@@ -18447,7 +18447,7 @@ Colegio Quisqueya, Santo Domingo
 <pre><code>## [1] -69.9935</code></pre>
 <pre class="r"><code>(guakia$latitudOK &lt;- guakia$LATITUDE)</code></pre>
 <pre><code>## [1] 19.2905</code></pre>
-<pre class="r"><code>guakia$idOK &lt;- guakia$NOMBRE
+<pre class="r"><code>guakia$idOK &lt;- guakia$IDENTIFICADOR
 guakia %&gt;%
   kable(booktabs=T) %&gt;%
   kable_styling(latex_options = c(&quot;HOLD_position&quot;, &quot;scale_down&quot;))</code></pre>
@@ -18455,7 +18455,13 @@ guakia %&gt;%
 <thead>
 <tr>
 <th style="text-align:left;">
-NOMBRE
+IDENTIFICADOR
+</th>
+<th style="text-align:left;">
+TIPO DE ESTACION
+</th>
+<th style="text-align:left;">
+MARCA COMERCIAL
 </th>
 <th style="text-align:right;">
 LONGITUDE
@@ -18471,9 +18477,6 @@ FECHA DE FINALIZACIÓN DE OPERACIONES
 </th>
 <th style="text-align:left;">
 ESTADO ACTUAL
-</th>
-<th style="text-align:left;">
-MARCA COMERCIAL
 </th>
 <th style="text-align:right;">
 longitudOK
@@ -18491,6 +18494,12 @@ idOK
 <td style="text-align:left;">
 Vuelta Larga
 </td>
+<td style="text-align:left;">
+climática
+</td>
+<td style="text-align:left;">
+Pluviómetro manual (de hasta 6’’) y termómetro TESTO 176 T2
+</td>
 <td style="text-align:right;">
 -69.9935
 </td>
@@ -18505,9 +18514,6 @@ NA
 </td>
 <td style="text-align:left;">
 activa
-</td>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:right;">
 -69.9935
@@ -18556,13 +18562,13 @@ latitudOK
 <tbody>
 <tr>
 <td style="text-align:left;">
-235
+365
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-Camar¢n
+Bohechio
 </td>
 <td style="text-align:right;">
 NaN
@@ -18573,13 +18579,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-440
+710
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-LOS GUINEOS
+PASO SENA
 </td>
 <td style="text-align:right;">
 NaN
@@ -18590,13 +18596,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-483
+269
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-LOS RANCHOS
+JICOME
 </td>
 <td style="text-align:right;">
 NaN
@@ -18607,30 +18613,132 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-36
+587
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+CUESTA BARROSA
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+835
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+LAS MERCEDES
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+93
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Presa Mana - La Finca
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+344
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Paso Bajito
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+694
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+EL CRUCE EL QUINCE
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+631
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+COTUI
+</td>
+<td style="text-align:right;">
+-70.15000
+</td>
+<td style="text-align:right;">
+19.05000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+48
 </td>
 <td style="text-align:left;">
 indrhi_telemetricas
 </td>
 <td style="text-align:left;">
-LAS MATAS DE SANTA CRUZ
+NIZAO BOCAINA
 </td>
 <td style="text-align:right;">
--71.54533
+-70.45951
 </td>
 <td style="text-align:right;">
-19.66520
+18.67162
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-413
+237
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-MATAYAYA
+Gu numa
 </td>
 <td style="text-align:right;">
 NaN
@@ -18641,30 +18749,30 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-505
+437
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-RESOLI
+GUAYABAL POSTRER RIO
 </td>
 <td style="text-align:right;">
-NaN
+-71.63750
 </td>
 <td style="text-align:right;">
-NaN
+18.59444
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-388
+502
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-El Capa
+LAS LOMAS
 </td>
 <td style="text-align:right;">
 NaN
@@ -18675,13 +18783,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-276
+699
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-AGUA CALIEN
+BAYAHIBE
 </td>
 <td style="text-align:right;">
 NaN
@@ -18692,13 +18800,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-585
+504
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-PALERO
+TABARA ARRIBA
 </td>
 <td style="text-align:right;">
 NaN
@@ -18709,30 +18817,30 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-152
+416
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-HATILLO YUNA
+PUERTECITO
 </td>
 <td style="text-align:right;">
-NaN
+-71.51111
 </td>
 <td style="text-align:right;">
-NaN
+18.80000
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-274
+129
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-PTE. VIEJO
+LA PITA JARABACOA
 </td>
 <td style="text-align:right;">
 NaN
@@ -18743,13 +18851,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-425
+436
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-SANTA LICIA
+BARTOLOME
 </td>
 <td style="text-align:right;">
 NaN
@@ -18760,13 +18868,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-377
+216
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-Jinova
+Pueblo Nuev
 </td>
 <td style="text-align:right;">
 NaN
@@ -18777,13 +18885,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-252
+137
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-El Llano
+AGUITA FRIA
 </td>
 <td style="text-align:right;">
 NaN
@@ -18794,13 +18902,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-622
+400
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-EL TALLER LA VEGA
+Jaquime
 </td>
 <td style="text-align:right;">
 NaN
@@ -18811,13 +18919,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-420
+108
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-EL RECODO
+EL NARANJAL OCOA
 </td>
 <td style="text-align:right;">
 NaN
@@ -18828,13 +18936,47 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-357
+854
+</td>
+<td style="text-align:left;">
+reddom
+</td>
+<td style="text-align:left;">
+La_Guama_Reddom
+</td>
+<td style="text-align:right;">
+-71.50160
+</td>
+<td style="text-align:right;">
+18.71723
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+848
+</td>
+<td style="text-align:left;">
+reddom
+</td>
+<td style="text-align:left;">
+Juliana_Jaramillo_Reddom
+</td>
+<td style="text-align:right;">
+-71.61470
+</td>
+<td style="text-align:right;">
+19.78727
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+385
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-Abadesa II
+EL LIMONCITO
 </td>
 <td style="text-align:right;">
 NaN
@@ -18845,30 +18987,30 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-371
+99
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-El Rosario
+DON MIGUEL
 </td>
 <td style="text-align:right;">
-NaN
+-71.67778
 </td>
 <td style="text-align:right;">
-NaN
+19.50278
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-717
+245
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-HIGUEY
+El Ca¤o
 </td>
 <td style="text-align:right;">
 NaN
@@ -18879,13 +19021,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-551
+830
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-ALBANA
+MAJAGUAL
 </td>
 <td style="text-align:right;">
 NaN
@@ -18896,13 +19038,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-581
+144
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-JAQUIME
+LOMA DE ATANACIO
 </td>
 <td style="text-align:right;">
 NaN
@@ -18913,155 +19055,19 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-329
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-El Meche
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-16
+27
 </td>
 <td style="text-align:left;">
 indrhi_telemetricas
 </td>
 <td style="text-align:left;">
-EL POPOTE
+JUMA
 </td>
 <td style="text-align:right;">
--71.12742
+-70.38617
 </td>
 <td style="text-align:right;">
-18.81294
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-452
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LA ESTRECHURA
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-600
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-El Torito
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-653
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-Santiago
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-660
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-Elias Piña / Comendador
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-244
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-El Jobo
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-542
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LA CANA
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-405
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-Ag. Arroyo
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
+18.89773
 </td>
 </tr>
 </tbody>
@@ -19150,8 +19156,8 @@ leaflet(consolidado_estaciones_sf) %&gt;%
     overlayGroups = ~ fuente, position = &#39;bottomright&#39;,
     options = layersControlOptions(collapsed = FALSE)) %&gt;% 
   setView(lat = 18.7, lng = -70.5, zoom = 7)</code></pre>
-<div id="htmlwidget-a2877165ed119eca209c" style="width:800px;height:500px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a2877165ed119eca209c">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addCircleMarkers","args":[[18.495486,18.810506,19.255789,19.242458,19.231114,18.8925,19.318333,19.348569,18.360739,19.445236,19.025228,18.818778,19.153017,18.916019,18.812944,19.271342,18.845833,19.351392,19.443061,19.177178,19.122172,19.128131,19.01495,19.604567,18.762169,18.897733,18.894675,19.279402,19.066939,19.265236,18.492386,19.152194,18.730133,19.6652,19.517981,18.679767,18.869122,19.1135,19.392733,18.588281,18.526052,19.321067,19.359684,18.975787,19.183289,18.671617,19.758472,18.8117,19.031064,19.659443,19.190223,18.495485,18.884669,19.62107,19.621902,18.976623,19.28742,18.85912,18.387439,19.033584,19.2870166666667,18.509853,19.406627,18.515394,19.107735,18.708633,19.154094,19.586905,19.179656,19.422741,19.521623,18.725383,18.414783,18.880258,19.178566,19.074954,18.957451,19.119125,19.5027770996094,19.4888896942139,19.5027770996094,19.0494441986084,19.0338897705078,18.6961116790771,18.4500007629395,18.2700004577637,18.5047225952148,18.3208332061768,19.5027770996094,19.4888896942139,18.5416660308838,18.6147212982178,18.408332824707,18.515832901001,18.6430549621582,18.4833335876465,18.7652778625488,19.1305561065674,19.4458332061768,19.5880546569824,19.6333332061768,18.9805564880371,19.0638885498047,19.200834274292,19.3869438171387,19.0861110687256,18.911111831665,19.286111831665,19.1305561065674,19.466667175293,18.7574996948242,18.2963886260986,19.0816669464111,18.8277778625488,18.75,19.75,19.4388885498047,18.3208332061768,18.783332824707,19.5444450378418,18.8916664123535,19.5249996185303,18.3944435119629,19.0494441986084,18.8758335113525,19.2838897705078,18.9916667938232,18.7999992370605,18.9333324432373,19.0338897705078,19.4388885498047,18.6277770996094,18.6961116790771,18.4500007629395,18.5349998474121,18.2700004577637,18.5944442749023,18.6313896179199,18.5047225952148,18.3208332061768,19.5027770996094,19.4888896942139,18.0249996185303,18.8158340454102,18.5416660308838,18.6147212982178,18.408332824707,18.515832901001,18.6430549621582,18.8138885498047,18.8138885498047,18.783332824707,18.5805549621582,18.4555549621582,18.7652778625488,18.3833332061768,19.6333332061768,19.3869438171387,19.200834274292,19.5880546569824,19.5472221374512,19.5444450378418,19.4458332061768,19.1305561065674,19.283332824707,19.0638885498047,18.9805564880371,19.0816669464111,18.8277778625488,18.9777774810791,18.9055557250977,18.8138885498047,18.75,18.6527786254883,18.8844451904297,19.1544437408447,19.286111831665,18.8916664123535,19.1305561065674,19.466667175293,19.286111831665,18.8916664123535,19.1305561065674,19.466667175293,18.7836112976074,19,19.0499992370605,19.283332824707,19.216667175293,18.911111831665,18.7574996948242,18.2963886260986,18.8138885498047,19.0861110687256,18.8158340454102,18.698055267334,19.4388885498047,19.283332824707,18.3833332061768,18.4950008392334,18.4743251800537,19.0324821472168,19.4975070953369,18.456371307373,19.50247,19.50264,19.75922,19.78727,19.66831,19.1255,19.44292,19.60421,19.28876,18.71723,19.07087,19.53784,19.55873,19.84958,19.5451,19.70878,19.66124,19.67714,19.63595,19.86363,19.73703,19.70652,19.09705,19.00903,19.23312,18.87926,19.54729,19.47227,19.00639,19.52976,19.04199,18.73675,19.290499],[-70.3216,-70.626461,-70.773519,-70.899256,-70.585836,-71.258367,-70.227775,-70.715081,-70.263694,-71.088708,-70.547572,-71.116139,-69.817831,-70.626036,-71.127417,-70.743967,-70.476664,-70.980839,-70.749622,-70.877581,-70.605628,-70.38149,-70.432847,-70.425733,-70.33145,-70.386175,-70.557845,-71.318158,-70.863492,-71.044536,-71.677406,-70.127222,-70.813933,-71.545333,-70.810069,-71.05605,-70.587011,-71.267333,-71.14037,-70.369229,-70.299782,-70.750355,-71.226214,-70.452846,-70.000606,-70.459506,-71.559926,-70.957233,-71.299541,-71.330834,-70.096421,-70.3216,-70.562574,-71.54095,-71.520941,-71.289821,-70.723234,-70.522012,-70.284503,-70.194795,-70.7231666666667,-70.330613,-71.117877,-71.016286,-70.404512,-71.052417,-70.093644,-71.060089,-70.386796,-71.55622,-71.389829,-71.108083,-71.175933,-71.203386,-70.67452,-70.787577,-70.383676,-70.113111,-71.6777801513672,-71.5555572509766,-71.6777801513672,-71.4088897705078,-71.5563888549805,-68.8327789306641,-70.0019454956055,-71.396110534668,-71.4375,-71.5722198486328,-71.6777801513672,-71.5555572509766,-70.4124984741211,-70.4519424438477,-70.2805557250977,-70.5713882446289,-70.5294418334961,-69.9166641235352,-69.0444412231445,-70.6388854980469,-70.7458343505859,-71.0513916015625,-71.4027786254883,-70.6277770996094,-70.7944412231445,-70.9875030517578,-71.1227798461914,-71.2808303833008,-70.716667175293,-70.2402801513672,-69.7888870239258,-70.4499969482422,-71.1505584716797,-71.1877746582031,-71.2933349609375,-71.0911102294922,-70.8405532836914,-70.8333358764648,-70.0472259521484,-71.5722198486328,-69.7722244262695,-70.9833297729492,-70.4583358764648,-71.3888854980469,-70.5388870239258,-71.4088897705078,-71.6694412231445,-71.4972229003906,-71.4888916015625,-71.5111083984375,-71.6166687011719,-71.5563888549805,-70.0472259521484,-68.7972259521484,-68.8327789306641,-70.0019454956055,-70.1444473266602,-71.396110534668,-71.6374969482422,-71.6513900756836,-71.4375,-71.5722198486328,-71.6777801513672,-71.5555572509766,-71.1944427490234,-70.6283340454102,-70.4124984741211,-70.4519424438477,-70.2805557250977,-70.5713882446289,-70.5294418334961,-69.8638916015625,-69.9638900756836,-69.7722244262695,-69.9888916015625,-70.6458358764648,-69.0444412231445,-70.8388900756836,-71.4027786254883,-71.1227798461914,-70.9875030517578,-71.0513916015625,-70.9111099243164,-70.9833297729492,-70.7458343505859,-70.6388854980469,-70.7180557250977,-70.7944412231445,-70.6277770996094,-71.2933349609375,-71.0911102294922,-71.2916641235352,-71.2638854980469,-71.1155548095703,-70.8405532836914,-71.0472259521484,-70.9019470214844,-71.3080520629883,-70.2402801513672,-70.4583358764648,-69.7888870239258,-70.4499969482422,-70.2402801513672,-70.4583358764648,-69.7888870239258,-70.4499969482422,-70.4725036621094,-69.966667175293,-70.1500015258789,-70.25,-70.533332824707,-70.716667175293,-71.1505584716797,-71.1877746582031,-69.8638916015625,-71.2808303833008,-70.6283340454102,-69.6449966430664,-70.0472259521484,-70.7180557250977,-70.8388900756836,-69.9530563354492,-69.2865524291992,-69.5525665283203,-70.6977157592773,-69.9504470825195,-71.34635,-71.5648,-71.21466,-71.6147,-71.19435,-70.60576,-70.74848,-71.38353,-70.9251,-71.5016,-70.79701,-70.98673,-71.09064,-71.64626,-70.96859,-71.65865,-71.21455,-71.31737,-71.19988,-71.11765,-70.93845,-70.64679,-70.7499,-70.6336,-70.5191,-71.54292,-70.62268,-70.70682,-69.97047,-70.84041,-70.25831,-70.94145,-69.993499],5,null,["indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","intec","intec","intec","intec","intec","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","guakia"],{"interactive":true,"className":"","stroke":false,"color":["#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#984EA3","#984EA3","#984EA3","#984EA3","#984EA3","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#E41A1C"],"weight":5,"opacity":0.5,"fill":true,"fillColor":["#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#984EA3","#984EA3","#984EA3","#984EA3","#984EA3","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#E41A1C"],"fillOpacity":0.8},null,null,null,null,["AGUACATE","ALTO BANDERA","BAIGUAQUE LOS PILONES","BAO AGUA CALIENTE","CAMU BAYACANES","CANAFISTOL","CENOVI","CONTRAEMBALSE DE LOPEZ","CONTRAEMBALSE LAS BARIAS","CONTRAEMBALSE MONCION","EL ARROYASO","EL CACHEO","EL LIMON","EL PINALITO, CONSTANZA","EL POPOTE","GUANAJUMA EL CERRAZO","GUAREY (PRESA GUAGUI)","INOA","ISA","JAGUA LOS LIMONES","JARABACOA","JIMA ABAJO burbuj","JIMA CAÑADA DE PIEDRA (burbuja","JOSE CONTRERAS","JUAN ADRIAN(LOS PLATANOS)","JUMA","LA CEIBA","LA CIDRA","LA CIENAGA, MANABAO","LA DIFERENCIA","LAGO ENRIQUILLO","LAS BIJA","LAS GUAMAS","LAS MATAS DE SANTA CRUZ","LOS ALMACIGOS","LOS BANCOS","LOS BOTADOS","LOS PINALES","MAGUA MONCION","MAHOMA EL ROSALITO","MAHOMITA EL CACAO","MAO LA CIDRA (burbuj","MAO MESETA","MASIPEDRO LOS ARROCES","MATA GRANDE","NIZAO BOCAINA","PALO VERDE","PALOMINO","PASO DE LIMA","PEÑA RANCHADERO","PIMENTEL","PRESA AGUACATE","PRESA DE BLANCO","PRESA DE CHACUEY","PRESA DE MAGUACA","PRESA DE SABANETA","PRESA DE TAVERA","PRESA DE TIREITO","PRESA DE VALDESIA","PRESA HATILLO","PRESA DE TAVERA","PRESA JIGUEY","PRESA MONCION","PRESA MONTE GRANDE","PRESA RINCON","PRESA SABANA YEGUA","PUENTE LA BARCA","PUENTE SAN RAFAEL(MAO)","RANCHITO","RESBALOSO","RINCON","SABANA ALTA","TAMAYO","VALLE DE BAO","YAQUE DEL NORTE BOMA","YAQUE DEL NORTE MANABAO","YUNA LA VERDE","YUNA PLATANAL","DON MIGUEL","PARTIDO","DON MIGUEL","CATANAMATIA","SABANA MULA","NARANJO DE CHINA","ENGOMBE","ANGOSTURA","NEYBA","PUERTO ESCONDIDO","DON MIGUEL","PARTIDO","LA LAGUNA","NIZAO","VALDESIA","EL MEMISO","LOS ARROYOS","STO DGO","EL SEYBO","JARABACOA","SANTIAGO ISA","MAO VALVERDE","LA ANTONA","EL RIO CONSTANZA","MANABAO","MATA GRANDE","MAGUA MONCION","LOS VALENCIO","EL VALLE CONSTANZA","SAN FCO. DE MACORIS","BARRAQUITO","JOSE CONTRERAS","SAN JUAN DE LA MAGUANA","EL PENON","LA CIENEGA","LA FLORIDA","GUAYABAL P. LAS CASAS","IMBERT (MET)","LOS JENGIBRES","PUERTO ESCONDIDO","EL CERRO","JINAMAGAO","LOS QUEMADOS","GUAYUBIN RINCON","HATILLO AZUA","CATANAMATIA","GUAZUMAL , ELIAS PINA","NARANJITO","POZO HONDO","PUERTECITO","RANCHITO (MACASIA)","SABANA MULA","LOS JENGIBRES","GUANITO","NARANJO DE CHINA","ENGOMBE","MEDINA","ANGOSTURA","GUAYABAL POSTRER RIO","LOS BOLOS","NEYBA","PUERTO ESCONDIDO","DON MIGUEL","PARTIDO","VILLA NIZAO","ALTO BANDERA","LA LAGUNA","NIZAO","VALDESIA","EL MEMISO","LOS ARROYOS","CACIQUE","DON JUAN","EL CERRO","HIGUERO","ESTEBANIA","EL SEYBO","EL SISAL","LA ANTONA","MAGUA MONCION","MATA GRANDE","MAO VALVERDE","CACHEO","JINAMAGAO","SANTIAGO ISA","JARABACOA","TAVERA","MANABAO","EL RIO CONSTANZA","LA CIENEGA","LA FLORIDA","SABANETA","GUAZUMAL","CACHEO","GUAYABAL P. LAS CASAS","VILLARPANDO","EL TETERO","PALO DE VIENTO","SAN FCO. DE MACORIS","LOS QUEMADOS","BARRAQUITO","JOSE CONTRERAS","SAN FCO. DE MACORIS","LOS QUEMADOS","BARRAQUITO","JOSE CONTRERAS","EL NOVILLO","CEVICOS","COTUI","SAN FCO. DE MACORIS","LA VEGA","CONSTANZA","SAN JUAN DE LA MAGUANA","EL PENON","CACIQUE","LOS VALENCIO","ALTO BANDERA","ANAMUYA","LOS JENGIBRES","TAVERA","EL SISAL","Jardín Botánico de Santo Domingo","San Pedro de Macorís","Las Terrenas","Jardín Botánico de Santiago","Colegio Quisqueya, Santo Domingo","Los_Tocones_Reddom","Chacuey_Reddom","Agua_de_Luis_Reddom","Juliana_Jaramillo_Reddom","Banamiel_Oficina_Reddom","Esnamarena_Reddom","Unisa_Reddom","Agrofrontera_Reddom","Los_Montones_Reddom","La_Guama_Reddom","Plan_Yaque_Manabao_Reddom","Ekoban1_Amina_Reddom","Banelino_Mao","Montecristi_Oficina_Banelino","Amina_Banelino","Judea_Nueva_Banamiel","Hatillo_Palma_Banelino","Hato_al_Medio_Banelino","Bananera_los_Rios","Novillero_Clay_REDDOM","Guananico_REDDOM","Puerto Plata_REDDOM","Jumunuco_REDDOM","La_Pita_REDDOM","Ucateci_LaVega_REDDOM","Las_Matas_de_Farfan_REDDOM","La_Cumbre_Reddom","Santiago_Apedi_Reddom","Cevicos_Reddom","Cimpa_Reddom","Conacado_Reddom","Sur_Futuro_Reddom","Vuelta Larga"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLegend","args":[{"colors":["#E41A1C","#377EB8","#4DAF4A","#984EA3","#FF7F00"],"labels":["guakia","indrhi_historico","indrhi_telemetricas","intec","reddom"],"na_color":null,"na_label":"NA","opacity":1,"position":"topright","type":"factor","title":"fuente","extra":null,"layerId":null,"className":"info legend","group":null}]},{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,"OSM",{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addProviderTiles","args":["Esri.NatGeoWorldMap",null,"ESRI Mapa",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addProviderTiles","args":["Esri.WorldImagery",null,"ESRI Imagen",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addProviderTiles","args":["CartoDB.Positron",null,"CartoDB",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addLayersControl","args":[["OSM","ESRI Mapa","CartoDB","ESRI Imagen"],["indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","intec","intec","intec","intec","intec","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","guakia"],{"collapsed":false,"autoZIndex":true,"position":"bottomright"}]}],"limits":{"lat":[18.0249996185303,19.86363],"lng":[-71.6777801513672,-68.7972259521484]},"setView":[[18.7,-70.5],7,[]]},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-28f411e740dff8da87b7" style="width:800px;height:500px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-28f411e740dff8da87b7">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addCircleMarkers","args":[[18.495486,18.810506,19.255789,19.242458,19.231114,18.8925,19.318333,19.348569,18.360739,19.445236,19.025228,18.818778,19.153017,18.916019,18.812944,19.271342,18.845833,19.351392,19.443061,19.177178,19.122172,19.128131,19.01495,19.604567,18.762169,18.897733,18.894675,19.279402,19.066939,19.265236,18.492386,19.152194,18.730133,19.6652,19.517981,18.679767,18.869122,19.1135,19.392733,18.588281,18.526052,19.321067,19.359684,18.975787,19.183289,18.671617,19.758472,18.8117,19.031064,19.659443,19.190223,18.495485,18.884669,19.62107,19.621902,18.976623,19.28742,18.85912,18.387439,19.033584,19.2870166666667,18.509853,19.406627,18.515394,19.107735,18.708633,19.154094,19.586905,19.179656,19.422741,19.521623,18.725383,18.414783,18.880258,19.178566,19.074954,18.957451,19.119125,19.5027770996094,19.4888896942139,19.5027770996094,19.0494441986084,19.0338897705078,18.6961116790771,18.4500007629395,18.2700004577637,18.5047225952148,18.3208332061768,19.5027770996094,19.4888896942139,18.5416660308838,18.6147212982178,18.408332824707,18.515832901001,18.6430549621582,18.4833335876465,18.7652778625488,19.1305561065674,19.4458332061768,19.5880546569824,19.6333332061768,18.9805564880371,19.0638885498047,19.200834274292,19.3869438171387,19.0861110687256,18.911111831665,19.286111831665,19.1305561065674,19.466667175293,18.7574996948242,18.2963886260986,19.0816669464111,18.8277778625488,18.75,19.75,19.4388885498047,18.3208332061768,18.783332824707,19.5444450378418,18.8916664123535,19.5249996185303,18.3944435119629,19.0494441986084,18.8758335113525,19.2838897705078,18.9916667938232,18.7999992370605,18.9333324432373,19.0338897705078,19.4388885498047,18.6277770996094,18.6961116790771,18.4500007629395,18.5349998474121,18.2700004577637,18.5944442749023,18.6313896179199,18.5047225952148,18.3208332061768,19.5027770996094,19.4888896942139,18.0249996185303,18.8158340454102,18.5416660308838,18.6147212982178,18.408332824707,18.515832901001,18.6430549621582,18.8138885498047,18.8138885498047,18.783332824707,18.5805549621582,18.4555549621582,18.7652778625488,18.3833332061768,19.6333332061768,19.3869438171387,19.200834274292,19.5880546569824,19.5472221374512,19.5444450378418,19.4458332061768,19.1305561065674,19.283332824707,19.0638885498047,18.9805564880371,19.0816669464111,18.8277778625488,18.9777774810791,18.9055557250977,18.8138885498047,18.75,18.6527786254883,18.8844451904297,19.1544437408447,19.286111831665,18.8916664123535,19.1305561065674,19.466667175293,19.286111831665,18.8916664123535,19.1305561065674,19.466667175293,18.7836112976074,19,19.0499992370605,19.283332824707,19.216667175293,18.911111831665,18.7574996948242,18.2963886260986,18.8138885498047,19.0861110687256,18.8158340454102,18.698055267334,19.4388885498047,19.283332824707,18.3833332061768,18.4950008392334,18.4743251800537,19.0324821472168,19.4975070953369,18.456371307373,19.50247,19.50264,19.75922,19.78727,19.66831,19.1255,19.44292,19.60421,19.28876,18.71723,19.07087,19.53784,19.55873,19.84958,19.5451,19.70878,19.66124,19.67714,19.63595,19.86363,19.73703,19.70652,19.09705,19.00903,19.23312,18.87926,19.54729,19.47227,19.00639,19.52976,19.04199,18.73675,19.290499],[-70.3216,-70.626461,-70.773519,-70.899256,-70.585836,-71.258367,-70.227775,-70.715081,-70.263694,-71.088708,-70.547572,-71.116139,-69.817831,-70.626036,-71.127417,-70.743967,-70.476664,-70.980839,-70.749622,-70.877581,-70.605628,-70.38149,-70.432847,-70.425733,-70.33145,-70.386175,-70.557845,-71.318158,-70.863492,-71.044536,-71.677406,-70.127222,-70.813933,-71.545333,-70.810069,-71.05605,-70.587011,-71.267333,-71.14037,-70.369229,-70.299782,-70.750355,-71.226214,-70.452846,-70.000606,-70.459506,-71.559926,-70.957233,-71.299541,-71.330834,-70.096421,-70.3216,-70.562574,-71.54095,-71.520941,-71.289821,-70.723234,-70.522012,-70.284503,-70.194795,-70.7231666666667,-70.330613,-71.117877,-71.016286,-70.404512,-71.052417,-70.093644,-71.060089,-70.386796,-71.55622,-71.389829,-71.108083,-71.175933,-71.203386,-70.67452,-70.787577,-70.383676,-70.113111,-71.6777801513672,-71.5555572509766,-71.6777801513672,-71.4088897705078,-71.5563888549805,-68.8327789306641,-70.0019454956055,-71.396110534668,-71.4375,-71.5722198486328,-71.6777801513672,-71.5555572509766,-70.4124984741211,-70.4519424438477,-70.2805557250977,-70.5713882446289,-70.5294418334961,-69.9166641235352,-69.0444412231445,-70.6388854980469,-70.7458343505859,-71.0513916015625,-71.4027786254883,-70.6277770996094,-70.7944412231445,-70.9875030517578,-71.1227798461914,-71.2808303833008,-70.716667175293,-70.2402801513672,-69.7888870239258,-70.4499969482422,-71.1505584716797,-71.1877746582031,-71.2933349609375,-71.0911102294922,-70.8405532836914,-70.8333358764648,-70.0472259521484,-71.5722198486328,-69.7722244262695,-70.9833297729492,-70.4583358764648,-71.3888854980469,-70.5388870239258,-71.4088897705078,-71.6694412231445,-71.4972229003906,-71.4888916015625,-71.5111083984375,-71.6166687011719,-71.5563888549805,-70.0472259521484,-68.7972259521484,-68.8327789306641,-70.0019454956055,-70.1444473266602,-71.396110534668,-71.6374969482422,-71.6513900756836,-71.4375,-71.5722198486328,-71.6777801513672,-71.5555572509766,-71.1944427490234,-70.6283340454102,-70.4124984741211,-70.4519424438477,-70.2805557250977,-70.5713882446289,-70.5294418334961,-69.8638916015625,-69.9638900756836,-69.7722244262695,-69.9888916015625,-70.6458358764648,-69.0444412231445,-70.8388900756836,-71.4027786254883,-71.1227798461914,-70.9875030517578,-71.0513916015625,-70.9111099243164,-70.9833297729492,-70.7458343505859,-70.6388854980469,-70.7180557250977,-70.7944412231445,-70.6277770996094,-71.2933349609375,-71.0911102294922,-71.2916641235352,-71.2638854980469,-71.1155548095703,-70.8405532836914,-71.0472259521484,-70.9019470214844,-71.3080520629883,-70.2402801513672,-70.4583358764648,-69.7888870239258,-70.4499969482422,-70.2402801513672,-70.4583358764648,-69.7888870239258,-70.4499969482422,-70.4725036621094,-69.966667175293,-70.1500015258789,-70.25,-70.533332824707,-70.716667175293,-71.1505584716797,-71.1877746582031,-69.8638916015625,-71.2808303833008,-70.6283340454102,-69.6449966430664,-70.0472259521484,-70.7180557250977,-70.8388900756836,-69.9530563354492,-69.2865524291992,-69.5525665283203,-70.6977157592773,-69.9504470825195,-71.34635,-71.5648,-71.21466,-71.6147,-71.19435,-70.60576,-70.74848,-71.38353,-70.9251,-71.5016,-70.79701,-70.98673,-71.09064,-71.64626,-70.96859,-71.65865,-71.21455,-71.31737,-71.19988,-71.11765,-70.93845,-70.64679,-70.7499,-70.6336,-70.5191,-71.54292,-70.62268,-70.70682,-69.97047,-70.84041,-70.25831,-70.94145,-69.993499],5,null,["indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","intec","intec","intec","intec","intec","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","guakia"],{"interactive":true,"className":"","stroke":false,"color":["#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#984EA3","#984EA3","#984EA3","#984EA3","#984EA3","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#E41A1C"],"weight":5,"opacity":0.5,"fill":true,"fillColor":["#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#4DAF4A","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#377EB8","#984EA3","#984EA3","#984EA3","#984EA3","#984EA3","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#FF7F00","#E41A1C"],"fillOpacity":0.8},null,null,null,null,["AGUACATE","ALTO BANDERA","BAIGUAQUE LOS PILONES","BAO AGUA CALIENTE","CAMU BAYACANES","CANAFISTOL","CENOVI","CONTRAEMBALSE DE LOPEZ","CONTRAEMBALSE LAS BARIAS","CONTRAEMBALSE MONCION","EL ARROYASO","EL CACHEO","EL LIMON","EL PINALITO, CONSTANZA","EL POPOTE","GUANAJUMA EL CERRAZO","GUAREY (PRESA GUAGUI)","INOA","ISA","JAGUA LOS LIMONES","JARABACOA","JIMA ABAJO burbuj","JIMA CAÑADA DE PIEDRA (burbuja","JOSE CONTRERAS","JUAN ADRIAN(LOS PLATANOS)","JUMA","LA CEIBA","LA CIDRA","LA CIENAGA, MANABAO","LA DIFERENCIA","LAGO ENRIQUILLO","LAS BIJA","LAS GUAMAS","LAS MATAS DE SANTA CRUZ","LOS ALMACIGOS","LOS BANCOS","LOS BOTADOS","LOS PINALES","MAGUA MONCION","MAHOMA EL ROSALITO","MAHOMITA EL CACAO","MAO LA CIDRA (burbuj","MAO MESETA","MASIPEDRO LOS ARROCES","MATA GRANDE","NIZAO BOCAINA","PALO VERDE","PALOMINO","PASO DE LIMA","PEÑA RANCHADERO","PIMENTEL","PRESA AGUACATE","PRESA DE BLANCO","PRESA DE CHACUEY","PRESA DE MAGUACA","PRESA DE SABANETA","PRESA DE TAVERA","PRESA DE TIREITO","PRESA DE VALDESIA","PRESA HATILLO","PRESA DE TAVERA","PRESA JIGUEY","PRESA MONCION","PRESA MONTE GRANDE","PRESA RINCON","PRESA SABANA YEGUA","PUENTE LA BARCA","PUENTE SAN RAFAEL(MAO)","RANCHITO","RESBALOSO","RINCON","SABANA ALTA","TAMAYO","VALLE DE BAO","YAQUE DEL NORTE BOMA","YAQUE DEL NORTE MANABAO","YUNA LA VERDE","YUNA PLATANAL","DON MIGUEL","PARTIDO","DON MIGUEL","CATANAMATIA","SABANA MULA","NARANJO DE CHINA","ENGOMBE","ANGOSTURA","NEYBA","PUERTO ESCONDIDO","DON MIGUEL","PARTIDO","LA LAGUNA","NIZAO","VALDESIA","EL MEMISO","LOS ARROYOS","STO DGO","EL SEYBO","JARABACOA","SANTIAGO ISA","MAO VALVERDE","LA ANTONA","EL RIO CONSTANZA","MANABAO","MATA GRANDE","MAGUA MONCION","LOS VALENCIO","EL VALLE CONSTANZA","SAN FCO. DE MACORIS","BARRAQUITO","JOSE CONTRERAS","SAN JUAN DE LA MAGUANA","EL PENON","LA CIENEGA","LA FLORIDA","GUAYABAL P. LAS CASAS","IMBERT (MET)","LOS JENGIBRES","PUERTO ESCONDIDO","EL CERRO","JINAMAGAO","LOS QUEMADOS","GUAYUBIN RINCON","HATILLO AZUA","CATANAMATIA","GUAZUMAL , ELIAS PINA","NARANJITO","POZO HONDO","PUERTECITO","RANCHITO (MACASIA)","SABANA MULA","LOS JENGIBRES","GUANITO","NARANJO DE CHINA","ENGOMBE","MEDINA","ANGOSTURA","GUAYABAL POSTRER RIO","LOS BOLOS","NEYBA","PUERTO ESCONDIDO","DON MIGUEL","PARTIDO","VILLA NIZAO","ALTO BANDERA","LA LAGUNA","NIZAO","VALDESIA","EL MEMISO","LOS ARROYOS","CACIQUE","DON JUAN","EL CERRO","HIGUERO","ESTEBANIA","EL SEYBO","EL SISAL","LA ANTONA","MAGUA MONCION","MATA GRANDE","MAO VALVERDE","CACHEO","JINAMAGAO","SANTIAGO ISA","JARABACOA","TAVERA","MANABAO","EL RIO CONSTANZA","LA CIENEGA","LA FLORIDA","SABANETA","GUAZUMAL","CACHEO","GUAYABAL P. LAS CASAS","VILLARPANDO","EL TETERO","PALO DE VIENTO","SAN FCO. DE MACORIS","LOS QUEMADOS","BARRAQUITO","JOSE CONTRERAS","SAN FCO. DE MACORIS","LOS QUEMADOS","BARRAQUITO","JOSE CONTRERAS","EL NOVILLO","CEVICOS","COTUI","SAN FCO. DE MACORIS","LA VEGA","CONSTANZA","SAN JUAN DE LA MAGUANA","EL PENON","CACIQUE","LOS VALENCIO","ALTO BANDERA","ANAMUYA","LOS JENGIBRES","TAVERA","EL SISAL","Jardín Botánico de Santo Domingo","San Pedro de Macorís","Las Terrenas","Jardín Botánico de Santiago","Colegio Quisqueya, Santo Domingo","Los_Tocones_Reddom","Chacuey_Reddom","Agua_de_Luis_Reddom","Juliana_Jaramillo_Reddom","Banamiel_Oficina_Reddom","Esnamarena_Reddom","Unisa_Reddom","Agrofrontera_Reddom","Los_Montones_Reddom","La_Guama_Reddom","Plan_Yaque_Manabao_Reddom","Ekoban1_Amina_Reddom","Banelino_Mao","Montecristi_Oficina_Banelino","Amina_Banelino","Judea_Nueva_Banamiel","Hatillo_Palma_Banelino","Hato_al_Medio_Banelino","Bananera_los_Rios","Novillero_Clay_REDDOM","Guananico_REDDOM","Puerto Plata_REDDOM","Jumunuco_REDDOM","La_Pita_REDDOM","Ucateci_LaVega_REDDOM","Las_Matas_de_Farfan_REDDOM","La_Cumbre_Reddom","Santiago_Apedi_Reddom","Cevicos_Reddom","Cimpa_Reddom","Conacado_Reddom","Sur_Futuro_Reddom","Vuelta Larga"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLegend","args":[{"colors":["#E41A1C","#377EB8","#4DAF4A","#984EA3","#FF7F00"],"labels":["guakia","indrhi_historico","indrhi_telemetricas","intec","reddom"],"na_color":null,"na_label":"NA","opacity":1,"position":"topright","type":"factor","title":"fuente","extra":null,"layerId":null,"className":"info legend","group":null}]},{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,"OSM",{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addProviderTiles","args":["Esri.NatGeoWorldMap",null,"ESRI Mapa",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addProviderTiles","args":["Esri.WorldImagery",null,"ESRI Imagen",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addProviderTiles","args":["CartoDB.Positron",null,"CartoDB",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addLayersControl","args":[["OSM","ESRI Mapa","CartoDB","ESRI Imagen"],["indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_telemetricas","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","indrhi_historico","intec","intec","intec","intec","intec","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","reddom","guakia"],{"collapsed":false,"autoZIndex":true,"position":"bottomright"}]}],"limits":{"lat":[18.0249996185303,19.86363],"lng":[-71.6777801513672,-68.7972259521484]},"setView":[[18.7,-70.5],7,[]]},"evals":[],"jsHooks":[]}</script>
 </div>
 
 

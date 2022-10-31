@@ -91,7 +91,7 @@ intec %>%
 guakia <- read_ods('fuentes/guakia/estaciones_guakia.ods')
 (guakia$longitudOK <- guakia$LONGITUDE)
 (guakia$latitudOK <- guakia$LATITUDE)
-guakia$idOK <- guakia$NOMBRE
+guakia$idOK <- guakia$IDENTIFICADOR
 guakia %>%
   kable(booktabs=T) %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down"))
