@@ -1,0 +1,126 @@
+---
+title: "Consolidación de listas de estaciones"
+author: "José Ramón Martínez Batlle"
+output:
+  # pdf_document:
+  #   latex_engine: xelatex
+  # html_document
+  github_document
+editor_options: 
+  chunk_output_type: console
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE)
+```
+
+## Paquetes
+
+```{r}
+library(sf)
+library(leaflet)
+library(mapview)
+library(readODS)
+library(readxl)
+library(parzer)
+library(tidyverse)
+library(kableExtra)
+```
+
+## INDRHI
+
+```{r}
+indrhi_telemetricas <- read_ods('fuentes/indrhi/Red_Telem_Estacion_Coord-Sept2015.ods')
+(indrhi_telemetricas$longitudOK <- indrhi_telemetricas$LONGITUDE)
+(indrhi_telemetricas$latitudOK <- indrhi_telemetricas$LATITUDE)
+indrhi_telemetricas$idOK <- indrhi_telemetricas$`STATION SITE`
+indrhi_telemetricas %>%
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down"))
+indrhi_historico <- read_excel(
+  path = 'fuentes/indrhi/Listado Red Medicion INDRHI_Historico_24-10-2022_revision_jr.xlsx'
+  )
+indrhi_historico$longitudOK <- 0 - parse_lon(indrhi_historico$LONGITUD)
+head(indrhi_historico$longitudOK, 50)
+indrhi_historico$latitudOK <- parse_lon(indrhi_historico$LATITUD)
+head(indrhi_historico$latitudOK, 50)
+indrhi_historico$idOK <- indrhi_historico$ESTACION
+indrhi_historico[1:130, ] %>%
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down"))
+```
+
+## Fundación REDDOM
+
+```{r}
+reddom <- read_excel(path = 'fuentes/reddom/Localizacion Estaciones Meterologicas CLIMARED_LT.xlsx',
+                     skip = 2, col_names = T)
+colnames(reddom) <- gsub('(^[0-9]$)', 'Temperatura-Humedad Suelo \\1', colnames(reddom))
+(reddom$longitudOK <- reddom$Longitud)
+(reddom$latitudOK <- reddom$Latitud)
+reddom$idOK <- reddom$NOMBRE
+reddom %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down"))
+```
+
+## INTEC
+
+```{r}
+intec <- read_excel(path = 'fuentes/intec/Lista estaciones meteorológicas OCCR.xlsx',
+                    skip = 7, col_names = T)
+colnames(intec) <- c(colnames(intec)[c(1, 2)], c('longitud', 'latitud'), colnames(intec)[c(5, 6)])
+(intec$longitudOK <- parse_lon(intec$longitud))
+(intec$latitudOK <- parse_lat(gsub('\\. ', '\\.', intec$latitud)))
+intec$Marca <- intec$Marca[1]
+intec$`Parámetros que miden` <- intec$`Parámetros que miden`[1]
+intec$idOK <- intec$Ubicación
+intec %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down"))
+```
+
+## Consolidado
+
+```{r}
+lista_estaciones <- list(
+  indrhi_telemetricas = indrhi_telemetricas,
+  indrhi_historico = indrhi_historico,
+  intec = intec,
+  reddom = reddom)
+consolidado_estaciones <- bind_rows(lista_estaciones, .id = 'fuente')[, c('fuente', 'idOK', 'longitudOK', 'latitudOK')]
+consolidado_estaciones %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down"))
+consolidado_estaciones_sf <- st_as_sf(
+  consolidado_estaciones[!with(consolidado_estaciones, is.na(longitudOK) | is.na(latitudOK)), ],
+  coords = c('longitudOK', 'latitudOK'))
+nrow(consolidado_estaciones_sf)
+table(consolidado_estaciones_sf$fuente)
+```
+
+## Mapa
+
+```{r}
+fpal <- colorFactor(RColorBrewer::brewer.pal(4, 'Set1'), domain = unique(consolidado_estaciones_sf$fuente))
+leaflet(consolidado_estaciones_sf) %>%
+  addCircleMarkers(
+    radius = 5, label = ~ idOK, group = ~ fuente,
+    color = ~ fpal(fuente),
+    stroke = FALSE, fillOpacity = 0.5
+  ) %>%
+  addLegend(pal = fpal, values = ~ fuente, opacity = 1) %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
+    overlayGroups = ~ fuente,
+    options = layersControlOptions(collapsed = FALSE))
+```
+
