@@ -13033,47 +13033,30 @@ latitudOK
 <tbody>
 <tr>
 <td style="text-align:left;">
-100
+89
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-PARTIDO
+SABANA MULA
 </td>
 <td style="text-align:right;">
--71.55556
+-71.55639
 </td>
 <td style="text-align:right;">
-19.48889
+19.03389
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-424
+150
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-NARANJO DE CHINA
-</td>
-<td style="text-align:right;">
--68.83278
-</td>
-<td style="text-align:right;">
-18.69611
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-662
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-SABANETA
+JUMA BONAO
 </td>
 <td style="text-align:right;">
 NaN
@@ -13084,319 +13067,64 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-556
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-EL PALMAR
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-201
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-Olivero
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-266
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-PALO VERDE
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-531
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-BOMA
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-629
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-EL AGUACATE
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-460
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-ARROYO HONDO
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-540
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-CAGUEYES
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-199
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-Conuquitos
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-174
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-Manjil
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-808
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-SAN JUAN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-70
-</td>
-<td style="text-align:left;">
-indrhi_telemetricas
-</td>
-<td style="text-align:left;">
-PUENTE SAN RAFAEL(MAO)
-</td>
-<td style="text-align:right;">
--71.06009
-</td>
-<td style="text-align:right;">
-19.58691
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-377
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-Jinova
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-251
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-Isabelita
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-650
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-Dajabon
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-794
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-RANCHO ARRIBA
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-864
+878
 </td>
 <td style="text-align:left;">
 reddom
 </td>
 <td style="text-align:left;">
-Novillero_Clay_REDDOM
+Barcelo_Reddom
 </td>
 <td style="text-align:right;">
--71.11765
+NA
 </td>
 <td style="text-align:right;">
-19.86363
+NA
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-442
+247
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-NEYBA
+Pedernales
 </td>
 <td style="text-align:right;">
--71.43750
+NaN
 </td>
 <td style="text-align:right;">
-18.50472
+NaN
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-327
+525
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-Santa Cruz
+TAVERA
 </td>
 <td style="text-align:right;">
-NaN
+-70.71806
 </td>
 <td style="text-align:right;">
-NaN
+19.28333
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-257
+614
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-DIQUE JUAN
+ABADESA
 </td>
 <td style="text-align:right;">
 NaN
@@ -13407,13 +13135,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-495
+151
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-PALMAREJO
+EL LIMON
 </td>
 <td style="text-align:right;">
 NaN
@@ -13424,58 +13152,7 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-546
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LOS LIMONES
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-803
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-DUVERGE
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-452
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LA ESTRECHURA
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-587
+588
 </td>
 <td style="text-align:left;">
 indrhi_historico
@@ -13492,13 +13169,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-820
+402
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-kM 11 SAN JUAN DE LA MAGUANA
+Jaquime
 </td>
 <td style="text-align:right;">
 NaN
@@ -13509,13 +13186,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-295
+213
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-EL POPOTE
+Cinta Negra
 </td>
 <td style="text-align:right;">
 NaN
@@ -13526,13 +13203,336 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-356
+82
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-Abadesa I
+DON MIGUEL
+</td>
+<td style="text-align:right;">
+-71.67778
+</td>
+<td style="text-align:right;">
+19.50278
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+768
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+GASPAR HERNANDEZ
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+172
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Pedro Santa
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+175
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Los Guineos
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+313
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Tireo
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+indrhi_telemetricas
+</td>
+<td style="text-align:left;">
+ALTO BANDERA
+</td>
+<td style="text-align:right;">
+-70.62646
+</td>
+<td style="text-align:right;">
+18.81051
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+446
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+CINTA NEGRA
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+335
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+CANA CHAPETON
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+646
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+NARANJITO LAS CUEVAS
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+370
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Arroyo Gaji
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+554
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+BARAHONA
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+308
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+PIEDRA LOS VEGANOS
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+875
+</td>
+<td style="text-align:left;">
+reddom
+</td>
+<td style="text-align:left;">
+Cimpa_Reddom
+</td>
+<td style="text-align:right;">
+-70.84041
+</td>
+<td style="text-align:right;">
+19.52976
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+399
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Jaquime
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+729
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+LAGO ENRIQUILLO (SAL)
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+674
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Trepada Alta
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+254
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+La Cruz
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+866
+</td>
+<td style="text-align:left;">
+reddom
+</td>
+<td style="text-align:left;">
+Puerto Plata_REDDOM
+</td>
+<td style="text-align:right;">
+-70.64679
+</td>
+<td style="text-align:right;">
+19.70652
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+465
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+EL LIMON DE OCOA
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+360
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Los Corozos
 </td>
 <td style="text-align:right;">
 NaN
@@ -13609,7 +13609,7 @@ reddom
 ## Mapa
 
 Versión interactiva del mapa,
-[aquí](https://htmlpreview.github.io/?https://github.com/geofis/datos-meteoclimaticos-escenarios-cc/blob/main/consolidacion-lista-estaciones.html#mapa)
+[aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa)
 
 ``` r
 fpal <- colorFactor(
