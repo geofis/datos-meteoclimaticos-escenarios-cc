@@ -4,8 +4,8 @@ author: "José Ramón Martínez Batlle"
 output:
   # pdf_document:
   #   latex_engine: xelatex
-  # html_document
-  github_document
+  html_document
+  # github_document
 editor_options: 
   chunk_output_type: console
 always_allow_html: true
@@ -13,6 +13,7 @@ always_allow_html: true
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
+  cache = FALSE, 
   echo = TRUE,
   warning = FALSE,
   message = FALSE)
@@ -93,25 +94,33 @@ lista_estaciones <- list(
   intec = intec,
   reddom = reddom)
 consolidado_estaciones <- bind_rows(lista_estaciones, .id = 'fuente')[, c('fuente', 'idOK', 'longitudOK', 'latitudOK')]
-consolidado_estaciones %>% 
+consolidado_estaciones[sample(seq_len(nrow(consolidado_estaciones)), 30), ] %>% 
   kable(booktabs=T) %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down"))
 consolidado_estaciones_sf <- st_as_sf(
   consolidado_estaciones[!with(consolidado_estaciones, is.na(longitudOK) | is.na(latitudOK)), ],
   coords = c('longitudOK', 'latitudOK'))
 nrow(consolidado_estaciones_sf)
-table(consolidado_estaciones_sf$fuente)
+table(consolidado_estaciones_sf$fuente) %>%
+  kable(booktabs=T, col.names = c('Fuente', 'Número de estaciones')) %>%
+  kable_styling(latex_options = c("HOLD_position"))
 ```
 
 ## Mapa
 
-```{r}
-fpal <- colorFactor(RColorBrewer::brewer.pal(4, 'Set1'), domain = unique(consolidado_estaciones_sf$fuente))
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión interactiva del mapa, [aquí](https://htmlpreview.github.io/?https://github.com/geofis/datos-meteoclimaticos-escenarios-cc/blob/main/consolidacion-lista-estaciones.html#mapa)'`
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://htmlpreview.github.io/?https://github.com/geofis/datos-meteoclimaticos-escenarios-cc/blob/main/consolidacion-lista-estaciones.html#mapa)'`
+
+```{r, fig.width=8, dpi=100}
+fpal <- colorFactor(
+  palette = RColorBrewer::brewer.pal(length(unique(consolidado_estaciones_sf$fuente)), 'Set1'),
+  domain = unique(consolidado_estaciones_sf$fuente))
 leaflet(consolidado_estaciones_sf) %>%
   addCircleMarkers(
     radius = 5, label = ~ idOK, group = ~ fuente,
     color = ~ fpal(fuente),
-    stroke = FALSE, fillOpacity = 0.5
+    stroke = FALSE, fillOpacity = 0.8
   ) %>%
   addLegend(pal = fpal, values = ~ fuente, opacity = 1) %>% 
   addTiles(group = 'OSM') %>%
@@ -120,7 +129,7 @@ leaflet(consolidado_estaciones_sf) %>%
   addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
   addLayersControl(
     baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
-    overlayGroups = ~ fuente,
-    options = layersControlOptions(collapsed = FALSE))
+    overlayGroups = ~ fuente, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  setView(lat = 18.7, lng = -70.5, zoom = 7)
 ```
-
