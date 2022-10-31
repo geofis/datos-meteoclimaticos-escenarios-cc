@@ -4,8 +4,8 @@ author: "José Ramón Martínez Batlle"
 output:
   # pdf_document:
   #   latex_engine: xelatex
-  # html_document
-  github_document
+  html_document
+  # github_document
 editor_options: 
   chunk_output_type: console
 always_allow_html: true
@@ -85,6 +85,19 @@ intec %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down"))
 ```
 
+## Guakia
+
+```{r}
+guakia <- read_ods('fuentes/guakia/estaciones_guakia.ods')
+(guakia$longitudOK <- guakia$LONGITUDE)
+(guakia$latitudOK <- guakia$LATITUDE)
+guakia$idOK <- guakia$NOMBRE
+guakia %>%
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down"))
+```
+
+
 ## Consolidado
 
 ```{r}
@@ -92,7 +105,8 @@ lista_estaciones <- list(
   indrhi_telemetricas = indrhi_telemetricas,
   indrhi_historico = indrhi_historico,
   intec = intec,
-  reddom = reddom)
+  reddom = reddom,
+  guakia = guakia)
 consolidado_estaciones <- bind_rows(lista_estaciones, .id = 'fuente')[, c('fuente', 'idOK', 'longitudOK', 'latitudOK')]
 consolidado_estaciones[sample(seq_len(nrow(consolidado_estaciones)), 30), ] %>% 
   kable(booktabs=T) %>%
