@@ -50,11 +50,11 @@ indrhi_historico <- read_excel(
   path = 'fuentes/indrhi/Listado Red Medicion INDRHI_Historico_24-10-2022_revision_jr.xlsx'
   )
 indrhi_historico$longitudOK <- 0 - parse_lon(indrhi_historico$LONGITUD)
-indrhi_historico$longitudOK[sample(seq_len(length(indrhi_historico$longitudOK)), 10)]
+set.seed(99); indrhi_historico$longitudOK[sample(seq_len(length(indrhi_historico$longitudOK)), 10)]
 indrhi_historico$latitudOK <- parse_lon(indrhi_historico$LATITUD)
-indrhi_historico$latitudOK[sample(seq_len(length(indrhi_historico$latitudOK)), 10)]
+set.seed(99); indrhi_historico$latitudOK[sample(seq_len(length(indrhi_historico$latitudOK)), 10)]
 indrhi_historico$idOK <- indrhi_historico$ESTACION
-indrhi_historico[sample(seq_len(nrow(indrhi_historico)), 10), ] %>%
+set.seed(99); indrhi_historico[sample(seq_len(nrow(indrhi_historico)), 10), ] %>%
   kable(booktabs=T) %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down"))
 ```
@@ -68,7 +68,7 @@ colnames(reddom) <- gsub('(^[0-9]$)', 'Temperatura-Humedad Suelo \\1', colnames(
 (reddom$longitudOK <- reddom$Longitud)
 (reddom$latitudOK <- reddom$Latitud)
 reddom$idOK <- reddom$NOMBRE
-reddom[sample(seq_len(nrow(reddom)), 10), ] %>% 
+set.seed(99); reddom[sample(seq_len(nrow(reddom)), 10), ] %>% 
   kable(booktabs=T) %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down"))
 ```
