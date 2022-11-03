@@ -30,6 +30,9 @@ library(readxl)
 library(parzer)
 library(tidyverse)
 library(kableExtra)
+library(pdftools)
+library(datapasta)
+source('R/funciones.R')
 ```
 
 ## INDRHI
@@ -120,11 +123,11 @@ table(consolidado_estaciones_sf$fuente) %>%
   kable_styling(latex_options = c("HOLD_position"))
 ```
 
-## Mapa
+## Mapa datos 2022
 
-`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa)'`
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-datos-2022)'`
 
-`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa)'`
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-datos-2022)'`
 
 ```{r, fig.width=8, dpi=100}
 fpal <- colorFactor(
@@ -147,3 +150,224 @@ leaflet(consolidado_estaciones_sf) %>%
     options = layersControlOptions(collapsed = FALSE)) %>% 
   setView(lat = 18.7, lng = -70.5, zoom = 7)
 ```
+
+## Consolidación estaciones INDRHI, ONAMET, REDDOM
+
+### Telemétricas INDRHI
+
+```{r, echo=F}
+nombres_columnas <- c("No.", "NOMBRE DE ESTACIÓN", "X", "Y", "CUENCA", "TIPO ESTACIÓN", "CONDICIONES")
+afd_indrhi_telem_1 <- data.frame(
+    stringsAsFactors = FALSE,
+                 No. = c(1L,2L,3L,4L,5L,6L,7L,
+                         8L,9L,10L,11L,12L,13L,14L,15L,16L,17L,18L,
+                         19L,20L,21L,22L,23L,24L,25L,26L,27L,28L,29L,
+                         30L,31L,32L,33L,34L),
+  NOMBRE.DE.ESTACIÓN = c("Alto Bandera",
+                         "Baiguaque Los  Pilones","Bao Agua Caliente","Camú - Bayacanes",
+                         "Cañafistol","Cenovi","Contraembalse de  López",
+                         "Contraembalse Las  Barías","Contraembalse  Monción",
+                         "El Aguacate","El Arroyaso","El Cacheo","El Limón",
+                         "El Popote","Guanajuma el  Cerrazo",
+                         "Guarey - Presa  Guaigui","Inoa","Instituto Isa","Jagua Los Limones",
+                         "Jarabacoa","Jima Abajo","Jima Cañada de  Piedra",
+                         "José Contreras","Juan Adrián (Los  Plátanos)","Juma",
+                         "La bija","La Ceiba","La Cidra","La Ciénaga, Manabao",
+                         "La Diferencia","La Guama","Lago Enriquillo",
+                         "Las Matas de Santa  Cruz","Los Almácigos"),
+                   X = c("328604","330054",
+                         "300367","333306.57","262106","265929.49","319847",
+                         "367775","280718","339563","337128","276980",
+                         "414000","275866","316725","344424.35","291926.81",
+                         "345120","302567","331115","354699","349195",
+                         "350480","359657.5835","354006","354006","335918",
+                         "255724","303919","285121","308836","382924","342232",
+                         "310063"),
+                   Y = c("2080646","2129922",
+                         "2128746","2127159.55","2090450","2137556.51",
+                         "2140291","2029388","2151425","2167688","2104337",
+                         "2082101","2117960","2092580","2131773","2084416.72",
+                         "2140900.88","2077243","2121495","2115122",
+                         "2115579","2103097","2168348","2075037.612","2090084",
+                         "2168348","2089896","2130735","2109276","2131441",
+                         "2071796","2121411","2173352","2159145"),
+              CUENCA = c("Rio Nizao",
+                         "Rio Baiguaque","Rio Bao","Rio Camú","San Juan","Rio Cenovi",
+                         "Rio Yaque del  Norte","Rio Nizao","Rio Mao",
+                         "Yaque del Sur","Rio Yaque del  Norte","Yaque del Sur",
+                         "Rio Yuna","Yaque del Sur","Rio Guanajuma","Rio Camú",
+                         "Rio Inoa","Rio Yaque del  Norte","Rio Jagua",
+                         "Rio Yaque del  Norte","Rio Jima","Rio Jima","Rio Cenovi",
+                         "Rio Maimón","Rio Yuboa","Rio Yuna","Rio La Ceiba",
+                         "Rio La Cidra","Rio Yaque del  Norte","Rio Maguá",
+                         "Yaque del Sur","Hoya Lago  Enriquillo","Rio Guayubin",
+                         "Los Almácigos"),
+       TIPO.ESTACIÓN = c("climática","hidrométrica",
+                         "hidrométrica","hidrométrica","Hidrométrica",
+                         "climática","presa+clim","presa+clim","presa+clim",
+                         "Hidrométrica","pluviométrica","Hidrométrica",
+                         "hidrométrica+clim","Climática","hidrométrica","presa+CA+clim",
+                         "hidrométrica","climática","hidrométrica",
+                         "climática","hidrométrica","hidrométrica","climática",
+                         "pluviométrica","climática","hidrométrica","pluviométrica",
+                         "pluviométrica","hidrométrica","climática",
+                         "Hidro+Pluvio+Sonda","presa+clim","pluviométrica",
+                         "hidrométrica"),
+         CONDICIONES = c("Funcionando",
+                         "No funcionando","No funcionando","No funcionando",
+                         "No funcionando","No funcionando","No funcionando","Funcionando",
+                         "No funcionando","No funcionando","No funcionando",
+                         "No funcionando","No funcionando","Funcionando",
+                         "No funcionando","Funcionando","No funcionando",
+                         "Funcionando","No funcionando","Funcionando",
+                         "No funcionando","No funcionando","No funcionando","Funcionando",
+                         "No funcionando","Funcionando","No funcionando",
+                         "Funcionando","Funcionando","No funcionando",
+                         "No funcionando","No funcionando","Funcionando","No funcionando")
+)
+colnames(afd_indrhi_telem_1) <- nombres_columnas
+
+afd_indrhi_telem_2 <- data.frame(
+    stringsAsFactors = FALSE,
+                 No. = c(35L,36L,37L,38L,39L,
+                         40L,41L,42L,43L,44L,45L,46L,47L,48L,49L,50L,
+                         51L,52L,53L,54L,55L,56L,57L,58L,59L,60L,61L,
+                         62L,63L,64L,65L,66L,67L,68L,69L,70L,71L,72L,
+                         73L),
+  NOMBRE.DE.ESTACIÓN = c("Los Bancos","Los Botados",
+                         "Los Pinales","Magua Monción","Mahoma El Rosalito",
+                         "Mahomita el Cacao","Mao La Cidra","Mao Meseta",
+                         "Masipedro Los Arroces","Mata Grande","Nizao Bocaina",
+                         "Palo Verde","Palomino","Paso de Lima",
+                         "Peña Ranchadero","Pimentel","Pinalito, Constanza",
+                         "Presa de Tireito","Presa de Aguacate","Presa de Blanco",
+                         "Presa de Chacuey","Presa de Hatillo","Presa de Jiguey",
+                         "Presa de Maguaca","Presa de Monción",
+                         "Presa de Monte Grande","Presa de Rincón","Presa de Sabana Yegua",
+                         "Presa de Sabaneta","Presa de Tavera","Presa de Valdesia",
+                         "Puente La Barca","Puente San Rafael (Mao)","Ranchito",
+                         "Resbaloso","Rincón","Sabana Alta","Tamayo",
+                         "Valle de Bao"),
+                   X = c(282608L,332820L,264013L,
+                         275219L,355528L,362807L,316109L,266154L,347054L,
+                         394799L,346075L,231743L,291962L,257967L,255610L,
+                         384728L,328756L,339659L,260706L,335411L,233506L,
+                         370404L,254763L,235606L,277602L,287144L,352260L,
+                         284116L,258912L,315508L,364311L,385002L,283911L,
+                         354186L,231575L,249209L,277628L,257761L,285724L),
+                   Y = c(2066453L,2087095L,
+                         2116476L,2145679L,2055823L,2048883L,2137284L,2142133L,
+                         2098779L,2121411L,2065121L,2186781L,2080064L,
+                         2105849L,2175469L,2122238L,2092323L,2085928L,2045187L,
+                         2088794L,2171536L,2100046L,2050922L,2171597L,2147187L,
+                         2048398L,2113341L,2070157L,2099808L,2132677L,
+                         2033532L,2118236L,2167073L,2121286L,2149596L,2160295L,
+                         2071678L,2024506L,2109683L),
+              CUENCA = c("Yaque del Sur","Rio Yuna",
+                         "San Juan","Rio Maguá","Rio Mahoma","Rio Mahomita",
+                         "Rio Mao","Rio Mao","Rio Masipedro",
+                         "Rio Yaque del  Norte","Rio Nizao","Rio Yaque del  Norte",
+                         "Yaque del Sur","San Juan","Rio Yaque del  Norte","Rio Yuna",
+                         "Rio Yuna","Rio Tireito","Rio Nizao","Rio Blanco",
+                         "Rio Chacuey","Rio Yuna","Rio Nizao","Rio Maguaca",
+                         "Rio Mao","Yaque del Sur","Rio Jima",
+                         "Yaque del Sur","San Juan","Rio Yaque del  Norte","Rio Nizao",
+                         "Rio Yuna","Rio Yaque del  Norte","Rio Yuna",
+                         "Rio Inaje","Rio Guayubín","San Juan","Yaque del Sur",
+                         "Rio Bao"),
+       TIPO.ESTACIÓN = c("Hidro+Pluvio+Sonda",
+                         "climática","Climática","pluviométrica","hidrométrica",
+                         "hidrométrica","hidrométrica","hidrométrica",
+                         "hidrométrica","climática","hidrométrica","hidrométrica",
+                         "Hidro+Pluvio+Sonda","Hidro+Pluvio+Sonda",
+                         "hidrométrica","hidrométrica","hidrométrica","presa+clim",
+                         "presa+clim","presa+clim","presa+clim","presa+CA+clim",
+                         "presa+clim","presa+clim","presa+CA+clim",
+                         "Hidro+Climática+Sonda","presa+CA+clim","Hidro+Climática+Sonda",
+                         "Hidro+Climática+Sonda","presa+CA+clim",
+                         "presa+CA+clim","Hidrométrica (SONDA)","hidrométrica",
+                         "hidrométrica","pluviométrica","hidrométrica","Hidrométrica",
+                         "Climática","pluviométrica"),
+         CONDICIONES = c("No funcionando",
+                         "No funcionando","No funcionando","Funcionando",
+                         "No funcionando","No funcionando","No funcionando",
+                         "No funcionando","No funcionando","Funcionando","No funcionando",
+                         "No funcionando","Funcionando","Funcionando",
+                         "No funcionando","No funcionando","No funcionando",
+                         "Funcionando","No funcionando","No funcionando",
+                         "No funcionando","No funcionando","No funcionando",
+                         "No funcionando","No funcionando","No funcionando",
+                         "No funcionando","No funcionando","Funcionando","Funcionando",
+                         "Funcionando","Funcionando","No funcionando",
+                         "No funcionando","Funcionando","No funcionando",
+                         "No funcionando","No funcionando","Funcionando")
+)
+colnames(afd_indrhi_telem_2) <- nombres_columnas
+
+afd_indrhi_telem_3 <- data.frame(
+    stringsAsFactors = FALSE,
+                 No. = c(74L, 75L, 76L, 77L, 78L, 79L, 80L),
+  NOMBRE.DE.ESTACIÓN = c("Valle del Tetero",
+                         "Yaque del Norte Boma","Yaque del Norte Manabao",
+                         "Yuna La Verde","Yuna Platanal","Presa de Tavera",
+                         "Loyola - Dajabón"),
+                   X = c("296888","323927",
+                         "311918","354321","382924","315508","216868.46"),
+                   Y = c("2100471","2121432",
+                         "2110080","2096692","2114381","2132677","2163447"),
+              CUENCA = c("Yaque del Sur",
+                         "Rio Yaque del  Norte","Rio Yaque del  Norte","Rio Yuna",
+                         "Rio Yuna","Rio Yaque del  Norte","Dajabón"),
+       TIPO.ESTACIÓN = c("Climática","hidrométrica",
+                         "hidrométrica+clim","hidrométrica","hidrométrica",
+                         "presa+CA","climática"),
+         CONDICIONES = c("No funcionando",
+                         "No funcionando","No funcionando","No funcionando",
+                         "No funcionando","No funcionando","No funcionando")
+)
+colnames(afd_indrhi_telem_3) <- nombres_columnas
+afd_indrhi_telem <- rbind(afd_indrhi_telem_1, afd_indrhi_telem_2, afd_indrhi_telem_3)
+afd_indrhi_telem_cond_n <- table(afd_indrhi_telem$CONDICIONES)
+afd_indrhi_telem_cond_pct <- prop.table(afd_indrhi_telem_cond_n)*100
+
+afd_indrhi_telem$CONDICIONES <- factor(afd_indrhi_telem$CONDICIONES,
+       labels = c(
+         paste0('Funcionando, ', afd_indrhi_telem_cond_n[[1]], ' (', afd_indrhi_telem_cond_pct[[1]], '%)'),
+         paste0('No funcionando, ', afd_indrhi_telem_cond_n[[2]], ' (', afd_indrhi_telem_cond_pct[[2]], '%)')))
+```
+
+#### sf
+
+```{r, echo=F}
+afd_indrhi_telem[, c('X', 'Y')] <- sapply(afd_indrhi_telem[, c('X', 'Y')], as.numeric)
+afd_indrhi_telem_sf <- st_as_sf(
+  afd_indrhi_telem, coords = c('X', 'Y'), crs = 32619) %>% 
+  st_transform(4326)
+afd_indrhi_telem_sf
+```
+
+#### Mapa
+
+```{r, echo=F}
+fpal_condiciones <- colorFactor(
+  palette = RColorBrewer::brewer.pal(length(unique(afd_indrhi_telem_sf$CONDICIONES)), 'Set1'),
+  domain = unique(afd_indrhi_telem_sf$CONDICIONES))
+leaflet(afd_indrhi_telem_sf) %>%
+  addCircleMarkers(
+    radius = 5, label = ~ `NOMBRE DE ESTACIÓN`, group = ~ CONDICIONES,
+    color = ~ fpal_condiciones(CONDICIONES),
+    stroke = FALSE, fillOpacity = 0.8
+  ) %>%
+  addLegend(pal = fpal_condiciones, values = ~ CONDICIONES, opacity = 1,title = "\"Estudio AFD\"<br>INDRHI<br>Telemétricas<br>CONDICIONES") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
+    overlayGroups = ~ CONDICIONES, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  setView(lat = 18.7, lng = -70.5, zoom = 7)
+
+```
+

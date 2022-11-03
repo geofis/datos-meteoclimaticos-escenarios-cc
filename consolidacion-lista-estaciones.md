@@ -13,6 +13,9 @@ library(readxl)
 library(parzer)
 library(tidyverse)
 library(kableExtra)
+library(pdftools)
+library(datapasta)
+source('R/funciones.R')
 ```
 
 ## INDRHI
@@ -13133,64 +13136,47 @@ latitudOK
 <tbody>
 <tr>
 <td style="text-align:left;">
-854
-</td>
-<td style="text-align:left;">
-reddom
-</td>
-<td style="text-align:left;">
-La_Guama_Reddom
-</td>
-<td style="text-align:right;">
--71.50160
-</td>
-<td style="text-align:right;">
-18.71723
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-592
+502
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-LOS QUEMADOS
+LAS LOMAS
 </td>
 <td style="text-align:right;">
--70.45834
+NaN
 </td>
 <td style="text-align:right;">
-18.89167
+NaN
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-404
+112
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-El Cerrazo
+EL SEYBO
 </td>
 <td style="text-align:right;">
-NaN
+-69.04444
 </td>
 <td style="text-align:right;">
-NaN
+18.76528
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-370
+197
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-Arroyo Gaji
+El Mamey
 </td>
 <td style="text-align:right;">
 NaN
@@ -13201,13 +13187,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-583
+702
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-EL LIMONCITO
+ESTEBANIA
 </td>
 <td style="text-align:right;">
 NaN
@@ -13218,13 +13204,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-433
+207
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-CARRIZAL
+Las Taranas
 </td>
 <td style="text-align:right;">
 NaN
@@ -13235,30 +13221,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-861
-</td>
-<td style="text-align:left;">
-reddom
-</td>
-<td style="text-align:left;">
-Hatillo_Palma_Banelino
-</td>
-<td style="text-align:right;">
--71.21455
-</td>
-<td style="text-align:right;">
-19.66124
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-775
+458
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-MONTE PLATA
+QUIJA QUIETA
 </td>
 <td style="text-align:right;">
 NaN
@@ -13269,13 +13238,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-505
+232
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-RESOLI
+Don Juan
 </td>
 <td style="text-align:right;">
 NaN
@@ -13286,13 +13255,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-811
+675
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-ELIAS PIÑA
+La Piñita Arriba
 </td>
 <td style="text-align:right;">
 NaN
@@ -13303,13 +13272,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-619
+672
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-LA CEIBA RIO BLANCO
+HATO MAYOR DEL REY
 </td>
 <td style="text-align:right;">
 NaN
@@ -13320,30 +13289,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-2
-</td>
-<td style="text-align:left;">
-indrhi_telemetricas
-</td>
-<td style="text-align:left;">
-ALTO BANDERA
-</td>
-<td style="text-align:right;">
--70.62646
-</td>
-<td style="text-align:right;">
-18.81051
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-755
+391
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-LAS MATAS DE FARFAN
+El Puente
 </td>
 <td style="text-align:right;">
 NaN
@@ -13354,53 +13306,19 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-716
+641
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-LA CUMBRE
+EL PENON
 </td>
 <td style="text-align:right;">
-NaN
+-71.18777
 </td>
 <td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-802
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LA DESCUBIERTA
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-166
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LA FLORIDA
-</td>
-<td style="text-align:right;">
--71.09111
-</td>
-<td style="text-align:right;">
-18.82778
+18.29639
 </td>
 </tr>
 <tr>
@@ -13412,142 +13330,6 @@ indrhi_historico
 </td>
 <td style="text-align:left;">
 Ag. Arroyo
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-305
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-El Lim¢n
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-711
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LOS JENGIBRES
-</td>
-<td style="text-align:right;">
--70.04723
-</td>
-<td style="text-align:right;">
-19.43889
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-64
-</td>
-<td style="text-align:left;">
-indrhi_telemetricas
-</td>
-<td style="text-align:left;">
-PRESA JIGUEY
-</td>
-<td style="text-align:right;">
--70.33061
-</td>
-<td style="text-align:right;">
-18.50985
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-843
-</td>
-<td style="text-align:left;">
-intec
-</td>
-<td style="text-align:left;">
-Jardín Botánico de Santiago
-</td>
-<td style="text-align:right;">
--70.69772
-</td>
-<td style="text-align:right;">
-19.49751
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-60
-</td>
-<td style="text-align:left;">
-indrhi_telemetricas
-</td>
-<td style="text-align:left;">
-PRESA DE TIREITO
-</td>
-<td style="text-align:right;">
--70.52201
-</td>
-<td style="text-align:right;">
-18.85912
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-595
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LA ANGELINA
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-691
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-COMATE BAYAGUANA
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-509
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-GUAYUBIN RINCON
 </td>
 <td style="text-align:right;">
 NaN
@@ -13575,19 +13357,19 @@ JOSE CONTRERAS
 </tr>
 <tr>
 <td style="text-align:left;">
-11
+95
 </td>
 <td style="text-align:left;">
-indrhi_telemetricas
+indrhi_historico
 </td>
 <td style="text-align:left;">
-EL ARROYASO
+RESOLI
 </td>
 <td style="text-align:right;">
--70.54757
+NaN
 </td>
 <td style="text-align:right;">
-19.02523
+NaN
 </td>
 </tr>
 <tr>
@@ -13609,13 +13391,13 @@ TAMAYO
 </tr>
 <tr>
 <td style="text-align:left;">
-194
+830
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-Mira Pato
+MAJAGUAL
 </td>
 <td style="text-align:right;">
 NaN
@@ -13626,19 +13408,240 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-238
+352
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-Higuero
+Jayaco
 </td>
 <td style="text-align:right;">
 NaN
 </td>
 <td style="text-align:right;">
 NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+483
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+LOS RANCHOS
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+100
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+PARTIDO
+</td>
+<td style="text-align:right;">
+-71.55556
+</td>
+<td style="text-align:right;">
+19.48889
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+117
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+SANTIAGO ISA
+</td>
+<td style="text-align:right;">
+-70.74583
+</td>
+<td style="text-align:right;">
+19.44583
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+355
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Sabana Gran
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+590
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+JUMA BONAO
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+677
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Batey la Paja
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+448
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+JUANCHO
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+166
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+LA FLORIDA
+</td>
+<td style="text-align:right;">
+-71.09111
+</td>
+<td style="text-align:right;">
+18.82778
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+235
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Camar¢n
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+489
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+DON JUAN
+</td>
+<td style="text-align:right;">
+-69.96389
+</td>
+<td style="text-align:right;">
+18.81389
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+50
+</td>
+<td style="text-align:left;">
+indrhi_telemetricas
+</td>
+<td style="text-align:left;">
+PALOMINO
+</td>
+<td style="text-align:right;">
+-70.95723
+</td>
+<td style="text-align:right;">
+18.81170
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+315
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Bayacanes
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+149
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+SAN FCO. DE MACORIS
+</td>
+<td style="text-align:right;">
+-70.24028
+</td>
+<td style="text-align:right;">
+19.28611
 </td>
 </tr>
 </tbody>
@@ -13714,10 +13717,10 @@ reddom
 </tbody>
 </table>
 
-## Mapa
+## Mapa datos 2022
 
 Versión interactiva del mapa,
-[aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa)
+[aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-datos-2022)
 
 ``` r
 fpal <- colorFactor(
@@ -13742,3 +13745,42 @@ leaflet(consolidado_estaciones_sf) %>%
 ```
 
 ![](consolidacion-lista-estaciones_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+## Consolidación estaciones INDRHI, ONAMET, REDDOM
+
+### Telemétricas INDRHI
+
+#### sf
+
+    ## Simple feature collection with 80 features and 5 fields
+    ## Geometry type: POINT
+    ## Dimension:     XY
+    ## Bounding box:  xmin: -71.69823 ymin: 18.29645 xmax: -69.81783 ymax: 19.75847
+    ## Geodetic CRS:  WGS 84
+    ## First 10 features:
+    ##    No.        NOMBRE DE ESTACIÓN               CUENCA TIPO ESTACIÓN
+    ## 1    1              Alto Bandera            Rio Nizao     climática
+    ## 2    2    Baiguaque Los  Pilones        Rio Baiguaque  hidrométrica
+    ## 3    3         Bao Agua Caliente              Rio Bao  hidrométrica
+    ## 4    4          Camú - Bayacanes             Rio Camú  hidrométrica
+    ## 5    5                Cañafistol             San Juan  Hidrométrica
+    ## 6    6                    Cenovi           Rio Cenovi     climática
+    ## 7    7   Contraembalse de  López Rio Yaque del  Norte    presa+clim
+    ## 8    8 Contraembalse Las  Barías            Rio Nizao    presa+clim
+    ## 9    9    Contraembalse  Monción              Rio Mao    presa+clim
+    ## 10  10               El Aguacate        Yaque del Sur  Hidrométrica
+    ##                   CONDICIONES                   geometry
+    ## 1     Funcionando, 22 (27.5%) POINT (-70.62646 18.81051)
+    ## 2  No funcionando, 58 (72.5%) POINT (-70.61701 19.25579)
+    ## 3  No funcionando, 58 (72.5%) POINT (-70.89925 19.24246)
+    ## 4  No funcionando, 58 (72.5%) POINT (-70.58583 19.23111)
+    ## 5  No funcionando, 58 (72.5%) POINT (-71.25837 18.89249)
+    ## 6  No funcionando, 58 (72.5%) POINT (-71.22778 19.31833)
+    ## 7  No funcionando, 58 (72.5%) POINT (-70.71507 19.34858)
+    ## 8     Funcionando, 22 (27.5%) POINT (-70.25144 18.35022)
+    ## 9  No funcionando, 58 (72.5%)  POINT (-71.0887 19.44524)
+    ## 10 No funcionando, 58 (72.5%) POINT (-70.52975 19.59775)
+
+#### Mapa
+
+![](consolidacion-lista-estaciones_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
