@@ -13136,47 +13136,47 @@ latitudOK
 <tbody>
 <tr>
 <td style="text-align:left;">
-453
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LA LAGUNA
-</td>
-<td style="text-align:right;">
--70.41250
-</td>
-<td style="text-align:right;">
-18.54167
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-22
+81
 </td>
 <td style="text-align:left;">
 indrhi_telemetricas
 </td>
 <td style="text-align:left;">
-JARABACOA
+YUNA PLATANAL
 </td>
 <td style="text-align:right;">
--70.60563
+-70.11311
 </td>
 <td style="text-align:right;">
-19.12217
+19.11913
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-573
+439
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-LOS CORRALITOS
+LOS BOLOS
+</td>
+<td style="text-align:right;">
+-71.65139
+</td>
+<td style="text-align:right;">
+18.63139
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+616
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+LA ANGELINA
 </td>
 <td style="text-align:right;">
 NaN
@@ -13187,98 +13187,132 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-852
+767
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+SAMANA
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+371
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+El Rosario
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+830
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+MAJAGUAL
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+108
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+EL NARANJAL OCOA
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+875
 </td>
 <td style="text-align:left;">
 reddom
 </td>
 <td style="text-align:left;">
-Agrofrontera_Reddom
+Cimpa_Reddom
 </td>
 <td style="text-align:right;">
--71.38353
+-70.84041
 </td>
 <td style="text-align:right;">
-19.60421
+19.52976
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-13
+23
 </td>
 <td style="text-align:left;">
 indrhi_telemetricas
 </td>
 <td style="text-align:left;">
-EL LIMON
+JIMA ABAJO burbuj
 </td>
 <td style="text-align:right;">
--69.81783
+-70.38149
 </td>
 <td style="text-align:right;">
-19.15302
+19.12813
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-633
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-SAN FCO. DE MACORIS
-</td>
-<td style="text-align:right;">
--70.25000
-</td>
-<td style="text-align:right;">
-19.28333
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-264
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LOPEZ
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-34
+68
 </td>
 <td style="text-align:left;">
 indrhi_telemetricas
 </td>
 <td style="text-align:left;">
-LAS BIJA
+PRESA SABANA YEGUA
 </td>
 <td style="text-align:right;">
--70.12722
+-71.05242
 </td>
 <td style="text-align:right;">
-19.15219
+18.70863
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-666
+263
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-Anamuya
+LOS VELAZQU
 </td>
 <td style="text-align:right;">
 NaN
@@ -13289,132 +13323,30 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-92
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-ENGOMBE
-</td>
-<td style="text-align:right;">
--70.00195
-</td>
-<td style="text-align:right;">
-18.45000
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-704
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LA GUAMA
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-350
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-Los Platano
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-170
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-El Corte
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-509
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-GUAYUBIN RINCON
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-145
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-CABEZA ARR. GUAYABAL
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-50
+37
 </td>
 <td style="text-align:left;">
 indrhi_telemetricas
 </td>
 <td style="text-align:left;">
-PALOMINO
+LOS ALMACIGOS
 </td>
 <td style="text-align:right;">
--70.95723
+-70.81007
 </td>
 <td style="text-align:right;">
-18.81170
+19.51798
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-485
+365
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-SABANA LARGA
+Bohechio
 </td>
 <td style="text-align:right;">
 NaN
@@ -13425,47 +13357,47 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-866
+537
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+HATO YAQUE
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+865
 </td>
 <td style="text-align:left;">
 reddom
 </td>
 <td style="text-align:left;">
-Puerto Plata_REDDOM
+Guananico_REDDOM
 </td>
 <td style="text-align:right;">
--70.64679
+-70.93845
 </td>
 <td style="text-align:right;">
-19.70652
+19.73703
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-782
+502
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-PADRE LAS CASAS
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-619
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-LA CEIBA RIO BLANCO
+LAS LOMAS
 </td>
 <td style="text-align:right;">
 NaN
@@ -13476,13 +13408,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-275
+237
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-SABANA IGLE
+Gu numa
 </td>
 <td style="text-align:right;">
 NaN
@@ -13493,13 +13425,30 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-680
+444
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-Anamuya
+DON MIGUEL
+</td>
+<td style="text-align:right;">
+-71.67778
+</td>
+<td style="text-align:right;">
+19.50278
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+801
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+OVIEDO
 </td>
 <td style="text-align:right;">
 NaN
@@ -13510,13 +13459,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-478
+430
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-LAS PAREDES
+PRESA MANA LA PRESA
 </td>
 <td style="text-align:right;">
 NaN
@@ -13527,13 +13476,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-261
+623
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-BOMA
+LA CABILMA
 </td>
 <td style="text-align:right;">
 NaN
@@ -13544,30 +13493,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-755
+806
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-LAS MATAS DE FARFAN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-<td style="text-align:right;">
-NaN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-484
-</td>
-<td style="text-align:left;">
-indrhi_historico
-</td>
-<td style="text-align:left;">
-RANCHO EL PINO
+NEYBA
 </td>
 <td style="text-align:right;">
 NaN
@@ -13595,13 +13527,13 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-752
+178
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-LA VEGA EN LA OFICINA
+El Corte
 </td>
 <td style="text-align:right;">
 NaN
@@ -13612,30 +13544,98 @@ NaN
 </tr>
 <tr>
 <td style="text-align:left;">
-848
-</td>
-<td style="text-align:left;">
-reddom
-</td>
-<td style="text-align:left;">
-Juliana_Jaramillo_Reddom
-</td>
-<td style="text-align:right;">
--71.61470
-</td>
-<td style="text-align:right;">
-19.78727
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-391
+355
 </td>
 <td style="text-align:left;">
 indrhi_historico
 </td>
 <td style="text-align:left;">
-El Puente
+Sabana Gran
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+838
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+ISLA CABRITOS
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+547
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+LOS PINOS
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+32
+</td>
+<td style="text-align:left;">
+indrhi_telemetricas
+</td>
+<td style="text-align:left;">
+LA DIFERENCIA
+</td>
+<td style="text-align:right;">
+-71.04454
+</td>
+<td style="text-align:right;">
+19.26524
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+354
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Cevicos
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+<td style="text-align:right;">
+NaN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+353
+</td>
+<td style="text-align:left;">
+indrhi_historico
+</td>
+<td style="text-align:left;">
+Cañabon
 </td>
 <td style="text-align:right;">
 NaN
@@ -13722,28 +13722,6 @@ reddom
 Versión interactiva del mapa,
 [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-datos-2022)
 
-``` r
-fpal <- colorFactor(
-  palette = RColorBrewer::brewer.pal(length(unique(consolidado_estaciones_sf$fuente)), 'Set1'),
-  domain = unique(consolidado_estaciones_sf$fuente))
-leaflet(consolidado_estaciones_sf) %>%
-  addCircleMarkers(
-    radius = 5, label = ~ idOK, group = ~ fuente,
-    color = ~ fpal(fuente),
-    stroke = FALSE, fillOpacity = 0.8
-  ) %>%
-  addLegend(pal = fpal, values = ~ fuente, opacity = 1) %>% 
-  addTiles(group = 'OSM') %>%
-  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
-  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
-  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
-  addLayersControl(
-    baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
-    overlayGroups = ~ fuente, position = 'bottomright',
-    options = layersControlOptions(collapsed = FALSE)) %>% 
-  setView(lat = 18.7, lng = -70.5, zoom = 7)
-```
-
 <img src="consolidacion-lista-estaciones_files/figure-gfm/unnamed-chunk-7-1.png" width="100%" />
 
 ## Consolidación estaciones INDRHI, ONAMET, REDDOM
@@ -13795,7 +13773,7 @@ Versión interactiva del mapa,
 #### Mapa de estaciones climáticas convencionales ONAMET estudio AFD
 
 Versión interactiva del mapa,
-[aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-climáticas-convencionales-estudio-afd)
+[aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-climáticas-convencionales-onamet-estudio-afd)
 
 <img src="consolidacion-lista-estaciones_files/figure-gfm/unnamed-chunk-13-1.png" width="100%" />
 
