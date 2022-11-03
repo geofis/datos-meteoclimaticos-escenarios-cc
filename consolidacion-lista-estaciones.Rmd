@@ -327,9 +327,9 @@ afd_indrhi_telem_3 <- data.frame(
 )
 colnames(afd_indrhi_telem_3) <- nombres_columnas
 afd_indrhi_telem <- rbind(afd_indrhi_telem_1, afd_indrhi_telem_2, afd_indrhi_telem_3)
+# Conteos, proporciones
 afd_indrhi_telem_cond_n <- table(afd_indrhi_telem$CONDICIONES)
 afd_indrhi_telem_cond_pct <- prop.table(afd_indrhi_telem_cond_n)*100
-
 afd_indrhi_telem$CONDICIONES <- factor(afd_indrhi_telem$CONDICIONES,
        labels = c(
          paste0('Funcionando, ', afd_indrhi_telem_cond_n[[1]], ' (', afd_indrhi_telem_cond_pct[[1]], '%)'),
@@ -373,7 +373,6 @@ leaflet(afd_indrhi_telem_sf) %>%
     overlayGroups = ~ CONDICIONES, position = 'bottomright',
     options = layersControlOptions(collapsed = FALSE)) %>% 
   setView(lat = 18.7, lng = -70.5, zoom = 7)
-
 ```
 
 ### Meterológicas ONAMET
@@ -529,5 +528,234 @@ leaflet(afd_onamet_clim_func_sf) %>%
     position = 'bottomright',
     options = layersControlOptions(collapsed = FALSE)) %>% 
   setView(lat = 18.7, lng = -70.5, zoom = 7)
+```
 
+### Automáticas ONAMET
+
+```{r, echo=F}
+nombres_columnas <- c("No.", "ESTACION", "PROVINCIA", "LATITUD", "LONGITUD", "ESTADO")
+afd_onamet_autom <- data.frame(
+   stringsAsFactors = FALSE,
+                No. = c(1L,2L,3L,4L,5L,6L,7L,
+                        8L,9L,10L,11L,12L,13L,14L,15L,16L,17L,18L,19L,
+                        20L,21L,22L,23L,24L,25L,26L,27L,28L,29L,30L),
+             NOMBRE = c("Valle Nuevo","Los Montones",
+                        "Monte Plata","Pimentel","San Juan","El Catey",
+                        "Puerto Plata","Arroyo Barril","El Higüero (MDJB)",
+                        "Sede ONAMET","La Romana (MDLR)","Sabana Larga",
+                        "Isla Saona","Restauración","El Pozo","Higüey","Monte Cristi",
+                        "Palo Verde","Luperón","Imbert","Nagua",
+                        "Las Galeras","Hato Mayor","Azua","Neyba","Polo","Cabrera",
+                        "Jimaní","Sabana de la Mar","Bayaguana"),
+          PROVINCIA = c("La Vega","Santiago",
+                        "Monte Plata","Duarte","San Juan de la Maguana","Samaná",
+                        "Puerto Plata","Samaná","Santo Domingo Norte",
+                        "Santo Domingo Este","La Romana","San José de Ocoa",
+                        "La Altagracia","Dajabón","María T. Sánchez","Higüey",
+                        "Monte Cristi","Monte Cristi","Puerto Plata","Puerto Plata",
+                        "María T. Sánchez","Samaná","Hato Mayor","Azua",
+                        "Bahoruco","Barahona","María T. Sánchez","Independencia",
+                        "Hato Mayor","Monte Plata"),
+            LATITUD = c(18.57627,18.12806,19.31511,
+                        19.26036,18.78354,19.28875,18.8024,19.2105,
+                        18.81512,19.26701,19.75708,19.2,18.56527,18.47332,18.4545,
+                        18.62753,19.84997,19.74382,19.87407,19.75588,
+                        19.36064,19.28957,18.77006,18.45306,18.48198,18.08739,
+                        19.64436,18.49274,19.05266,18.74221),
+           LONTIGUD = c(-70.50572,-68.72973,-71.689,
+                        -69.88605,-70.64764,-70.92514,-69.78154,-70.11752,
+                        -71.27745,-69.73368,-70.56897,-69.43166,-69.98858,
+                        -69.87055,-68.91676,-68.69784,-71.65351,-71.57216,
+                        -70.96508,-70.83061,-69.85213,-69.18798,-69.2556,
+                        -70.75819,-71.32469,-71.2724,-69.90633,-71.85273,
+                        -69.38885,-69.63078),
+           ESTADO = c("2300 m  Activa",
+                        "704 m  Activa","54 m  Activa","51.8 m  Activa","406 m  Activa",
+                        "4 m  Activa","10 m  Activa","38 m  Activa",
+                        "55 m  Activa","16 m  Activa","67 m  Activa",
+                        "494 m  Inactiva","1 m  Inactiva","605 m  Inactiva","37 m  Inactiva",
+                        "Instalada, no disponible","Instalada, no disponible",
+                        "Instalada, no disponible","Instalada, no disponible",
+                        "Instalada, no disponible","Instalada, no disponible",
+                        "Instalada, no disponible","Instalada, no disponible",
+                        "Instalada, no disponible","Instalada, no disponible",
+                        "Instalada, no disponible","Instalada, no disponible",
+                        "Instalada, no disponible","Instalada, no disponible",
+                        "Instalada, no disponible")
+)
+colnames(afd_onamet_autom) <- nombres_columnas
+afd_onamet_autom$ESTADO <- gsub('[0-9].*m  ', '', afd_onamet_autom$ESTADO)
+
+# Conteos, proporciones
+afd_onamet_autom_est_n <- table(afd_onamet_autom$ESTADO)
+afd_onamet_autom_est_pct <- round(prop.table(afd_onamet_autom_est_n)*100, 2)
+afd_onamet_autom$ESTADO <- factor(afd_onamet_autom$ESTADO,
+       labels = c(
+         paste0('Activa, ', afd_onamet_autom_est_n[[1]], ' (', afd_onamet_autom_est_pct[[1]], '%)'),
+         paste0('Inactiva, ', afd_onamet_autom_est_n[[2]], ' (', afd_onamet_autom_est_pct[[2]], '%)'),
+         paste0('Instalada, no disponible, ', afd_onamet_autom_est_n[[3]], ' (', afd_onamet_autom_est_pct[[3]], '%)')))
+```
+
+<!-- #### sf -->
+
+```{r, echo=F}
+afd_onamet_autom_sf <- st_as_sf(
+  afd_onamet_autom, coords = c('LONGITUD', 'LATITUD'), crs = 4326)
+```
+
+#### Mapa de estaciones automáticas ONAMET estudio AFD
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-automáticas-onamet-estudio-afd)'`
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-automáticas-onamet-estudio-afd)'`
+
+
+```{r, echo=F, fig.width=8, dpi=100, out.width="100%"}
+fpal_estado <- colorFactor(
+  palette = RColorBrewer::brewer.pal(length(unique(afd_onamet_autom_sf$ESTADO)), 'Set1'),
+  domain = unique(afd_onamet_autom_sf$ESTADO), reverse = T)
+leaflet(afd_onamet_autom_sf) %>%
+  addCircleMarkers(
+    radius = 5,
+    # label = ~ `ESTACION`,
+    group = ~ ESTADO,
+    color = ~ fpal_estado(ESTADO),
+    stroke = FALSE, fillOpacity = 0.8
+  ) %>%
+  addLegend(pal = fpal_estado, values = ~ ESTADO, opacity = 1, title = "\"Estudio AFD\". ONAMET<br>Automáticas. ESTADO") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
+    overlayGroups = ~ ESTADO, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  setView(lat = 18.7, lng = -70.5, zoom = 7)
+```
+
+### Climatológicas REDDOM
+
+```{r, echo=F}
+afd_reddom_clim <- data.frame(
+  stringsAsFactors = FALSE,
+              NUM. = c(1L,2L,3L,4L,5L,6L,7L,8L,
+                       9L,10L,11L,12L,13L,14L,15L,16L,17L,18L,19L,
+                       20L,21L,22L,23L,24L,25L,26L,27L,28L,29L,30L,31L,
+                       32L,33L,34L,35L,36L),
+            NOMBRE = c("Los_Tocones_Reddom",
+                       "Agua_de_Luis_Reddom","Juliana_Jaramillo_Reddom",
+                       "Esnamarena_Reddom","Unisa_Reddom","Agrofrontera_Reddom",
+                       "Los_Montones_Reddom","Plan_Yaque_Manabao_Reddom",
+                       "Ekoban1_Amina_Reddom","Banelino_Mao","Montecristi_Oficina_Banelino",
+                       "Amina_Banelino","Judea_Nueva_Banamiel",
+                       "Hatillo_Palma_Banelino","Novillero_Clay_REDDOM","Guananico_REDDOM",
+                       "REDDOM1_Los Dajaos","La_Pita_REDDOM",
+                       "Ucateci_LaVega_REDDOM","Las_Matas_de_Farfan_REDDOM","La_Cumbre_Reddom",
+                       "Santiago_Apedi_Reddom","Cevicos_Reddom","Cimpa_Reddom",
+                       "Conacado_Reddom","Sur_Futuro_Reddom","Barcelo_Reddom",
+                       "Compadre_Pascual","Piedra_Blanca",
+                       "Banamiel_Oficina_Reddom","Bananera_los_Rios","Chacuey_Reddom",
+                       "Hato_al_Medio_Banelino","Jumunuco_REDDOM","La_Guama_Reddom",
+                       "Puerto Plata_REDDOM"),
+             LUGAR = c("Los Tocones, Santiago  Rodriguez","Agua de Luis, Montecristi",
+                       "Juliana Jaramillo,  Montecristi","Jarabacoa, La Vega",
+                       "La Herradura, Santiago","Martin Garcia,  Montecristi",
+                       "Los Montones, San Jose  de Las Matas","Manabao, Jarabacoa",
+                       "Amina, Valverde Mao","Mao, Valverde","Montecristi",
+                       "Tierra Fria, Amina, Mao","Judea, Montecristi",
+                       "Hatillo Palma,  Montecristi","Luperon, Puerto Plata","Guananico, Puerto Plata",
+                       "Los Dajaos, Jarabacoa","La Pita, Jarabacoa",
+                       "La Vega, UCATECI","Las Matas de Farfan, San  Juan",
+                       "La Cumbre, Santiago","Parque, Santiago",
+                       "Asociacion Pina, Cevicos,  Cotui","Villa Gonzalez, Santiago",
+                       "Hernando Alonzo, Cotui","Padre Las Casas, Azua","Hato Mayor,","La Vega",
+                       "La Vega","Hatillo de Palma,  Montecrisiti",
+                       "Hatilo Palma,  Montecristi","Chacuey, Dajabon",
+                       "Hato al Medio,  Montecristi","Jumunuco, Jarabacoa",
+                       "La Guama, Cercado, San  Juan de la Maguana","Puerto Plata"),
+           Latitud = c(19.50247,19.75922,19.78727,
+                       19.1255,19.44292,19.60421,19.28876,19.07087,19.53784,
+                       19.55873,19.84958,19.5451,19.70878,19.66124,
+                       19.86363,19.73703,19.4059,19.00903,19.23312,18.87926,
+                       19.54729,19.47227,19.00639,19.52976,19.04199,18.73675,
+                       18.46267,19.5449,19.7532,19.66831,19.63595,19.50264,
+                       19.67714,19.09705,18.71723,19.70652),
+          Longitud = c(-71.34635,-71.21466,-71.6147,
+                       -70.60576,-70.74848,-71.38353,-70.9251,-70.79701,
+                       -70.98673,-71.09064,-71.64626,-70.96859,-71.65865,
+                       -71.21455,-71.11765,-70.93845,-70.45344,-70.6336,
+                       -70.5191,-71.54292,-70.62268,-70.70682,-69.97047,-70.84041,
+                       -70.25831,-70.94145,-69.15753,-70.4521,-70.36341,
+                       -71.19435,-71.19988,-71.5648,-71.31737,-70.7499,
+                       -71.5016,-70.64679),
+            Altura = c(122L,200L,20L,586L,181L,
+                       79L,711L,909L,91L,107L,18L,101L,44L,56L,7L,205L,
+                       962L,1203L,96L,435L,736L,159L,102L,101L,122L,
+                       516L,108L,1011L,576L,91L,55L,133L,NA,1004L,800L,NA),
+             Desde = c("1/9/2014","1/9/2014",
+                       "1/8/2014","1/9/2014","1/9/2014","1/9/2014","1/10/2014",
+                       "2/2/2015","1/1/2015","1/3/2016","1/3/2016","1/3/2016",
+                       "1/6/2015","1/7/2015","1/3/2016","1/2/2016",
+                       "1/5/2016","1/5/2016","1/7/2016","1/8/2016","1/2/2017",
+                       "1/3/2017","1/3/2017","1/6/2017","1/6/2017","20/12/2017",
+                       "28/8/2017","1/6/2016","1/9/2014",NA,NA,NA,NA,NA,
+                       NA,NA),
+             Hasta = c("31/3/2019","15/4/2019",
+                       "15/4/2019","15/4/2019","15/4/2019","15/4/2019",
+                       "15/4/2019","15/4/2019","28/2/2019","15/4/2019","15/4/2019",
+                       "15/4/2019","15/4/2019","31/1/2019","15/4/2019",
+                       "15/4/2019","31/3/2019","15/4/2019","15/4/2019","15/4/2019",
+                       "15/4/2019","15/4/2019","15/4/2019","15/4/2019",
+                       "15/4/2019","15/4/2019","26/1/2018","15/4/2019",
+                       "15/4/2019",NA,NA,NA,NA,NA,NA,NA)
+)
+
+# Conteos, proporciones
+afd_reddom_clim$ESTADO <- ifelse(is.na(afd_reddom_clim$Desde), 'No funcionando', 'Funcionando')
+afd_reddom_clim_est_n <- table(afd_reddom_clim$ESTADO)
+afd_reddom_clim_est_pct <- round(prop.table(afd_reddom_clim_est_n)*100, 2)
+afd_reddom_clim$ESTADO <- factor(afd_reddom_clim$ESTADO,
+       labels = c(
+         paste0('Funcionando, ', afd_reddom_clim_est_n[[1]], ' (', afd_reddom_clim_est_pct[[1]], '%)'),
+         paste0('No funcionando, ', afd_reddom_clim_est_n[[2]], ' (', afd_reddom_clim_est_pct[[2]], '%)')))
+```
+
+
+<!-- #### sf -->
+
+```{r, echo=F}
+afd_reddom_clim_sf <- st_as_sf(
+  afd_reddom_clim, coords = c('Longitud', 'Latitud'), crs = 4326)
+```
+
+#### Mapa de estaciones climatológicas REDDOM estudio AFD
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-climatológicas-reddom-estudio-afd)'`
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-climatológicas-reddom-estudio-afd)'`
+
+
+```{r, echo=F, fig.width=8, dpi=100, out.width="100%"}
+fpal_estado2 <- colorFactor(
+  palette = RColorBrewer::brewer.pal(length(unique(afd_reddom_clim_sf$ESTADO)), 'Set1'),
+  domain = unique(afd_reddom_clim_sf$ESTADO), reverse = T)
+leaflet(afd_reddom_clim_sf) %>%
+  addCircleMarkers(
+    radius = 5,
+    label = ~ NOMBRE,
+    group = ~ ESTADO,
+    color = ~ fpal_estado2(ESTADO),
+    stroke = FALSE, fillOpacity = 0.8
+  ) %>%
+  addLegend(pal = fpal_estado2, values = ~ ESTADO, opacity = 1, title = "\"Estudio AFD\". REDDOM<br>Climatológicas. ESTADO") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
+    overlayGroups = ~ ESTADO, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  setView(lat = 18.7, lng = -70.5, zoom = 7)
 ```
