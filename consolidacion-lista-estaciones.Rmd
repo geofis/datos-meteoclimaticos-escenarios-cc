@@ -129,7 +129,7 @@ table(consolidado_estaciones_sf$fuente) %>%
 
 `r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-datos-2022)'`
 
-```{r, fig.width=8, dpi=100}
+```{r, fig.width=8, dpi=100, out.width="100%"}
 fpal <- colorFactor(
   palette = RColorBrewer::brewer.pal(length(unique(consolidado_estaciones_sf$fuente)), 'Set1'),
   domain = unique(consolidado_estaciones_sf$fuente))
@@ -348,7 +348,7 @@ afd_indrhi_telem_sf
 
 #### Mapa
 
-```{r, echo=F}
+```{r, echo=F, fig.width=8, dpi=100, out.width="100%"}
 fpal_condiciones <- colorFactor(
   palette = RColorBrewer::brewer.pal(length(unique(afd_indrhi_telem_sf$CONDICIONES)), 'Set1'),
   domain = unique(afd_indrhi_telem_sf$CONDICIONES))
