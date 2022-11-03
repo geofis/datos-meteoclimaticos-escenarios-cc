@@ -13,7 +13,7 @@ always_allow_html: true
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  cache = FALSE, 
+  cache = F, 
   echo = TRUE,
   warning = FALSE,
   message = FALSE)
@@ -33,27 +33,28 @@ library(kableExtra)
 library(pdftools)
 library(datapasta)
 source('R/funciones.R')
+leaflet_map_view <- . %>% setView(lat = 18.7, lng = -70.3, zoom = 8)
 ```
 
 ## INDRHI
 
 ```{r}
 indrhi_telemetricas <- read_ods('fuentes/indrhi/Red_Telem_Estacion_Coord-Sept2015.ods')
-(indrhi_telemetricas$longitudOK <- indrhi_telemetricas$LONGITUDE)
-(indrhi_telemetricas$latitudOK <- indrhi_telemetricas$LATITUDE)
+indrhi_telemetricas$longitudOK <- indrhi_telemetricas$LONGITUDE
+indrhi_telemetricas$latitudOK <- indrhi_telemetricas$LATITUDE
 indrhi_telemetricas$idOK <- indrhi_telemetricas$`STATION SITE`
-indrhi_telemetricas %>%
+set.seed(100);indrhi_telemetricas[sample(seq_len(nrow(indrhi_telemetricas)), 10), ] %>%
   kable(booktabs=T) %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down"))
 indrhi_historico <- read_excel(
   path = 'fuentes/indrhi/Listado Red Medicion INDRHI_Historico_24-10-2022_revision_jr.xlsx'
   )
 indrhi_historico$longitudOK <- 0 - parse_lon(indrhi_historico$LONGITUD)
-head(indrhi_historico$longitudOK, 50)
+indrhi_historico$longitudOK[sample(seq_len(length(indrhi_historico$longitudOK)), 10)]
 indrhi_historico$latitudOK <- parse_lon(indrhi_historico$LATITUD)
-head(indrhi_historico$latitudOK, 50)
+indrhi_historico$latitudOK[sample(seq_len(length(indrhi_historico$latitudOK)), 10)]
 indrhi_historico$idOK <- indrhi_historico$ESTACION
-indrhi_historico[1:130, ] %>%
+indrhi_historico[sample(seq_len(nrow(indrhi_historico)), 10), ] %>%
   kable(booktabs=T) %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down"))
 ```
@@ -67,7 +68,7 @@ colnames(reddom) <- gsub('(^[0-9]$)', 'Temperatura-Humedad Suelo \\1', colnames(
 (reddom$longitudOK <- reddom$Longitud)
 (reddom$latitudOK <- reddom$Latitud)
 reddom$idOK <- reddom$NOMBRE
-reddom %>% 
+reddom[sample(seq_len(nrow(reddom)), 10), ] %>% 
   kable(booktabs=T) %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down"))
 ```
@@ -115,10 +116,11 @@ consolidado_estaciones[sample(seq_len(nrow(consolidado_estaciones)), 30), ] %>%
   kable(booktabs=T) %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down"))
 consolidado_estaciones_sf <- st_as_sf(
-  consolidado_estaciones[!with(consolidado_estaciones, is.na(longitudOK) | is.na(latitudOK)), ],
+  consolidado_estaciones[!with(consolidado_estaciones, is.na(longitudOK) | is.na(latitudOK)), ] %>% 
+     group_by(fuente) %>% mutate(fuente = paste0(fuente, ' (', n(), ')')),
   coords = c('longitudOK', 'latitudOK'))
 nrow(consolidado_estaciones_sf)
-table(consolidado_estaciones_sf$fuente) %>%
+table(gsub(' \\(.*$', '', consolidado_estaciones_sf$fuente)) %>%
   kable(booktabs=T, col.names = c('Fuente', 'Número de estaciones')) %>%
   kable_styling(latex_options = c("HOLD_position"))
 ```
@@ -129,7 +131,7 @@ table(consolidado_estaciones_sf$fuente) %>%
 
 `r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-datos-2022)'`
 
-```{r, echo=F, fig.width=8, dpi=100, out.width="100%"}
+```{r mapa, echo=F, fig.width=12.7, fig.height=10.5, dpi=62}
 fpal <- colorFactor(
   palette = RColorBrewer::brewer.pal(length(unique(consolidado_estaciones_sf$fuente)), 'Set1'),
   domain = unique(consolidado_estaciones_sf$fuente))
@@ -148,7 +150,7 @@ leaflet(consolidado_estaciones_sf) %>%
     baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
     overlayGroups = ~ fuente, position = 'bottomright',
     options = layersControlOptions(collapsed = FALSE)) %>% 
-  setView(lat = 18.7, lng = -70.5, zoom = 7)
+  leaflet_map_view
 ```
 
 ## Consolidación estaciones INDRHI, ONAMET, REDDOM
@@ -343,7 +345,6 @@ afd_indrhi_telem[, c('X', 'Y')] <- sapply(afd_indrhi_telem[, c('X', 'Y')], as.nu
 afd_indrhi_telem_sf <- st_as_sf(
   afd_indrhi_telem, coords = c('X', 'Y'), crs = 32619) %>% 
   st_transform(4326)
-afd_indrhi_telem_sf
 ```
 
 #### Mapa de estaciones telemétricas INDRHI estudio AFD
@@ -353,7 +354,7 @@ afd_indrhi_telem_sf
 `r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-telemétricas-indrhi-estudio-afd)'`
 
 
-```{r, echo=F, fig.width=8, dpi=100, out.width="100%"}
+```{r, opts.label='mapa'}
 fpal_condiciones <- colorFactor(
   palette = RColorBrewer::brewer.pal(length(unique(afd_indrhi_telem_sf$CONDICIONES)), 'Set1'),
   domain = unique(afd_indrhi_telem_sf$CONDICIONES))
@@ -372,7 +373,7 @@ leaflet(afd_indrhi_telem_sf) %>%
     baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
     overlayGroups = ~ CONDICIONES, position = 'bottomright',
     options = layersControlOptions(collapsed = FALSE)) %>% 
-  setView(lat = 18.7, lng = -70.5, zoom = 7)
+  leaflet_map_view
 ```
 
 ### Meterológicas ONAMET
@@ -508,7 +509,7 @@ afd_onamet_clim_func_sf$tipo <- "Climáticas convencionales"
 
 `r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-climáticas-convencionales-onamet-estudio-afd)'`
 
-```{r, echo=F, fig.width=8, dpi=100, out.width="100%"}
+```{r, opts.label='mapa'}
 fpal_tipo <- colorFactor(
   palette = RColorBrewer::brewer.pal(length(unique(afd_onamet_clim_func_sf$tipo)), 'Set1'),
   domain = unique(afd_onamet_clim_func_sf$tipo))
@@ -527,7 +528,7 @@ leaflet(afd_onamet_clim_func_sf) %>%
     baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
     position = 'bottomright',
     options = layersControlOptions(collapsed = FALSE)) %>% 
-  setView(lat = 18.7, lng = -70.5, zoom = 7)
+  leaflet_map_view
 ```
 
 ### Automáticas ONAMET
@@ -610,7 +611,7 @@ afd_onamet_autom_sf <- st_as_sf(
 `r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-automáticas-onamet-estudio-afd)'`
 
 
-```{r, echo=F, fig.width=8, dpi=100, out.width="100%"}
+```{r, opts.label='mapa'}
 fpal_estado <- colorFactor(
   palette = RColorBrewer::brewer.pal(length(unique(afd_onamet_autom_sf$ESTADO)), 'Set1'),
   domain = unique(afd_onamet_autom_sf$ESTADO), reverse = T)
@@ -631,7 +632,7 @@ leaflet(afd_onamet_autom_sf) %>%
     baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
     overlayGroups = ~ ESTADO, position = 'bottomright',
     options = layersControlOptions(collapsed = FALSE)) %>% 
-  setView(lat = 18.7, lng = -70.5, zoom = 7)
+  leaflet_map_view
 ```
 
 ### Climatológicas REDDOM
@@ -736,7 +737,7 @@ afd_reddom_clim_sf <- st_as_sf(
 `r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-climatológicas-reddom-estudio-afd)'`
 
 
-```{r, echo=F, fig.width=8, dpi=100, out.width="100%"}
+```{r, opts.label='mapa'}
 fpal_estado2 <- colorFactor(
   palette = RColorBrewer::brewer.pal(length(unique(afd_reddom_clim_sf$ESTADO)), 'Set1'),
   domain = unique(afd_reddom_clim_sf$ESTADO), reverse = T)
@@ -755,7 +756,7 @@ leaflet(afd_reddom_clim_sf) %>%
   addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
   addLayersControl(
     baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
-    overlayGroups = ~ ESTADO, position = 'bottomright',
+    overlayGroups = ~ ESTADO, position = 'bottomright', 
     options = layersControlOptions(collapsed = FALSE)) %>% 
-  setView(lat = 18.7, lng = -70.5, zoom = 7)
+  leaflet_map_view
 ```
