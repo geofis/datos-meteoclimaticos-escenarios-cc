@@ -357,12 +357,12 @@ afd_indrhi_telem_sf <- st_as_sf(
 ```{r, opts.label='mapa'}
 fpal_condiciones <- colorFactor(
   palette = RColorBrewer::brewer.pal(length(unique(afd_indrhi_telem_sf$CONDICIONES)), 'Set1'),
-  domain = unique(afd_indrhi_telem_sf$CONDICIONES))
+  domain = unique(afd_indrhi_telem_sf$CONDICIONES), reverse = T)
 leaflet(afd_indrhi_telem_sf) %>%
   addCircleMarkers(
     radius = 5, label = ~ `NOMBRE DE ESTACIÓN`, group = ~ CONDICIONES,
     color = ~ fpal_condiciones(CONDICIONES),
-    stroke = FALSE, fillOpacity = 0.8
+    stroke = F, fillOpacity = 1
   ) %>%
   addLegend(pal = fpal_condiciones, values = ~ CONDICIONES, opacity = 1,title = "\"Estudio AFD\"<br>INDRHI<br>Telemétricas<br>CONDICIONES") %>% 
   addTiles(group = 'OSM') %>%
