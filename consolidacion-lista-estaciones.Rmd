@@ -336,7 +336,7 @@ afd_indrhi_telem$CONDICIONES <- factor(afd_indrhi_telem$CONDICIONES,
          paste0('No funcionando, ', afd_indrhi_telem_cond_n[[2]], ' (', afd_indrhi_telem_cond_pct[[2]], '%)')))
 ```
 
-#### sf
+<!-- #### sf -->
 
 ```{r, echo=F}
 afd_indrhi_telem[, c('X', 'Y')] <- sapply(afd_indrhi_telem[, c('X', 'Y')], as.numeric)
@@ -346,7 +346,12 @@ afd_indrhi_telem_sf <- st_as_sf(
 afd_indrhi_telem_sf
 ```
 
-#### Mapa
+#### Mapa de estaciones telemétricas INDRHI estudio AFD
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-telemétricas-indrhi-estudio-afd)'`
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-telemétricas-indrhi-estudio-afd)'`
+
 
 ```{r, echo=F, fig.width=8, dpi=100, out.width="100%"}
 fpal_condiciones <- colorFactor(
@@ -371,3 +376,158 @@ leaflet(afd_indrhi_telem_sf) %>%
 
 ```
 
+### Meterológicas ONAMET
+
+```{r, echo=F}
+nombres_columnas <- c("No.", "ESTACION", "PROVINCIA", "LATITUD", "LONGITUD", "ELEVACIÓN")
+afd_onamet_clim_func_1 <- data.frame(
+  stringsAsFactors = FALSE,
+               No. = c(1L,2L,3L,4L,5L,6L,7L,8L,
+                       9L,10L,11L,12L,13L,14L,15L,16L,17L,18L),
+          ESTACION = c("AZUA","PERALTA",
+                       "PADRE LAS CASAS","TAMAYO","NEYBA","CABRAL","BARAHONA","POLO",
+                       "RESTAURACION","DAJABON","SANTO DOMINGO","CEVICOS",
+                       "VILLA RIVA","PIMENTEL","SAN F. MACORIS","EL SEIBO",
+                       "MICHES","ELIAS PINA"),
+         PROVINCIA = c("AZUA","AZUA","AZUA",
+                       "BAHORUCO","BAHORUCO","BARAHONA","BARAHONA","BARAHONA",
+                       "DAJABON","DAJABON","DISTRITO NACIONAL","DUARTE","DUARTE",
+                       "DUARTE","DUARTE","EL SEIBO","EL SEIBO",
+                       "ELIAS PINA"),
+           LATITUD = c("18.450N","18.346N","18.733N",
+                       "18.383N","18.467N","18.250N","18.200N","18.067N",
+                       "19.317N","19.550N","18.483N","19.000N","19.167N",
+                       "19.183N","19.283N","18.767N","18.983N","18.867N"),
+          LONGITUD = c("70.733W","70.455W","70.933W",
+                       "71.217W","71.417W","71.217W","71.100W","71.283W",
+                       "71.683W","71.700W","69.917W","69.967W","69.900W",
+                       "70.100W","70.250W","69.033W","69.050W","71.700W"),
+         ELEVACIÓN = c(76L,516L,510L,21L,10L,19L,
+                       10L,703L,594L,36L,14L,90L,17L,37L,110L,87L,3L,
+                       387L)
+)
+colnames(afd_onamet_clim_func_1) <- nombres_columnas
+afd_onamet_clim_func_2 <- data.frame(
+  stringsAsFactors = FALSE,
+               No. = c(19L,20L,21L,22L,23L,24L,
+                       25L,26L,27L,28L,29L,30L,31L,32L,33L,34L,35L,36L,
+                       37L,38L,39L,40L,41L,42L,43L,44L,45L,46L,47L,
+                       48L,49L,50L,51L,52L,53L,54L,55L,56L,57L,58L,
+                       59L,60L,61L,62L,63L,64L,65L,66L,67L),
+          ESTACION = c("HONDO VALLE","MOCA",
+                       "GASPAR HDEZ.","HATO MAYOR","S.DE LA MAR","DUVERGE","JIMANI",
+                       "LA DESCUBIERTA","HIGUEY","SAN R. YUMA","PUNTA CANA",
+                       "LA ROMANA","CONSTANZA","LA CASTILLA","LA VEGA",
+                       "JARABACOA","CABRERA","RIO SAN JUAN","NAGUA","BONAO",
+                       "MONTE CRISTI","PEPILLO SALCEDO","VILLA VASQUEZ",
+                       "BAYAGUANA","MONTE PLATA","YAMASA","OVIEDO","PEDERNALES",
+                       "ENRIQUILLO","BANI","SAN JOSE OCOA","RANCHO ARRIBA",
+                       "IMBERT","ALTAMIRA","YASICA","LUPERON","A. LA UNION",
+                       "SALCEDO","SANCHEZ","ARROYO BARRIL","SAMANA",
+                       "SAN CRISTOBAL","LOYOLA","V. ALTAGRACIA","SAN JUAN","EL CERCADO",
+                       "LAS MATAS FARFAN","LOS LLANOS","SAN P. MACORIS"),
+         PROVINCIA = c("ELIAS PINA","ESPAILLAT",
+                       "ESPAILLAT","HATO MAYOR","HATO MAYOR","INDEPENDENCIA",
+                       "INDEPENDENCIA","INDEPENDENCIA","LA ALTAGRACIA",
+                       "LA ALTAGRACIA","LA ALTAGRACIA","LA ROMANA","LA VEGA",
+                       "LA VEGA","LA VEGA","LA VEGA","MARIA T. SANCHEZ",
+                       "MARIA T. SANCHEZ","MARIA T. SANCHEZ","MONSEÑOR NOUEL",
+                       "MONTE CRISTI","MONTE CRISTI","MONTE CRISTI","MONTE PLATA",
+                       "MONTE PLATA","MONTE PLATA","PEDERNALES","PEDERNALES",
+                       "PEDERNALES","PERAVIA","PERAVIA","PERAVIA","PUERTO PLATA",
+                       "PUERTO PLATA","PUERTO PLATA","PUERTO PLATA",
+                       "PUERTO PLATA","HERMANAS MIRABAL","SAMANA","SAMANA","SAMANA",
+                       "SAN CRISTOBAL","SAN CRISTOBAL","SAN CRISTOBAL",
+                       "SAN JUAN","SAN JUAN","SAN JUAN","SAN P. MACORIS",
+                       "SAN P. MACORIS"),
+           LATITUD = c("18.717N","19.383N","19.617N",
+                       "18.750N","19.050N","18.367N","18.483N","18.567N",
+                       "18.600N","18.417N","18.567N","18.417N","18.900N",
+                       "18.967N","19.217N","19.117N","19.633N","19.633N",
+                       "19.367N","18.933N","19.850N","19.700N","19.733N",
+                       "18.750N","18.800N","18.767N","17.783N","18.033N",
+                       "17.900N","18.267N","18.533N","18.700N","19.750N","19.667N",
+                       "19.633N","19.883N","19.750N","19.367N","19.217N",
+                       "19.217N","19.200N","18.417N","18.243N","18.667N",
+                       "18.800N","18.717N","18.867N","18.617N","18.450N"),
+          LONGITUD = c("71.683W","70.517W","70.267W",
+                       "69.250W","69.417W","71.517W","71.850W","71.733W",
+                       "68.700W","68.667W","68.367W","68.967W","70.733W",
+                       "70.583W","70.533W","70.633W","69.900W","70.067W",
+                       "69.833W","70.400W","71.633W","71.750W","71.433W",
+                       "69.633W","69.783W","70.017W","71.367W","71.733W",
+                       "71.233W","70.333W","70.500W","70.450W","70.833W","70.833W",
+                       "70.583W","70.950W","70.550W","70.417W","69.600W",
+                       "69.450W","69.333W","70.100W","70.061W","70.167W",
+                       "71.233W","71.517W","71.517W","69.483W","69.300W"),
+         ELEVACIÓN = c(890L,83L,15L,102L,3L,2L,
+                       31L,9L,106L,54L,122L,23L,1164L,1141L,97L,529L,
+                       15L,4L,3L,172L,7L,5L,24L,61L,56L,69L,3L,11L,3L,
+                       60L,475L,678L,124L,310L,129L,4L,5L,196L,17L,4L,
+                       7L,44L,36L,156L,415L,720L,430L,41L,3L)
+)
+colnames(afd_onamet_clim_func_2) <- nombres_columnas
+afd_onamet_clim_func_3 <- data.frame(
+  stringsAsFactors = FALSE,
+               No. = c(68L, 69L, 70L, 71L, 72L, 73L, 74L, 75L, 76L),
+          ESTACION = c("COTUI",
+                       "SAN JOSE DE LAS MATAS","SANTIAGO","LAS AMERICAS","LA VICTORIA","HERRERA",
+                       "SANTIAGO RODRIGUEZ","MONCION","MAO"),
+         PROVINCIA = c("SANCHEZ RAMIREZ","SANTIAGO",
+                       "SANTIAGO","SANTO DOMINGO ESTE","SANTO DOMINGO NORTE",
+                       "SANTO DOMINGO OESTE","STGO RODRIGUEZ","STGO RODRIGUEZ",
+                       "VALVERDE"),
+           LATITUD = c("19.050N","19.333N","19.450N",
+                       "18.433N","18.583N","18.467N","19.467N","19.400N",
+                       "19.550N"),
+          LONGITUD = c("70.150W","70.933W","70.700W",
+                       "69.667W","69.833W","69.967W","71.333W","71.150W",
+                       "71.067W"),
+         ELEVACIÓN = c(60L, 523L, 183L, 17L, 12L, 61L, 129L, 366L, 78L)
+)
+colnames(afd_onamet_clim_func_3) <- nombres_columnas
+afd_onamet_clim_func <- rbind(
+  afd_onamet_clim_func_1,
+  afd_onamet_clim_func_2,
+  afd_onamet_clim_func_3)
+afd_onamet_clim_func[, c('LONGITUD', 'LATITUD')] <- parse_lon_lat(
+  afd_onamet_clim_func$LONGITUD,
+  afd_onamet_clim_func$LATITUD)
+```
+
+<!-- #### sf -->
+
+```{r, echo=F}
+afd_onamet_clim_func_sf <- st_as_sf(
+  afd_onamet_clim_func, coords = c('LONGITUD', 'LATITUD'), crs = 4326)
+afd_onamet_clim_func_sf$tipo <- "Climáticas convencionales"
+```
+
+#### Mapa de estaciones climáticas convencionales ONAMET estudio AFD
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-climáticas-convencionales-estudio-afd)'`
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/consolidacion-lista-estaciones.html#mapa-de-estaciones-climáticas-convencionales-estudio-afd)'`
+
+```{r, echo=F, fig.width=8, dpi=100, out.width="100%"}
+fpal_tipo <- colorFactor(
+  palette = RColorBrewer::brewer.pal(length(unique(afd_onamet_clim_func_sf$tipo)), 'Set1'),
+  domain = unique(afd_onamet_clim_func_sf$tipo))
+leaflet(afd_onamet_clim_func_sf) %>%
+  addCircleMarkers(
+    radius = 5, label = ~ `ESTACION`,
+    color = ~ fpal_tipo(tipo),
+    stroke = FALSE, fillOpacity = 0.8
+  ) %>%
+  addLegend(pal = fpal_tipo, values = ~ tipo, opacity = 1, title = "\"Estudio AFD\"<br>ONAMET") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("OSM", "ESRI Mapa", "CartoDB", "ESRI Imagen"),
+    position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  setView(lat = 18.7, lng = -70.5, zoom = 7)
+
+```
