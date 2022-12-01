@@ -169,7 +169,7 @@ indrhi[[1]] %>% group_by(Estado) %>%
 
 El mapa de estaciones hidrométricas, con indicación de sus estados, se muestra a continuación.
 
-```{r}
+```{r, eval=F}
 indrhi[[1]]$`Longitud   Corregida` <- gsub('59 57 57', '69 57 57', indrhi[[1]]$`Longitud   Corregida`)
 foo <- indrhi[[1]] %>%
   mutate(`Latitud2` = parse_lat(indrhi[[1]]$`Latitud  Corregida`),
