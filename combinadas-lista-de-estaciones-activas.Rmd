@@ -2,9 +2,9 @@
 title: "Estaciones combinadas y activas"
 author: "José Martínez<br>Michela Izzo"
 output:
+  # github_document
   html_document:
     code_folding: hide
-  # github_document
   # pdf_document:
   #   latex_engine: xelatex
 editor_options: 
@@ -37,8 +37,6 @@ library(readxl)
 library(parzer)
 library(tidyverse)
 library(kableExtra)
-library(pdftools)
-library(datapasta)
 source('R/funciones.R')
 leaflet_map_view <- . %>% setView(lat = 18.7, lng = -70.3, zoom = 8)
 ```
@@ -166,7 +164,7 @@ indrhi[[1]] %>% group_by(Estado) %>%
   gsub(' NA ', '', .)
 ```
 
-La tabla de estaciones hidrométricas aportada por el INDRHI cuenta con dos pares columnas de coordenadas bajo las denominaciones `r grep('lat|lon', ignore.case=T, colnames(indrhi[[1]]), value=T)`; el primer par contiene valores de lo que parecen ser coordenadas de falso norte y falso este en la proyección UTM (no se especifica datum), y no precisamente valores de latitud y longitud. El segundo par, con el apelativo "corregida", el cual sugiere una mejora en la precisión, sí contiene coordenadas en sistema sexagesimal de latitud y longitud verdaderas, aunque mezcladas con coordenadas UTM. Por lo tanto, en orden de prelación, usamos el segundo par siempre que estuviere presente. Destacamos también que algunas estaciones no disponían de coordenadas (e.g. estaciones N° 1, 105, 106, 116), y otras registraban valores claramente erróneos y no asimilables a ningún sistema de referencia (e.g. estaciones N° 118, 119, 120), por lo que fueron excluidas de nuestros análisis. Todas las coordenadas fueron transformadas a sistema de coordenadas geográficas, no proyectado. El mapa de estaciones hidrométricas, con indicación de sus estados, se muestra a continuación.
+La tabla de estaciones hidrométricas aportada por el INDRHI cuenta con dos pares columnas de coordenadas bajo las denominaciones `r grep('lat|lon', ignore.case=T, colnames(indrhi[[1]]), value=T)`; el primer par contiene valores de lo que parecen ser coordenadas de falso norte y falso este en la proyección UTM (no se especifica datum), y no precisamente valores de latitud y longitud. El segundo par, con el apelativo "corregida", el cual sugiere una mejora en la precisión, sí contiene coordenadas en sistema sexagesimal de latitud y longitud verdaderas, aunque mezcladas con coordenadas UTM. Por lo tanto, en orden de prelación, usamos el segundo par siempre que estuviere presente. Destacamos también que algunas estaciones no disponían de coordenadas (e.g. estaciones N° 1, 105, 106, 116), y otras registraban valores claramente erróneos y no atribuibles a ningún sistema de referencia (e.g. estaciones N° 118, 119, 120), por lo que fueron excluidas de nuestros análisis; para la limpieza de estos datos se usaron funciones basadas en expresiones regulares y otras herramientas. Todas las coordenadas fueron transformadas a sistema de coordenadas geográficas, no proyectado. El mapa de estaciones hidrométricas, con indicación de sus estados, se muestra a continuación.
 
 ```{r, eval=F}
 indrhi[[1]]$`Longitud Corregida` <- gsub('59 57 57', '69 57 57', indrhi[[1]]$`Longitud Corregida`)
