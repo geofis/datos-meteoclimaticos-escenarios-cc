@@ -154,7 +154,7 @@ En el caso de INDRHI se utilizó un único archivo como fuente (`Informe Final i
 
 Las estaciones reportadas por el INDRHI son de dos tipos generales: hidrométricas y climáticas. En ambos casos, INDRHI clasificó las estaciones según "estado" en tres categorías: "buena", "regular" y "mala". Para la fecha, de un total de 171 estaciones hidrométricas, 121 se encontraban en la categoría "mala", 24 en "regular" y 30 en "buena". Las estaciones de la categoría "mala" no se encontraban en operación, y presentaban daños cuantiosos, por lo que su restablecimiento es complicado. En el caso de las estaciones en estado regular, aunque no se encontraban en operación, su restablecimiento requería una inversión muy pequeña. Finalmente, las estaciones en estado bueno se consideraban como tal si se encontraban operativas.
 
-A modo de actualización, según Israel Acosta, encargado del departamento de hidrología de INDRHI, se confirma que el número de estaciones en estado bueno y regular ha cambiado muy poco en los últimos años. Añade que se reportaron algunas incidencias en los últimos años, relacionadas con la estabilidad del personal a cargo de las estaciones. Acosta destaca además que muchas de las 24 estaciones en estado regular, siguen siendo recuperables actualmente con una mínima inversión.
+A modo de actualización, según Israel Acosta, encargado del departamento de hidrología de INDRHI, se nos confirmó que el número de estaciones en estado bueno y regular ha cambiado muy poco en los últimos años. Añadió que se reportaron algunas incidencias en años recientes, relacionadas con la estabilidad del personal a cargo de las estaciones. Acosta destacó además que una buena parte de las 24 estaciones en estado regular, siguen siendo recuperables actualmente con una mínima inversión.
 
 ```{r}
 indrhi <- map(5:6, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
@@ -164,16 +164,16 @@ indrhi[[1]] %>% group_by(Estado) %>%
   kable(booktabs=T) %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
   gsub(' NA ', '', .)
-
 ```
 
-El mapa de estaciones hidrométricas, con indicación de sus estados, se muestra a continuación.
+La tabla de estaciones hidrométricas aportada por el INDRHI cuenta con dos pares columnas de coordenadas bajo las denominaciones `r grep('lat|lon', ignore.case=T, colnames(indrhi[[1]]), value=T)`; el primer par contiene valores de lo que parecen ser coordenadas de falso norte y falso este en la proyección UTM (no se especifica datum), y no precisamente valores de latitud y longitud. El segundo par, con el apelativo "corregida", el cual sugiere una mejora en la precisión, sí contiene coordenadas en sistema sexagesimal de latitud y longitud verdaderas, aunque mezcladas con coordenadas UTM. Por lo tanto, en orden de prelación, usamos el segundo par siempre que estuviere presente. Destacamos también que algunas estaciones no disponían de coordenadas (e.g. estaciones N° 1, 105, 106, 116), y otras registraban valores claramente erróneos y no asimilables a ningún sistema de referencia (e.g. estaciones N° 118, 119, 120), por lo que fueron excluidas de nuestros análisis. Todas las coordenadas fueron transformadas a sistema de coordenadas geográficas, no proyectado. El mapa de estaciones hidrométricas, con indicación de sus estados, se muestra a continuación.
 
 ```{r, eval=F}
-indrhi[[1]]$`Longitud   Corregida` <- gsub('59 57 57', '69 57 57', indrhi[[1]]$`Longitud   Corregida`)
+indrhi[[1]]$`Longitud Corregida` <- gsub('59 57 57', '69 57 57', indrhi[[1]]$`Longitud Corregida`)
+ifelse(grepl(' ', indrhi[[1]]$`Latitud Corregida`), indrhi[[1]]$`Latitud Corregida`, NA)
 foo <- indrhi[[1]] %>%
-  mutate(`Latitud2` = parse_lat(indrhi[[1]]$`Latitud  Corregida`),
-         `Longitud2` = 0-parse_lon(indrhi[[1]]$`Longitud   Corregida`)) %>% 
+  mutate(`Latitud2` = parse_lat(indrhi[[1]]$`Latitud Corregida`),
+         `Longitud2` = 0-parse_lon(indrhi[[1]]$`Longitud Corregida`)) %>% 
   select(`N°`, `Latitud2`, `Longitud2`) %>% 
   na.omit %>% 
   st_as_sf(coords = c('Longitud2', 'Latitud2'), crs = 4326) %>% 
