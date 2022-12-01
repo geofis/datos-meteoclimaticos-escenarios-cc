@@ -1,0 +1,213 @@
+---
+title: "Estaciones combinadas y activas"
+author: "José Martínez<br>Michela Izzo"
+output:
+  html_document:
+    code_folding: hide
+  # github_document
+  # pdf_document:
+  #   latex_engine: xelatex
+editor_options: 
+  chunk_output_type: console
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  cache = F, 
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE)
+```
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión HTML (más legible e interactiva), [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/combinadas-lista-de-estaciones-activas.html)'`
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión HTML (quizá más legible), [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/combinadas-lista-de-estaciones-activas.html)'`
+
+
+## Paquetes
+
+```{r}
+library(sf)
+library(leaflet)
+library(leaflet.extras)
+library(mapview)
+library(readODS)
+library(readxl)
+library(parzer)
+library(tidyverse)
+library(kableExtra)
+library(pdftools)
+library(datapasta)
+source('R/funciones.R')
+leaflet_map_view <- . %>% setView(lat = 18.7, lng = -70.3, zoom = 8)
+```
+
+## Resultados
+
+En el archivo `combinadas_v0.9.xlsx` se consolidaron los resultados de los archivos aportados por ONAMET e INDRHI en un único archivo combinado. Este producto derivado es, por lo tanto, una relación de estaciones (en filas) con un conjunto de atributos (columnas) específicos de cada una. Hasta el momento, se han consolidado las de ONAMET (primeras cuatro hojas) e INDRHI (últimas dos hojas).
+
+### ONAMET
+
+ONAMET aportó dos archivos, cada uno conteniendo listas de estaciones que entendemos son comunes. El primero contiene una relación de estaciones con indicación de coordenadas (`COORDENADAS 2022 DIVISION INSTRUMENTOS.xlsx`), mientras que el segundo indica los periodos de medición de cada variable de cada estación (`LISTADO PERIODO DE MEDICION DE CADA ESTACION(22)-1.xlsx`). El objetivo de este análisis es producir un mapa de las estaciones que se consideran activas, para lo cual necesitamos las coordenadas del primer archivo, y el periodo de medición del segundo.
+
+Para decidir cuáles estaciones se consideran activas, se buscó, mediante expresión regular, la cadena de caracteres "2021" en las columnas que contenían fechas (e.g. columnas PR, TX, etc.) de las listas de estaciones con indicación de periodos de medición. Cada coincidencia señalaba una estación que colecta datos hasta 2022. Se buscó "2021" como equivalente de 2022 porque, como bien explicó ONAMET en el archivo fuente, el año actual (2022) no se hace constar hasta tanto haya transcurrido al completo.
+
+```{r, results='hide'}
+onamet <- map(1:4, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
+lista_con_periodo <- bind_rows(sapply(2:4, function(x) onamet[[x]], simplify = F)) %>% 
+   rename_at(., vars(-'id',-'nombre'), ~ paste('var_', .))
+indice_2022 <- sapply(lista_con_periodo %>% select(3:last_col()),
+       function(x) grep('2021', x), simplify = F) %>%
+  unlist(use.names = F) %>% unique %>% sort
+total_2022 <- length(indice_2022)
+#Estaciones que colectaban hasta 2022
+lista_con_periodo_2022 <- lista_con_periodo[indice_2022,]
+#Estaciones que colectaban hasta 2022 con correspondencia en tabla EMC (coordenadas)
+lista_con_periodo_2022_coord <- lista_con_periodo_2022 %>% inner_join(onamet[[1]], by='nombre')
+anadidas <- which(lista_con_periodo_2022_coord %>% pull(lat) %>% is.na())
+```
+
+En la lista de estaciones meteorológicas convencionales con indicación de coordenadas, **se encontraron `r nrow(onamet[[1]])-length(grep('añadida por', onamet[[1]]$codigo, ignore.case = T))`**, mientras que la lista de estaciones con indicación de periodo de medición contenía **`r nrow(lista_con_periodo)` estaciones**. De las estaciones con indicación de periodo, **se encontraron un total de `r nrow(lista_con_periodo_2022)` estaciones registrando datos hasta 2022**. De estas, a **`r nrow(lista_con_periodo_2022_coord) - length(anadidas)` estaciones** se les localizaron sus homólogas en la lista de coordenadas, y a **`r length(anadidas)`** (`r paste(lista_con_periodo_2022_coord[anadidas, 'nombre', drop=T], collapse=', ')`) no se les pudo localizar sus correspondientes homólogas con coordenadas. En el caso de `r lista_con_periodo_2022_coord[anadidas[3], 'nombre', drop=T]`, la incertidumbre se debió a que hay varias estaciones en dicha ciudad, lo cual hacía difícil determinar con cuál de todas hacerla corresponder.
+
+Como se puede notar, **el mayor desafío que presentaron los datos de ONAMET, fue determinar la correspondencia de las estaciones entre listas debido a la ausencia de un código (clave) común**. Si bien cada lista de estaciones asignaba códigos o nombres únicos a las estación, estos no eran consistentes entre listas. Aunque muchas estaciones pudieron emparejarse, en algunos casos hicimos la correspondencia con incertidumbre o, directamente, no se pudo hacer la relación como ya se refirió (ver también comentarios en globos en el archivo `combinadas_v0.9.xlsx`). Entendemos que si cada estación contase con un identificador único, la correspondencia hubiese sido más eficiente y certera.
+
+Generamos una columna de estado, asignando estado "activa" a las que recogen datos hasta 2022. Al mismo tiempo, para elaborar el mapa en secciones posteriores, asignamos coordenadas *ad hoc* a las estaciones que carecían de ellas. Incluimos la tabla resumen a continuación:
+
+```{r}
+lista_con_periodo_2022_coord_todas <- lista_con_periodo_2022 %>%
+  right_join(onamet[[1]], by='nombre') %>% rowwise() %>% 
+  mutate(inactiva = all(is.na(c_across(starts_with('var_'))))) %>% 
+  mutate(estado = ifelse(
+    inactiva,
+    'inactiva o no reportada',
+    'activa')) %>%
+  select(id, nombre_onamet, starts_with('var_'), lat, lon, h_m, estado) %>% 
+  mutate(
+    lat = case_when(
+      nombre_onamet == 'LOYOLA (SCR )' ~ 18.411929,
+      nombre_onamet == 'SANTIAGO'  ~ 19.50054,
+      nombre_onamet == 'CABO ENGAÑO'  ~ 18.616784,
+      TRUE ~ lat),
+    lon = case_when(
+      nombre_onamet == 'LOYOLA (SCR )' ~ -70.112727,
+      nombre_onamet == 'SANTIAGO'  ~ -70.69806,
+      nombre_onamet == 'CABO ENGAÑO'  ~ -68.325500,
+      TRUE ~ lon),
+    estado = case_when(
+      nombre_onamet == 'BANÍ' ~ 'inactiva o no reportada', #Lista de estaciones con coords.
+      nombre_onamet == 'LA VEGA - IATESA' ~ 'inactiva o no reportada', #Lista de estaciones con coords.
+      TRUE ~ estado)
+    )
+```
+
+```{r}
+lista_con_periodo_2022_coord_todas %>%
+  select(id, nombre_onamet, lat, lon, h_m, estado) %>% 
+  left_join(lista_con_periodo %>%
+              select(nombre, starts_with('var_')) %>% 
+              right_join(onamet[[1]] %>% select(nombre, nombre_onamet))
+            ) %>% 
+  arrange(nombre_onamet) %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+```
+
+El mapa de las estaciones de ONAMET, según el estado actual de las mismas, se muestra a continuación. Se recuerda que el mapa representa, cartográficamente, lo contenido en la lista de estaciones y los correspondientes periodos reportados de operación por ONAMET. []{#mapa-datos-2022}
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/combinadas-lista-de-estaciones-activas.html#mapa-datos-2022)'`
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/combinadas-lista-de-estaciones-activas.html#mapa-datos-2022)'`
+
+
+```{r, fig.width=15.7, fig.height=10.5, dpi=62}
+lista_con_periodo_2022_coord_todas_sf <- st_as_sf(lista_con_periodo_2022_coord_todas,
+                                                  coords = c('lon', 'lat'), crs = 4326)
+
+fpal_estado <- colorFactor(
+  palette = RColorBrewer::brewer.pal(length(unique(lista_con_periodo_2022_coord_todas_sf$estado)), 'Set1'),
+  domain = unique(lista_con_periodo_2022_coord_todas_sf$estado), reverse = T)
+leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
+  addCircleMarkers(
+    radius = 5, label = ~ nombre_onamet, group = ~ estado,
+    color = ~ fpal_estado(estado),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_estado, values = ~ estado, opacity = 1,
+            title = "Estaciones<br>Meteorológicas<br>Convencionales<br>ONAMET<br>Estado") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("CartoDB", "OSM", "ESRI Mapa", "ESRI Imagen"),
+    overlayGroups = ~ estado, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+### INDRHI
+
+En el caso de INDRHI se utilizó un único archivo como fuente (`Informe Final inventario estaciones hidrometeorológicas INDRHI, Rep. Dom..pdf`), el cual fue elaborado por personal técnico de dicha institución en 2019, con el objetivo de documentar el estado de sus estaciones hidroclimáticas. El documento fue servido en formato PDF, por lo que hubo que extraer la información programáticamente. Las informaciones sobre el estado de las estaciones fueron complementadas por medio de comunicaciones directas con personal del INDRHI. Por lo tanto, en este caso, no se requirió procesamiento intensivo para poder elaborar los correspondientes mapas.
+
+Las estaciones reportadas por el INDRHI son de dos tipos generales: hidrométricas y climáticas. En ambos casos, INDRHI clasificó las estaciones según "estado" en tres categorías: "buena", "regular" y "mala". Para la fecha, de un total de 171 estaciones hidrométricas, 121 se encontraban en la categoría "mala", 24 en "regular" y 30 en "buena". Las estaciones de la categoría "mala" no se encontraban en operación, y presentaban daños cuantiosos, por lo que su restablecimiento es complicado. En el caso de las estaciones en estado regular, aunque no se encontraban en operación, su restablecimiento requería una inversión muy pequeña. Finalmente, las estaciones en estado bueno se consideraban como tal si se encontraban operativas.
+
+A modo de actualización, según Israel Acosta, encargado del departamento de hidrología de INDRHI, se confirma que el número de estaciones en estado bueno y regular ha cambiado muy poco en los últimos años. Añade que se reportaron algunas incidencias en los últimos años, relacionadas con la estabilidad del personal a cargo de las estaciones. Acosta destaca además que muchas de las 24 estaciones en estado regular, siguen siendo recuperables actualmente con una mínima inversión.
+
+```{r}
+indrhi <- map(5:6, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
+indrhi[[1]] %>% group_by(Estado) %>%
+  mutate(Estado = factor(Estado, levels=c('Bueno', 'Regular', 'Malo'))) %>%
+  count() %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+
+```
+
+El mapa de estaciones hidrométricas, con indicación de sus estados, se muestra a continuación.
+
+```{r}
+indrhi[[1]]$`Longitud   Corregida` <- gsub('59 57 57', '69 57 57', indrhi[[1]]$`Longitud   Corregida`)
+foo <- indrhi[[1]] %>%
+  mutate(`Latitud2` = parse_lat(indrhi[[1]]$`Latitud  Corregida`),
+         `Longitud2` = 0-parse_lon(indrhi[[1]]$`Longitud   Corregida`)) %>% 
+  select(`N°`, `Latitud2`, `Longitud2`) %>% 
+  na.omit %>% 
+  st_as_sf(coords = c('Longitud2', 'Latitud2'), crs = 4326) %>% 
+  st_transform(32619) %>% 
+  mutate(`Longitud2` = unlist(map(.$geometry, 1)),
+         `Latitud2` = unlist(map(.$geometry, 2))) %>% 
+  st_drop_geometry() %>% 
+  right_join(indrhi[[1]], by = 'N°')
+foo %>% mutate(Latitud = ifelse(is.na(Latitud2), Latitud, Latitud2)) %>% View()
+  
+indrhi_hidro_sf <- st_as_sf(indrhi[[1]], coords = c('Longitud', 'Latitud'), crs = 32619)
+
+fpal_estado <- colorFactor(
+  palette = RColorBrewer::brewer.pal(length(unique(lista_con_periodo_2022_coord_todas_sf$estado)), 'Set1'),
+  domain = unique(lista_con_periodo_2022_coord_todas_sf$estado), reverse = T)
+leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
+  addCircleMarkers(
+    radius = 5, label = ~ nombre_onamet, group = ~ estado,
+    color = ~ fpal_estado(estado),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_estado, values = ~ estado, opacity = 1,
+            title = "Estaciones<br>Meteorológicas<br>Convencionales<br>ONAMET<br>Estado") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("CartoDB", "OSM", "ESRI Mapa", "ESRI Imagen"),
+    overlayGroups = ~ estado, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+
+
+```
+
