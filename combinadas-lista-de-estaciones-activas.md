@@ -17,8 +17,6 @@ library(readxl)
 library(parzer)
 library(tidyverse)
 library(kableExtra)
-library(pdftools)
-library(datapasta)
 source('R/funciones.R')
 leaflet_map_view <- . %>% setView(lat = 18.7, lng = -70.3, zoom = 8)
 ```
@@ -4698,46 +4696,38 @@ leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
 
 En el caso de INDRHI se utilizó un único archivo como fuente
 (`Informe Final inventario estaciones hidrometeorológicas INDRHI, Rep. Dom..pdf`),
-el cual fue elaborado por personal técnico de dicha institución en 2019,
+el cual fue elaborado por personal técnico de la institución en 2019,
 con el objetivo de documentar el estado de sus estaciones
-hidroclimáticas. El documento fue servido en formato PDF, por lo que
-hubo que extraer la información programáticamente. Las informaciones
-sobre el estado de las estaciones fueron complementadas por medio de
-comunicaciones directas con personal del INDRHI. Por lo tanto, en este
-caso, no se requirió procesamiento intensivo para poder elaborar los
-correspondientes mapas.
-
-Las estaciones reportadas por el INDRHI son de dos tipos generales:
-hidrométricas y climáticas. En ambos casos, INDRHI clasificó las
-estaciones según “estado” en tres categorías: “buena”, “regular” y
-“mala”. Para la fecha, de un total de 171 estaciones hidrométricas, 121
-se encontraban en la categoría “mala”, 24 en “regular” y 30 en “buena”.
-Las estaciones de la categoría “mala” no se encontraban en operación, y
-presentaban daños cuantiosos, por lo que su restablecimiento es
-complicado. En el caso de las estaciones en estado regular, aunque no se
-encontraban en operación, su restablecimiento requería una inversión muy
-pequeña. Finalmente, las estaciones en estado bueno se consideraban como
-tal si se encontraban operativas.
-
-A modo de actualización, según Israel Acosta, encargado del departamento
-de hidrología de INDRHI, se confirma que el número de estaciones en
-estado bueno y regular ha cambiado muy poco en los últimos años. Añade
-que se reportaron algunas incidencias en los últimos años, relacionadas
-con la estabilidad del personal a cargo de las estaciones. Acosta
-destaca además que muchas de las 24 estaciones en estado regular, siguen
-siendo recuperables actualmente con una mínima inversión.
+hidroclimáticas. El documento nos fue entregado en formato PDF, por lo
+que hubo que extraer la información programáticamente. Las informaciones
+sobre el estado de las estaciones fueron complementadas con
+comunicaciones directas con personal del INDRHI.
 
 ``` r
 indrhi <- map(5:6, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
-indrhi[[1]] %>% group_by(Estado) %>%
+```
+
+Las estaciones reportadas en el informe son de dos tipos generales:
+hidrométricas y climáticas. De las primeras, las hidrométricas, hay un
+total de 175 estaciones, mientras que las climáticas representan un
+total de 63 estaciones. En ambos casos, INDRHI clasificó las estaciones
+según “estado” en tres categorías: Bueno, Regular, Malo.
+
+#### Estaciones hidrométricas
+
+``` r
+indrhi_hidrometricas_resumen_estado <- indrhi[[1]] %>% group_by(Estado) %>%
   mutate(Estado = factor(Estado, levels=c('Bueno', 'Regular', 'Malo'))) %>%
-  count() %>% 
+  count()
+indrhi_hidrometricas_resumen_estado %>%
   kable(booktabs=T) %>%
-  kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
+  kable_styling(
+    full_width = F,
+    latex_options = c("HOLD_position", "scale_down")) %>%
   gsub(' NA ', '', .)
 ```
 
-<table class="table" style="margin-left: auto; margin-right: auto;">
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
 <th style="text-align:left;">
@@ -4776,45 +4766,7387 @@ Malo
 </tbody>
 </table>
 
-El mapa de estaciones hidrométricas, con indicación de sus estados, se
+Al momento de redactarse el presente documento, se nos informó que el
+estado respecto de la línea base de 2019 se ha mantenido bastante
+similar. En el referido informe, de un total de 175 estaciones
+hidrométricas, 121 se encontraban en la categoría “Malo”, 24 en estado
+“Regular” y 30 en la categoría “Bueno”. Las estaciones de la categoría
+“Malo” se encontraban fuera operación al momento de realizarse el
+referido informe, y presentaban daños significativos, por lo que su
+restablecimiento podría resultar complicado. En el caso de las
+estaciones en estado “Regular”, aunque no se encontraban en operación al
+momento de realizarse el levantamiento en 2019, su restablecimiento
+requería una inversión muy pequeña. Finalmente, las estaciones en estado
+“Bueno” se encontraban en operación normal.
+
+A modo de actualización, según Israel Acosta, encargado del departamento
+de hidrología de INDRHI, se nos confirmó que el número de estaciones
+según cada categoría de estado, ha cambiado muy poco en años recientes.
+Añadió que se reportaron algunas incidencias en años recientes,
+relacionadas con la estabilidad del personal responsable en terreno.
+Acosta destacó además que una buena parte de las 24 estaciones en estado
+regular, continúan siendo recuperables actualmente con una mínima
+inversión.
+
+En cuanto a la localización de las estaciones, la tabla de las
+hidrométricas aportada por el INDRHI cuenta con dos pares columnas de
+coordenadas bajo las denominaciones Latitud, Longitud, Latitud
+Corregida, Longitud Corregida. El primer par contiene valores de lo que
+parecen ser coordenadas de falso norte y falso este en la proyección UTM
+(no se especifica datum, asumiremos WGS84), por lo que no se trata de
+coordenadas latitud/longitud. El segundo par, con el mismo nombre y
+sufijo “Corregida”, sugiere una mejora en la precisión, y sus
+coordenadas (mayoritariamente) están expresadas en sistema sexagesimal
+de latitud y longitud, aunque también hay algunas UTM entremezcladas.
+
+Para garantizar la consistencia de las coordenadas, escribimos una
+función, basada en expresiones regulares, que eligía de preferencia el
+par de coordenadas del grupo “Corregida”; si este par no estaba
+disponible, entonces elegía el par “normal”. Destacamos también que
+algunas estaciones no disponían de coordenadas de ninguna clase
+(e.g. estaciones N° 1, 105, 106, 116), y otras registraban valores
+claramente erróneos y no atribuibles a ningún sistema de referencia
+(e.g. estaciones N° 118, 119, 120). Nuestra función excluyó dichas
+estaciones del mapa y de los análisis posteriores. Todas las coordenadas
+fueron transformadas a sistema de coordenadas geográficas, WGS84
+(EPSG:4326). La tabla exhaustiva de las estaciones, conteniendo las
+coordenadas consolidadas y depuradas, se muestra a continuación.
+
+``` r
+coord_limpias <- bind_cols(lapply(
+  c('Latitud', 'Longitud', 'Latitud Corregida', 'Longitud Corregida'),
+  function(x)
+    limpiar_coord(
+      mi_vector = indrhi[[1]][,x, drop=T],
+      sufijo = ifelse(grepl('Corregida', x), 'correg', 'normal'))))
+coord_limpias$utm_x_consolidadas <- with(
+  data = coord_limpias,
+  expr = ifelse(is.na(utm_x_correg), utm_x_normal, utm_x_correg))
+coord_limpias$utm_y_consolidadas <- with(
+  data = coord_limpias,
+  expr = ifelse(is.na(utm_y_correg), utm_y_normal, utm_y_correg))
+indrhi_hidrometricas_coord_limpias <- cbind(indrhi[[1]], coord_limpias)
+
+indrhi_hidrometricas_final <- indrhi_hidrometricas_coord_limpias %>% 
+  select(`N°`, utm_x_consolidadas, utm_y_consolidadas) %>% 
+  na.omit %>% 
+  st_as_sf(coords = c('utm_x_consolidadas', 'utm_y_consolidadas'), crs = 32619) %>% 
+  st_transform(4326) %>% 
+  mutate(lon_dd_consolidadas = unlist(map(.$geometry, 1)),
+         lat_dd_consolidadas = unlist(map(.$geometry, 2))) %>% 
+  st_drop_geometry() %>% 
+  right_join(indrhi_hidrometricas_coord_limpias, by = 'N°') %>% 
+  mutate(lon_dd_consolidadas = ifelse(is.na(lon_dd_consolidadas), lon_dd_correg, lon_dd_consolidadas),
+         lat_dd_consolidadas = ifelse(is.na(lat_dd_consolidadas), lat_dd_correg, lat_dd_consolidadas)) %>% 
+  arrange(`N°`) %>% 
+  select(-(utm_x_normal:utm_y_consolidadas), -(Latitud:`Longitud Corregida`)) %>% 
+  relocate(matches('consolidadas'), .after = `Sub-cuenca`)
+indrhi_hidrometricas_final %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+N°
+</th>
+<th style="text-align:right;">
+Código
+</th>
+<th style="text-align:left;">
+Nombre de la estación
+</th>
+<th style="text-align:left;">
+Cuenca
+</th>
+<th style="text-align:left;">
+Sub-cuenca
+</th>
+<th style="text-align:right;">
+lon_dd_consolidadas
+</th>
+<th style="text-align:right;">
+lat_dd_consolidadas
+</th>
+<th style="text-align:right;">
+Altitud (m)
+</th>
+<th style="text-align:left;">
+Mira - Periodo de registro
+</th>
+<th style="text-align:left;">
+Estado
+</th>
+<th style="text-align:left;">
+Transmisión de datos
+</th>
+<th style="text-align:left;">
+Existe Curva de Gasto
+</th>
+<th style="text-align:left;">
+Observación
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Isabela
+</td>
+<td style="text-align:left;">
+Bajabonico
+</td>
+<td style="text-align:left;">
+Puerto plata
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+La garita esta en mala condiciones, el Oservador esta invalido
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+311001
+</td>
+<td style="text-align:left;">
+Batey Excabacion
+</td>
+<td style="text-align:left;">
+Higuamo
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:right;">
+-69.40147
+</td>
+<td style="text-align:right;">
+18.63061
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:left;">
+2015-2017
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+Incomp.
+</td>
+<td style="text-align:left;">
+el lugar se encuentra con maleza que fueron cortadas, y le falta la mira
+\#3,4,6,7,8,9
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+532001
+</td>
+<td style="text-align:left;">
+Puerto Escondido
+</td>
+<td style="text-align:left;">
+Lago Enriquillo
+</td>
+<td style="text-align:left;">
+Enriquillo/Río Las Damas
+</td>
+<td style="text-align:right;">
+-71.58066
+</td>
+<td style="text-align:right;">
+18.32454
+</td>
+<td style="text-align:right;">
+425
+</td>
+<td style="text-align:left;">
+1955-2019
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Falta de mantenimiento
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+El Millo
+</td>
+<td style="text-align:left;">
+Lago Enriquillo
+</td>
+<td style="text-align:left;">
+Río Majagual/Enriquillo
+</td>
+<td style="text-align:right;">
+-71.34922
+</td>
+<td style="text-align:right;">
+18.54715
+</td>
+<td style="text-align:right;">
+80
+</td>
+<td style="text-align:left;">
+1984-2002
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+230001
+</td>
+<td style="text-align:left;">
+Anamuya
+</td>
+<td style="text-align:left;">
+Rio Anamuya
+</td>
+<td style="text-align:left;">
+Anamuya
+</td>
+<td style="text-align:right;">
+-68.64482
+</td>
+<td style="text-align:right;">
+18.69947
+</td>
+<td style="text-align:right;">
+68
+</td>
+<td style="text-align:left;">
+2015-2017
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+Incomp.
+</td>
+<td style="text-align:left;">
+La estación hidrométrica solo están las bases de las miras, no tienen
+limnimetro.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+45001
+</td>
+<td style="text-align:left;">
+Rinconcito
+</td>
+<td style="text-align:left;">
+Rio Artibonito
+</td>
+<td style="text-align:left;">
+Artibonito/Río Macasias
+</td>
+<td style="text-align:right;">
+-71.76762
+</td>
+<td style="text-align:right;">
+18.95801
+</td>
+<td style="text-align:right;">
+268
+</td>
+<td style="text-align:left;">
+1955-2018
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Instrumentos descalibrados, Irresponsabilidad de los lectores y poca
+supervision
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Sonador
+</td>
+<td style="text-align:left;">
+Rio Artibonito
+</td>
+<td style="text-align:left;">
+Artibonito/Río Sonador
+</td>
+<td style="text-align:right;">
+-71.57687
+</td>
+<td style="text-align:right;">
+18.70537
+</td>
+<td style="text-align:right;">
+760
+</td>
+<td style="text-align:left;">
+1972-2013
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+No tiene lector de mira, fue pensionado: La mira esta en perfecta
+condición.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+543001
+</td>
+<td style="text-align:left;">
+Puertecito
+</td>
+<td style="text-align:left;">
+Rio Artibonito
+</td>
+<td style="text-align:left;">
+Artibonito/Río Macasias
+</td>
+<td style="text-align:right;">
+-71.50987
+</td>
+<td style="text-align:right;">
+18.80093
+</td>
+<td style="text-align:right;">
+605
+</td>
+<td style="text-align:left;">
+1955-2017
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Aun se puede considerar de utilidad, porque aun están funcionando y
+reportando
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+542001
+</td>
+<td style="text-align:left;">
+Cajuilito
+</td>
+<td style="text-align:left;">
+Rio Artibonito
+</td>
+<td style="text-align:left;">
+Artibonito/Río Tocino
+</td>
+<td style="text-align:right;">
+-71.59966
+</td>
+<td style="text-align:right;">
+19.08263
+</td>
+<td style="text-align:right;">
+456
+</td>
+<td style="text-align:left;">
+1978-2019
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Aun se puede considerar de utilidad, porque aun están funcionando y
+reportando
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+543002
+</td>
+<td style="text-align:left;">
+Ranchitos
+</td>
+<td style="text-align:left;">
+Rio Artibonito
+</td>
+<td style="text-align:left;">
+Artibonito/Río Macasias
+</td>
+<td style="text-align:right;">
+-71.61729
+</td>
+<td style="text-align:right;">
+18.93246
+</td>
+<td style="text-align:right;">
+380
+</td>
+<td style="text-align:left;">
+1955-2019
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+La Sección de mira hay que cambiarla porque cambio sus cauces. Datos no
+son reales.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+543101
+</td>
+<td style="text-align:left;">
+Pozo Hondo
+</td>
+<td style="text-align:left;">
+Rio Artibonito
+</td>
+<td style="text-align:left;">
+Artibonito/Río Yacahueque
+</td>
+<td style="text-align:right;">
+-71.48591
+</td>
+<td style="text-align:right;">
+19.01005
+</td>
+<td style="text-align:right;">
+315
+</td>
+<td style="text-align:left;">
+1964-2019
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+El muro esta en mala condiciones, La lectora de mira esta enferama
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+540002
+</td>
+<td style="text-align:left;">
+Pedro Santana
+</td>
+<td style="text-align:left;">
+Rio Artibonito
+</td>
+<td style="text-align:left;">
+Río Artibonito
+</td>
+<td style="text-align:right;">
+-71.69024
+</td>
+<td style="text-align:right;">
+19.10257
+</td>
+<td style="text-align:right;">
+278
+</td>
+<td style="text-align:left;">
+1956-2019
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+La mira 3 no tene regla
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+El Estrecho
+</td>
+<td style="text-align:left;">
+Rio Bajabonico
+</td>
+<td style="text-align:left;">
+Bajabonico
+</td>
+<td style="text-align:right;">
+-70.94147
+</td>
+<td style="text-align:right;">
+19.80553
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:left;">
+1956-1965
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+60001
+</td>
+<td style="text-align:left;">
+Imbert
+</td>
+<td style="text-align:left;">
+Rio Bajabonico
+</td>
+<td style="text-align:left;">
+Bajabonico
+</td>
+<td style="text-align:right;">
+-70.82714
+</td>
+<td style="text-align:right;">
+19.29927
+</td>
+<td style="text-align:right;">
+123
+</td>
+<td style="text-align:left;">
+1955-1993
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Faltan las miras 0,1 y 2. Además no tiene observador.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+400001
+</td>
+<td style="text-align:left;">
+El Recodo
+</td>
+<td style="text-align:left;">
+Rio Bani
+</td>
+<td style="text-align:left;">
+Río Baní
+</td>
+<td style="text-align:right;">
+-70.33945
+</td>
+<td style="text-align:right;">
+18.37361
+</td>
+<td style="text-align:right;">
+230
+</td>
+<td style="text-align:left;">
+1979-2006
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+La estacion ya no existe por crecida del rio bani.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Los Jengibres
+</td>
+<td style="text-align:left;">
+Rio Boba
+</td>
+<td style="text-align:left;">
+Boba/Boba
+</td>
+<td style="text-align:right;">
+-70.04242
+</td>
+<td style="text-align:right;">
+19.44386
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:left;">
+1968-2013
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Las miras se deslizaron.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+La Pinta
+</td>
+<td style="text-align:left;">
+Rio Chacuey
+</td>
+<td style="text-align:left;">
+Chacuey/Chacuey
+</td>
+<td style="text-align:right;">
+-71.55150
+</td>
+<td style="text-align:right;">
+19.64413
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:left;">
+1964-1978
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Manabao
+</td>
+<td style="text-align:left;">
+Rio Chacuey
+</td>
+<td style="text-align:left;">
+Yaque del Norte
+</td>
+<td style="text-align:right;">
+-70.78760
+</td>
+<td style="text-align:right;">
+19.07700
+</td>
+<td style="text-align:right;">
+865
+</td>
+<td style="text-align:left;">
+1963-2001
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+La Espensa
+</td>
+<td style="text-align:left;">
+Rio Chacuey
+</td>
+<td style="text-align:left;">
+Chacuey/Chacuey
+</td>
+<td style="text-align:right;">
+-71.55428
+</td>
+<td style="text-align:right;">
+19.57802
+</td>
+<td style="text-align:right;">
+80
+</td>
+<td style="text-align:left;">
+1977-1993
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Le falta la mira 1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+260001
+</td>
+<td style="text-align:left;">
+Santa Lucía
+</td>
+<td style="text-align:left;">
+Rio Chavón
+</td>
+<td style="text-align:left;">
+Río Chavón
+</td>
+<td style="text-align:right;">
+-68.93690
+</td>
+<td style="text-align:right;">
+18.68206
+</td>
+<td style="text-align:right;">
+77
+</td>
+<td style="text-align:left;">
+1956-2001
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Es necesario reubicar la estación, la sección esta en malas condiciones.
+La caseta no tiene limnigrafo, las miras fueron derribadas por crecida
+del rio.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+240001
+</td>
+<td style="text-align:left;">
+El Mamey
+</td>
+<td style="text-align:left;">
+Rio Haina
+</td>
+<td style="text-align:left;">
+Río Duey
+</td>
+<td style="text-align:right;">
+-68.75111
+</td>
+<td style="text-align:right;">
+18.66878
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+1968-2019
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Aun se puede considerar de utilidad, porque aun están funcionando y
+reportando
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:right;">
+340004
+</td>
+<td style="text-align:left;">
+Los Corozos
+</td>
+<td style="text-align:left;">
+Rio Haina
+</td>
+<td style="text-align:left;">
+Río Haina
+</td>
+<td style="text-align:right;">
+-70.12344
+</td>
+<td style="text-align:right;">
+18.52466
+</td>
+<td style="text-align:right;">
+63
+</td>
+<td style="text-align:left;">
+1982-2007
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+La estacion no existe por crecida del Rio Haina, el observador fallecio.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:right;">
+10001
+</td>
+<td style="text-align:left;">
+Don Miguel
+</td>
+<td style="text-align:left;">
+Rio Masacre
+</td>
+<td style="text-align:left;">
+Masacre/Masacre
+</td>
+<td style="text-align:right;">
+-71.68351
+</td>
+<td style="text-align:right;">
+19.49365
+</td>
+<td style="text-align:right;">
+83
+</td>
+<td style="text-align:left;">
+1955-2019
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Aun se puede considerar de utilidad, porque aun están funcionando y
+reportando
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Carbonera
+</td>
+<td style="text-align:left;">
+Rio Masacre
+</td>
+<td style="text-align:left;">
+Masacre/Guajabo
+</td>
+<td style="text-align:right;">
+-71.69400
+</td>
+<td style="text-align:right;">
+19.59052
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:left;">
+1964-1967
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+La Aduana
+</td>
+<td style="text-align:left;">
+Rio Masacre
+</td>
+<td style="text-align:left;">
+Masacre/Masacre
+</td>
+<td style="text-align:right;">
+-71.71141
+</td>
+<td style="text-align:right;">
+19.54847
+</td>
+<td style="text-align:right;">
+42
+</td>
+<td style="text-align:left;">
+1980-1999
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+26
+</td>
+<td style="text-align:right;">
+160003
+</td>
+<td style="text-align:left;">
+Cinta Negra
+</td>
+<td style="text-align:left;">
+Rio Nagua
+</td>
+<td style="text-align:left;">
+Nagua/Nagua
+</td>
+<td style="text-align:right;">
+-69.96343
+</td>
+<td style="text-align:right;">
+19.28035
+</td>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:left;">
+1980-2018
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Este observador abandono y dejo un sustituto, pero ese sustituto también
+se fue hace 2 años. Por la apariencia de la caseta, puede ser que este
+limnigrafo no este funcionando hace mucho tiempo.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Villa Nizao
+</td>
+<td style="text-align:left;">
+Rio Nizaito
+</td>
+<td style="text-align:left;">
+Nizaito
+</td>
+<td style="text-align:right;">
+-71.18576
+</td>
+<td style="text-align:right;">
+18.01662
+</td>
+<td style="text-align:right;">
+121
+</td>
+<td style="text-align:left;">
+1955-1998
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+380011
+</td>
+<td style="text-align:left;">
+Bocaina
+</td>
+<td style="text-align:left;">
+Rio Nizao
+</td>
+<td style="text-align:left;">
+Río Nizao
+</td>
+<td style="text-align:right;">
+-70.47316
+</td>
+<td style="text-align:right;">
+18.67280
+</td>
+<td style="text-align:right;">
+662
+</td>
+<td style="text-align:left;">
+1980-2019
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Existen dos casetas una con limnigrafo no funciona, y la otra para
+telemétrica no tiene ningún equipo por vandalismo. Estación hidrométrica
+con 4 bases. Solo tiene las miras 0 y 1, faltan las 2 y 3.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+29
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Jiguey
+</td>
+<td style="text-align:left;">
+Rio Nizao
+</td>
+<td style="text-align:left;">
+Rio Nizao
+</td>
+<td style="text-align:right;">
+-70.37745
+</td>
+<td style="text-align:right;">
+18.54599
+</td>
+<td style="text-align:right;">
+573
+</td>
+<td style="text-align:left;">
+2015-2017
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+Incomp.
+</td>
+<td style="text-align:left;">
+Caseta no tiene candado ni batería.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Aguacate
+</td>
+<td style="text-align:left;">
+Rio Nizao
+</td>
+<td style="text-align:left;">
+Rio Nizao
+</td>
+<td style="text-align:right;">
+-70.32149
+</td>
+<td style="text-align:right;">
+18.49588
+</td>
+<td style="text-align:right;">
+347
+</td>
+<td style="text-align:left;">
+2015-2017
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+Incomp.
+</td>
+<td style="text-align:left;">
+Caseta sin candado no tiene batería.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+332321
+</td>
+<td style="text-align:left;">
+El Salto
+</td>
+<td style="text-align:left;">
+Rio Ozama
+</td>
+<td style="text-align:left;">
+Comatillo
+</td>
+<td style="text-align:right;">
+-69.60801
+</td>
+<td style="text-align:right;">
+18.83988
+</td>
+<td style="text-align:right;">
+144
+</td>
+<td style="text-align:left;">
+2015-2017
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+Incomp.
+</td>
+<td style="text-align:left;">
+Sección de miras en buenas condiciones. No tiene observador(Cancelado)
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+32
+</td>
+<td style="text-align:right;">
+333101
+</td>
+<td style="text-align:left;">
+El Higuero
+</td>
+<td style="text-align:left;">
+Rio Ozama
+</td>
+<td style="text-align:left;">
+Río Higuero
+</td>
+<td style="text-align:right;">
+-69.99933
+</td>
+<td style="text-align:right;">
+18.61658
+</td>
+<td style="text-align:right;">
+49
+</td>
+<td style="text-align:left;">
+1959-1985
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+La estacion hidrometrica no existe por crecida del Rio Higuero, es
+necesario reinstalar.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+33
+</td>
+<td style="text-align:right;">
+330001
+</td>
+<td style="text-align:left;">
+Don Juan
+</td>
+<td style="text-align:left;">
+Rio Ozama
+</td>
+<td style="text-align:left;">
+Rio Ozama
+</td>
+<td style="text-align:right;">
+-69.95100
+</td>
+<td style="text-align:right;">
+18.81812
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+2015-2017
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+Incomp.
+</td>
+<td style="text-align:left;">
+El rio cambio de cauce a unos 30 metros de la estación hidrométrica, es
+necesario reubicar la estación.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+332101
+</td>
+<td style="text-align:left;">
+Los Hidalgos
+</td>
+<td style="text-align:left;">
+Rio Ozama
+</td>
+<td style="text-align:left;">
+Rio Sabana
+</td>
+<td style="text-align:right;">
+-69.66440
+</td>
+<td style="text-align:right;">
+18.87713
+</td>
+<td style="text-align:right;">
+178
+</td>
+<td style="text-align:left;">
+2015-2017
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Telemetría Satelital
+</td>
+<td style="text-align:left;">
+Incomp.
+</td>
+<td style="text-align:left;">
+Sección de miras en condiciones precaria, se recomienda reubicar la
+estación. No tiene observador (Falleció)
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+331001
+</td>
+<td style="text-align:left;">
+El Cacique
+</td>
+<td style="text-align:left;">
+Rio Ozama
+</td>
+<td style="text-align:left;">
+Río Savita
+</td>
+<td style="text-align:right;">
+-69.86123
+</td>
+<td style="text-align:right;">
+18.81733
+</td>
+<td style="text-align:right;">
+37
+</td>
+<td style="text-align:left;">
+1955-2014
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Hay que Reinstalar la mira 1,2. estan Dañadas(observador pencionado )
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+36
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Valle de Samaná
+</td>
+<td style="text-align:left;">
+Rio San Juan
+</td>
+<td style="text-align:left;">
+San Juan/San Juan
+</td>
+<td style="text-align:right;">
+-69.33747
+</td>
+<td style="text-align:right;">
+19.26323
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:left;">
+1980-2013
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Instrumentos descalibrados, Irresponsabilidad de los lectores y poca
+supervisión
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+37
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+San Rafael I
+</td>
+<td style="text-align:left;">
+Rio San Rafael
+</td>
+<td style="text-align:left;">
+Río San Rafael
+</td>
+<td style="text-align:right;">
+-71.13787
+</td>
+<td style="text-align:right;">
+18.02911
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+1956-2013
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Instrumentos descalibrados, Irresponsabilidad de los lectores y poca
+supervisión
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+38
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+San Rafael II
+</td>
+<td style="text-align:left;">
+Rio San Rafael
+</td>
+<td style="text-align:left;">
+Río San Rafael
+</td>
+<td style="text-align:right;">
+-71.14120
+</td>
+<td style="text-align:right;">
+18.03241
+</td>
+<td style="text-align:right;">
+185
+</td>
+<td style="text-align:left;">
+1980-2013
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Instrumentos descalibrados, Irresponsabilidad de los lectores y poca
+supervisión
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+San Rafael
+</td>
+<td style="text-align:left;">
+Rio San Rafael
+</td>
+<td style="text-align:left;">
+Río San Rafael/Majagual
+</td>
+<td style="text-align:right;">
+-71.14116
+</td>
+<td style="text-align:right;">
+18.03042
+</td>
+<td style="text-align:right;">
+156
+</td>
+<td style="text-align:left;">
+1980-2013
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Instrumentos descalibrados, Irresponsabilidad de los lectores y poca
+supervisión
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+300002
+</td>
+<td style="text-align:left;">
+Paso al Medio
+</td>
+<td style="text-align:left;">
+Rio Soco
+</td>
+<td style="text-align:left;">
+Río Soco
+</td>
+<td style="text-align:right;">
+-69.17193
+</td>
+<td style="text-align:right;">
+18.56742
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:left;">
+1957-2018
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+hay que re instalar la mira 1,2,3,4 se la llevo la crecida del rio.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+41
+</td>
+<td style="text-align:right;">
+47002
+</td>
+<td style="text-align:left;">
+Santa Cruz
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Y.del B./Maguaca
+</td>
+<td style="text-align:right;">
+-71.52177
+</td>
+<td style="text-align:right;">
+19.62386
+</td>
+<td style="text-align:right;">
+47
+</td>
+<td style="text-align:left;">
+1964-1978
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Falta la mira \#5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+42
+</td>
+<td style="text-align:right;">
+45501
+</td>
+<td style="text-align:left;">
+Puente Guayubin
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Yaque del Norte
+</td>
+<td style="text-align:right;">
+-71.39816
+</td>
+<td style="text-align:right;">
+19.66163
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:left;">
+1960-1966
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+No hay observador
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+43
+</td>
+<td style="text-align:right;">
+42006
+</td>
+<td style="text-align:left;">
+Sabaneta
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Y. del N./Bao
+</td>
+<td style="text-align:right;">
+-70.97864
+</td>
+<td style="text-align:right;">
+19.54565
+</td>
+<td style="text-align:right;">
+767
+</td>
+<td style="text-align:left;">
+1980-2018
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Falta la mira \#0 , observador con edad avanzada
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+44
+</td>
+<td style="text-align:right;">
+42801
+</td>
+<td style="text-align:left;">
+La Fortaleza
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Y.del N/Janico
+</td>
+<td style="text-align:right;">
+-70.83344
+</td>
+<td style="text-align:right;">
+19.04703
+</td>
+<td style="text-align:right;">
+407
+</td>
+<td style="text-align:left;">
+1982-2019
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Solo le falta la \#0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+45
+</td>
+<td style="text-align:right;">
+40008
+</td>
+<td style="text-align:left;">
+Puente San Rafael
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Yaque del Norte
+</td>
+<td style="text-align:right;">
+-71.05942
+</td>
+<td style="text-align:right;">
+19.58971
+</td>
+<td style="text-align:right;">
+62
+</td>
+<td style="text-align:left;">
+1958-2017
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Mira 5 esta Gastada
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+46
+</td>
+<td style="text-align:right;">
+40020
+</td>
+<td style="text-align:left;">
+Peña Ranchadero
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Yaque del Norte
+</td>
+<td style="text-align:right;">
+-71.32977
+</td>
+<td style="text-align:right;">
+19.65942
+</td>
+<td style="text-align:right;">
+49
+</td>
+<td style="text-align:left;">
+1977-2018
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Aun se puede considerar de utilidad, porque aun están funcionando y
+reportando
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+47
+</td>
+<td style="text-align:right;">
+43001
+</td>
+<td style="text-align:left;">
+Inoa
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Y. del N/Inoa
+</td>
+<td style="text-align:right;">
+-70.95897
+</td>
+<td style="text-align:right;">
+19.32357
+</td>
+<td style="text-align:right;">
+331
+</td>
+<td style="text-align:left;">
+1967-1995
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Quien hace la observación es la sobrina.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+48
+</td>
+<td style="text-align:right;">
+40017
+</td>
+<td style="text-align:left;">
+Boma
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Yaque del Norte
+</td>
+<td style="text-align:right;">
+-70.66224
+</td>
+<td style="text-align:right;">
+19.16861
+</td>
+<td style="text-align:right;">
+450
+</td>
+<td style="text-align:left;">
+1971-2017
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Aun se puede considerar de utilidad, porque aun están funcionando y
+reportando
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+49
+</td>
+<td style="text-align:right;">
+40007
+</td>
+<td style="text-align:left;">
+Jinamagao
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Yaque del Norte
+</td>
+<td style="text-align:right;">
+-70.98202
+</td>
+<td style="text-align:right;">
+19.54277
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+1960-2019
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Aun se puede considerar de utilidad, porque aun están funcionando y
+reportando
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+41202
+</td>
+<td style="text-align:left;">
+Jarabacoa
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Y. del N./Arroyo Cercado
+</td>
+<td style="text-align:right;">
+-70.67840
+</td>
+<td style="text-align:right;">
+19.08357
+</td>
+<td style="text-align:right;">
+510
+</td>
+<td style="text-align:left;">
+1964-1967
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Esta estacion hay que reacerla completa
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:right;">
+40010
+</td>
+<td style="text-align:left;">
+Palo verde
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Yaque del Norte
+</td>
+<td style="text-align:right;">
+-71.55546
+</td>
+<td style="text-align:right;">
+19.75778
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:left;">
+1959-1995
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo fisico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Las crecidas del rio destruyeron la estacion, debe ser recontruida.
+Tiene un observador nombrado
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+52
+</td>
+<td style="text-align:right;">
+41740
+</td>
+<td style="text-align:left;">
+Mata Grande
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Y. del N./Antonsape Bueno
+</td>
+<td style="text-align:right;">
+-70.99611
+</td>
+<td style="text-align:right;">
+19.19532
+</td>
+<td style="text-align:right;">
+910
+</td>
+<td style="text-align:left;">
+1981-2019
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+Esta estación se encuentra en mal estado.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:right;">
+45301
+</td>
+<td style="text-align:left;">
+Cana Chapetón
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+Y. Del N./Cana
+</td>
+<td style="text-align:right;">
+-71.25967
+</td>
+<td style="text-align:right;">
+19.59789
+</td>
+<td style="text-align:right;">
+65
+</td>
+<td style="text-align:left;">
+1959-1966
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Correo físico: planilla en papel, mensual
+</td>
+<td style="text-align:left;">
+si
+</td>
+<td style="text-align:left;">
+El rio arrastro la mira.
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:right;">
+42203
+</td>
+<td style="text-align:left;">
+Bejucal
+</td>
+<td style="text-align:left;">
+Rio Yaque del Norte
+</td>
+<td style="text-align:left;">
+
+25. del N./Guajuma
+    </td>
+    <td style="text-align:right;">
+    -70.73507
+    </td>
+    <td style="text-align:right;">
+    19.18246
+    </td>
+    <td style="text-align:right;">
+    707
+    </td>
+    <td style="text-align:left;">
+    1981-2000
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Estacion destruida totalmente.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    55
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Rincón
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. Del N./Guayubín
+    </td>
+    <td style="text-align:right;">
+    -71.38663
+    </td>
+    <td style="text-align:right;">
+    19.52613
+    </td>
+    <td style="text-align:right;">
+    128
+    </td>
+    <td style="text-align:left;">
+    1964-1995
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    56
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    La Antona
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. Del N./Guayubín
+    </td>
+    <td style="text-align:right;">
+    -71.40289
+    </td>
+    <td style="text-align:right;">
+    19.63025
+    </td>
+    <td style="text-align:right;">
+    38
+    </td>
+    <td style="text-align:left;">
+    1955-1966
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    57
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Inaje
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. Del N./Inaje
+    </td>
+    <td style="text-align:right;">
+    -71.46927
+    </td>
+    <td style="text-align:right;">
+    19.42135
+    </td>
+    <td style="text-align:right;">
+    162
+    </td>
+    <td style="text-align:left;">
+    1960-1961
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    58
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Jicomé
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. Del N./Jicomé
+    </td>
+    <td style="text-align:right;">
+    -70.94842
+    </td>
+    <td style="text-align:right;">
+    19.62802
+    </td>
+    <td style="text-align:right;">
+    121
+    </td>
+    <td style="text-align:left;">
+    1957-1958
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    59
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    La Gorra
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. Del N./Maguaca
+    </td>
+    <td style="text-align:right;">
+    -71.49482
+    </td>
+    <td style="text-align:right;">
+    19.51830
+    </td>
+    <td style="text-align:right;">
+    112
+    </td>
+    <td style="text-align:left;">
+    1977-1977
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    60
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Bulla
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. Del N./Mao
+    </td>
+    <td style="text-align:right;">
+    -71.07707
+    </td>
+    <td style="text-align:right;">
+    19.41982
+    </td>
+    <td style="text-align:right;">
+    295
+    </td>
+    <td style="text-align:left;">
+    1967-2001
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    61
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Chorrera
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. Del N./Mao
+    </td>
+    <td style="text-align:right;">
+    -71.08481
+    </td>
+    <td style="text-align:right;">
+    19.46413
+    </td>
+    <td style="text-align:right;">
+    108
+    </td>
+    <td style="text-align:left;">
+    1957-1967
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    62
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Martínez
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. Del N./Mao
+    </td>
+    <td style="text-align:right;">
+    -71.07953
+    </td>
+    <td style="text-align:right;">
+    19.47052
+    </td>
+    <td style="text-align:right;">
+    103
+    </td>
+    <td style="text-align:left;">
+    1956-1965
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    63
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Mata de Jobo
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. Del N./Yaguajai
+    </td>
+    <td style="text-align:right;">
+    -71.33121
+    </td>
+    <td style="text-align:right;">
+    19.46497
+    </td>
+    <td style="text-align:right;">
+    108
+    </td>
+    <td style="text-align:left;">
+    1955-1965
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    64
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Manabao
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. del N./Arroyo Grande
+    </td>
+    <td style="text-align:right;">
+    -70.78987
+    </td>
+    <td style="text-align:right;">
+    19.06973
+    </td>
+    <td style="text-align:right;">
+    901
+    </td>
+    <td style="text-align:left;">
+    1955-1979
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    65
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Paso Bajito
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. Del N./Baiguate
+    </td>
+    <td style="text-align:right;">
+    -70.66399
+    </td>
+    <td style="text-align:right;">
+    19.01495
+    </td>
+    <td style="text-align:right;">
+    982
+    </td>
+    <td style="text-align:left;">
+    1981-2013
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Instrumentos descalibrados, Irresponsabilidad de los lectores y poca
+    supervisión
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    66
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Bao
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. del N./Bao
+    </td>
+    <td style="text-align:right;">
+    -70.79702
+    </td>
+    <td style="text-align:right;">
+    19.30579
+    </td>
+    <td style="text-align:right;">
+    308
+    </td>
+    <td style="text-align:left;">
+    1955-1979
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    67
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Sabana Iglesia
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. del N./Bao
+    </td>
+    <td style="text-align:right;">
+    -70.74619
+    </td>
+    <td style="text-align:right;">
+    19.31413
+    </td>
+    <td style="text-align:right;">
+    230
+    </td>
+    <td style="text-align:left;">
+    1967-1980
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    68
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    El Puente
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+    Y. del N./Dicayagua
+    </td>
+    <td style="text-align:right;">
+    -70.76563
+    </td>
+    <td style="text-align:right;">
+    19.45218
+    </td>
+    <td style="text-align:right;">
+    143
+    </td>
+    <td style="text-align:left;">
+    19774-1984
+    </td>
+    <td style="text-align:left;">
+    Malo
+    </td>
+    <td style="text-align:left;">
+    Correo físico: planilla en papel, mensual
+    </td>
+    <td style="text-align:left;">
+    si
+    </td>
+    <td style="text-align:left;">
+    Las crecidas del rio destruyeron la estación, debe ser reconstruida.
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:right;">
+    69
+    </td>
+    <td style="text-align:right;">
+    </td>
+    <td style="text-align:left;">
+    Guanajuma
+    </td>
+    <td style="text-align:left;">
+    Rio Yaque del Norte
+    </td>
+    <td style="text-align:left;">
+
+    25. del N./Guajuma
+        </td>
+        <td style="text-align:right;">
+        -70.74535
+        </td>
+        <td style="text-align:right;">
+        19.28108
+        </td>
+        <td style="text-align:right;">
+        315
+        </td>
+        <td style="text-align:left;">
+        1967-1979
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        70
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Jamamú
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N./Jamamu
+        </td>
+        <td style="text-align:right;">
+        -70.93344
+        </td>
+        <td style="text-align:right;">
+        19.19440
+        </td>
+        <td style="text-align:right;">
+        707
+        </td>
+        <td style="text-align:left;">
+        1981-1995
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Instrumentos descalibrados, Irresponsabilidad de los lectores y
+        poca supervisión
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        71
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Jamamú
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N./Jamamu
+        </td>
+        <td style="text-align:right;">
+        -70.93344
+        </td>
+        <td style="text-align:right;">
+        19.19440
+        </td>
+        <td style="text-align:right;">
+        707
+        </td>
+        <td style="text-align:left;">
+        1981-1995
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        72
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Casa de Máquina
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N./jimenoa
+        </td>
+        <td style="text-align:right;">
+        -70.59787
+        </td>
+        <td style="text-align:right;">
+        19.09892
+        </td>
+        <td style="text-align:right;">
+        602
+        </td>
+        <td style="text-align:left;">
+        1981-1987
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        73
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Hato Viejo
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N./jimenoa
+        </td>
+        <td style="text-align:right;">
+        -70.63414
+        </td>
+        <td style="text-align:right;">
+        19.13474
+        </td>
+        <td style="text-align:right;">
+        542
+        </td>
+        <td style="text-align:left;">
+        1955-1995
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        74
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Pinalito
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N/ Jagua
+        </td>
+        <td style="text-align:right;">
+        -70.75897
+        </td>
+        <td style="text-align:right;">
+        19.29524
+        </td>
+        <td style="text-align:right;">
+        283
+        </td>
+        <td style="text-align:left;">
+        1955-1979
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        75
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Potrero
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N/Amina
+        </td>
+        <td style="text-align:right;">
+        -70.96008
+        </td>
+        <td style="text-align:right;">
+        19.46969
+        </td>
+        <td style="text-align:right;">
+        115
+        </td>
+        <td style="text-align:left;">
+        1955-1967
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        76
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Paso de la Perra
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.83966
+        </td>
+        <td style="text-align:right;">
+        19.07752
+        </td>
+        <td style="text-align:right;">
+        960
+        </td>
+        <td style="text-align:left;">
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        77
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Pinar Quemado
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.66513
+        </td>
+        <td style="text-align:right;">
+        19.09502
+        </td>
+        <td style="text-align:right;">
+        614
+        </td>
+        <td style="text-align:left;">
+        1955-2001
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        78
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Los Velazquitos
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.67757
+        </td>
+        <td style="text-align:right;">
+        19.21274
+        </td>
+        <td style="text-align:right;">
+        375
+        </td>
+        <td style="text-align:left;">
+        1981-1994
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        79
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Tavera
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.71535
+        </td>
+        <td style="text-align:right;">
+        19.26135
+        </td>
+        <td style="text-align:right;">
+        375
+        </td>
+        <td style="text-align:left;">
+        1964-1971
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        80
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Baitoa
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.70896
+        </td>
+        <td style="text-align:right;">
+        19.32774
+        </td>
+        <td style="text-align:right;">
+        215
+        </td>
+        <td style="text-align:left;">
+        1957-1966
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        81
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Baitoa
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.70896
+        </td>
+        <td style="text-align:right;">
+        19.32774
+        </td>
+        <td style="text-align:right;">
+        215
+        </td>
+        <td style="text-align:left;">
+        1957-1966
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        82
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        López
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.71118
+        </td>
+        <td style="text-align:right;">
+        19.33413
+        </td>
+        <td style="text-align:right;">
+        190
+        </td>
+        <td style="text-align:left;">
+        1961-1966
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        83
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        López
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.71118
+        </td>
+        <td style="text-align:right;">
+        19.33413
+        </td>
+        <td style="text-align:right;">
+        190
+        </td>
+        <td style="text-align:left;">
+        1961-1966
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        84
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Las Charcas
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.71396
+        </td>
+        <td style="text-align:right;">
+        19.40857
+        </td>
+        <td style="text-align:right;">
+        164
+        </td>
+        <td style="text-align:left;">
+        1967-1992
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        85
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Pte. Viejo Santiago
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.71174
+        </td>
+        <td style="text-align:right;">
+        19.43107
+        </td>
+        <td style="text-align:right;">
+        149
+        </td>
+        <td style="text-align:left;">
+        1972-1975
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        86
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Pte. Viejo Santiago
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.71174
+        </td>
+        <td style="text-align:right;">
+        19.43107
+        </td>
+        <td style="text-align:right;">
+        149
+        </td>
+        <td style="text-align:left;">
+        1972-1975
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        87
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Santiago
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.70313
+        </td>
+        <td style="text-align:right;">
+        19.44135
+        </td>
+        <td style="text-align:right;">
+        150
+        </td>
+        <td style="text-align:left;">
+        1955-1966
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        88
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Santiago
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.70313
+        </td>
+        <td style="text-align:right;">
+        19.44135
+        </td>
+        <td style="text-align:right;">
+        150
+        </td>
+        <td style="text-align:left;">
+        1955-1966
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        89
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Hato Yaque
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.79619
+        </td>
+        <td style="text-align:right;">
+        19.50580
+        </td>
+        <td style="text-align:right;">
+        120
+        </td>
+        <td style="text-align:left;">
+        1967-1971
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        90
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Cañeo
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -70.98314
+        </td>
+        <td style="text-align:right;">
+        19.54247
+        </td>
+        <td style="text-align:right;">
+        80
+        </td>
+        <td style="text-align:left;">
+        1967-1989
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        91
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Jicome
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -71.14731
+        </td>
+        <td style="text-align:right;">
+        19.62497
+        </td>
+        <td style="text-align:right;">
+        45
+        </td>
+        <td style="text-align:left;">
+        1967-1974
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        92
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        La Caña
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -71.52538
+        </td>
+        <td style="text-align:right;">
+        19.62247
+        </td>
+        <td style="text-align:right;">
+        44
+        </td>
+        <td style="text-align:left;">
+        1959-1966
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        93
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Dique Juan Gómez
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Yaque del Norte
+        </td>
+        <td style="text-align:right;">
+        -71.41705
+        </td>
+        <td style="text-align:right;">
+        19.68913
+        </td>
+        <td style="text-align:right;">
+        23
+        </td>
+        <td style="text-align:left;">
+        1975-1994
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Las crecidas del rio destruyeron la estación, debe ser
+        reconstruida.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        94
+        </td>
+        <td style="text-align:right;">
+        42102
+        </td>
+        <td style="text-align:left;">
+        El Higuero
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N/ Jagua
+        </td>
+        <td style="text-align:right;">
+        -70.83769
+        </td>
+        <td style="text-align:right;">
+        19.24795
+        </td>
+        <td style="text-align:right;">
+        485
+        </td>
+        <td style="text-align:left;">
+        1979-2019
+        </td>
+        <td style="text-align:left;">
+        Malo
+        </td>
+        <td style="text-align:left;">
+        Telemetría Satelital
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Estacion Satelital esta cerrada por fuera. Faltan antenas, panel
+        y sensores del rio.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        95
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Redondo
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N./jimenoa
+        </td>
+        <td style="text-align:right;">
+        -70.58389
+        </td>
+        <td style="text-align:right;">
+        19.02863
+        </td>
+        <td style="text-align:right;">
+        996
+        </td>
+        <td style="text-align:left;">
+        1981-1993
+        </td>
+        <td style="text-align:left;">
+        Regular
+        </td>
+        <td style="text-align:left;">
+        Correo fisico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Falta la mira \#4 y esta tamado de maleza
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        96
+        </td>
+        <td style="text-align:right;">
+        42005
+        </td>
+        <td style="text-align:left;">
+        Aguas Caliente
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N./Bao
+        </td>
+        <td style="text-align:right;">
+        -70.89814
+        </td>
+        <td style="text-align:right;">
+        19.24524
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        1979-1987
+        </td>
+        <td style="text-align:left;">
+        Regular
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Faltan las miras 0 y 1.
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        97
+        </td>
+        <td style="text-align:right;">
+        183101
+        </td>
+        <td style="text-align:left;">
+        Pinalito
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N/ Jagua
+        </td>
+        <td style="text-align:right;">
+        -70.75897
+        </td>
+        <td style="text-align:right;">
+        19.29524
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        1955-2019
+        </td>
+        <td style="text-align:left;">
+        Regular
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Aun se puede considerar de utilidad, porque aun están
+        funcionando y reportando
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        98
+        </td>
+        <td style="text-align:right;">
+        43001
+        </td>
+        <td style="text-align:left;">
+        Inoa
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N/Amina
+        </td>
+        <td style="text-align:right;">
+        -70.98300
+        </td>
+        <td style="text-align:right;">
+        19.35222
+        </td>
+        <td style="text-align:right;">
+        348
+        </td>
+        <td style="text-align:left;">
+        1967-2017
+        </td>
+        <td style="text-align:left;">
+        Regular
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Aun se puede considerar de utilidad, porque aun están
+        funcionando y reportando
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        99
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Paso de la Palma
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. Del N./Maguaca
+        </td>
+        <td style="text-align:right;">
+        -71.51604
+        </td>
+        <td style="text-align:right;">
+        19.57455
+        </td>
+        <td style="text-align:right;">
+        85
+        </td>
+        <td style="text-align:left;">
+        1979-2018
+        </td>
+        <td style="text-align:left;">
+        Regular
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Instrumentos descalibrados, Irresponsabilidad de los lectores y
+        poca supervisión
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        100
+        </td>
+        <td style="text-align:right;">
+        </td>
+        <td style="text-align:left;">
+        Los Pilones
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+        Y. del N. /Baiguaque
+        </td>
+        <td style="text-align:right;">
+        -70.77352
+        </td>
+        <td style="text-align:right;">
+        19.25579
+        </td>
+        <td style="text-align:right;">
+        459
+        </td>
+        <td style="text-align:left;">
+        1979-2019
+        </td>
+        <td style="text-align:left;">
+        Regular
+        </td>
+        <td style="text-align:left;">
+        Correo físico: planilla en papel, mensual
+        </td>
+        <td style="text-align:left;">
+        si
+        </td>
+        <td style="text-align:left;">
+        Instrumentos descalibrados, Irresponsabilidad de los lectores y
+        poca supervisión
+        </td>
+        </tr>
+        <tr>
+        <td style="text-align:right;">
+        101
+        </td>
+        <td style="text-align:right;">
+        42202
+        </td>
+        <td style="text-align:left;">
+        El Cerrazo
+        </td>
+        <td style="text-align:left;">
+        Rio Yaque del Norte
+        </td>
+        <td style="text-align:left;">
+
+        25. del N./Guajuma
+            </td>
+            <td style="text-align:right;">
+            -70.72710
+            </td>
+            <td style="text-align:right;">
+            19.23592
+            </td>
+            <td style="text-align:right;">
+            449
+            </td>
+            <td style="text-align:left;">
+            1979-2018
+            </td>
+            <td style="text-align:left;">
+            Regular
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Faltan las 0 y 3.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            102
+            </td>
+            <td style="text-align:right;">
+            491005
+            </td>
+            <td style="text-align:left;">
+            Palomino
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y. del S./del Medio
+            </td>
+            <td style="text-align:right;">
+            -70.96944
+            </td>
+            <td style="text-align:right;">
+            18.80512
+            </td>
+            <td style="text-align:right;">
+            0
+            </td>
+            <td style="text-align:left;">
+            1978-2017
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Aun se puede considerar de utilidad, porque aun están
+            funcionando y reportando
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            103
+            </td>
+            <td style="text-align:right;">
+            493006
+            </td>
+            <td style="text-align:left;">
+            Paso de Lima
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y. Del S./Río San Juan
+            </td>
+            <td style="text-align:right;">
+            -71.29826
+            </td>
+            <td style="text-align:right;">
+            19.02472
+            </td>
+            <td style="text-align:right;">
+            673
+            </td>
+            <td style="text-align:left;">
+            1975-2018
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Hay que hacer limpieza del coral. La mira están bien
+            0-1-2- 3. Punto de mira vieja se esta leyendo
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            104
+            </td>
+            <td style="text-align:right;">
+            493802
+            </td>
+            <td style="text-align:left;">
+            Vallejuelo
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y.del S./Los Baos
+            </td>
+            <td style="text-align:right;">
+            -71.31721
+            </td>
+            <td style="text-align:right;">
+            18.65660
+            </td>
+            <td style="text-align:right;">
+            654
+            </td>
+            <td style="text-align:left;">
+            1978-2018
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            La lectora de mira esta enferma
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            105
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            La Meseta
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            1989-2019
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            </td>
+            <td style="text-align:left;">
+            Actualmente están reportando
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            106
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Cucurucho
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            1986-2019
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            </td>
+            <td style="text-align:left;">
+            Actualmente están reportando
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            107
+            </td>
+            <td style="text-align:right;">
+            493601
+            </td>
+            <td style="text-align:left;">
+            Hato Viejo
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y. del S./Arroyo Loro
+            </td>
+            <td style="text-align:right;">
+            -71.25538
+            </td>
+            <td style="text-align:right;">
+            18.79707
+            </td>
+            <td style="text-align:right;">
+            381
+            </td>
+            <td style="text-align:left;">
+            1971-2000
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Existe caseta vieja, La crecida se llevo el linigrafo, No
+            tiene Lector de mira la estación.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            108
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Rosario
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Rio San Juan
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            381
+            </td>
+            <td style="text-align:left;">
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            No existe nada, se tomo la coordenada en el punto viejo de
+            la mira. La observadora fue cancelada.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            109
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Naranjal
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y. del S./Maguana
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            1964-1967
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Existe una mira de 3, y el cause del Rio cambio
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            110
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Palo Alto
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Río Yaque del Sur
+            </td>
+            <td style="text-align:right;">
+            -71.17364
+            </td>
+            <td style="text-align:right;">
+            18.29928
+            </td>
+            <td style="text-align:right;">
+            0
+            </td>
+            <td style="text-align:left;">
+            1967-2011
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            111
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Conuquito
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Río Yaque del Sur
+            </td>
+            <td style="text-align:right;">
+            -71.15148
+            </td>
+            <td style="text-align:right;">
+            18.41161
+            </td>
+            <td style="text-align:right;">
+            33
+            </td>
+            <td style="text-align:left;">
+            1964-1993
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Instrumentos descalibrados, Irresponsabilidad de los
+            lectores y poca supervisión
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            112
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            El Rodeo
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y. Del S./Arroyo Limón
+            </td>
+            <td style="text-align:right;">
+            -71.26760
+            </td>
+            <td style="text-align:right;">
+            19.00551
+            </td>
+            <td style="text-align:right;">
+            0
+            </td>
+            <td style="text-align:left;">
+            1982-1994
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            113
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            La Coja
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y. del S./Guayabal
+            </td>
+            <td style="text-align:right;">
+            -70.81868
+            </td>
+            <td style="text-align:right;">
+            18.76856
+            </td>
+            <td style="text-align:right;">
+            0
+            </td>
+            <td style="text-align:left;">
+            1982-2000
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            114
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            La Guama
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y. del S./Las Cuevas
+            </td>
+            <td style="text-align:right;">
+            -70.81296
+            </td>
+            <td style="text-align:right;">
+            18.72572
+            </td>
+            <td style="text-align:right;">
+            770
+            </td>
+            <td style="text-align:left;">
+            1982-2000
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            115
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Naranjal
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y. del S./Maguana
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            1964-1967
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            116
+            </td>
+            <td style="text-align:right;">
+            493201
+            </td>
+            <td style="text-align:left;">
+            El Cacheo
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y. del S./Mijo
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            1983-2018
+            </td>
+            <td style="text-align:left;">
+            Regular
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            </td>
+            <td style="text-align:left;">
+            Actualmente están reportando
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            117
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Los Guiros
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Río Yaque del Sur
+            </td>
+            <td style="text-align:right;">
+            -71.00095
+            </td>
+            <td style="text-align:right;">
+            18.51058
+            </td>
+            <td style="text-align:right;">
+            0
+            </td>
+            <td style="text-align:left;">
+            1985-2018
+            </td>
+            <td style="text-align:left;">
+            Regular
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Instrumentos descalibrados, Irresponsabilidad de los
+            lectores y poca supervisión
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            118
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Cañafistol
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Rio San Juan
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            492
+            </td>
+            <td style="text-align:left;">
+            </td>
+            <td style="text-align:left;">
+            Regular
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            La mira esta fuera de cauce, se alejo 4 metros. Estación
+            Hidrométrica Satelital.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            119
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            El Cacheo
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y. del S./Arroyo Grande
+            </td>
+            <td style="text-align:right;">
+            -71.11519
+            </td>
+            <td style="text-align:right;">
+            18.81385
+            </td>
+            <td style="text-align:right;">
+            460
+            </td>
+            <td style="text-align:left;">
+            1983-2019
+            </td>
+            <td style="text-align:left;">
+            Regular
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Hay que cambiar la Mira-Cauce se aleja de la mira.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            120
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Paso de Lima
+            </td>
+            <td style="text-align:left;">
+            Rio Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            Y. Del S./Río San Juan
+            </td>
+            <td style="text-align:right;">
+            -71.29826
+            </td>
+            <td style="text-align:right;">
+            19.02472
+            </td>
+            <td style="text-align:right;">
+            673
+            </td>
+            <td style="text-align:left;">
+            1975-2018
+            </td>
+            <td style="text-align:left;">
+            Regular
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Estación Satelital. Hidrolab no existe, se la llevo la
+            crecida. Existían cuatro mira vieja la cual no sirven. La
+            Nivelación de mira no sirven.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            121
+            </td>
+            <td style="text-align:right;">
+            100003
+            </td>
+            <td style="text-align:left;">
+            Yásica Arriba
+            </td>
+            <td style="text-align:left;">
+            Rio Yasica
+            </td>
+            <td style="text-align:left;">
+            Yásica/Yásica
+            </td>
+            <td style="text-align:right;">
+            -70.59327
+            </td>
+            <td style="text-align:right;">
+            19.63365
+            </td>
+            <td style="text-align:right;">
+            120
+            </td>
+            <td style="text-align:left;">
+            1971-2018
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Correo fisico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            No tiene observador
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            122
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Palma Herrera
+            </td>
+            <td style="text-align:left;">
+            Rio Yasica
+            </td>
+            <td style="text-align:left;">
+            Yásica/Partido
+            </td>
+            <td style="text-align:right;">
+            -70.41089
+            </td>
+            <td style="text-align:right;">
+            19.55469
+            </td>
+            <td style="text-align:right;">
+            140
+            </td>
+            <td style="text-align:left;">
+            1964-1966
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            123
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Sonador
+            </td>
+            <td style="text-align:left;">
+            Rio Yasica
+            </td>
+            <td style="text-align:left;">
+            Yásica/Sonador
+            </td>
+            <td style="text-align:right;">
+            -70.53943
+            </td>
+            <td style="text-align:right;">
+            19.59870
+            </td>
+            <td style="text-align:right;">
+            133
+            </td>
+            <td style="text-align:left;">
+            1956-1984
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Instrumentos descalibrados, Irresponsabilidad de los
+            lectores y poca supervisión
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            124
+            </td>
+            <td style="text-align:right;">
+            101001
+            </td>
+            <td style="text-align:left;">
+            Jamao
+            </td>
+            <td style="text-align:left;">
+            Rio Yasica
+            </td>
+            <td style="text-align:left;">
+            Yásica/Jamao
+            </td>
+            <td style="text-align:right;">
+            -70.44828
+            </td>
+            <td style="text-align:right;">
+            19.63171
+            </td>
+            <td style="text-align:right;">
+            34
+            </td>
+            <td style="text-align:left;">
+            1957-1987
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            La ultima crecida del Rio Jamao arrastro las miras.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            125
+            </td>
+            <td style="text-align:right;">
+            100002
+            </td>
+            <td style="text-align:left;">
+            Los Brazos
+            </td>
+            <td style="text-align:left;">
+            Rio Yasica
+            </td>
+            <td style="text-align:left;">
+            Yásica/Sonador
+            </td>
+            <td style="text-align:right;">
+            -70.43089
+            </td>
+            <td style="text-align:right;">
+            19.66052
+            </td>
+            <td style="text-align:right;">
+            15
+            </td>
+            <td style="text-align:left;">
+            1955-1996
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las miras fueron destruidas con la Tormenta Noel.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            126
+            </td>
+            <td style="text-align:right;">
+            185502
+            </td>
+            <td style="text-align:left;">
+            Santa Ana
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Cenoví
+            </td>
+            <td style="text-align:right;">
+            -70.37064
+            </td>
+            <td style="text-align:right;">
+            19.25907
+            </td>
+            <td style="text-align:right;">
+            82
+            </td>
+            <td style="text-align:left;">
+            1982-2019
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Actualmente están reportando
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            127
+            </td>
+            <td style="text-align:right;">
+            120002
+            </td>
+            <td style="text-align:left;">
+            Yuna
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna
+            </td>
+            <td style="text-align:right;">
+            -70.25278
+            </td>
+            <td style="text-align:right;">
+            18.94722
+            </td>
+            <td style="text-align:right;">
+            76
+            </td>
+            <td style="text-align:left;">
+            2015-2017
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            Incomp.
+            </td>
+            <td style="text-align:left;">
+            Esta todo en buenas condiciones, pero no transmite.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            128
+            </td>
+            <td style="text-align:right;">
+            181101
+            </td>
+            <td style="text-align:left;">
+            Los Arroces
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Masipedro
+            </td>
+            <td style="text-align:right;">
+            -70.16638
+            </td>
+            <td style="text-align:right;">
+            18.97866
+            </td>
+            <td style="text-align:right;">
+            218
+            </td>
+            <td style="text-align:left;">
+            1983-2019
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            La observadora de esta estación esta en proceso de pensión,
+            esta muy enferma, por lo que seria conveniente nombrar un
+            observador con urgencia.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            129
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Blanco (Presa)
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Rio Blanco
+            </td>
+            <td style="text-align:right;">
+            -70.52139
+            </td>
+            <td style="text-align:right;">
+            18.88278
+            </td>
+            <td style="text-align:right;">
+            465
+            </td>
+            <td style="text-align:left;">
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            En el muro de la presa de Blanco
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            130
+            </td>
+            <td style="text-align:right;">
+            183001
+            </td>
+            <td style="text-align:left;">
+            El Torito
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Blanco
+            </td>
+            <td style="text-align:right;">
+            -70.45590
+            </td>
+            <td style="text-align:right;">
+            18.75634
+            </td>
+            <td style="text-align:right;">
+            760
+            </td>
+            <td style="text-align:left;">
+            1982-2004
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Lleno de maleza dentro y Fuera del corral
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            131
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Los Plátanos
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Maimón
+            </td>
+            <td style="text-align:right;">
+            -70.31890
+            </td>
+            <td style="text-align:right;">
+            18.78632
+            </td>
+            <td style="text-align:right;">
+            240
+            </td>
+            <td style="text-align:left;">
+            1958-1965
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Esta llena de maleza, y no tenemos llave para accesar. Esta
+            transmitiendo.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            132
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Blanco
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Blanco
+            </td>
+            <td style="text-align:right;">
+            -70.52146
+            </td>
+            <td style="text-align:right;">
+            18.88300
+            </td>
+            <td style="text-align:right;">
+            465
+            </td>
+            <td style="text-align:left;">
+            1977-1988
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación. Actualmente no
+            esta en la red de observación
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            133
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Rodeo
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Blanco
+            </td>
+            <td style="text-align:right;">
+            -70.56840
+            </td>
+            <td style="text-align:right;">
+            18.88439
+            </td>
+            <td style="text-align:right;">
+            660
+            </td>
+            <td style="text-align:left;">
+            1977-1977
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación. Actualmente no
+            esta en la red de observación
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            134
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Tireo
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Blanco
+            </td>
+            <td style="text-align:right;">
+            -70.63285
+            </td>
+            <td style="text-align:right;">
+            18.91912
+            </td>
+            <td style="text-align:right;">
+            1165
+            </td>
+            <td style="text-align:left;">
+            1978-1979
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación. Actualmente no
+            esta en la red de observación
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            135
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Los Guázaros
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Caña Amarga
+            </td>
+            <td style="text-align:right;">
+            -70.52646
+            </td>
+            <td style="text-align:right;">
+            18.85579
+            </td>
+            <td style="text-align:right;">
+            630
+            </td>
+            <td style="text-align:left;">
+            1980-1988
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación. Actualmente no
+            esta en la red de observación
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            136
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Tireo
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Tireo
+            </td>
+            <td style="text-align:right;">
+            -70.56840
+            </td>
+            <td style="text-align:right;">
+            18.88439
+            </td>
+            <td style="text-align:right;">
+            660
+            </td>
+            <td style="text-align:left;">
+            1980-1995
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del río arrastró las miras
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            137
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            El Pino de Yuna
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Yuna
+            </td>
+            <td style="text-align:right;">
+            -70.45618
+            </td>
+            <td style="text-align:right;">
+            18.79550
+            </td>
+            <td style="text-align:right;">
+            582
+            </td>
+            <td style="text-align:left;">
+            1982-2006
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida. Tiene un observador nombrado
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            138
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Piedra los Veganos
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Yuna
+            </td>
+            <td style="text-align:right;">
+            -70.47173
+            </td>
+            <td style="text-align:right;">
+            18.81995
+            </td>
+            <td style="text-align:right;">
+            470
+            </td>
+            <td style="text-align:left;">
+            1982-2004
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación. Actualmente no
+            esta en la red de observación
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            139
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Hatillo
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Yuna
+            </td>
+            <td style="text-align:right;">
+            -70.25283
+            </td>
+            <td style="text-align:right;">
+            18.94745
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            1955-1970
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación. Actualmente no
+            esta en la red de observación
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            140
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Arroyón Arriba
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Arroyón
+            </td>
+            <td style="text-align:right;">
+            -70.52827
+            </td>
+            <td style="text-align:right;">
+            18.85972
+            </td>
+            <td style="text-align:right;">
+            700
+            </td>
+            <td style="text-align:left;">
+            1980-1984
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            141
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Arroyón Abajo
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Arroyón
+            </td>
+            <td style="text-align:right;">
+            -70.52354
+            </td>
+            <td style="text-align:right;">
+            18.86066
+            </td>
+            <td style="text-align:right;">
+            600
+            </td>
+            <td style="text-align:left;">
+            1979-1987
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            142
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Jeremías
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Camú
+            </td>
+            <td style="text-align:right;">
+            -70.48597
+            </td>
+            <td style="text-align:right;">
+            19.22554
+            </td>
+            <td style="text-align:right;">
+            70
+            </td>
+            <td style="text-align:left;">
+            1957-1961
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            143
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Jamo
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Camú
+            </td>
+            <td style="text-align:right;">
+            -70.48885
+            </td>
+            <td style="text-align:right;">
+            19.22868
+            </td>
+            <td style="text-align:right;">
+            65
+            </td>
+            <td style="text-align:left;">
+            1973-1978
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            144
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Cañabón
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Cañabón
+            </td>
+            <td style="text-align:right;">
+            -70.41887
+            </td>
+            <td style="text-align:right;">
+            19.05395
+            </td>
+            <td style="text-align:right;">
+            118
+            </td>
+            <td style="text-align:left;">
+            1964-1966
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            145
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Cevicos
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Cevicos
+            </td>
+            <td style="text-align:right;">
+            -69.98432
+            </td>
+            <td style="text-align:right;">
+            19.00617
+            </td>
+            <td style="text-align:right;">
+            78
+            </td>
+            <td style="text-align:left;">
+            1963-1965
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            146
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Sabana Grande
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Chacuey
+            </td>
+            <td style="text-align:right;">
+            -70.06621
+            </td>
+            <td style="text-align:right;">
+            19.03554
+            </td>
+            <td style="text-align:right;">
+            50
+            </td>
+            <td style="text-align:left;">
+            1959-1965
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            147
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Jayaco
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Jima
+            </td>
+            <td style="text-align:right;">
+            -70.43936
+            </td>
+            <td style="text-align:right;">
+            19.00590
+            </td>
+            <td style="text-align:right;">
+            161
+            </td>
+            <td style="text-align:left;">
+            1955-1965
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            148
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Blanco
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Juan de Jesús
+            </td>
+            <td style="text-align:right;">
+            -70.36810
+            </td>
+            <td style="text-align:right;">
+            18.88717
+            </td>
+            <td style="text-align:right;">
+            630
+            </td>
+            <td style="text-align:left;">
+            1980-1995
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            149
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Naranjal
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Licey
+            </td>
+            <td style="text-align:right;">
+            -70.51450
+            </td>
+            <td style="text-align:right;">
+            19.32830
+            </td>
+            <td style="text-align:right;">
+            96
+            </td>
+            <td style="text-align:left;">
+            1964-1987
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            150
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Maimón
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Maimón
+            </td>
+            <td style="text-align:right;">
+            -70.28490
+            </td>
+            <td style="text-align:right;">
+            18.89937
+            </td>
+            <td style="text-align:right;">
+            120
+            </td>
+            <td style="text-align:left;">
+            1968-2008
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            151
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Los Guázaros
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Tireito
+            </td>
+            <td style="text-align:right;">
+            -70.52257
+            </td>
+            <td style="text-align:right;">
+            18.85886
+            </td>
+            <td style="text-align:right;">
+            630
+            </td>
+            <td style="text-align:left;">
+            1978-1990
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            152
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            El Meche
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Toro Flaco
+            </td>
+            <td style="text-align:right;">
+            -70.53291
+            </td>
+            <td style="text-align:right;">
+            18.84794
+            </td>
+            <td style="text-align:right;">
+            700
+            </td>
+            <td style="text-align:left;">
+            1980-1986
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            153
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Rincón de Yuboa
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Yuboa
+            </td>
+            <td style="text-align:right;">
+            -70.36157
+            </td>
+            <td style="text-align:right;">
+            18.78331
+            </td>
+            <td style="text-align:right;">
+            400
+            </td>
+            <td style="text-align:left;">
+            1984-1988
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            154
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Los Quemados
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Yuna
+            </td>
+            <td style="text-align:right;">
+            -70.47314
+            </td>
+            <td style="text-align:right;">
+            18.87916
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            1962-1984
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            155
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Bonao
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Yuna
+            </td>
+            <td style="text-align:right;">
+            -70.40762
+            </td>
+            <td style="text-align:right;">
+            18.95916
+            </td>
+            <td style="text-align:right;">
+            155
+            </td>
+            <td style="text-align:left;">
+            1960-1965
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            156
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Los Corosos
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Yuna
+            </td>
+            <td style="text-align:right;">
+            -70.20089
+            </td>
+            <td style="text-align:right;">
+            19.05496
+            </td>
+            <td style="text-align:right;">
+            55
+            </td>
+            <td style="text-align:left;">
+            1959-1965
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            157
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            La Jagua
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Yuna
+            </td>
+            <td style="text-align:right;">
+            -69.70796
+            </td>
+            <td style="text-align:right;">
+            19.14882
+            </td>
+            <td style="text-align:right;">
+            13
+            </td>
+            <td style="text-align:left;">
+            1997-2004
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estación, debe ser
+            reconstruida.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            158
+            </td>
+            <td style="text-align:right;">
+            185003
+            </td>
+            <td style="text-align:left;">
+            La Bija
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Camú
+            </td>
+            <td style="text-align:right;">
+            -70.12723
+            </td>
+            <td style="text-align:right;">
+            19.14948
+            </td>
+            <td style="text-align:right;">
+            28
+            </td>
+            <td style="text-align:left;">
+            1968-2007
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Esta estación fue vandalizada, solo quedo la caseta. La
+            observadora en proceso de pensión; la señora ya no vive ahí.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            159
+            </td>
+            <td style="text-align:right;">
+            185001
+            </td>
+            <td style="text-align:left;">
+            Bayacanes
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Camú
+            </td>
+            <td style="text-align:right;">
+            -70.58153
+            </td>
+            <td style="text-align:right;">
+            19.23565
+            </td>
+            <td style="text-align:right;">
+            130
+            </td>
+            <td style="text-align:left;">
+            1960-1999
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            No hay miras. Vandalizada, solo queda la caseta.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            160
+            </td>
+            <td style="text-align:right;">
+            185501
+            </td>
+            <td style="text-align:left;">
+            Cenoví, Los Limones
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Cenoví
+            </td>
+            <td style="text-align:right;">
+            -70.34906
+            </td>
+            <td style="text-align:right;">
+            19.31966
+            </td>
+            <td style="text-align:right;">
+            0
+            </td>
+            <td style="text-align:left;">
+            2005-2008
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las miras fueron arrastradas por una crecida en la Tormenta
+            Noel.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            161
+            </td>
+            <td style="text-align:right;">
+            184003
+            </td>
+            <td style="text-align:left;">
+            El pino de Yuna
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Maimón
+            </td>
+            <td style="text-align:right;">
+            -70.29723
+            </td>
+            <td style="text-align:right;">
+            18.89472
+            </td>
+            <td style="text-align:right;">
+            98
+            </td>
+            <td style="text-align:left;">
+            1956-1966
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Esta estación desapareció a raíz de la tormenta Noel.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            162
+            </td>
+            <td style="text-align:right;">
+            187002
+            </td>
+            <td style="text-align:left;">
+            Abadesa
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Payabo
+            </td>
+            <td style="text-align:right;">
+            -69.92643
+            </td>
+            <td style="text-align:right;">
+            19.01863
+            </td>
+            <td style="text-align:right;">
+            51
+            </td>
+            <td style="text-align:left;">
+            2015-2017
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            Incomp.
+            </td>
+            <td style="text-align:left;">
+            La sección de mira no existen por la crecida del rio, no hay
+            observador, esta pensionado.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            163
+            </td>
+            <td style="text-align:right;">
+            184002
+            </td>
+            <td style="text-align:left;">
+            Los Plátanos
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Yuna
+            </td>
+            <td style="text-align:right;">
+            -70.11228
+            </td>
+            <td style="text-align:right;">
+            19.12214
+            </td>
+            <td style="text-align:right;">
+            39
+            </td>
+            <td style="text-align:left;">
+            1971-1982
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las crecidas del rio destruyeron la estacion. Actualmente no
+            esta en la red de observacion
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            164
+            </td>
+            <td style="text-align:right;">
+            185002
+            </td>
+            <td style="text-align:left;">
+            Ranchito
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Camú
+            </td>
+            <td style="text-align:right;">
+            -70.38872
+            </td>
+            <td style="text-align:right;">
+            19.17508
+            </td>
+            <td style="text-align:right;">
+            56
+            </td>
+            <td style="text-align:left;">
+            1968-2006
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Tiene un poco de malezas, no funciona.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            165
+            </td>
+            <td style="text-align:right;">
+            188002
+            </td>
+            <td style="text-align:left;">
+            Los Tres Pasos
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Chacuey
+            </td>
+            <td style="text-align:right;">
+            -70.07879
+            </td>
+            <td style="text-align:right;">
+            18.97640
+            </td>
+            <td style="text-align:right;">
+            77
+            </td>
+            <td style="text-align:left;">
+            1984-1993
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las miras no están y no tenemos llave para ver el
+            limnigrafo.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            166
+            </td>
+            <td style="text-align:right;">
+            188008
+            </td>
+            <td style="text-align:left;">
+            La Cabirma
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Maguaca
+            </td>
+            <td style="text-align:right;">
+            -70.11522
+            </td>
+            <td style="text-align:right;">
+            18.97470
+            </td>
+            <td style="text-align:right;">
+            46
+            </td>
+            <td style="text-align:left;">
+            1982-2002
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Las miras fueron arrastradas por el rio a raíz de una
+            crecida, hace años. Hay un corral, recién construido, pero
+            no instalaron la telemétrica.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            167
+            </td>
+            <td style="text-align:right;">
+            183101
+            </td>
+            <td style="text-align:left;">
+            Pinalito
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Tireo
+            </td>
+            <td style="text-align:right;">
+            -70.28923
+            </td>
+            <td style="text-align:right;">
+            18.89662
+            </td>
+            <td style="text-align:right;">
+            1165
+            </td>
+            <td style="text-align:left;">
+            1981-2019
+            </td>
+            <td style="text-align:left;">
+            Malo
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            No transmite, en mal estado total. Falta mira, además el 50%
+            del corral esta en el suelo.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            168
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            La Boca
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Jaya
+            </td>
+            <td style="text-align:right;">
+            -70.30209
+            </td>
+            <td style="text-align:right;">
+            19.24578
+            </td>
+            <td style="text-align:right;">
+            87
+            </td>
+            <td style="text-align:left;">
+            1982-2007
+            </td>
+            <td style="text-align:left;">
+            Regular
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Esta estación esta completa, pero no transmite.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            169
+            </td>
+            <td style="text-align:right;">
+            185603
+            </td>
+            <td style="text-align:left;">
+            Jaya
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Jaya
+            </td>
+            <td style="text-align:right;">
+            -70.30250
+            </td>
+            <td style="text-align:right;">
+            19.24556
+            </td>
+            <td style="text-align:right;">
+            61
+            </td>
+            <td style="text-align:left;">
+            2015-2017
+            </td>
+            <td style="text-align:left;">
+            Regular
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            Incomp.
+            </td>
+            <td style="text-align:left;">
+            Esta estación esta completa, pero no transmite.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            170
+            </td>
+            <td style="text-align:right;">
+            185201
+            </td>
+            <td style="text-align:left;">
+            Rincón
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Jima
+            </td>
+            <td style="text-align:right;">
+            -70.40695
+            </td>
+            <td style="text-align:right;">
+            19.10509
+            </td>
+            <td style="text-align:right;">
+            80
+            </td>
+            <td style="text-align:left;">
+            1957-1976
+            </td>
+            <td style="text-align:left;">
+            Regular
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Esta estación esta completa, pero no transmite.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            171
+            </td>
+            <td style="text-align:right;">
+            180003
+            </td>
+            <td style="text-align:left;">
+            Villa Riva
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Yuna
+            </td>
+            <td style="text-align:right;">
+            -69.90444
+            </td>
+            <td style="text-align:right;">
+            19.17440
+            </td>
+            <td style="text-align:right;">
+            10
+            </td>
+            <td style="text-align:left;">
+            1955-2002
+            </td>
+            <td style="text-align:left;">
+            Regular
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            Quedan 2 miras.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            172
+            </td>
+            <td style="text-align:right;">
+            180004
+            </td>
+            <td style="text-align:left;">
+            El Limón
+            </td>
+            <td style="text-align:left;">
+            Rio Yuna
+            </td>
+            <td style="text-align:left;">
+            Yuna/Yuna
+            </td>
+            <td style="text-align:right;">
+            -69.81921
+            </td>
+            <td style="text-align:right;">
+            19.15301
+            </td>
+            <td style="text-align:right;">
+            8
+            </td>
+            <td style="text-align:left;">
+            1968-2019
+            </td>
+            <td style="text-align:left;">
+            Regular
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            si
+            </td>
+            <td style="text-align:left;">
+            A esta estación le falta 8 metros de miras, por lo que se le
+            dificulta a la observadora hacer bien su trabajo.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            173
+            </td>
+            <td style="text-align:right;">
+            42301
+            </td>
+            <td style="text-align:left;">
+            BAIGUAQUEPILONES LOS
+            </td>
+            <td style="text-align:left;">
+            Yaque del Norte
+            </td>
+            <td style="text-align:left;">
+            Baiguaque
+            </td>
+            <td style="text-align:right;">
+            -70.87945
+            </td>
+            <td style="text-align:right;">
+            19.34889
+            </td>
+            <td style="text-align:right;">
+            413
+            </td>
+            <td style="text-align:left;">
+            1979 - 2018
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            </td>
+            <td style="text-align:left;">
+            Falta la mira 0.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            174
+            </td>
+            <td style="text-align:right;">
+            42301
+            </td>
+            <td style="text-align:left;">
+            BAIGUAQUEPILONES LOS
+            </td>
+            <td style="text-align:left;">
+            Yaque del Norte
+            </td>
+            <td style="text-align:left;">
+            Baiguaque
+            </td>
+            <td style="text-align:right;">
+            -70.87945
+            </td>
+            <td style="text-align:right;">
+            19.34889
+            </td>
+            <td style="text-align:right;">
+            413
+            </td>
+            <td style="text-align:left;">
+            2015-2017
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Telemetría Satelital
+            </td>
+            <td style="text-align:left;">
+            Incomp.
+            </td>
+            <td style="text-align:left;">
+            Falta la mira 0.
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:right;">
+            175
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            Sabana Alta
+            </td>
+            <td style="text-align:left;">
+            Yaque del Sur
+            </td>
+            <td style="text-align:left;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:right;">
+            </td>
+            <td style="text-align:left;">
+            1985 - 2019
+            </td>
+            <td style="text-align:left;">
+            Bueno
+            </td>
+            <td style="text-align:left;">
+            Correo físico: planilla en papel, mensual
+            </td>
+            <td style="text-align:left;">
+            </td>
+            <td style="text-align:left;">
+            Actualmente están reportando
+            </td>
+            </tr>
+            </tbody>
+            </table>
+
+``` r
+indrhi_hidrometricas_final_sf <- indrhi_hidrometricas_final %>% 
+  mutate(excluir_sf = ifelse(is.na(lon_dd_consolidadas) | is.na(lat_dd_consolidadas), 'sí', 'no')) %>% 
+  filter(excluir_sf=='no') %>% 
+  st_as_sf(coords = c('lon_dd_consolidadas', 'lat_dd_consolidadas'), crs = 4326) %>% 
+  select(-excluir_sf) %>%
+  mutate(Estado = factor(Estado, levels = c('Bueno','Regular', 'Malo')))
+```
+
+Del total de 175 estaciones hidrométricas, para fines de representación,
+descartamos 9 que no contaban con coordenadas, o que sus valores eran
+erróneos. El mapa de estaciones hidrométricas con coordenadas depuradas
+(166 estaciones), e indicación de sus correspondientes estados, se
 muestra a continuación.
 
 ``` r
-indrhi[[1]]$`Longitud   Corregida` <- gsub('59 57 57', '69 57 57', indrhi[[1]]$`Longitud   Corregida`)
-foo <- indrhi[[1]] %>%
-  mutate(`Latitud2` = parse_lat(indrhi[[1]]$`Latitud  Corregida`),
-         `Longitud2` = 0-parse_lon(indrhi[[1]]$`Longitud   Corregida`)) %>% 
-  select(`N°`, `Latitud2`, `Longitud2`) %>% 
-  na.omit %>% 
-  st_as_sf(coords = c('Longitud2', 'Latitud2'), crs = 4326) %>% 
-  st_transform(32619) %>% 
-  mutate(`Longitud2` = unlist(map(.$geometry, 1)),
-         `Latitud2` = unlist(map(.$geometry, 2))) %>% 
-  st_drop_geometry() %>% 
-  right_join(indrhi[[1]], by = 'N°')
-foo %>% mutate(Latitud = ifelse(is.na(Latitud2), Latitud, Latitud2)) %>% View()
-  
-indrhi_hidro_sf <- st_as_sf(indrhi[[1]], coords = c('Longitud', 'Latitud'), crs = 32619)
-
 fpal_estado <- colorFactor(
-  palette = RColorBrewer::brewer.pal(length(unique(lista_con_periodo_2022_coord_todas_sf$estado)), 'Set1'),
-  domain = unique(lista_con_periodo_2022_coord_todas_sf$estado), reverse = T)
-leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
+  palette = c("#E41A1C", "#FFFF33","#4DAF4A"),
+  # palette = RColorBrewer::brewer.pal(length(unique(indrhi_hidrometricas_final_sf$Estado)), 'Set1'),
+  domain = unique(indrhi_hidrometricas_final_sf$Estado), reverse = T)
+leaflet(indrhi_hidrometricas_final_sf) %>%
   addCircleMarkers(
-    radius = 5, label = ~ nombre_onamet, group = ~ estado,
-    color = ~ fpal_estado(estado),
+    radius = 5, label = ~`N°`, group = ~ Estado,
+    popup = ~ paste0('Codigo N°: ', `N°`, '<br>Nombre: ', `Nombre de la estación`, '<br>Estado: ', Estado),
+    color = ~ fpal_estado(Estado),
     stroke = F, fillOpacity = 1
   ) %>%
-  addLegend(pal = fpal_estado, values = ~ estado, opacity = 1,
-            title = "Estaciones<br>Meteorológicas<br>Convencionales<br>ONAMET<br>Estado") %>% 
+  addLegend(pal = fpal_estado, values = ~ Estado, opacity = 1,
+            title = "Estaciones<br>Hidrométricas<br>INDRHI<br>Estado") %>% 
   addTiles(group = 'OSM') %>%
   addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
   addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
   addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
   addLayersControl(
-    baseGroups = c("CartoDB", "OSM", "ESRI Mapa", "ESRI Imagen"),
-    overlayGroups = ~ estado, position = 'bottomright',
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ Estado, position = 'bottomright',
     options = layersControlOptions(collapsed = FALSE)) %>% 
   leaflet_map_view %>% 
   addFullscreenControl()
+```
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+#### Estaciones climáticas
+
+``` r
+# indrhi <- map(5:6, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
+indrhi_historico <- read_xlsx('fuentes/indrhi/Listado Red Medicion INDRHI_Historico_24-10-2022_revision_jr.xlsx')
+indrhi[[2]] <- indrhi[[2]] %>% rename(Estado = Estatus) %>% 
+  mutate(Estado = factor(Estado, labels = c('Bueno', 'Malo', 'Regular')))
+indrhi_climaticas_resumen_estado <- indrhi[[2]] %>% group_by(Estado) %>%
+  mutate(Estado = factor(Estado, levels=c('Bueno', 'Regular', 'Malo'))) %>%
+  count()
+indrhi_climaticas_resumen_estado %>%
+  kable(booktabs=T) %>%
+  kable_styling(
+    full_width = F,
+    latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+indrhi[[2]] %>% mutate(Código = as.character(Código)) %>%
+  inner_join(
+    # indrhi_historico %>% select(CODIGO, LATITUD, LONGITUD) %>% distinct() %>% arrange(CODIGO),
+    indrhi_historico %>% select(CODIGO, `X (UTM)`, `Y (UTM)`, LATITUD, LONGITUD) %>% distinct() %>% arrange(CODIGO),
+    by = c("Código" = "CODIGO")) %>% 
+  unique()
+
+indrhi_historico %>% filter(CODIGO %in% indrhi[[2]]$Código) %>%
+  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
+  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`))
+
+indrhi_historico %>% filter(tolower(ESTACION) %in% tolower(indrhi[[2]]$`Nombre de la  estación`)) %>%
+  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
+  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`))
+
+
+indrhi_historico %>% filter(CODIGO %in% indrhi[[2]]$Código) %>%
+  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
+  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`)) %>% 
+  right_join(
+    indrhi_historico %>% filter(tolower(ESTACION) %in% tolower(indrhi[[2]]$`Nombre de la  estación`)) %>%
+  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
+  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`)), by='CODIGO'
+  ) %>% distinct()
+```
+
+La fuente empleada para extraer la información sobre las estaciones
+climáticas, fue la misma que la usada para las hidrométricas (archivo de
+“inventario”, procedente del PDF
+`Informe Final inventario estaciones hidrometeorológicas INDRHI, Rep. Dom..pdf`),
+pero en este caso no se inluyeron las coordenadas de las estaciones, si
+bien los demás atributos de interés si estaban presentes. En tal
+sentido, la categorización de estaciones según estados se pudo realizar
+satisfactoriamente, obteniéndose el resultado detallado a continuación.
+Del total de 63 estaciones climáticas, 34 se encontraban en la categoría
+“Malo”, 12 en estado “Regular” y 17 en la categoría “Bueno”.
+
+Para avanzar hacia la producción del mapa de estaciones climáticas del
+INDRHI, hubo que complementar el ausencia de coordenadas, uniendo la
+tabla extraída desde el PDF con una lista histórica de estaciones
+mayoritariamente georreferenciadas, aportada igualmente por el
+departamento de hidrología de INDRHI, y corregida puntualmente por
+nosotros
+(`Listado Red Medicion INDRHI_Historico_24-10-2022_revision_jr.xlsx`).
+Aprovechamos la existencia del campo `CODIGO` del archivo “histórico”,
+para hacer unión con el homólogo `Código` de la tabla de inventario
+procedente del PDF. No obstante, dos dificultades afloraron: 1) En el
+archivo histórico, muchas estaciones están duplicadas, cada copia con
+coordenadas exactamente iguales o ligeramente diferentes entre sí
+(normalmente unos 10 a 100 m, savo un caso); 2) No todas las estaciones
+disponían de coordenadas. La duplicidad la resolvimos eligiendo el
+duplicado más probable según criterio propio, conocimiento del terreno y
+fuentes cartográficas.
+
+``` r
+knitr::knit_exit()
 ```

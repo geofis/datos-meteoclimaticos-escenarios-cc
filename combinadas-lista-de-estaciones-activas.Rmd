@@ -148,64 +148,278 @@ leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
 
 ### INDRHI
 
-En el caso de INDRHI se utilizó un único archivo como fuente (`Informe Final inventario estaciones hidrometeorológicas INDRHI, Rep. Dom..pdf`), el cual fue elaborado por personal técnico de dicha institución en 2019, con el objetivo de documentar el estado de sus estaciones hidroclimáticas. El documento fue servido en formato PDF, por lo que hubo que extraer la información programáticamente. Las informaciones sobre el estado de las estaciones fueron complementadas por medio de comunicaciones directas con personal del INDRHI. Por lo tanto, en este caso, no se requirió procesamiento intensivo para poder elaborar los correspondientes mapas.
-
-Las estaciones reportadas por el INDRHI son de dos tipos generales: hidrométricas y climáticas. En ambos casos, INDRHI clasificó las estaciones según "estado" en tres categorías: "buena", "regular" y "mala". Para la fecha, de un total de 171 estaciones hidrométricas, 121 se encontraban en la categoría "mala", 24 en "regular" y 30 en "buena". Las estaciones de la categoría "mala" no se encontraban en operación, y presentaban daños cuantiosos, por lo que su restablecimiento es complicado. En el caso de las estaciones en estado regular, aunque no se encontraban en operación, su restablecimiento requería una inversión muy pequeña. Finalmente, las estaciones en estado bueno se consideraban como tal si se encontraban operativas.
-
-A modo de actualización, según Israel Acosta, encargado del departamento de hidrología de INDRHI, se nos confirmó que el número de estaciones en estado bueno y regular ha cambiado muy poco en los últimos años. Añadió que se reportaron algunas incidencias en años recientes, relacionadas con la estabilidad del personal a cargo de las estaciones. Acosta destacó además que una buena parte de las 24 estaciones en estado regular, siguen siendo recuperables actualmente con una mínima inversión.
+En el caso de INDRHI se utilizó un único archivo como fuente (`Informe Final inventario estaciones hidrometeorológicas INDRHI, Rep. Dom..pdf`), el cual fue elaborado por personal técnico de la institución en 2019, con el objetivo de documentar el estado de sus estaciones hidroclimáticas. El documento nos fue entregado en formato PDF, por lo que hubo que extraer la información programáticamente. Las informaciones sobre el estado de las estaciones fueron complementadas con comunicaciones directas con personal del INDRHI.
 
 ```{r}
 indrhi <- map(5:6, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
-indrhi[[1]] %>% group_by(Estado) %>%
+```
+
+Las estaciones reportadas en el informe son de dos tipos generales: hidrométricas y climáticas. De las primeras, las hidrométricas, hay un total de `r nrow(indrhi[[1]])` estaciones, mientras que las climáticas representan un total de `r nrow(indrhi[[2]])` estaciones. En ambos casos, INDRHI clasificó las estaciones según "estado" en tres categorías: `r levels(factor(indrhi[[1]]$Estado))[c(1,3,2)]`. 
+
+#### Estaciones hidrométricas
+
+```{r}
+indrhi_hidrometricas_resumen_estado <- indrhi[[1]] %>% group_by(Estado) %>%
   mutate(Estado = factor(Estado, levels=c('Bueno', 'Regular', 'Malo'))) %>%
-  count() %>% 
+  count()
+indrhi_hidrometricas_resumen_estado %>%
   kable(booktabs=T) %>%
-  kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
+  kable_styling(
+    full_width = F,
+    latex_options = c("HOLD_position", "scale_down")) %>%
   gsub(' NA ', '', .)
 ```
 
-La tabla de estaciones hidrométricas aportada por el INDRHI cuenta con dos pares columnas de coordenadas bajo las denominaciones `r grep('lat|lon', ignore.case=T, colnames(indrhi[[1]]), value=T)`; el primer par contiene valores de lo que parecen ser coordenadas de falso norte y falso este en la proyección UTM (no se especifica datum), y no precisamente valores de latitud y longitud. El segundo par, con el apelativo "corregida", el cual sugiere una mejora en la precisión, sí contiene coordenadas en sistema sexagesimal de latitud y longitud verdaderas, aunque mezcladas con coordenadas UTM. Por lo tanto, en orden de prelación, usamos el segundo par siempre que estuviere presente. Destacamos también que algunas estaciones no disponían de coordenadas (e.g. estaciones N° 1, 105, 106, 116), y otras registraban valores claramente erróneos y no atribuibles a ningún sistema de referencia (e.g. estaciones N° 118, 119, 120), por lo que fueron excluidas de nuestros análisis; para la limpieza de estos datos se usaron funciones basadas en expresiones regulares y otras herramientas. Todas las coordenadas fueron transformadas a sistema de coordenadas geográficas, no proyectado. El mapa de estaciones hidrométricas, con indicación de sus estados, se muestra a continuación.
+Al momento de redactarse el presente documento, se nos informó que el estado respecto de la línea base de 2019 se ha mantenido bastante similar. En el referido informe, de un total de `r nrow(indrhi[[1]])` estaciones hidrométricas, `r indrhi_hidrometricas_resumen_estado %>% filter(Estado=='Malo') %>% pull(n)` se encontraban en la categoría "Malo", `r indrhi_hidrometricas_resumen_estado %>% filter(Estado=='Regular') %>% pull(n)` en estado "Regular" y `r indrhi_hidrometricas_resumen_estado %>% filter(Estado=='Bueno') %>% pull(n)` en la categoría "Bueno". Las estaciones de la categoría "Malo" se encontraban fuera operación al momento de realizarse el referido informe, y presentaban daños significativos, por lo que su restablecimiento podría resultar complicado. En el caso de las estaciones en estado "Regular", aunque no se encontraban en operación al momento de realizarse el levantamiento en 2019, su restablecimiento requería una inversión muy pequeña. Finalmente, las estaciones en estado "Bueno" se encontraban en operación normal.
 
-```{r, eval=F}
-indrhi[[1]]$`Longitud Corregida` <- gsub('59 57 57', '69 57 57', indrhi[[1]]$`Longitud Corregida`)
-ifelse(grepl(' ', indrhi[[1]]$`Latitud Corregida`), indrhi[[1]]$`Latitud Corregida`, NA)
-foo <- indrhi[[1]] %>%
-  mutate(`Latitud2` = parse_lat(indrhi[[1]]$`Latitud Corregida`),
-         `Longitud2` = 0-parse_lon(indrhi[[1]]$`Longitud Corregida`)) %>% 
-  select(`N°`, `Latitud2`, `Longitud2`) %>% 
+A modo de actualización, según Israel Acosta, encargado del departamento de hidrología de INDRHI, se nos confirmó que el número de estaciones según cada categoría de estado, ha cambiado muy poco en años recientes. Añadió que se reportaron algunas incidencias en años recientes, relacionadas con la estabilidad del personal responsable en terreno. Acosta destacó además que una buena parte de las 24 estaciones en estado regular, continúan siendo recuperables actualmente con una mínima inversión.
+
+En cuanto a la localización de las estaciones, la tabla de las hidrométricas aportada por el INDRHI cuenta con dos pares columnas de coordenadas bajo las denominaciones `r grep('lat|lon', ignore.case=T, colnames(indrhi[[1]]), value=T)`. El primer par contiene valores de lo que parecen ser coordenadas de falso norte y falso este en la proyección UTM (no se especifica datum, asumiremos WGS84), por lo que no se trata de coordenadas latitud/longitud. El segundo par, con el mismo nombre y sufijo "Corregida", sugiere una mejora en la precisión, y sus coordenadas (mayoritariamente) están expresadas en sistema sexagesimal de latitud y longitud, aunque también hay algunas UTM entremezcladas.
+
+Para garantizar la consistencia de las coordenadas, escribimos una función, basada en expresiones regulares, que eligía de preferencia el par de coordenadas del grupo "Corregida"; si este par no estaba disponible, entonces elegía el par "normal". Destacamos también que algunas estaciones no disponían de coordenadas de ninguna clase (e.g. estaciones N° 1, 105, 106, 116), y otras registraban valores claramente erróneos y no atribuibles a ningún sistema de referencia (e.g. estaciones N° 118, 119, 120). Nuestra función excluyó dichas estaciones del mapa y de los análisis posteriores. Todas las coordenadas fueron transformadas a sistema de coordenadas geográficas, WGS84 (EPSG:4326). La tabla exhaustiva de las estaciones, conteniendo las coordenadas consolidadas y depuradas, se muestra a continuación.
+
+```{r, eval=T}
+coord_limpias <- bind_cols(lapply(
+  c('Latitud', 'Longitud', 'Latitud Corregida', 'Longitud Corregida'),
+  function(x)
+    limpiar_coord(
+      mi_vector = indrhi[[1]][,x, drop=T],
+      sufijo = ifelse(grepl('Corregida', x), 'correg', 'normal'))))
+coord_limpias$utm_x_consolidadas <- with(
+  data = coord_limpias,
+  expr = ifelse(is.na(utm_x_correg), utm_x_normal, utm_x_correg))
+coord_limpias$utm_y_consolidadas <- with(
+  data = coord_limpias,
+  expr = ifelse(is.na(utm_y_correg), utm_y_normal, utm_y_correg))
+indrhi_hidrometricas_coord_limpias <- cbind(indrhi[[1]], coord_limpias)
+
+indrhi_hidrometricas_final <- indrhi_hidrometricas_coord_limpias %>% 
+  select(`N°`, utm_x_consolidadas, utm_y_consolidadas) %>% 
   na.omit %>% 
-  st_as_sf(coords = c('Longitud2', 'Latitud2'), crs = 4326) %>% 
-  st_transform(32619) %>% 
-  mutate(`Longitud2` = unlist(map(.$geometry, 1)),
-         `Latitud2` = unlist(map(.$geometry, 2))) %>% 
+  st_as_sf(coords = c('utm_x_consolidadas', 'utm_y_consolidadas'), crs = 32619) %>% 
+  st_transform(4326) %>% 
+  mutate(lon_dd_consolidadas = unlist(map(.$geometry, 1)),
+         lat_dd_consolidadas = unlist(map(.$geometry, 2))) %>% 
   st_drop_geometry() %>% 
-  right_join(indrhi[[1]], by = 'N°')
-foo %>% mutate(Latitud = ifelse(is.na(Latitud2), Latitud, Latitud2)) %>% View()
-  
-indrhi_hidro_sf <- st_as_sf(indrhi[[1]], coords = c('Longitud', 'Latitud'), crs = 32619)
+  right_join(indrhi_hidrometricas_coord_limpias, by = 'N°') %>% 
+  mutate(lon_dd_consolidadas = ifelse(is.na(lon_dd_consolidadas), lon_dd_correg, lon_dd_consolidadas),
+         lat_dd_consolidadas = ifelse(is.na(lat_dd_consolidadas), lat_dd_correg, lat_dd_consolidadas)) %>% 
+  arrange(`N°`) %>% 
+  select(-(utm_x_normal:utm_y_consolidadas), -(Latitud:`Longitud Corregida`)) %>% 
+  relocate(matches('consolidadas'), .after = `Sub-cuenca`)
+indrhi_hidrometricas_final %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+indrhi_hidrometricas_final_sf <- indrhi_hidrometricas_final %>% 
+  mutate(excluir_sf = ifelse(is.na(lon_dd_consolidadas) | is.na(lat_dd_consolidadas), 'sí', 'no')) %>% 
+  filter(excluir_sf=='no') %>% 
+  st_as_sf(coords = c('lon_dd_consolidadas', 'lat_dd_consolidadas'), crs = 4326) %>% 
+  select(-excluir_sf) %>%
+  mutate(Estado = factor(Estado, levels = c('Bueno','Regular', 'Malo')))
+```
 
+Del total de `r nrow(indrhi[[1]])` estaciones hidrométricas, para fines de representación, descartamos `r nrow(indrhi[[1]]) - nrow(indrhi_hidrometricas_final_sf)` que no contaban con coordenadas, o que sus valores eran erróneos. El mapa de estaciones hidrométricas con coordenadas depuradas (`r nrow(indrhi_hidrometricas_final_sf)` estaciones), e indicación de sus correspondientes estados, se muestra a continuación.
+
+```{r, fig.width=15.7, fig.height=10.5, dpi=62}
 fpal_estado <- colorFactor(
-  palette = RColorBrewer::brewer.pal(length(unique(lista_con_periodo_2022_coord_todas_sf$estado)), 'Set1'),
-  domain = unique(lista_con_periodo_2022_coord_todas_sf$estado), reverse = T)
-leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
+  palette = c("#E41A1C", "#FFFF33","#4DAF4A"),
+  # palette = RColorBrewer::brewer.pal(length(unique(indrhi_hidrometricas_final_sf$Estado)), 'Set1'),
+  domain = unique(indrhi_hidrometricas_final_sf$Estado), reverse = T)
+leaflet(indrhi_hidrometricas_final_sf) %>%
   addCircleMarkers(
-    radius = 5, label = ~ nombre_onamet, group = ~ estado,
-    color = ~ fpal_estado(estado),
+    radius = 5, label = ~`N°`, group = ~ Estado,
+    popup = ~ paste0('Codigo N°: ', `N°`, '<br>Nombre: ', `Nombre de la estación`, '<br>Estado: ', Estado),
+    color = ~ fpal_estado(Estado),
     stroke = F, fillOpacity = 1
   ) %>%
-  addLegend(pal = fpal_estado, values = ~ estado, opacity = 1,
-            title = "Estaciones<br>Meteorológicas<br>Convencionales<br>ONAMET<br>Estado") %>% 
+  addLegend(pal = fpal_estado, values = ~ Estado, opacity = 1,
+            title = "Estaciones<br>Hidrométricas<br>INDRHI<br>Estado") %>% 
   addTiles(group = 'OSM') %>%
   addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
   addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
   addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
   addLayersControl(
-    baseGroups = c("CartoDB", "OSM", "ESRI Mapa", "ESRI Imagen"),
-    overlayGroups = ~ estado, position = 'bottomright',
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ Estado, position = 'bottomright',
     options = layersControlOptions(collapsed = FALSE)) %>% 
   leaflet_map_view %>% 
   addFullscreenControl()
+```
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Estaciones climáticas
+
+```{r, results='hide'}
+# indrhi <- map(5:6, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
+indrhi_historico <- read_xlsx('fuentes/indrhi/Listado Red Medicion INDRHI_Historico_24-10-2022_revision_jr.xlsx')
+indrhi[[2]] <- indrhi[[2]] %>% rename(Estado = Estatus) %>% 
+  mutate(Estado = factor(Estado, labels = c('Bueno', 'Malo', 'Regular')))
+indrhi_climaticas_resumen_estado <- indrhi[[2]] %>% group_by(Estado) %>%
+  mutate(Estado = factor(Estado, levels=c('Bueno', 'Regular', 'Malo'))) %>%
+  count()
+indrhi_climaticas_resumen_estado %>%
+  kable(booktabs=T) %>%
+  kable_styling(
+    full_width = F,
+    latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+indrhi[[2]] %>% mutate(Código = as.character(Código)) %>%
+  inner_join(
+    # indrhi_historico %>% select(CODIGO, LATITUD, LONGITUD) %>% distinct() %>% arrange(CODIGO),
+    indrhi_historico %>% select(CODIGO, `X (UTM)`, `Y (UTM)`, LATITUD, LONGITUD) %>% distinct() %>% arrange(CODIGO),
+    by = c("Código" = "CODIGO")) %>% 
+  unique()
+
+indrhi_historico %>% filter(CODIGO %in% indrhi[[2]]$Código) %>%
+  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
+  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`))
+
+indrhi_historico %>% filter(tolower(ESTACION) %in% tolower(indrhi[[2]]$`Nombre de la  estación`)) %>%
+  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
+  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`))
+
+
+indrhi_historico %>% filter(CODIGO %in% indrhi[[2]]$Código) %>%
+  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
+  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`)) %>% 
+  right_join(
+    indrhi_historico %>% filter(tolower(ESTACION) %in% tolower(indrhi[[2]]$`Nombre de la  estación`)) %>%
+  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
+  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`)), by='CODIGO'
+  ) %>% distinct()
 
 ```
+
+La fuente empleada para extraer la información sobre las estaciones climáticas, fue la misma que la usada para las hidrométricas (archivo de "inventario", procedente del PDF `Informe Final inventario estaciones hidrometeorológicas INDRHI, Rep. Dom..pdf`), pero en este caso no se inluyeron las coordenadas de las estaciones, si bien los demás atributos de interés si estaban presentes. En tal sentido, la categorización de estaciones según estados se pudo realizar satisfactoriamente, obteniéndose el resultado detallado a continuación. Del total de `r nrow(indrhi[[2]])` estaciones climáticas, `r indrhi_climaticas_resumen_estado %>% filter(Estado=='Malo') %>% pull(n)` se encontraban en la categoría "Malo", `r indrhi_climaticas_resumen_estado %>% filter(Estado=='Regular') %>% pull(n)` en estado "Regular" y `r indrhi_climaticas_resumen_estado %>% filter(Estado=='Bueno') %>% pull(n)` en la categoría "Bueno".
+
+
+Para avanzar hacia la producción del mapa de estaciones climáticas del INDRHI, hubo que complementar el ausencia de coordenadas, uniendo la tabla extraída desde el PDF con una lista histórica de estaciones mayoritariamente georreferenciadas, aportada igualmente por el departamento de hidrología de INDRHI, y corregida puntualmente por nosotros (`Listado Red Medicion INDRHI_Historico_24-10-2022_revision_jr.xlsx`). Aprovechamos la existencia del campo `CODIGO` del archivo "histórico", para hacer unión con el homólogo `Código` de la tabla de inventario procedente del PDF. No obstante, dos dificultades afloraron: 1) En el archivo histórico, muchas estaciones están duplicadas, cada copia con coordenadas exactamente iguales o ligeramente diferentes entre sí (normalmente unos 10 a 100 m, savo un caso); 2) No todas las estaciones disponían de coordenadas. La duplicidad la resolvimos eligiendo el duplicado más probable según criterio propio, conocimiento del terreno y fuentes cartográficas.
+
+```{r}
+knitr::knit_exit()
+```
+
+
+
+
+
+En cuanto a la localización de las estaciones, la tabla de las hidrométricas aportada por el INDRHI cuenta con dos pares columnas de coordenadas bajo las denominaciones `r grep('lat|lon', ignore.case=T, colnames(indrhi[[1]]), value=T)`. El primer par contiene valores de lo que parecen ser coordenadas de falso norte y falso este en la proyección UTM (no se especifica datum, asumiremos WGS84), por lo que no se trata de coordenadas latitud/longitud. El segundo par, con el mismo nombre y sufijo "Corregida", sugiere una mejora en la precisión, y sus coordenadas (mayoritariamente) están expresadas en sistema sexagesimal de latitud y longitud, aunque también hay algunas UTM entremezcladas.
+
+Para garantizar la consistencia de las coordenadas, escribimos una función, basada en expresiones regulares, que eligía de preferencia el par de coordenadas del grupo "Corregida"; si este par no estaba disponible, entonces elegía el par "normal". Destacamos también que algunas estaciones no disponían de coordenadas de ninguna clase (e.g. estaciones N° 1, 105, 106, 116), y otras registraban valores claramente erróneos y no atribuibles a ningún sistema de referencia (e.g. estaciones N° 118, 119, 120). Nuestra función excluyó dichas estaciones del mapa y de los análisis posteriores. Todas las coordenadas fueron transformadas a sistema de coordenadas geográficas, WGS84 (EPSG:4326). La tabla exhaustiva de las estaciones, conteniendo las coordenadas consolidadas y depuradas, se muestra a continuación.
+
+```{r, eval=T}
+coord_limpias <- bind_cols(lapply(
+  c('Latitud', 'Longitud', 'Latitud Corregida', 'Longitud Corregida'),
+  function(x)
+    limpiar_coord(
+      mi_vector = indrhi[[1]][,x, drop=T],
+      sufijo = ifelse(grepl('Corregida', x), 'correg', 'normal'))))
+coord_limpias$utm_x_consolidadas <- with(
+  data = coord_limpias,
+  expr = ifelse(is.na(utm_x_correg), utm_x_normal, utm_x_correg))
+coord_limpias$utm_y_consolidadas <- with(
+  data = coord_limpias,
+  expr = ifelse(is.na(utm_y_correg), utm_y_normal, utm_y_correg))
+indrhi_hidrometricas_coord_limpias <- cbind(indrhi[[1]], coord_limpias)
+
+indrhi_hidrometricas_final <- indrhi_hidrometricas_coord_limpias %>% 
+  select(`N°`, utm_x_consolidadas, utm_y_consolidadas) %>% 
+  na.omit %>% 
+  st_as_sf(coords = c('utm_x_consolidadas', 'utm_y_consolidadas'), crs = 32619) %>% 
+  st_transform(4326) %>% 
+  mutate(lon_dd_consolidadas = unlist(map(.$geometry, 1)),
+         lat_dd_consolidadas = unlist(map(.$geometry, 2))) %>% 
+  st_drop_geometry() %>% 
+  right_join(indrhi_hidrometricas_coord_limpias, by = 'N°') %>% 
+  mutate(lon_dd_consolidadas = ifelse(is.na(lon_dd_consolidadas), lon_dd_correg, lon_dd_consolidadas),
+         lat_dd_consolidadas = ifelse(is.na(lat_dd_consolidadas), lat_dd_correg, lat_dd_consolidadas)) %>% 
+  arrange(`N°`) %>% 
+  select(-(utm_x_normal:utm_y_consolidadas), -(Latitud:`Longitud Corregida`)) %>% 
+  relocate(matches('consolidadas'), .after = `Sub-cuenca`)
+indrhi_hidrometricas_final %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+indrhi_hidrometricas_final_sf <- indrhi_hidrometricas_final %>% 
+  mutate(excluir_sf = ifelse(is.na(lon_dd_consolidadas) | is.na(lat_dd_consolidadas), 'sí', 'no')) %>% 
+  filter(excluir_sf=='no') %>% 
+  st_as_sf(coords = c('lon_dd_consolidadas', 'lat_dd_consolidadas'), crs = 4326) %>% 
+  select(-excluir_sf) %>%
+  mutate(Estado = factor(Estado, levels = c('Bueno','Regular', 'Malo')))
+```
+
+Del total de `r nrow(indrhi[[1]])` estaciones hidrométricas, para fines de representación, descartamos `r nrow(indrhi[[1]]) - nrow(indrhi_hidrometricas_final_sf)` que no contaban con coordenadas, o que sus valores eran erróneos. El mapa de estaciones hidrométricas con coordenadas depuradas (`r nrow(indrhi_hidrometricas_final_sf)` estaciones), e indicación de sus correspondientes estados, se muestra a continuación.
+
+```{r, fig.width=15.7, fig.height=10.5, dpi=62}
+fpal_estado <- colorFactor(
+  palette = c("#E41A1C", "#FFFF33","#4DAF4A"),
+  # palette = RColorBrewer::brewer.pal(length(unique(indrhi_hidrometricas_final_sf$Estado)), 'Set1'),
+  domain = unique(indrhi_hidrometricas_final_sf$Estado), reverse = T)
+leaflet(indrhi_hidrometricas_final_sf) %>%
+  addCircleMarkers(
+    radius = 5, label = ~`N°`, group = ~ Estado,
+    popup = ~ paste0('Codigo N°: ', `N°`, '<br>Nombre: ', `Nombre de la estación`, '<br>Estado: ', Estado),
+    color = ~ fpal_estado(Estado),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_estado, values = ~ Estado, opacity = 1,
+            title = "Estaciones<br>Hidrométricas<br>INDRHI<br>Estado") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ Estado, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+
+
 
