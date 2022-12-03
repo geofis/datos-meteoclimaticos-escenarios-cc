@@ -5,3 +5,4 @@ El proyecto "Generación y gestión de datos hidrometeorológicos y escenarios d
 Entradas disponibles:
 
 - [Consolidación de listas de estaciones](consolidacion-lista-estaciones.md)
+- [Listas de estaciones según estado](combinadas-lista-de-estaciones-activas.md)
