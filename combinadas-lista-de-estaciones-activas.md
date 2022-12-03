@@ -4684,7 +4684,7 @@ leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
   addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
   addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
   addLayersControl(
-    baseGroups = c("CartoDB", "OSM", "ESRI Mapa", "ESRI Imagen"),
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),    
     overlayGroups = ~ estado, position = 'bottomright',
     options = layersControlOptions(collapsed = FALSE)) %>% 
   leaflet_map_view %>% 
@@ -4711,7 +4711,7 @@ indrhi <- map(5:6, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet 
 Las estaciones reportadas en el informe son de dos tipos generales:
 hidrométricas y climáticas. De las primeras, las hidrométricas, hay un
 total de 175 estaciones, mientras que las climáticas representan un
-total de 63 estaciones. En ambos casos, INDRHI clasificó las estaciones
+total de 61 estaciones. En ambos casos, INDRHI clasificó las estaciones
 según “estado” en tres categorías: Bueno, Regular, Malo.
 
 #### Estaciones hidrométricas
@@ -12085,11 +12085,11 @@ leaflet(indrhi_hidrometricas_final_sf) %>%
 indrhi_historico <- read_xlsx('fuentes/indrhi/Listado Red Medicion INDRHI_Historico_24-10-2022_revision_jr.xlsx')
 indrhi[[2]] <- indrhi[[2]] %>% rename(Estado = Estatus) %>% 
   filter(!(`N°` == 18 | `N°` == 43)) %>% # Quitar Santana y Jarabacoa, duplicadas
-  mutate(Estado = factor(Estado, labels = c('Bueno', 'Malo', 'Regular')))
+  mutate(Estado = factor(Estado, labels = c('Bueno', 'Malo', 'Regular'))) %>% 
+  mutate(Estado = factor(Estado, levels=c('Bueno', 'Regular', 'Malo')))
 indrhi_climaticas_resumen_estado <- indrhi[[2]] %>% 
   select(`Código`, `Nombre de la  estación`, Estado) %>% 
   group_by(Estado) %>%
-  mutate(Estado = factor(Estado, levels=c('Bueno', 'Regular', 'Malo'))) %>%
   count()
 indrhi_climaticas_resumen_estado %>%
   kable(booktabs=T) %>%
