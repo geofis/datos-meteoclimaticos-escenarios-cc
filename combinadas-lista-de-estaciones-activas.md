@@ -17,6 +17,7 @@ library(readxl)
 library(parzer)
 library(tidyverse)
 library(kableExtra)
+library(fuzzyjoin)
 source('R/funciones.R')
 leaflet_map_view <- . %>% setView(lat = 18.7, lng = -70.3, zoom = 8)
 ```
@@ -12083,8 +12084,11 @@ leaflet(indrhi_hidrometricas_final_sf) %>%
 # indrhi <- map(5:6, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
 indrhi_historico <- read_xlsx('fuentes/indrhi/Listado Red Medicion INDRHI_Historico_24-10-2022_revision_jr.xlsx')
 indrhi[[2]] <- indrhi[[2]] %>% rename(Estado = Estatus) %>% 
+  filter(!(`N°` == 18 | `N°` == 43)) %>% # Quitar Santana y Jarabacoa, duplicadas
   mutate(Estado = factor(Estado, labels = c('Bueno', 'Malo', 'Regular')))
-indrhi_climaticas_resumen_estado <- indrhi[[2]] %>% group_by(Estado) %>%
+indrhi_climaticas_resumen_estado <- indrhi[[2]] %>% 
+  select(`Código`, `Nombre de la  estación`, Estado) %>% 
+  group_by(Estado) %>%
   mutate(Estado = factor(Estado, levels=c('Bueno', 'Regular', 'Malo'))) %>%
   count()
 indrhi_climaticas_resumen_estado %>%
@@ -12093,60 +12097,2528 @@ indrhi_climaticas_resumen_estado %>%
     full_width = F,
     latex_options = c("HOLD_position", "scale_down")) %>%
   gsub(' NA ', '', .)
-indrhi[[2]] %>% mutate(Código = as.character(Código)) %>%
-  inner_join(
-    # indrhi_historico %>% select(CODIGO, LATITUD, LONGITUD) %>% distinct() %>% arrange(CODIGO),
-    indrhi_historico %>% select(CODIGO, `X (UTM)`, `Y (UTM)`, LATITUD, LONGITUD) %>% distinct() %>% arrange(CODIGO),
-    by = c("Código" = "CODIGO")) %>% 
-  unique()
-
-indrhi_historico %>% filter(CODIGO %in% indrhi[[2]]$Código) %>%
-  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
-  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`))
-
-indrhi_historico %>% filter(tolower(ESTACION) %in% tolower(indrhi[[2]]$`Nombre de la  estación`)) %>%
-  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
-  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`))
-
-
-indrhi_historico %>% filter(CODIGO %in% indrhi[[2]]$Código) %>%
-  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
-  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`)) %>% 
-  right_join(
-    indrhi_historico %>% filter(tolower(ESTACION) %in% tolower(indrhi[[2]]$`Nombre de la  estación`)) %>%
-  select(CODIGO, `X (UTM)`, `Y (UTM)`) %>% distinct() %>% group_by(CODIGO) %>%
-  summarise(rango_x=max(`X (UTM)`) - min(`X (UTM)`), rango_y=max(`Y (UTM)`) - min(`Y (UTM)`)), by='CODIGO'
-  ) %>% distinct()
 ```
 
-La fuente empleada para extraer la información sobre las estaciones
-climáticas, fue la misma que la usada para las hidrométricas (archivo de
-“inventario”, procedente del PDF
-`Informe Final inventario estaciones hidrometeorológicas INDRHI, Rep. Dom..pdf`),
-pero en este caso no se inluyeron las coordenadas de las estaciones, si
-bien los demás atributos de interés si estaban presentes. En tal
-sentido, la categorización de estaciones según estados se pudo realizar
-satisfactoriamente, obteniéndose el resultado detallado a continuación.
-Del total de 63 estaciones climáticas, 34 se encontraban en la categoría
-“Malo”, 12 en estado “Regular” y 17 en la categoría “Bueno”.
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Estado
+</th>
+<th style="text-align:right;">
+n
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:right;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:right;">
+12
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:right;">
+32
+</td>
+</tr>
+</tbody>
+</table>
 
-Para avanzar hacia la producción del mapa de estaciones climáticas del
-INDRHI, hubo que complementar el ausencia de coordenadas, uniendo la
-tabla extraída desde el PDF con una lista histórica de estaciones
-mayoritariamente georreferenciadas, aportada igualmente por el
-departamento de hidrología de INDRHI, y corregida puntualmente por
-nosotros
+La fuente empleada para extraer la lista de estaciones climáticas, con
+sus respectivos estados de operación, fue la misma que la usada para las
+hidrométricas, es decir, el inventario procedente del PDF
+`Informe Final inventario estaciones hidrometeorológicas INDRHI, Rep. Dom..pdf`.
+La categorización de estaciones según estados indica que, del total de
+61 estaciones climáticas, 32 se encontraban en la categoría “Malo”, 12
+en estado “Regular” y 17 en la categoría “Bueno”.
+
+La tabla fuente carecía del necesario atributo “coordenadas”, así que,
+para avanzar en la generación del mapa de estaciones climáticas del
+INDRHI, nuevamente hubo que manipular los datos (*data wrangling*).
+Suplimos la ausencia de coordenadas uniendo la tabla inventario (sin
+coordenadas) con una lista histórica de estaciones georreferenciadas
+(mayoritariamente) con coordenadas UTM y/o LAT/LON. Esta última tabla
+fue aportada por el departamento de hidrología de INDRHI, y corregida
+puntualmente por nosotros
 (`Listado Red Medicion INDRHI_Historico_24-10-2022_revision_jr.xlsx`).
-Aprovechamos la existencia del campo `CODIGO` del archivo “histórico”,
-para hacer unión con el homólogo `Código` de la tabla de inventario
-procedente del PDF. No obstante, dos dificultades afloraron: 1) En el
-archivo histórico, muchas estaciones están duplicadas, cada copia con
-coordenadas exactamente iguales o ligeramente diferentes entre sí
-(normalmente unos 10 a 100 m, savo un caso); 2) No todas las estaciones
-disponían de coordenadas. La duplicidad la resolvimos eligiendo el
-duplicado más probable según criterio propio, conocimiento del terreno y
-fuentes cartográficas.
+Aprovechamos la existencia de campos comunes (códigos, nombre de
+estación) entre este archivo y la tabla de inventario procedente del
+PDF. No obstante, tres nuevas dificultades afloraron:
 
 ``` r
-knitr::knit_exit()
+# Unión por código
+indrhi[[2]] %>% mutate(Código = as.character(Código)) %>%
+  select(CODIGO = Código, ESTACION = `Nombre de la  estación`) %>% 
+  inner_join(indrhi_historico %>% select(ORDEN, CODIGO, `X (UTM)`, `Y (UTM)`), by = 'CODIGO') %>% 
+  group_by(CODIGO) %>% 
+  mutate(dist_x=max(`X (UTM)`) - min(`X (UTM)`), dist_y=max(`Y (UTM)`) - min(`Y (UTM)`)) %>% 
+  write_csv('fuentes/indrhi/revision_estaciones_climaticas/para_revision_unidas_por_codigo.csv')
+# Resto: no pudieron unirse por código, y se unieron por nombre de estación (búsqueda de texto difusa)
+# Probados todos los métodos, "cosine" conservó el máximo posible e hizo las mejores coincidencias
+sapply(
+  c("osa", "lv", "dl", "hamming", "lcs", "qgram", "cosine", "jaccard", "jw","soundex"),
+  function(x)
+    indrhi[[2]] %>% mutate(Código = as.character(Código)) %>%
+    select(CODIGO = Código, ESTACION = `Nombre de la  estación`) %>% 
+    anti_join(indrhi_historico %>% select(ORDEN, CODIGO, `X (UTM)`, `Y (UTM)`), by = 'CODIGO') %>%
+    select(-CODIGO) %>% 
+    stringdist_left_join(
+      y = indrhi_historico %>%
+        select(ORDEN, ESTACION, `X (UTM)`, `Y (UTM)`, 'ESTACION',   'NOMBRE_CUE', 'UBICACION'),
+      ignore_case = T, max_dist = 0.1, method = x,
+      by = 'ESTACION', distance_col='distancia') %>% mutate(metodo=x) %>%
+    write_csv(paste0('fuentes/indrhi/revision_estaciones_climaticas/para_revision_unidas_por_nombre_metodo_', x, '.csv')),
+  simplify = F)
 ```
+
+1.  En la tabla de inventario, el campo `Código` no fue rellenado para
+    todas las estaciones. En este caso, se complementó la unión usando
+    el campo nombre de estación. Usamos el criterio de provincia, cuenca
+    y localidad, para asegurarnos que las estaciones con nombres
+    genéricos (e.g. “CACHEO”) y uso generalizado, fuesen unívocamente
+    identificadas en el par de tablas. Al unir por nombre estación,
+    también se corría el riesgo de que, nombres coincidentes, no fuesen
+    correctamente emparejados al comparar cadenas parecidas pero no
+    exactamente iguales (diferencias de grafías, signos de puntuación,
+    omisiones de artículos). Para ello, evaluamos coincidencia de los
+    campos de nombres de estación en las dos tablas (la de inventario,
+    sin coordenadas, y la histórica, con coordenadas), mediante
+    coincidencia aproximada de cadenas, búsqueda de texto difuso y
+    funciones de distancia de cadenas.
+
+2.  En el archivo histórico, muchas estaciones son repeticiones
+    (duplicados, triplicados, …), cada copia con coordenadas iguales y/o
+    ligeramente diferentes entre sí. Normalmente, las distancias entre
+    repeticiones eran de 0 a 100 m, pero también encontramos extremos,
+    como 20 km (ver ejemplo en figura
+    <a href="#fig:ejemplosrepetidas">1</a>), por lo que hubo eligir la
+    instancia más probable según criterio propio, conocimiento del
+    terreno y fuentes cartográficas en entorno SIG (software QGIS).
+
+3.  No todas las estaciones disponían de coordenadas en el archivo
+    histórico. Lógicamente, las estaciones sin coordenadas, las
+    excluimos del mapa.
+
+![Figure 1: Ejemplos de estaciones repetidas en archivo histórico
+INDRHI](img/ejemplo_repetidas.jpg)
+
+``` r
+indrhi_climaticas_depurado <- indrhi[[2]] %>%
+               select(ESTACION = `Nombre de la  estación`, Cuenca, `Sub-cuenca`, PROVINCIA,
+                      Municipio, `Nivel de Tecnología`, Estado, `Proyecto /Red`, `Observación`) %>%
+  left_join(bind_rows(
+    read_ods('fuentes/indrhi/revision_estaciones_climaticas/para_revision_unidas_por_codigo.ods') %>% 
+      select(ESTACION, ORDEN),
+    read_ods('fuentes/indrhi/revision_estaciones_climaticas/para_revision_unidas_por_nombre_metodo_cosine.ods') %>% 
+      select(ESTACION = ESTACION.x, ORDEN)),
+             by = 'ESTACION') %>% 
+  left_join(indrhi_historico %>% select(ORDEN, CODIGO, `X (UTM)`, `Y (UTM)`), by = 'ORDEN')
+indrhi_climaticas_depurado_ll <- indrhi_climaticas_depurado %>%
+  mutate(excluir_sf = ifelse(is.na(`X (UTM)`) | is.na(`Y (UTM)`), 'sí', 'no')) %>% 
+  filter(excluir_sf=='no') %>% select(-excluir_sf) %>% 
+  st_as_sf(coords = c('X (UTM)', 'Y (UTM)'), crs = 32619) %>% 
+  st_transform(4326) %>% 
+  mutate(lon_dd = unlist(map(.$geometry, 1)),
+         lat_dd = unlist(map(.$geometry, 2))) %>% 
+  st_drop_geometry() %>% 
+  select(ESTACION, lon_dd, lat_dd) %>% 
+  right_join(indrhi_climaticas_depurado, by = 'ESTACION') %>% 
+  relocate(lon_dd:lat_dd, .after = Municipio)
+indrhi_climaticas_depurado_ll %>% 
+  select(-ORDEN, -`X (UTM)`, -`Y (UTM)`) %>% 
+  arrange(ESTACION) %>% 
+  kable(booktabs=T) %>%
+  kable_styling(
+    full_width = F,
+    latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+```
+
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+ESTACION
+</th>
+<th style="text-align:left;">
+Cuenca
+</th>
+<th style="text-align:left;">
+Sub-cuenca
+</th>
+<th style="text-align:left;">
+PROVINCIA
+</th>
+<th style="text-align:left;">
+Municipio
+</th>
+<th style="text-align:right;">
+lon_dd
+</th>
+<th style="text-align:right;">
+lat_dd
+</th>
+<th style="text-align:left;">
+Nivel de Tecnología
+</th>
+<th style="text-align:left;">
+Estado
+</th>
+<th style="text-align:left;">
+Proyecto /Red
+</th>
+<th style="text-align:left;">
+Observación
+</th>
+<th style="text-align:left;">
+CODIGO
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Angelina
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Sánchez Ramírez
+</td>
+<td style="text-align:left;">
+Cotui
+</td>
+<td style="text-align:right;">
+-70.22229
+</td>
+<td style="text-align:right;">
+19.13080
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Esta estación tiene muchos equipos, aunque funcionan están en mal
+estado. De la garita no queda nada.
+</td>
+<td style="text-align:left;">
+1815
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Angostura
+</td>
+<td style="text-align:left;">
+Enriquillo
+</td>
+<td style="text-align:left;">
+Enriquillo
+</td>
+<td style="text-align:left;">
+Independencia
+</td>
+<td style="text-align:left;">
+Mella
+</td>
+<td style="text-align:right;">
+-71.39485
+</td>
+<td style="text-align:right;">
+18.26713
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+La estación esta en malas condiciones
+</td>
+<td style="text-align:left;">
+5312
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Barraquito
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Duarte
+</td>
+<td style="text-align:left;">
+Villa Riva
+</td>
+<td style="text-align:right;">
+-69.78891
+</td>
+<td style="text-align:right;">
+19.12899
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Esta estación esta en total abandono, no hemos podido contactar al
+observador.
+</td>
+<td style="text-align:left;">
+1814
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bayahibe
+</td>
+<td style="text-align:left;">
+Chavón
+</td>
+<td style="text-align:left;">
+Chavón
+</td>
+<td style="text-align:left;">
+Higuey
+</td>
+<td style="text-align:left;">
+Bayahibe
+</td>
+<td style="text-align:right;">
+-68.84189
+</td>
+<td style="text-align:right;">
+18.40092
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+Solo existe el corral, no tiene ningún tipo de equipos.
+</td>
+<td style="text-align:left;">
+6688
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Blanco (Presa)
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Blanco
+</td>
+<td style="text-align:left;">
+Monseñor Noel
+</td>
+<td style="text-align:left;">
+Bonao
+</td>
+<td style="text-align:right;">
+-70.55812
+</td>
+<td style="text-align:right;">
+18.88745
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+La estación esta llena de maleza, dentro y fuera del coral, además no
+transmite.
+</td>
+<td style="text-align:left;">
+183201
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Boca de Mao
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Valverde
+</td>
+<td style="text-align:left;">
+Mao
+</td>
+<td style="text-align:right;">
+-71.05147
+</td>
+<td style="text-align:right;">
+19.58830
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Solo funciona el Pluviómetro Mecánico.
+</td>
+<td style="text-align:left;">
+406
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Catanamatias
+</td>
+<td style="text-align:left;">
+Artibonito
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:right;">
+-71.40899
+</td>
+<td style="text-align:right;">
+19.04968
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+5408
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cenovi en Santa Ana
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Cenovi en Santa Ana
+</td>
+<td style="text-align:left;">
+Duarte
+</td>
+<td style="text-align:left;">
+San Francisco de Macorís
+</td>
+<td style="text-align:right;">
+-70.34796
+</td>
+<td style="text-align:right;">
+19.29467
+</td>
+<td style="text-align:left;">
+Convencional/Auto mática
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+No funciona el tanque evaporímetro
+</td>
+<td style="text-align:left;">
+1838
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cítricos Dominicanos
+</td>
+<td style="text-align:left;">
+Haina
+</td>
+<td style="text-align:left;">
+Guananito
+</td>
+<td style="text-align:left;">
+San Cristóbal
+</td>
+<td style="text-align:left;">
+Villa Altagracia
+</td>
+<td style="text-align:right;">
+-70.24028
+</td>
+<td style="text-align:right;">
+18.73897
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+Solo existe el corral, no tiene ningún tipo de equipos.
+</td>
+<td style="text-align:left;">
+6696
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Comate
+</td>
+<td style="text-align:left;">
+Ozama
+</td>
+<td style="text-align:left;">
+Rio Comate
+</td>
+<td style="text-align:left;">
+Monte Plata
+</td>
+<td style="text-align:left;">
+Bayaguana
+</td>
+<td style="text-align:right;">
+-69.61664
+</td>
+<td style="text-align:right;">
+18.74568
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+La estación no existe.
+</td>
+<td style="text-align:left;">
+6391
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Constanza
+</td>
+<td style="text-align:left;">
+Yaque del Sur
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+La Vega
+</td>
+<td style="text-align:left;">
+Constanza
+</td>
+<td style="text-align:right;">
+-70.71674
+</td>
+<td style="text-align:right;">
+18.91134
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Es una de las mejores estaciones en la región, de las mas estables.
+</td>
+<td style="text-align:left;">
+4902
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Aguacate
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Duarte
+</td>
+<td style="text-align:left;">
+Villa Riva
+</td>
+<td style="text-align:right;">
+-69.75949
+</td>
+<td style="text-align:right;">
+19.17220
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+El Sindico de El Aguacate construyo un parque en el área de la estación.
+</td>
+<td style="text-align:left;">
+1843
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Arroyaso
+</td>
+<td style="text-align:left;">
+Yaque del Norte
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+La Vega
+</td>
+<td style="text-align:left;">
+Jarabacoa
+</td>
+<td style="text-align:right;">
+-70.53229
+</td>
+<td style="text-align:right;">
+19.04496
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+En esta estación solo queda el anemómetro y el pluviómetro. No tiene
+observador , las observaciones la hacen en el proyecto Ébano Verde.
+</td>
+<td style="text-align:left;">
+467
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Limón
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+María Trinidad Sánchez
+</td>
+<td style="text-align:left;">
+Nagua
+</td>
+<td style="text-align:right;">
+-69.81945
+</td>
+<td style="text-align:right;">
+19.15301
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+El candado de esta estación fue violado, pero todo lo demás esta ahí,
+tiene un poco de maleza; esta estación no esta transmitiendo.
+</td>
+<td style="text-align:left;">
+1803
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Memiso
+</td>
+<td style="text-align:left;">
+Rio Ocoa
+</td>
+<td style="text-align:left;">
+Rio Ocoa
+</td>
+<td style="text-align:left;">
+Azua
+</td>
+<td style="text-align:left;">
+Estebania
+</td>
+<td style="text-align:right;">
+-70.57159
+</td>
+<td style="text-align:right;">
+18.51421
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Estación libre de vegetación, el corral esta oxidado.
+</td>
+<td style="text-align:left;">
+4425
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Naranjito
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Santiago Rodríguez
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:right;">
+-71.34351
+</td>
+<td style="text-align:right;">
+19.47442
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+La observadora esta pensionada en espera del nombramiento de sustituta.
+</td>
+<td style="text-align:left;">
+407
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Seibo
+</td>
+<td style="text-align:left;">
+Soco
+</td>
+<td style="text-align:left;">
+Rio Soco
+</td>
+<td style="text-align:left;">
+El Seibo
+</td>
+<td style="text-align:left;">
+El Seibo
+</td>
+<td style="text-align:right;">
+-69.04444
+</td>
+<td style="text-align:right;">
+18.76550
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+No existe ningún equipo en la estación por deterioro y vandalismo, el
+corral se traslado al patio de la observadora para posible instalación
+de estación con tecnología Gprs.
+</td>
+<td style="text-align:left;">
+3001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Engombe
+</td>
+<td style="text-align:left;">
+Haina
+</td>
+<td style="text-align:left;">
+Haina
+</td>
+<td style="text-align:left;">
+Santo Domingo
+</td>
+<td style="text-align:left;">
+Santo Domingo Oeste
+</td>
+<td style="text-align:right;">
+-70.00194
+</td>
+<td style="text-align:right;">
+18.44941
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Solo funciona el pluviómetro y el anemómetro, el corral en mal estado.
+</td>
+<td style="text-align:left;">
+3401
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Guarey-Guaigui
+</td>
+<td style="text-align:left;">
+Yuna/Camu
+</td>
+<td style="text-align:left;">
+Guaigui
+</td>
+<td style="text-align:left;">
+La Vega
+</td>
+<td style="text-align:left;">
+La Vega
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Convencional/Auto mática
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+Esta en perfecta condiciones, esta transmitiendo.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hato Mayor
+</td>
+<td style="text-align:left;">
+Higuamo
+</td>
+<td style="text-align:left;">
+Higuamo
+</td>
+<td style="text-align:left;">
+Hato Mayor
+</td>
+<td style="text-align:left;">
+Hierba Buena
+</td>
+<td style="text-align:right;">
+-69.25001
+</td>
+<td style="text-align:right;">
+18.75023
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+La estación ya no existe.
+</td>
+<td style="text-align:left;">
+3104
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Higuerito
+</td>
+<td style="text-align:left;">
+Artibonito
+</td>
+<td style="text-align:left;">
+Artibonito
+</td>
+<td style="text-align:left;">
+Elías Piña
+</td>
+<td style="text-align:left;">
+Higuerito
+</td>
+<td style="text-align:right;">
+-71.62430
+</td>
+<td style="text-align:right;">
+18.99017
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+Esta estación necesita que se le instale un pluviómetro convencional, ya
+que el sistema eléctrico no funciona. No tiene el panel solar, ni la
+tarjeta de memoria; la base del tanque de evaporación esta destruida.
+</td>
+<td style="text-align:left;">
+6701
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Higuey
+</td>
+<td style="text-align:left;">
+Rio Duey
+</td>
+<td style="text-align:left;">
+Rio Duey
+</td>
+<td style="text-align:left;">
+Higuey
+</td>
+<td style="text-align:left;">
+Higuey
+</td>
+<td style="text-align:right;">
+-68.69901
+</td>
+<td style="text-align:right;">
+18.61992
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+Ya no existen estructura ni equipos de esta estación.
+</td>
+<td style="text-align:left;">
+6392
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Isa
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Santiago
+</td>
+<td style="text-align:left;">
+Santiago
+</td>
+<td style="text-align:right;">
+-70.74591
+</td>
+<td style="text-align:right;">
+19.44608
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+404
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jarabacoa
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+La Vega
+</td>
+<td style="text-align:left;">
+Jarabacoa
+</td>
+<td style="text-align:right;">
+-70.63896
+</td>
+<td style="text-align:right;">
+19.13080
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+Esta Transmitiendo.
+</td>
+<td style="text-align:left;">
+401
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+José Contreras
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Hermanas Mirabal
+</td>
+<td style="text-align:left;">
+Villa Trina
+</td>
+<td style="text-align:right;">
+-70.45006
+</td>
+<td style="text-align:right;">
+19.46691
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+Esta todo, menos la garita; pero nada esta funcionando.
+</td>
+<td style="text-align:left;">
+1816
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Juma-Bonao
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Monseñor Noel
+</td>
+<td style="text-align:left;">
+Bonao
+</td>
+<td style="text-align:right;">
+-70.38618
+</td>
+<td style="text-align:right;">
+18.90023
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+La telemétrica esta llena de maleza, el tanque de evaporación no esta
+funcionando.
+</td>
+<td style="text-align:left;">
+1802
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Km 11 Carretera Sánchez
+</td>
+<td style="text-align:left;">
+Yaque del Sur
+</td>
+<td style="text-align:left;">
+Rio San Juan
+</td>
+<td style="text-align:left;">
+San Juan de la Maguana
+</td>
+<td style="text-align:left;">
+San Juan
+</td>
+<td style="text-align:right;">
+-71.15053
+</td>
+<td style="text-align:right;">
+18.75813
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Estación en mal estado.
+</td>
+<td style="text-align:left;">
+4903
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Km 15
+</td>
+<td style="text-align:left;">
+Yaque del Sur
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Azua
+</td>
+<td style="text-align:left;">
+Compostela
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+No funciona.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Km 15
+</td>
+<td style="text-align:left;">
+Yaque del Sur
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Azua
+</td>
+<td style="text-align:left;">
+Compostela
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2002 (SIAP)
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Antona
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Montecristy
+</td>
+<td style="text-align:left;">
+Guayubin
+</td>
+<td style="text-align:right;">
+-71.40288
+</td>
+<td style="text-align:right;">
+19.63358
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+La observadora solicita que la estación sea trasladada mas cerca de su
+residencia.
+</td>
+<td style="text-align:left;">
+408
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Guama
+</td>
+<td style="text-align:left;">
+Nisibon
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Higuey
+</td>
+<td style="text-align:left;">
+Nisibon
+</td>
+<td style="text-align:right;">
+-68.66119
+</td>
+<td style="text-align:right;">
+18.80965
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+La estación ya no existe.
+</td>
+<td style="text-align:left;">
+6691
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Isabela
+</td>
+<td style="text-align:left;">
+Bajabonico
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Puerto Plata
+</td>
+<td style="text-align:left;">
+Isabela
+</td>
+<td style="text-align:right;">
+-71.06397
+</td>
+<td style="text-align:right;">
+19.83025
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Observador invalido, lo ayuda su hijo.
+</td>
+<td style="text-align:left;">
+602
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Peñita
+</td>
+<td style="text-align:left;">
+Este
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Hato Mayor
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:right;">
+-70.27561
+</td>
+<td style="text-align:right;">
+18.45551
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+Esta estación ya no existe, desconocidos retiraron la estación completa.
+</td>
+<td style="text-align:left;">
+380009
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lago Enriquillo
+</td>
+<td style="text-align:left;">
+Enriquillo
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Independencia
+</td>
+<td style="text-align:left;">
+Descubierta
+</td>
+<td style="text-align:right;">
+-71.69811
+</td>
+<td style="text-align:right;">
+18.55929
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+La estación climática tiene todos los equipos en buenas condiciones. No
+esta funcionando por falta de mantenimiento. El hidrolab instalado para
+medir el nivel del agua fue sustraído.
+</td>
+<td style="text-align:left;">
+5323
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Las Barias
+</td>
+<td style="text-align:left;">
+Nizao
+</td>
+<td style="text-align:left;">
+Nizao
+</td>
+<td style="text-align:left;">
+Peravia
+</td>
+<td style="text-align:left;">
+Pizarrete
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+Estación completa marca Sutron. La base del tanque de evaporación esta
+deteriorada.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Arroyos
+</td>
+<td style="text-align:left;">
+Rio Ocoa
+</td>
+<td style="text-align:left;">
+Rio Ocoa
+</td>
+<td style="text-align:left;">
+San José de Ocoa
+</td>
+<td style="text-align:left;">
+Sabana Larga
+</td>
+<td style="text-align:right;">
+-70.52916
+</td>
+<td style="text-align:right;">
+18.64196
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Esta libre de vegetación, corral en mal estado.
+</td>
+<td style="text-align:left;">
+4426
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Botados
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Monseñor Noel
+</td>
+<td style="text-align:left;">
+Bonao
+</td>
+<td style="text-align:right;">
+-70.57674
+</td>
+<td style="text-align:right;">
+18.87078
+</td>
+<td style="text-align:left;">
+Convencional/Auto mática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+Esta llena de maleza, no funcionan, el observador de la estación
+climática convencional fue cancelado, aun no han nombrado a nadie en su
+lugar.
+</td>
+<td style="text-align:left;">
+1817
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Jengibres
+</td>
+<td style="text-align:left;">
+Rio Boba
+</td>
+<td style="text-align:left;">
+Rio Boba
+</td>
+<td style="text-align:left;">
+María Trinidad Sánchez
+</td>
+<td style="text-align:left;">
+Nagua
+</td>
+<td style="text-align:right;">
+-70.04727
+</td>
+<td style="text-align:right;">
+19.43913
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+La garita colapso y también los termómetros, el tanque de evaporación
+tiene la base rota, por lo que no esta funcionando.
+</td>
+<td style="text-align:left;">
+1501
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Naranjos
+</td>
+<td style="text-align:left;">
+Rio Duey
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Higuey
+</td>
+<td style="text-align:left;">
+San Rafael del Yuma
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+La estación ya no existe.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Matagrande
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Santiago
+</td>
+<td style="text-align:left;">
+Sajoma
+</td>
+<td style="text-align:right;">
+-70.98758
+</td>
+<td style="text-align:right;">
+19.20857
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Observador incapacitado, la labor la realizar su sobrina.
+</td>
+<td style="text-align:left;">
+411
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Matayaya
+</td>
+<td style="text-align:left;">
+Artibonito
+</td>
+<td style="text-align:left;">
+Artibonito
+</td>
+<td style="text-align:left;">
+San Juan de la Maguana
+</td>
+<td style="text-align:left;">
+Las Matas de Farfán
+</td>
+<td style="text-align:right;">
+-71.58844
+</td>
+<td style="text-align:right;">
+18.88357
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+La garita no sirve, el termómetro mínima no sirve; la base del tanque de
+evaporación no sirve.
+</td>
+<td style="text-align:left;">
+5401
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Medina
+</td>
+<td style="text-align:left;">
+Haina
+</td>
+<td style="text-align:left;">
+Haina
+</td>
+<td style="text-align:left;">
+San Cristóbal
+</td>
+<td style="text-align:left;">
+Medina
+</td>
+<td style="text-align:right;">
+-70.14450
+</td>
+<td style="text-align:right;">
+18.53523
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Vegetación dentro y fuera, garita en malas condiciones, pluviómetro
+aceptable, base del pluviómetro deteriorada, al tanque de evaporación le
+falta el gancho milimétrico, corral en mal estado.
+</td>
+<td style="text-align:left;">
+3402
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Naranjal
+</td>
+<td style="text-align:left;">
+Rio Ocoa
+</td>
+<td style="text-align:left;">
+Rio Ocoa
+</td>
+<td style="text-align:left;">
+San José de Ocoa
+</td>
+<td style="text-align:left;">
+Sabana Larga
+</td>
+<td style="text-align:right;">
+-70.47712
+</td>
+<td style="text-align:right;">
+18.54298
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+No existe estructura ni equipos de la estación, el observador falleció.
+</td>
+<td style="text-align:left;">
+4401
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Naranjito
+</td>
+<td style="text-align:left;">
+Artibonito
+</td>
+<td style="text-align:left;">
+Artibonito
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:right;">
+-71.49733
+</td>
+<td style="text-align:right;">
+19.28413
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Falta mantenimiento preventivo
+</td>
+<td style="text-align:left;">
+5410
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Palo de Caja
+</td>
+<td style="text-align:left;">
+Nizao
+</td>
+<td style="text-align:left;">
+Nizao
+</td>
+<td style="text-align:left;">
+San José de Ocoa
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:right;">
+-70.40006
+</td>
+<td style="text-align:right;">
+18.53078
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+Vegetación dentro del corral, fue limpiada la estación no esta
+funcionando, el corral tiene ruptura por vandalismo.
+</td>
+<td style="text-align:left;">
+3806
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Peñón Barahona
+</td>
+<td style="text-align:left;">
+Yaque del Sur
+</td>
+<td style="text-align:left;">
+Yaque del Sur
+</td>
+<td style="text-align:left;">
+Barahona
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:right;">
+-71.18722
+</td>
+<td style="text-align:right;">
+18.29662
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+La estación tiene que ser reparada.
+</td>
+<td style="text-align:left;">
+4904
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Presa de Montegrande
+</td>
+<td style="text-align:left;">
+Yaque del Sur
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Barahona
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2002 (SIAP)
+</td>
+<td style="text-align:left;">
+El pluviómetro esta desnivelado y no tenemos conocimiento de si esta
+transmitiendo.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Presa de Aguacate
+</td>
+<td style="text-align:left;">
+Nizao
+</td>
+<td style="text-align:left;">
+Nizao
+</td>
+<td style="text-align:left;">
+San Cristóbal
+</td>
+<td style="text-align:left;">
+El Cacao
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+Estación completa marca Sutron. La estación tiene un poco de maleza en
+su interior y no se pudo limpiar por no tener las llaves de la estación.
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Presa Hatillo
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+Sánchez Ramírez
+</td>
+<td style="text-align:left;">
+Cotui
+</td>
+<td style="text-align:right;">
+-70.25283
+</td>
+<td style="text-align:right;">
+18.94745
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+Todo en buena condiciones, pero no transmite.
+</td>
+<td style="text-align:left;">
+1806
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Presa Jiguez
+</td>
+<td style="text-align:left;">
+Nizao
+</td>
+<td style="text-align:left;">
+Nizao
+</td>
+<td style="text-align:left;">
+San José de Ocoa
+</td>
+<td style="text-align:left;">
+Jiguey
+</td>
+<td style="text-align:right;">
+-70.38255
+</td>
+<td style="text-align:right;">
+18.53328
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+La estación no tiene el panel solar, le fue robado; la estación no esta
+funcionando.
+</td>
+<td style="text-align:left;">
+380201
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pueblo Nuevo
+</td>
+<td style="text-align:left;">
+Ozama
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Monte Plata
+</td>
+<td style="text-align:left;">
+Majagual
+</td>
+<td style="text-align:right;">
+-70.17477
+</td>
+<td style="text-align:right;">
+18.43995
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+La estación ya no existe.
+</td>
+<td style="text-align:left;">
+361001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Puerto Escondido
+</td>
+<td style="text-align:left;">
+Enriquillo
+</td>
+<td style="text-align:left;">
+Las Damas
+</td>
+<td style="text-align:left;">
+Independencia
+</td>
+<td style="text-align:left;">
+Puerto Escondido
+</td>
+<td style="text-align:right;">
+-71.57233
+</td>
+<td style="text-align:right;">
+18.32106
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+Pluviómetro en mal estado; pero el tanque evaporímetro, el pluviógrafo y
+el anemómetro están en buen estado.
+</td>
+<td style="text-align:left;">
+532001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Quinigua
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Santiago
+</td>
+<td style="text-align:left;">
+Villa González
+</td>
+<td style="text-align:right;">
+-70.77368
+</td>
+<td style="text-align:right;">
+19.52663
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+405
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sabana de la Mar
+</td>
+<td style="text-align:left;">
+Este
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Hato Mayor
+</td>
+<td style="text-align:left;">
+Sabana de la Mar
+</td>
+<td style="text-align:right;">
+-69.38908
+</td>
+<td style="text-align:right;">
+19.04605
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+Hay que confirmar su estado.
+</td>
+<td style="text-align:left;">
+6693
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sabana Mula
+</td>
+<td style="text-align:left;">
+Artibonito
+</td>
+<td style="text-align:left;">
+Artibonito
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:right;">
+-71.55650
+</td>
+<td style="text-align:right;">
+19.03412
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+5411
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Santana
+</td>
+<td style="text-align:left;">
+Rio Bani
+</td>
+<td style="text-align:left;">
+Rio Bani
+</td>
+<td style="text-align:left;">
+Peravia
+</td>
+<td style="text-align:left;">
+Bani
+</td>
+<td style="text-align:right;">
+-70.21687
+</td>
+<td style="text-align:right;">
+18.27898
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+En esta estación solo existe el corral, no tiene equipos.
+</td>
+<td style="text-align:left;">
+6387
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tavera
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Yaque Del Norte
+</td>
+<td style="text-align:left;">
+Santiago
+</td>
+<td style="text-align:left;">
+Janico
+</td>
+<td style="text-align:right;">
+-70.71813
+</td>
+<td style="text-align:right;">
+19.28357
+</td>
+<td style="text-align:left;">
+Ambas
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+402
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Trepada Alta
+</td>
+<td style="text-align:left;">
+Rio Yabon
+</td>
+<td style="text-align:left;">
+Rio Yanigua
+</td>
+<td style="text-align:left;">
+Hato Mayor
+</td>
+<td style="text-align:left;">
+El Valle
+</td>
+<td style="text-align:right;">
+-69.45930
+</td>
+<td style="text-align:right;">
+18.97636
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+Esta estación no existe.
+</td>
+<td style="text-align:left;">
+7320
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Triple Ozama
+</td>
+<td style="text-align:left;">
+Ozama
+</td>
+<td style="text-align:left;">
+Ozama
+</td>
+<td style="text-align:left;">
+Monte Plata
+</td>
+<td style="text-align:left;">
+Don Juan
+</td>
+<td style="text-align:right;">
+-69.94047
+</td>
+<td style="text-align:right;">
+18.81030
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Malo
+</td>
+<td style="text-align:left;">
+Red Aquater 1998
+</td>
+<td style="text-align:left;">
+La estación ya no existe.
+</td>
+<td style="text-align:left;">
+6390
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Valdesia
+</td>
+<td style="text-align:left;">
+Nizao
+</td>
+<td style="text-align:left;">
+Nizao
+</td>
+<td style="text-align:left;">
+Peravia
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:right;">
+-70.28061
+</td>
+<td style="text-align:right;">
+18.40856
+</td>
+<td style="text-align:left;">
+Automática
+</td>
+<td style="text-align:left;">
+Regular
+</td>
+<td style="text-align:left;">
+Red Banco Mundial 2015 (Sutron)
+</td>
+<td style="text-align:left;">
+Estación completa marca Sutron. El tanque de evaporación tiene la base
+de madera deteriorada.
+</td>
+<td style="text-align:left;">
+3802
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vallejuelo
+</td>
+<td style="text-align:left;">
+Yaque del Sur
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+San Juan de la Maguana
+</td>
+<td style="text-align:left;">
+Vallejuelo
+</td>
+<td style="text-align:right;">
+-71.33949
+</td>
+<td style="text-align:right;">
+18.65774
+</td>
+<td style="text-align:left;">
+Convencional
+</td>
+<td style="text-align:left;">
+Bueno
+</td>
+<td style="text-align:left;">
+Red Tradicional Indrhi
+</td>
+<td style="text-align:left;">
+No existe garita y no tiene termómetro.
+</td>
+<td style="text-align:left;">
+4915
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+# sf
+indrhi_climaticas_depurado_ll_sf <- indrhi_climaticas_depurado_ll %>% 
+  mutate(excluir_sf = ifelse(is.na(lon_dd) | is.na(lat_dd), 'sí', 'no')) %>% 
+  filter(excluir_sf=='no') %>% select(-excluir_sf) %>% 
+  st_as_sf(coords = c('lon_dd', 'lat_dd'), crs = 4326)
+```
+
+Del total de 61 estaciones hidrométricas, para fines de representación,
+descartamos 7 que no contaban con coordenadas. El mapa de estaciones
+climáticas (54 estaciones), e indicación de sus correspondientes
+estados, se muestra a continuación.
+
+``` r
+fpal_estado <- colorFactor(
+  palette = c("#E41A1C", "#FFFF33","#4DAF4A"),
+  # palette = RColorBrewer::brewer.pal(length(unique(indrhi_hidrometricas_final_sf$Estado)), 'Set1'),
+  domain = unique(indrhi_climaticas_depurado_ll_sf$Estado), reverse = T)
+leaflet(indrhi_climaticas_depurado_ll_sf) %>%
+  addCircleMarkers(
+    radius = 5, label = ~ESTACION, group = ~ Estado,
+    popup = ~ paste0('Codigo N°: ', CODIGO, '<br>Nombre: ', ESTACION, '<br>Estado: ', Estado),
+    color = ~ fpal_estado(Estado),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_estado, values = ~ Estado, opacity = 1,
+            title = "Estaciones<br>Climáticas<br>INDRHI<br>Estado") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ Estado, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->

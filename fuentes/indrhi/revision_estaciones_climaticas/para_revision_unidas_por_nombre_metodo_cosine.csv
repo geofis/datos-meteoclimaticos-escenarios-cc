@@ -1,0 +1,51 @@
+ESTACION.x,ORDEN,ESTACION.y,X (UTM),Y (UTM),NOMBRE_CUE,UBICACION,distancia,metodo
+Higuerito,157,Higuero,395265,2053533,Rio Ozama/Higero,Higuero,0.08831538832289643,cosine
+Higuerito,411,HIGUERO,395653,2054730,Rio Ozama,Higuero,0.08831538832289643,cosine
+Higuerito,626,HIGUERITO,223700,2101800,Rio Artibonito,Banica,0,cosine
+Higuerito,755,HIGUERITO,254681,1988402,Rio Yaque del Sur,"BARAHONA, ARROYO DULCE",0,cosine
+Bayahibe,618,BAYAHIBE,516700,2034550,Rio Chavon,Romana,0,cosine
+Lago Enriquillo,647,LAGO ENRIQUILLO,215200,2054200,Lago Enriquillo,Lago Enriquillo,0,cosine
+Lago Enriquillo,648,LAGO ENRIQUILLO (SAL),215200,2054200,Lago Enriquillo,Lago Enriquillo,0.06295742866836362,cosine
+Lago Enriquillo,665,ENRIQUILLO,263382,1980564,Rio Pedernales,Pedernales,0.0913117774977571,cosine
+Puerto Escondido,17,PUERTO ESCONDIDO,228100,2027400,Lago Enriquillo,Puerto Escondido,0,cosine
+Puerto Escondido,121,PUERTO ESCONDIDO,228110,2027626,Lago Enriquillo,Puerto Esco,0,cosine
+Puerto Escondido,362,PUERTO ESCONDIDO,228110,2027626,Lago Enriquillo,Puerto Escondido,0,cosine
+La Peñita,141,La Pe¤ita,365303,2041057,Rio Nizao / Nizao,La Pe¤ita,0.09090909090909094,cosine
+Hato Mayor,703,HATO MAYOR,473647,2073210,Rio Higuamo,Hato Mayor,0,cosine
+Santana,239,Santa Ana,358469,2133983,Rio Yuna/Cenovi,Santa Ana,0.030912576295302086,cosine
+Santana,611,SANTANA,371375,2021480,Rio Bani,Bani-Santana,0,cosine
+Las Barias,455,SABANA IGLESIA,316423,2136512,Yaque del Norte,SABANA IGLESIA,0.09630388588493599,cosine
+Palo de Caja,24,Palo de Caja,352224,2049485,Rio Nizao,Palo de Caja,0,cosine
+Palo de Caja,143,Palo de Caj,354239,2052144,Rio Nizao / Nizao,Palo de Caj,0.018504542377636324,cosine
+Palo de Caja,255,PASO DE LA PALMA,236105,2167867,Yaque del Norte/Maguaca,Paso de la Palma,0.09315468736248544,cosine
+Palo de Caja,375,PALO DE CAJA,352200,2049200,Rio Nizao,Palo de Caja,0,cosine
+Presa de Aguacate,81,EL AGUACATE,420145,2120055,Rio Yuna,El Aguacate,0.09482285631434306,cosine
+Presa de Aguacate,208,EL AGUACATE,287085,2086485,Rio Yaque del Sur,EL AGUACATE,0.09482285631434306,cosine
+Presa de Aguacate,489,PRESA DE SABANETA,258912,2099808,Rio Yaque del Sur,PRESA DE SABANETA,0.07862827863785127,cosine
+Presa de Aguacate,522,EL AGUACATE,420144,2120053,Rio Yuna,El Aguacate,0.09482285631434306,cosine
+Presa de Aguacate,548,EL AGUACATE,420146,2120053,Rio Yuna,El Aguacate,0.09482285631434306,cosine
+Presa Jiguez,NA,NA,NA,NA,NA,NA,NA,cosine
+Valdesia,25,VALDESIA,364700,2035800,Rio Nizao,Valdesia,0,cosine
+Valdesia,378,VALDESIA,364738,2035865,Rio Nizao,Valdesia,0,cosine
+Comate,NA,NA,NA,NA,NA,NA,NA,cosine
+Pueblo Nuevo,135,Pueblo Nuev,375941,2039263,Rio Nigua / Yubazo,Pueblo Nuev,0.026271008879704683,cosine
+Triple Ozama,609,BATEY TRIPLE OZAMA,400900,2080100,Rio Ozama,Monte Plata,0.07289493069889341,cosine
+Santana,239,Santa Ana,358469,2133983,Rio Yuna/Cenovi,Santa Ana,0.030912576295302086,cosine
+Santana,611,SANTANA,371375,2021480,Rio Bani,Bani-Santana,0,cosine
+Higuey,345,HIGUEY,525998,2068372,Rio Duey,Higuey,0,cosine
+Higuey,636,HIGUEY,531500,2059000,Rio Duey,Higuey,0,cosine
+Higuey,700,HIGUEY,531651,2056621,Rio Duey,Higuey,0,cosine
+Los Naranjos,NA,NA,NA,NA,NA,NA,NA,cosine
+Trepada Alta,13,PERALTA,312800,2055500,Rio Jura,Peralta,0.08479136935514109,cosine
+Trepada Alta,353,PERALTA,312690,2055675,Rio Jura,Peralta,0.08479136935514109,cosine
+Trepada Alta,593,Trepada Alta,451652,2098275,Rio Higuamo,Hato Mayor del Rey,0,cosine
+Trepada Alta,622,PERALTA,313900,2055200,Rio Via,Azua-Peralta,0.08479136935514109,cosine
+Trepada Alta,753,LA PETACA,241543,2057295,Rio YAque del Sur,"BAHORUCO, NEIBA",0.08853456962469997,cosine
+estación Vallejuelo,NA,NA,NA,NA,NA,NA,NA,cosine
+Km 11 Carretera  Sánchez,NA,NA,NA,NA,NA,NA,NA,cosine
+Km 15,NA,NA,NA,NA,NA,NA,NA,cosine
+Km 15,NA,NA,NA,NA,NA,NA,NA,cosine
+Peñón Barahona,NA,NA,NA,NA,NA,NA,NA,cosine
+Presa de  Montegrande,NA,NA,NA,NA,NA,NA,NA,cosine
+Blanco (Presa),NA,NA,NA,NA,NA,NA,NA,cosine
+Guarey-Guaigui,NA,NA,NA,NA,NA,NA,NA,cosine
