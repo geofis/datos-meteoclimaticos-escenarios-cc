@@ -12,8 +12,6 @@ Puerto Escondido,121,PUERTO ESCONDIDO,228110,2027626,Lago Enriquillo,Puerto Esco
 Puerto Escondido,362,PUERTO ESCONDIDO,228110,2027626,Lago Enriquillo,Puerto Escondido,0,cosine
 La Peñita,141,La Pe¤ita,365303,2041057,Rio Nizao / Nizao,La Pe¤ita,0.09090909090909094,cosine
 Hato Mayor,703,HATO MAYOR,473647,2073210,Rio Higuamo,Hato Mayor,0,cosine
-Santana,239,Santa Ana,358469,2133983,Rio Yuna/Cenovi,Santa Ana,0.030912576295302086,cosine
-Santana,611,SANTANA,371375,2021480,Rio Bani,Bani-Santana,0,cosine
 Las Barias,455,SABANA IGLESIA,316423,2136512,Yaque del Norte,SABANA IGLESIA,0.09630388588493599,cosine
 Palo de Caja,24,Palo de Caja,352224,2049485,Rio Nizao,Palo de Caja,0,cosine
 Palo de Caja,143,Palo de Caj,354239,2052144,Rio Nizao / Nizao,Palo de Caj,0.018504542377636324,cosine
@@ -41,8 +39,10 @@ Trepada Alta,353,PERALTA,312690,2055675,Rio Jura,Peralta,0.08479136935514109,cos
 Trepada Alta,593,Trepada Alta,451652,2098275,Rio Higuamo,Hato Mayor del Rey,0,cosine
 Trepada Alta,622,PERALTA,313900,2055200,Rio Via,Azua-Peralta,0.08479136935514109,cosine
 Trepada Alta,753,LA PETACA,241543,2057295,Rio YAque del Sur,"BAHORUCO, NEIBA",0.08853456962469997,cosine
-estación Vallejuelo,NA,NA,NA,NA,NA,NA,NA,cosine
-Km 11 Carretera  Sánchez,NA,NA,NA,NA,NA,NA,NA,cosine
+Vallejuelo,298,Vallejuelo,254973,2064333,Rio Yaque del Sur/Los Baos,Vallejuelo,0,cosine
+Vallejuelo,561,VALLEJUELO,253215,2064570,Rio Yaque del Sur,Vallejuelo,0,cosine
+Vallejuelo,641,VALLEJUELO,253209,2064569,Rio Yaque del Sur,Vallejuelo,0,cosine
+Km 11 Carretera Sánchez,NA,NA,NA,NA,NA,NA,NA,cosine
 Km 15,NA,NA,NA,NA,NA,NA,NA,cosine
 Km 15,NA,NA,NA,NA,NA,NA,NA,cosine
 Peñón Barahona,NA,NA,NA,NA,NA,NA,NA,cosine

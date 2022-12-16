@@ -147,6 +147,8 @@ leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
     options = layersControlOptions(collapsed = FALSE)) %>% 
   leaflet_map_view %>% 
   addFullscreenControl()
+# lista_con_periodo_2022_coord_todas_sf %>% 
+#   st_write('out/con_indicacion_estatus_onamet.gpkg')
 ```
 
 ### INDRHI
@@ -248,6 +250,8 @@ leaflet(indrhi_hidrometricas_final_sf) %>%
     options = layersControlOptions(collapsed = FALSE)) %>% 
   leaflet_map_view %>% 
   addFullscreenControl()
+# indrhi_hidrometricas_final_sf %>% 
+#   st_write('out/con_indicacion_estatus_hidrometricas_indrhi.gpkg')
 ```
 
 #### Estaciones climáticas
@@ -375,4 +379,6 @@ leaflet(indrhi_climaticas_depurado_ll_sf) %>%
     options = layersControlOptions(collapsed = FALSE)) %>% 
   leaflet_map_view %>% 
   addFullscreenControl()
+# indrhi_climaticas_depurado_ll_sf %>% 
+#   st_write('out/con_indicacion_estatus_climaticas_indrhi.gpkg')
 ```

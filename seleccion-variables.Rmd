@@ -1,0 +1,68 @@
+---
+title: "Seleccionar variables"
+author: "José Martínez<br>Michela Izzo"
+output:
+  # bookdown::github_document2:
+  #   number_sections: false
+  #   fig_caption: yes
+  bookdown::html_document2:
+    number_sections: false
+    code_folding: hide
+    fig_caption: yes
+editor_options: 
+  chunk_output_type: console
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  cache = F, 
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE)
+```
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión HTML (más legible e interactiva), [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/seleccion-variables.html)'`
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión HTML (quizá más legible), [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/seleccion-variables.html)'`
+
+
+## Paquetes
+
+```{r}
+library(sf)
+library(tidyverse)
+library(tmap)
+library(kableExtra)
+library(ahpsurvey)
+gh_content <- 'https://raw.githubusercontent.com/'
+gh_zonal_stats <- paste0(gh_content,
+                         'geofis/zonal-statistics/0b2e95aaee87bf326cf132d28f4bd15220bb4ec7/out/')
+res <- 4 #Resolución H3, puedes elegir entre 4, 5, 6 o 7, pero cuidado con valores >=6
+tmpfile <- tempfile()
+download.file(
+  url = paste0(gh_zonal_stats, 'list_with_all_sources_all_resolution.RDS'),
+  tmpfile, method = if(Sys.info()[['sysname']]=='Windows') 'curl' else 'libcurl')
+tmprds <- readRDS(tmpfile)
+za <- tmprds[[paste0('H3 resolution: ', res)]]
+unlink(tmpfile)
+prefijos_disponibles <- c('ESA', 'CGL', 'GSL', 'GHH', 'WCL', 'CH-BIO', 'G90', 'G90-GEOM', "LUGARES-POBLADOS",
+                          'CGIAR-ELE', 'GFC-PTC YEAR 2000', 'GFC-LOSS', 'OSM-DIST', 'GP-CONSUNadj YEAR 2020')
+prefijos_categorias_finales <- c('CGL', 'GHH', 'CH-BIO', 'G90', 'G90-GEOM', "LUGARES-POBLADOS",
+                                 "HORAS-DE-SOMBRA", 'CGIAR-ELE', 'GFC-PTC YEAR 2000', 'GFC-LOSS',
+                                 'OSM-DIST', 'GP-CONSUNadj YEAR 2020') #RANKING DE NIVEL 1
+#VALORAR LOS SUBCRITERIOS
+
+
+
+length(prefijos_disponibles)
+(length(prefijos_disponibles) * (length(prefijos_disponibles)-1))/2
+
+```
+
+
+
+```{r}
+unlist(lapply(data.frame(combn(c(c('a', 'b'), c('c', 'd')), 2)), paste, collapse = '_'), use.names = F)
+```
+
