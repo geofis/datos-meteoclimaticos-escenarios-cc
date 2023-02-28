@@ -1,0 +1,67 @@
+---
+title: "Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas en República Dominicana, usando AHP y análisis de autocorrelación espacial"
+author: "José Martínez<br>Michela Izzo"
+output:
+  bookdown::html_document2:
+    number_sections: false
+    code_folding: hide
+    fig_caption: yes
+    md_extensions: "-fancy_lists"
+editor_options: 
+  chunk_output_type: console
+always_allow_html: true
+references: ref/biblio.bib
+bibliography: ref/biblio.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  cache = F, 
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE)
+# options(digits = 3)
+options(knitr.duplicate.label = "allow")
+```
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión HTML (más legible e interactiva), [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/ponderacion-variables-ahp.html)'`
+
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión HTML (quizá más legible), [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/ponderacion-variables-ahp.html)'`
+
+```{r, echo=F, include=F}
+incluir_supl_al_final <- T
+cargar_script_supl_met <- T
+if(cargar_script_supl_met && interactive()) {
+  raiz_supl_met <- 'seleccion-sitios-red-de-estaciones-suplemento-metodologico'
+  knitr::purl(paste0(raiz_supl_met, '.Rmd'))
+  source(paste0(raiz_supl_met, '.R'))
+}
+```
+
+## Introducción
+
+El método de selección de alternativas multicriterio AHP (*Analytic Hierarchy Process*) se fundamenta en la teoría de la toma de decisiones multicriterio (MCA) y la teoría de la jerarquía analítica. Fue desarrollado por Thomas Saaty en la década de 1970 [@saaty1977], con varias revisiones posteriores [@saaty2001; @saaty2007], y se utiliza para tomar decisiones cuando se deben considerar múltiples criterios y alternativas. Tradicionalmente, el método AHP se ha utilizado en investigaciones del ámbito de las ingenierías, ciencias sociales, económicas y empresariales, e igualmente en la toma de decisiones donde intervienen datos geoespaciales [@saaty2013; @darko2019; @podvezko2009; @subramanian2012; @breaz2017]. Recientemente, fue usado de forma eficiente en la selección de sitios idóneos para la instalación de estaciones meteoclimáticas en Perú [@rojasbriceno2021].
+
+El método AHP consiste en descomponer un problema complejo en una estructura jerárquica de criterios y subcriterios, para luego comparar distintas alternativas en función de cada uno de dichos criterios. El proceso se realiza en varias etapas, que incluyen, identificar los objetivos y criterios relevantes para el problema, crear una estructura jerárquica de los criterios y subcriterios, comparar los criterios y subcriterios mediante una matriz de comparación en parejas (paso clave), calcular los valores de prioridad de cada criterio (paso clave), comparar las alternativas, calcular los valores de prioridad de cada alternativa en función de cada criterio y, finalmente, calcular los valores totales de prioridad de cada alternativa.
+
+El método AHP es ampliamente utilizado en la toma de decisiones y en la planificación estratégica, ya que permite elegir entre varias opciones considerando valoraciones de criterios, y porque tiene en cuenta la importancia relativa de los criterios elegidos. Esta importancia relativa se asigna, normalmente, por medio de consultas hechas a personas con experiencia en el área de conocimiento donde se enmarque el problema en cuestión.
+
+En este estudio, aplicamos AHP para seleccionar sitios idóneos donde instalar estaciones meteoclimáticas en República Dominicana, garantizando la eficiencia de la red, maximizando recursos y evitando redundancia información. Para ello, nos apoyamos tanto en fuentes de información geoespacial sistemáticamente producidas, como en consultas a personas con experiencia en temas climáticos y meteorológicos.
+
+## Materiales y método
+
+El método AHP se utiliza para seleccionar la mejor opción entre diferentes alternativas, utilizando criterios de selección ponderados por personas con conocimiento del problema [@saaty2013]. Las repuestas originales normalmente deben organizarse y recodificarse y, posteriormente, se debe evaluar su consistencia. A continuación, se seleccionan las respuestas consistentes, o se ajustan las inconsistentes, y se establece la ponderación de criterios. Finalmente, la ponderación definida, se aplica a las fuentes de información disponible para obtener una lista de alternativas, de entre las cuales, se selecciona la más idónea de acuerdo con los criterios definidos.
+
+Tanto el diseño de los formularios, como el procesamiento de respuestas y la ponderación de criterios, los realizamos empleando lenguajes de programación. Para diseñar los formularios, empleamos paquetes y funciones de Python, mientras que para los análisis nos auxiliamos del paquete `ahpsurvey` y otros del entorno de programación estadística R, diseñado para tales fines [@cho2019ahpsurvey; @rcoreteam2021r; @whicham2019welcome]. Describimos estos pasos detalladamente en la sección [Información suplementaria](#infosupl).
+
+## Resultados
+
+TODO
+
+## Información suplementaria {#infosupl}
+
+```{r child = 'seleccion-sitios-red-de-estaciones-suplemento-metodologico.Rmd', eval=incluir_supl_al_final}
+```
+
+
+## Referencias

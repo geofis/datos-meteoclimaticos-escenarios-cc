@@ -38,7 +38,7 @@ library(ahpsurvey)
 gh_content <- 'https://raw.githubusercontent.com/'
 gh_zonal_stats <- paste0(gh_content,
                          'geofis/zonal-statistics/0b2e95aaee87bf326cf132d28f4bd15220bb4ec7/out/')
-res <- 4 #Resolución H3, puedes elegir entre 4, 5, 6 o 7, pero cuidado con valores >=6
+res <- 7 #Resolución H3, puedes elegir entre 4, 5, 6 o 7, pero cuidado con valores >=6
 tmpfile <- tempfile()
 download.file(
   url = paste0(gh_zonal_stats, 'list_with_all_sources_all_resolution.RDS'),
@@ -46,11 +46,37 @@ download.file(
 tmprds <- readRDS(tmpfile)
 za <- tmprds[[paste0('H3 resolution: ', res)]]
 unlink(tmpfile)
-prefijos_disponibles <- c('ESA', 'CGL', 'GSL', 'GHH', 'WCL', 'CH-BIO', 'G90', 'G90-GEOM', "LUGARES-POBLADOS",
-                          'CGIAR-ELE', 'GFC-PTC YEAR 2000', 'GFC-LOSS', 'OSM-DIST', 'GP-CONSUNadj YEAR 2020')
-prefijos_categorias_finales <- c('CGL', 'GHH', 'CH-BIO', 'G90', 'G90-GEOM', "LUGARES-POBLADOS",
-                                 "HORAS-DE-SOMBRA", 'CGIAR-ELE', 'GFC-PTC YEAR 2000', 'GFC-LOSS',
-                                 'OSM-DIST', 'GP-CONSUNadj YEAR 2020') #RANKING DE NIVEL 1
+prefijos_disponibles <- c('ESA', 'CGL', 'GSL', 'GHH', 'WCL', 'CH-BIO', 'G90', 'G90-GEOM',
+                          "LUGARES-POBLADOS",'CGIAR-ELE', 'GFC-PTC YEAR 2000',
+                          'GFC-LOSS', 'OSM-DIST', 'GP-CONSUNadj YEAR 2020')
+# DON MONÓN
+prefijos_categorias_finales <- c(#Nivel 1 con indicación de nivel 2
+  #VER UMBRALES EN FUNCIÓN DE REFERENCIAS (e.g. Slope)
+  'CGL', #¿Diversidad de coberturas NO "Urban / built up"? o BROAD LEAF+HERBACEOUS+SHRUBLAND
+  'GHH', #contrast_1km, ...
+  'CH-BIO', #bio03 isothermality, bio15 precipitation seasonality
+  'G90', #Slope.
+  'G90-GEOM', #¿Diversidad de formas?
+  'WSF', #Distancia a asentamientos, porcentaje de cobertura de asentamientos, ELEGIDO 2019
+  'HORAS-DE-SOMBRA', #__self__, menor sombra, mayor ideoneidad
+  'CGIAR-ELE', #INCLUIDA
+  'OSM-DIST', #INCLUIDA
+  'GP-CONSUNadj YEAR 2020' #QUIZÁ SE SUPERPONE CON WSF
+  )
+# DOÑA MISQUI
+prefijos_categorias_finales <- c(#Nivel 1 con indicación de nivel 2
+  'CGL', #INCLUIDO. Preferido ante ESA. Rango 4
+  'GHH', #INCLUIDO. Rango 8
+  'CH-BIO', #INCLUIDO. Preferido ante WCL. Rango 5
+  'G90', #¿?. Rango 2 y 3
+  'G90-GEOM', #INCLUIDO. Preferido ante GSL. Rango 2 y 3
+  'CGIAR-ELE', #INCLUIDO. Rango 1
+  'OSM-DIST', #INCLUIDO. Rango 7
+  'GP-CONSUNadj YEAR 2020' #__self__. Rango 6
+  ## EXCLUIDO: Pérdida de cobertura y cobertura 2000 (Hansen)
+  )
+#CREAR FORMULARIO PARA EVALUACIÓN POR PARES (DON MONÓN)
+
 #VALORAR LOS SUBCRITERIOS
 
 

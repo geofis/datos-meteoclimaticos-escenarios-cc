@@ -123,6 +123,8 @@ nrow(consolidado_estaciones_sf)
 table(gsub(' \\(.*$', '', consolidado_estaciones_sf$fuente)) %>%
   kable(booktabs=T, col.names = c('Fuente', 'Número de estaciones')) %>%
   kable_styling(latex_options = c("HOLD_position"))
+st_crs(consolidado_estaciones_sf) <- 4326
+# st_write(consolidado_estaciones_sf, 'out/consolidado_estaciones_sf.gpkg', delete_dsn = T)
 ```
 
 ## Mapa datos 2022

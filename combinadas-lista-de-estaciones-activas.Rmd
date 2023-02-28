@@ -350,6 +350,7 @@ indrhi_climaticas_depurado_ll_sf <- indrhi_climaticas_depurado_ll %>%
   mutate(excluir_sf = ifelse(is.na(lon_dd) | is.na(lat_dd), 'sí', 'no')) %>% 
   filter(excluir_sf=='no') %>% select(-excluir_sf) %>% 
   st_as_sf(coords = c('lon_dd', 'lat_dd'), crs = 4326)
+# st_write(indrhi_climaticas_depurado_ll_sf, 'out/indrhi_climaticas_depurado_ll_sf.gpkg')
 ```
 
 
