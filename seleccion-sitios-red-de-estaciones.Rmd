@@ -24,9 +24,9 @@ knitr::opts_chunk$set(
 options(knitr.duplicate.label = "allow")
 ```
 
-`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión HTML (más legible e interactiva), [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/ponderacion-variables-ahp.html)'`
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión HTML (más legible e interactiva), [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/seleccion-sitios-red-de-estaciones.html)'`
 
-`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión HTML (quizá más legible), [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/ponderacion-variables-ahp.html)'`
+`r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión HTML (quizá más legible), [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/seleccion-sitios-red-de-estaciones.html)'`
 
 ```{r, echo=F, include=F}
 incluir_supl_al_final <- T
