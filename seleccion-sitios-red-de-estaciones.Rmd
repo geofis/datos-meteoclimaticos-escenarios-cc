@@ -2,6 +2,9 @@
 title: "Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas en República Dominicana, usando AHP y análisis de autocorrelación espacial"
 author: "José Martínez<br>Michela Izzo"
 output:
+  # bookdown::github_document2:
+  #   number_sections: false
+  #   fig_caption: yes
   bookdown::html_document2:
     number_sections: false
     code_folding: hide
