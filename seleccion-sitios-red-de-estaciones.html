@@ -6321,8 +6321,8 @@ Figure 2: Preferencias individuales por atributo y ratio de consistencia
                           atts = names(variables), 
                           negconvert = TRUE, 
                           reciprocal = TRUE,
-                          method = &#39;eigen&#39;, 
-                          aggmethod = &quot;geometric&quot;, 
+                          method = &#39;arithmetic&#39;, 
+                          aggmethod = &quot;arithmetic&quot;, 
                           qt = 0.2,
                           censorcr = umbral,
                           agg = TRUE)</code></pre>
@@ -6330,26 +6330,26 @@ Figure 2: Preferencias individuales por atributo y ratio de consistencia
 <pre class="r"><code>flujo_completo_ahp</code></pre>
 <pre><code>## $indpref
 ##         acce       temp      pluv       habi       agua       pend       inso
-## 1 0.03526604 0.22254926 0.3340183 0.15867208 0.02234925 0.01773132 0.07483988
-## 2 0.08375587 0.22734613 0.2638653 0.06625461 0.06339769 0.02901840 0.10617991
-## 3 0.05788924 0.04494556 0.2696734 0.04494556 0.05788924 0.06411284 0.32525348
-## 4 0.10291091 0.19474847 0.2517406 0.06661607 0.08553786 0.03577330 0.22170063
+## 1 0.03783945 0.22203720 0.3217716 0.15802223 0.02320675 0.01919223 0.08067977
+## 2 0.08661956 0.22549179 0.2507727 0.07119389 0.06711269 0.03073792 0.10906283
+## 3 0.05613493 0.04694375 0.2816625 0.04694375 0.05613493 0.06271388 0.31180958
+## 4 0.09921970 0.19344529 0.2455522 0.06919519 0.08887372 0.03739288 0.22349337
 ##         elev         CR      top1      top2      top3
-## 1 0.13457384 0.08982184 acce_pend pluv_elev pend_inso
-## 2 0.16018207 0.07347255 habi_agua habi_inso pluv_agua
-## 3 0.13529073 0.07222070 temp_inso habi_inso temp_pend
-## 4 0.04097216 0.05515668 habi_agua agua_elev acce_elev
+## 1 0.13725077 0.08982184 acce_pend pluv_elev pend_inso
+## 2 0.15900861 0.07347255 habi_agua habi_inso pluv_agua
+## 3 0.13765667 0.07222070 temp_inso habi_inso temp_pend
+## 4 0.04282767 0.05515668 habi_agua agua_elev acce_elev
 ## 
 ## $aggpref
 ##         AggPref SD.AggPref
-## acce 0.06476760 0.02958300
-## temp 0.14506700 0.08617446
-## pluv 0.27812241 0.03689363
-## habi 0.07490238 0.05072215
-## agua 0.05146632 0.02618181
-## pend 0.03295943 0.01975799
-## inso 0.15471808 0.11449844
-## elev 0.10455212 0.05255485</code></pre>
+## acce 0.06995341 0.02802697
+## temp 0.17197951 0.08458538
+## pluv 0.27493975 0.03505279
+## habi 0.08633876 0.04903657
+## agua 0.05883202 0.02737096
+## pend 0.03750923 0.01840879
+## inso 0.18126139 0.10670155
+## elev 0.11918593 0.05190998</code></pre>
 </div>
 <div id="referencias" class="section level2 unnumbered">
 <h2>Referencias</h2>

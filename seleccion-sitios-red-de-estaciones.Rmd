@@ -59,7 +59,143 @@ Tanto el diseño de los formularios, como el procesamiento de respuestas y la po
 
 ## Resultados
 
-TODO
+### Importancia de los criterios
+
+
+### Mapas de los subcriterios
+
+```{r funcionesfuentescartograficas}
+source('R/funciones.R')
+library(sf)
+res_h3 <- 7 #Escribir un valor entre 4 y 7, ambos extremos inclusive
+ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
+ez_ver <- 'da5b4ed7c6b126fce15f8980b7a0b389937f7f35/'
+ind_esp_url <- paste0(ruta_ez_gh, ez_ver, 'out/all_sources_all_variables_res_', res_h3, '.gpkg')
+ind_esp_url
+if(!any(grepl('^ind_esp$', ls()))){
+  ind_esp <- st_read(ind_esp_url, optional = T)
+  st_geometry(ind_esp) <- "geometry"
+  ind_esp <- st_transform(ind_esp, 32619)
+}
+if(!any(grepl('^pais_url$', ls()))){
+  pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
+  pais <- st_read(pais_url, optional = T, layer = 'pais')
+  st_geometry(pais) <- "geometry"
+  pais <- st_transform(pais, 32619)
+}
+if(!any(grepl('^ind_esp_inters$', ls()))){
+  ind_esp_inters <- st_intersection(pais, ind_esp)
+  colnames(ind_esp_inters) <- colnames(ind_esp)
+  ind_esp_inters$area_sq_m <- units::drop_units(st_area(ind_esp_inters))
+  ind_esp_inters$area_sq_km <- units::drop_units(st_area(ind_esp_inters))/1000000
+  ind_esp_inters
+}
+```
+
+
+```{r osmdist}
+# Para "OSM-DIST mean"
+if(!any(grepl('^osm_rcl$', ls()))){
+  osm_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'OSM-DIST mean',
+                          umbrales = c(50, 200, 500, 5000),
+                          nombre = 'Distancia a accesos OSM',
+                          ord_cat = 'nin_rev')
+}
+if(any(grepl('^osm_rcl$', ls()))){
+  p <- osm_rcl$mapa +
+    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
+  print(p)
+  print(osm_rcl$intervalos_y_etiquetas)
+}
+if(any(grepl('^osm_rcl$', ls()))){
+  clipr::write_clip(osm_rcl$intervalos_y_etiquetas)
+}
+```
+
+
+
+```{r estacionalidadtermica}
+# Para "CH-BIO bio04 temperature seasonality"
+summary(ind_esp_inters$`CH-BIO bio04 temperature seasonality`)
+ggplot(ind_esp_inters) +
+  aes(x = '', y = `CH-BIO bio04 temperature seasonality`) +
+  geom_boxplot(alpha = 0, width = 0.3) +
+  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
+  theme_bw() +
+  theme(axis.title.x = element_blank())
+if(!any(grepl('^chbio04_rcl$', ls()))){
+  chbio04_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'CH-BIO bio04 temperature seasonality',
+                          umbrales = c(1100, 1300, 1500),
+                          nombre = 'Estacionalidad térmica (°C/100x0.1)',
+                          ord_cat = 'ni')
+}
+if(any(grepl('^chbio04_rcl$', ls()))){
+  p <- chbio04_rcl$mapa +
+    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
+  print(p)
+  print(chbio04_rcl$intervalos_y_etiquetas)
+}
+if(any(grepl('^chbio04_rcl$', ls()))){
+  clipr::write_clip(chbio04_rcl$intervalos_y_etiquetas)
+}
+```
+
+
+```{r estacionalidadpluvio}
+# Para "CH-BIO bio15 precipitation seasonality"
+summary(ind_esp_inters$`CH-BIO bio15 precipitation seasonality`)
+ggplot(ind_esp_inters) +
+  aes(x = '', y = `CH-BIO bio15 precipitation seasonality`) +
+  geom_boxplot(alpha = 0, width = 0.3) +
+  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
+  theme_bw() +
+  theme(axis.title.x = element_blank())
+if(!any(grepl('^chbio15_rcl$', ls()))){
+  chbio15_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'CH-BIO bio15 precipitation seasonality',
+                          umbrales = c(300, 400, 500),
+                          nombre = 'Estacionalidad pluviométrica (kg x m-2 x 0.1)',
+                          ord_cat = 'ni')
+}
+if(any(grepl('^chbio15_rcl$', ls()))){
+  p <- chbio15_rcl$mapa +
+    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
+  print(p)
+  print(chbio15_rcl$intervalos_y_etiquetas)
+}
+if(any(grepl('^chbio15_rcl$', ls()))){
+  clipr::write_clip(chbio15_rcl$intervalos_y_etiquetas)
+}
+```
+
+
+
+```{r heterogeneidadhabitat}
+# Para "GHH coefficient_of_variation_1km"
+summary(ind_esp_inters$`GHH coefficient_of_variation_1km`)
+ggplot(ind_esp_inters) +
+  aes(x = '', y = `GHH coefficient_of_variation_1km`) +
+  geom_boxplot(alpha = 0, width = 0.3) +
+  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
+  theme_bw() +
+  theme(axis.title.x = element_blank())
+if(!any(grepl('^hethab_rcl$', ls()))){
+  hethab_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'GHH coefficient_of_variation_1km',
+                          umbrales = c(250, 500, 1500),
+                          nombre = 'Heterogeneidad de hábitat (coef. variación)',
+                          ord_cat = 'in')
+}
+if(any(grepl('^hethab_rcl$', ls()))){
+  p <- hethab_rcl$mapa +
+    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
+  print(p)
+  print(hethab_rcl$intervalos_y_etiquetas)
+}
+if(any(grepl('^hethab_rcl$', ls()))){
+  clipr::write_clip(hethab_rcl$intervalos_y_etiquetas)
+}
+```
+
+
 
 ## Información suplementaria {#infosupl}
 

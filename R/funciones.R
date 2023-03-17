@@ -42,3 +42,136 @@ limpiar_coord <- function(mi_vector = NULL, sufijo = NULL) {
   colnames(salida) <- paste0(colnames(salida), '_', sufijo)
   return(salida)
 }
+
+# Función de reclasificación
+reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
+                         ord_cat = 'in', nombre = NULL){
+  #' @param vectorial Objeto de clase \code{sf} que contiene
+  #'   la representación territorial de la variable.
+  #' @param campo Cadena de caracteres conteniendo el nombre del campo a reclasificar.
+  #' @param umrables Vector de límites de superiores de cada categoría.
+  #'   Los límites mínimo y máximo no necesitan incluirse. La función los deriva.
+  #' @param ord_cat Caracter definiendo la opción de ordenación de categorías.
+  #'   'in': altamente idóneo, mod. idóneo, marg. idóneo, no idóneo
+  #'   'ni': no idóneo, marg. idóneo, mod. idóneo, altamente idóneo
+  #'   'nin': no idóneo, altamente idóneo, mod. idóneo, marg. idóneo, no idóneo
+  #'   'nin_rev': no idóneo, marg. idóneo, mod. idóneo, altamente idóneo, no idóneo
+
+  #' @example
+  # source('R/funciones.R')
+  # library(sf)
+  # res_h3 <- 7 #Escribir un valor entre 4 y 7, ambos extremos inclusive
+  # ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
+  # ez_ver <- 'da5b4ed7c6b126fce15f8980b7a0b389937f7f35/'
+  # ind_esp_url <- paste0(ruta_ez_gh, ez_ver, 'out/all_sources_all_variables_res_', res_h3, '.gpkg')
+  # ind_esp_url
+  # if(!any(grepl('^ind_esp$', ls()))){
+  #   ind_esp <- st_read(ind_esp_url, optional = T)
+  #   st_geometry(ind_esp) <- "geometry"
+  #   ind_esp <- st_transform(ind_esp, 32619)
+  # }
+  # if(!any(grepl('^pais_url$', ls()))){
+  #   pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
+  #   pais <- st_read(pais_url, optional = T, layer = 'pais')
+  #   st_geometry(pais) <- "geometry"
+  #   pais <- st_transform(pais, 32619)
+  # }
+  # if(!any(grepl('^ind_esp_inters$', ls()))){
+  #   ind_esp_inters <- st_intersection(pais, ind_esp)
+  #   colnames(ind_esp_inters) <- colnames(ind_esp)
+  #   ind_esp_inters$area_sq_m <- units::drop_units(st_area(ind_esp_inters))
+  #   ind_esp_inters$area_sq_km <- units::drop_units(st_area(ind_esp_inters))/1000000
+  #   ind_esp_inters
+  # }
+  # # Para "OSM-DIST mean"
+  # if(!any(grepl('^osm_rcl$', ls()))){
+  #   osm_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'OSM-DIST mean',
+  #                           umbrales = c(50, 200, 500, 5000),
+  #                           nombre = 'Distancia a accesos OSM',
+  #                           ord_cat = 'nin_rev')
+  #   osm_rcl$mapa +
+  #     geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
+  #   osm_rcl$intervalos_y_etiquetas
+  # }
+  # if(any(grepl('^osm_rcl$', ls()))){
+  #   clipr::write_clip(osm_rcl$intervalos_y_etiquetas)
+  # }
+  
+  # Paquetes
+  library(sf)
+  library(ggplot2)
+  library(dplyr)
+  
+  # Definir nombre
+  if(is.null(nombre)) nombre <- campo
+  
+  # Función para construir categorías
+  fuente <- c('no', 'marginalmente', 'moderadamente', 'altamente', 'idóneo')
+  construir_categorias <- function(ordenacion = ord_cat){
+    categorias <- switch(ordenacion,
+           'nin' = c(
+             paste(fuente[1:4], fuente[5]),
+             paste(fuente[1], fuente[5])
+             ),
+           'nin_rev' = c(
+             paste(fuente[1], fuente[5]),
+             paste(fuente[4:1], fuente[5])
+           ),
+           'in' = c(paste(fuente[4:1], fuente[5])),
+           'ni' = c(paste(fuente[1:4], fuente[5]))
+    )
+    return(categorias)
+  }
+  
+  # Construir categorías
+  categorias <- construir_categorias()
+  
+  # Añadir umbrales extremos
+  umbrales_ampliados <- c(min(vectorial[[campo]], na.rm = T), umbrales, max(vectorial[[campo]], na.rm = T))
+  umbrales_ampliados
+  if(length(umbrales) + 1 != length(categorias)) 
+    stop('El número de categorías es incorrecto')
+  
+  # Crear intervalos
+  campo_salida_interv <- paste(campo, 'intervalos')
+  campo_salida_etiq <- paste(campo, 'etiquetas')
+  vectorial[[campo_salida_interv]] <- cut(
+    vectorial[[campo]],
+    umbrales_ampliados, include.lowest = T)
+  vectorial[[campo_salida_etiq]] <- factor(vectorial[[campo_salida_interv]],
+                                           labels = categorias)
+  vectorial[['enteros_ordenados']] <- as.integer(
+    factor(vectorial[[campo_salida_etiq]],
+           levels = c(paste(fuente[1:4], fuente[5]))))
+  vectorial <- vectorial[c(campo_indice, campo_salida_interv, campo_salida_etiq, 'enteros_ordenados')]
+  
+  # Crear mapa
+  val_col <- c("altamente idóneo" = "#018571", "moderadamente idóneo" = "#80cdc1",
+               "marginalmente idóneo" = "#dfd2b3", "no idóneo" = "#a6611a")
+  val_col_cat <- val_col[match(categorias, names(val_col))]
+  mapa <- vectorial %>% ggplot +
+    aes(fill = .data[[campo_salida_etiq]]) +
+    geom_sf(lwd=0) + 
+    scale_fill_manual(nombre, values = val_col) +
+    labs(title = paste('Reclasificación de valores de', nombre)) +
+    theme_bw() +
+    theme(legend.position = 'bottom')
+  
+  # Invervalos y etiquetas
+  extraer_digitos_interv <- function(col) {
+    as.numeric(gsub('(\\(|\\[)(\\d.*)(,.*)', '\\2', col))
+  }
+  intervalos_y_etiquetas <- vectorial %>% st_drop_geometry %>%
+    select(all_of(campo_salida_interv),
+           all_of(campo_salida_etiq),
+           all_of('enteros_ordenados')) %>% 
+    distinct %>% 
+    na.omit() %>% 
+    mutate_at(.vars = campo_salida_interv,
+              .funs = list(ord = extraer_digitos_interv)) %>% 
+    arrange(ord) %>%
+    select(-ord)
+  
+  # Salida
+  return(list(vectorial = vectorial, mapa = mapa, intervalos_y_etiquetas = intervalos_y_etiquetas))
+}
