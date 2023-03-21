@@ -22,7 +22,9 @@ knitr::opts_chunk$set(
   cache = F, 
   echo = TRUE,
   warning = FALSE,
-  message = FALSE)
+  message = FALSE,
+  out.width = '100%',
+  dpi = 300)
 # options(digits = 3)
 ```
 
@@ -336,22 +338,6 @@ flujo_completo_ahp <- ahp(df = tabla_col_renom[, col_ord],
                           qt = 0.2,
                           censorcr = umbral,
                           agg = TRUE)
-flujo_completo_ahp$indpref %>% 
-  mutate(`Persona consultada` = cr_indicador[cr_indicador[,1]==1, 'Persona consultada']) %>% 
-  relocate(`Persona consultada`) %>% 
-  estilo_kable(titulo = 'Preferencias individuales',
-               cubre_anchura = F) %>% 
-  kable_styling(position = 'left') %>% 
-  column_spec(column = 1:2, width = "10em")
-
-flujo_completo_ahp$aggpref %>%
-  as.data.frame() %>% 
-  rownames_to_column('Variable') %>% 
-  estilo_kable(titulo = 'Preferencias agregadas',
-               cubre_anchura = F) %>% 
-  kable_styling(position = 'left') %>% 
-  column_spec(column = 1:2, width = "10em")
-
 # sum(flujo_completo_ahp$aggpref[,1]) == 1
 ```
 
@@ -364,14 +350,11 @@ Las fuentes ráster son servidas bajo distintas resoluciones y sistemas de refer
 Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios sugeridos por otros autores, así como adaptando umbrales convencionales a la realidad insular [@fao32agriculture; @rojasbriceno2021]. Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática. Los umbrales elegidos para definir las puntuaciones de criterios, están recogidos en la tabla (ver tabla \@ref(tab:umbralesapuntuaciones)).
 
 ```{r umbralesapuntuaciones}
-
-  kable(format = 'html', escape = F, booktabs = T, digits = 2,
+puntuaciones_umbrales <- readODS::read_ods('fuentes/umbrales-criterios-ahp/puntuaciones.ods', sheet = 1)
+puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
         caption = 'Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas') %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-
-
-Finalmente
-
+```
 
 ### Modelización de la idoneidad según pesos
 

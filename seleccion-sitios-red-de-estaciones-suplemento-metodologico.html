@@ -6668,11 +6668,195 @@ elev
 </table>
 <pre class="r"><code># sum(flujo_completo_ahp$aggpref[,1]) == 1</code></pre>
 </div>
-<div id="reducción-y-reclasificación-de-fuentes-cartográficas" class="section level3">
-<h3>Reducción y reclasificación de fuentes cartográficas</h3>
+<div id="obtención-reducción-y-reclasificación-de-fuentes-cartográficas" class="section level3">
+<h3>Obtención, reducción y reclasificación de fuentes cartográficas</h3>
 <p>Utilizamos múltiples fuentes cartográficas ráster como variables de territorio para modelizar la idoneidad de sitios candidatos para la instalación de estaciones meteoclimáticas. Originalmente, disponíamos de más de 100 fuentes ráster para realizar nuestros análisis, pero elegimos sólo ocho de ellas por considerarlas relevantes siguiendo recomendaciones de estudios previos <span class="citation">(Rojas Briceño et al. 2021)</span>. Estas ocho variables fueron ponderadas por el personal experto mediante el proceso descrito anteriormente.</p>
 <p>Las fuentes ráster son servidas bajo distintas resoluciones y sistemas de referencia, por lo que fue necesario aplicar algoritmos de reducción y consolidar resultados en una geometría común. Para ello, redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3 (<em>hex bins</em>) <span class="citation">(Martínez-Batlle 2022)</span>. Probamos distintas resoluciones de dicho índice, y tras algunas pruebas, elegimos la resolución “7”. Con esta resolución, cubrimos el territorio dominicano más un área de influencia con aproximadamente 13,000 hexágonos de ca. 4<span class="math inline">\(km^2\)</span> cada uno. Dentro de cada hexágono, por medio de estadística zonal, obtuvimos la media de cada variable, la cual utilizamos como estadístico de referencia en la reclasificación descrita a continuación.</p>
-<p>Reclasificamos los valores promedio aplicando criterios sugeridos por otros autores y adaptando los umbrales a la realidad insular <span class="citation">(FAO, n.d.; Rojas Briceño et al. 2021)</span>.</p>
+<p>Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios sugeridos por otros autores, así como adaptando umbrales convencionales a la realidad insular <span class="citation">(FAO, n.d.; Rojas Briceño et al. 2021)</span>. Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática. Los umbrales elegidos para definir las puntuaciones de criterios, están recogidos en la tabla (ver tabla <a href="#tab:umbralesapuntuaciones">10</a>).</p>
+<pre class="r"><code>puntuaciones_umbrales &lt;- readODS::read_ods(&#39;fuentes/umbrales-criterios-ahp/puntuaciones.ods&#39;, sheet = 1)
+puntuaciones_umbrales %&gt;% kable(format = &#39;html&#39;, escape = F, booktabs = T, digits = 2,
+        caption = &#39;Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas&#39;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;hover&quot;, &quot;condensed&quot;), full_width = T)</code></pre>
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:umbralesapuntuaciones">Table 10: </span>Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Etiquetas
+</th>
+<th style="text-align:left;">
+altamente idóneo
+</th>
+<th style="text-align:left;">
+moderadamente idóneo
+</th>
+<th style="text-align:left;">
+marginalmente idóneo
+</th>
+<th style="text-align:left;">
+no idóneo
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Escala ordinal
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Distancia a accesos (m) [OSM-DIST]
+</td>
+<td style="text-align:left;">
+(50,300]
+</td>
+<td style="text-align:left;">
+(300,500]
+</td>
+<td style="text-align:left;">
+(500,5e+03]
+</td>
+<td style="text-align:left;">
+[12.8,50]
+(5e+03,3.28e+04]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Estacionalidad térmica (°C/100x0.1)
+</td>
+<td style="text-align:left;">
+(1.5e+03,1.66e+03]
+</td>
+<td style="text-align:left;">
+(1.3e+03,1.5e+03]
+</td>
+<td style="text-align:left;">
+(1.1e+03,1.3e+03]
+</td>
+<td style="text-align:left;">
+[854,1.1e+03]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Estacionalidad pluviométrica (kg x m-2 x 0.1)
+</td>
+<td style="text-align:left;">
+(500,622]
+</td>
+<td style="text-align:left;">
+(400,500]
+</td>
+<td style="text-align:left;">
+(300,400]
+</td>
+<td style="text-align:left;">
+[222,300]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Heterogeneidad de hábitat (coef. variación)
+</td>
+<td style="text-align:left;">
+[0,250]
+</td>
+<td style="text-align:left;">
+(250,500]
+</td>
+<td style="text-align:left;">
+(500,1.5e+03]
+</td>
+<td style="text-align:left;">
+(1.5e+03,3.56e+03]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Distancia a cuerpos de agua (km)
+</td>
+<td style="text-align:left;">
+(1000,max]
+</td>
+<td style="text-align:left;">
+(500,1000]
+</td>
+<td style="text-align:left;">
+(250,500]
+</td>
+<td style="text-align:left;">
+[0,250]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pendiente (°)
+</td>
+<td style="text-align:left;">
+[0,3]
+</td>
+<td style="text-align:left;">
+(3,9]
+</td>
+<td style="text-align:left;">
+(9,15]
+</td>
+<td style="text-align:left;">
+(15,32.7]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Horas de insolación (horas/año)
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Elevación (metros snm)
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="modelización-de-la-idoneidad-según-pesos" class="section level3">
 <h3>Modelización de la idoneidad según pesos</h3>

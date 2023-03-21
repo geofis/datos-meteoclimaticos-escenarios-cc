@@ -22,7 +22,9 @@ knitr::opts_chunk$set(
   cache = F, 
   echo = TRUE,
   warning = FALSE,
-  message = FALSE)
+  message = FALSE,
+  out.width = '100%',
+  res = 200)
 # options(digits = 3)
 options(knitr.duplicate.label = "allow")
 ```
@@ -34,7 +36,7 @@ options(knitr.duplicate.label = "allow")
 ```{r, echo=F, include=F}
 incluir_supl_al_final <- T
 cargar_script_supl_met <- T
-if(cargar_script_supl_met && interactive()) {
+if(cargar_script_supl_met) {
   raiz_supl_met <- 'seleccion-sitios-red-de-estaciones-suplemento-metodologico'
   knitr::purl(paste0(raiz_supl_met, '.Rmd'))
   source(paste0(raiz_supl_met, '.R'))
@@ -61,25 +63,53 @@ Tanto el diseño de los formularios, como el procesamiento de respuestas y la po
 
 ### Importancia de los criterios
 
+Las tablas \@ref(tab:prefind) y \@ref(tab:prefagg) muestran las preferencias individuales y agregadas, respectivamente, de las personas entrevistadas cuyas respuestas fueron consistentes.
+
+```{r prefind}
+kable_prefind <- flujo_completo_ahp$indpref %>% 
+  mutate(`Persona consultada` = cr_indicador[cr_indicador[,1]==1, 'Persona consultada']) %>% 
+  relocate(`Persona consultada`) %>% 
+  estilo_kable(titulo = 'Preferencias individuales',
+               cubre_anchura = F) %>% 
+  kable_styling(position = 'left') %>% 
+  column_spec(column = 1:2, width = "10em")
+kable_prefind
+```
+
+```{r prefagg}
+kable_prefagg <- flujo_completo_ahp$aggpref %>%
+  as.data.frame() %>% 
+  rownames_to_column('Variable') %>% 
+  mutate(Variable = factor(Variable, labels = variables[sort(names(variables))])) %>% 
+  estilo_kable(titulo = 'Preferencias agregadas',
+               cubre_anchura = F) %>% 
+  kable_styling(position = 'left') %>% 
+  column_spec(column = 1:2, width = "10em")
+kable_prefagg
+```
+
 
 ### Mapas de los subcriterios
+
 
 ```{r funcionesfuentescartograficas}
 source('R/funciones.R')
 library(sf)
+library(kableExtra)
 res_h3 <- 7 #Escribir un valor entre 4 y 7, ambos extremos inclusive
 ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
-ez_ver <- 'da5b4ed7c6b126fce15f8980b7a0b389937f7f35/'
+# ez_ver <- 'da5b4ed7c6b126fce15f8980b7a0b389937f7f35/'
+ez_ver <- 'd7f79365168e688f0d78f521e53fbf2da19244ef/'
 ind_esp_url <- paste0(ruta_ez_gh, ez_ver, 'out/all_sources_all_variables_res_', res_h3, '.gpkg')
 ind_esp_url
 if(!any(grepl('^ind_esp$', ls()))){
-  ind_esp <- st_read(ind_esp_url, optional = T)
+  ind_esp <- st_read(ind_esp_url, optional = T, quiet = T)
   st_geometry(ind_esp) <- "geometry"
   ind_esp <- st_transform(ind_esp, 32619)
 }
 if(!any(grepl('^pais_url$', ls()))){
   pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
-  pais <- st_read(pais_url, optional = T, layer = 'pais')
+  pais <- invisible(st_read(pais_url, optional = T, layer = 'pais', quiet = T))
   st_geometry(pais) <- "geometry"
   pais <- st_transform(pais, 32619)
 }
@@ -88,10 +118,13 @@ if(!any(grepl('^ind_esp_inters$', ls()))){
   colnames(ind_esp_inters) <- colnames(ind_esp)
   ind_esp_inters$area_sq_m <- units::drop_units(st_area(ind_esp_inters))
   ind_esp_inters$area_sq_km <- units::drop_units(st_area(ind_esp_inters))/1000000
-  ind_esp_inters
+}
+if(!any(grepl('^ind_esp_inters$', ls())) && interactive()){
+  print(ind_esp_inters)
 }
 ```
 
+Distancia a accesos.
 
 ```{r osmdist}
 # Para "OSM-DIST mean"
@@ -105,14 +138,16 @@ if(any(grepl('^osm_rcl$', ls()))){
   p <- osm_rcl$mapa +
     geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
   print(p)
-  print(osm_rcl$intervalos_y_etiquetas)
+  osm_rcl$intervalos_y_etiquetas %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
+    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 }
-if(any(grepl('^osm_rcl$', ls()))){
+if(any(grepl('^osm_rcl$', ls())) && interactive()){
   clipr::write_clip(osm_rcl$intervalos_y_etiquetas)
 }
 ```
 
-
+Estacionalidad térmica.
 
 ```{r estacionalidadtermica}
 # Para "CH-BIO bio04 temperature seasonality"
@@ -126,20 +161,23 @@ ggplot(ind_esp_inters) +
 if(!any(grepl('^chbio04_rcl$', ls()))){
   chbio04_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'CH-BIO bio04 temperature seasonality',
                           umbrales = c(1100, 1300, 1500),
-                          nombre = 'Estacionalidad térmica (°C/100x0.1)',
+                          nombre = 'Estacionalidad térmica',
                           ord_cat = 'ni')
 }
 if(any(grepl('^chbio04_rcl$', ls()))){
   p <- chbio04_rcl$mapa +
     geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
   print(p)
-  print(chbio04_rcl$intervalos_y_etiquetas)
+  chbio04_rcl$intervalos_y_etiquetas %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
+    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 }
-if(any(grepl('^chbio04_rcl$', ls()))){
+if(any(grepl('^chbio04_rcl$', ls())) && interactive()){
   clipr::write_clip(chbio04_rcl$intervalos_y_etiquetas)
 }
 ```
 
+Estacionalidad pluviométrica.
 
 ```{r estacionalidadpluvio}
 # Para "CH-BIO bio15 precipitation seasonality"
@@ -153,21 +191,23 @@ ggplot(ind_esp_inters) +
 if(!any(grepl('^chbio15_rcl$', ls()))){
   chbio15_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'CH-BIO bio15 precipitation seasonality',
                           umbrales = c(300, 400, 500),
-                          nombre = 'Estacionalidad pluviométrica (kg x m-2 x 0.1)',
+                          nombre = 'Estacionalidad pluviométrica',
                           ord_cat = 'ni')
 }
 if(any(grepl('^chbio15_rcl$', ls()))){
   p <- chbio15_rcl$mapa +
     geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
   print(p)
-  print(chbio15_rcl$intervalos_y_etiquetas)
+  chbio15_rcl$intervalos_y_etiquetas %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
+    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 }
-if(any(grepl('^chbio15_rcl$', ls()))){
+if(any(grepl('^chbio15_rcl$', ls())) && interactive()){
   clipr::write_clip(chbio15_rcl$intervalos_y_etiquetas)
 }
 ```
 
-
+Heterogeneidad de hábitat.
 
 ```{r heterogeneidadhabitat}
 # Para "GHH coefficient_of_variation_1km"
@@ -181,20 +221,81 @@ ggplot(ind_esp_inters) +
 if(!any(grepl('^hethab_rcl$', ls()))){
   hethab_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'GHH coefficient_of_variation_1km',
                           umbrales = c(250, 500, 1500),
-                          nombre = 'Heterogeneidad de hábitat (coef. variación)',
+                          nombre = 'Heterogeneidad de hábitat',
                           ord_cat = 'in')
 }
 if(any(grepl('^hethab_rcl$', ls()))){
   p <- hethab_rcl$mapa +
     geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
   print(p)
-  print(hethab_rcl$intervalos_y_etiquetas)
+  hethab_rcl$intervalos_y_etiquetas %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
+    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 }
-if(any(grepl('^hethab_rcl$', ls()))){
+if(any(grepl('^hethab_rcl$', ls())) && interactive()){
   clipr::write_clip(hethab_rcl$intervalos_y_etiquetas)
 }
 ```
 
+Distancia a cuerpos de agua y humedales.
+
+```{r cuerposaguadist}
+# Para "WBW-DIST"
+summary(ind_esp_inters$`WBW-DIST mean`)
+ggplot(ind_esp_inters) +
+  aes(x = '', y = `WBW-DIST mean`) +
+  geom_boxplot(alpha = 0, width = 0.3) +
+  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
+  theme_bw() +
+  theme(axis.title.x = element_blank())
+if(!any(grepl('^wbwdist_rcl$', ls()))){
+  wbwdist_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'WBW-DIST mean',
+                          umbrales = c(1000, 2000, 3000),
+                          nombre = 'Distancia a cuerpos de agua y humedales',
+                          ord_cat = 'ni')
+}
+if(any(grepl('^wbwdist_rcl$', ls()))){
+  p <- wbwdist_rcl$mapa +
+    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
+  print(p)
+  wbwdist_rcl$intervalos_y_etiquetas %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
+    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+}
+if(any(grepl('^wbwdist_rcl$', ls())) && interactive()){
+  clipr::write_clip(wbwdist_rcl$intervalos_y_etiquetas)
+}
+```
+
+Pendiente.
+
+```{r pendiente}
+# Para "G90 Slope"
+summary(ind_esp_inters$`G90 Slope`)
+ggplot(ind_esp_inters) +
+  aes(x = '', y = `G90 Slope`) +
+  geom_boxplot(alpha = 0, width = 0.3) +
+  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
+  theme_bw() +
+  theme(axis.title.x = element_blank())
+if(!any(grepl('^slope_rcl$', ls()))){
+  slope_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'G90 Slope',
+                          umbrales = c(3, 9, 15),
+                          nombre = 'Pendiente promedio',
+                          ord_cat = 'in')
+}
+if(any(grepl('^slope_rcl$', ls()))){
+  p <- slope_rcl$mapa +
+    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
+  print(p)
+  slope_rcl$intervalos_y_etiquetas %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
+    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+}
+if(any(grepl('^slope_rcl$', ls())) && interactive()){
+  clipr::write_clip(slope_rcl$intervalos_y_etiquetas)
+}
+```
 
 
 ## Información suplementaria {#infosupl}

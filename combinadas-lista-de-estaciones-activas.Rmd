@@ -115,6 +115,23 @@ lista_con_periodo_2022_coord_todas %>%
   gsub(' NA ', '', .)
 ```
 
+El resumen por estado se refleja en la siguiente tabla:
+
+```{r}
+onamet_estado <- data.frame(
+  Estado = c('activa', 'inactiva o no reportada'),
+  n = c(
+    nrow(lista_con_periodo_2022),
+    83 - nrow(lista_con_periodo_2022)
+    ))
+onamet_estado %>% 
+  kable(booktabs=T) %>%
+  kable_styling(
+    full_width = F,
+    latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+```
+
 El mapa de las estaciones de ONAMET, según el estado actual de las mismas, se muestra a continuación. Se recuerda que el mapa representa, cartográficamente, lo contenido en la lista de estaciones y los correspondientes periodos reportados de operación por ONAMET. []{#mapa-datos-2022}
 
 `r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'gfm-yaml_metadata_block') 'Versión interactiva del mapa, [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/combinadas-lista-de-estaciones-activas.html#mapa-datos-2022)'`

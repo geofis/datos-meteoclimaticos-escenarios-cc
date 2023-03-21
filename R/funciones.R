@@ -155,7 +155,15 @@ reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
     scale_fill_manual(nombre, values = val_col) +
     labs(title = paste('Reclasificación de valores de', nombre)) +
     theme_bw() +
-    theme(legend.position = 'bottom')
+    theme(
+      legend.position = 'bottom',
+      legend.key.size = unit(0.5, 'cm'), #change legend key size
+      legend.key.height = unit(0.5, 'cm'), #change legend key height
+      legend.key.width = unit(0.5, 'cm'), #change legend key width
+      legend.title = element_text(size=8), #change legend title font size
+      legend.text = element_text(size=6) #change legend text font size
+      )
+    
   
   # Invervalos y etiquetas
   extraer_digitos_interv <- function(col) {

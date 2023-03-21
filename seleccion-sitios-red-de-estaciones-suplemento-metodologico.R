@@ -1,13 +1,15 @@
-## ----supsetup, include=FALSE------------------------------------------------------------------------------------------------
+## ----supsetup, include=FALSE--------------------------------------------------
 knitr::opts_chunk$set(
   cache = F, 
   echo = TRUE,
   warning = FALSE,
-  message = FALSE)
+  message = FALSE,
+  out.width = '100%',
+  dpi = 300)
 # options(digits = 3)
 
 
-## ----suppaquetes------------------------------------------------------------------------------------------------------------
+## ----suppaquetes--------------------------------------------------------------
 library(kableExtra)
 library(tidyverse)
 library(ahpsurvey)
@@ -17,7 +19,7 @@ estilo_kable <- function(df, titulo = '', cubre_anchura = T) {
 }
 
 
-## ----supvariables-----------------------------------------------------------------------------------------------------------
+## ----supvariables-------------------------------------------------------------
 variables <- c(
     acce = "distancia a accesos",
     temp = "estacionalidad térmica",
@@ -31,7 +33,7 @@ variables <- c(
 col_ord <- as.vector(sapply(as.data.frame(combn(names(variables), 2)), paste0, collapse = '_'))
 
 
-## ----suptabequivalencias----------------------------------------------------------------------------------------------------
+## ----suptabequivalencias------------------------------------------------------
 valor_formulario <- c('(100)', '(66)', '(33)', '0', '33', '66', '100')
 recod_repartida <- FALSE
 if(recod_repartida) {
@@ -55,7 +57,7 @@ data.frame(
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----supimpresiontabequivalencias-------------------------------------------------------------------------------------------
+## ----supimpresiontabequivalencias---------------------------------------------
 as.data.frame(variables) %>% 
   rownames_to_column() %>% 
   setNames(nm = c('Código', 'Nombre completo')) %>% 
@@ -64,7 +66,7 @@ as.data.frame(variables) %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----suptablaresultadosenbruto----------------------------------------------------------------------------------------------
+## ----suptablaresultadosenbruto------------------------------------------------
 tabla_original <- read_csv('fuentes/respuestas-ahp/respuestas.csv')
 tabla_en_bruto <- tabla_original[, -grep('Marca|Opcionalmente', colnames(tabla_original))]
 tabla_en_bruto %>% 
@@ -73,7 +75,7 @@ tabla_en_bruto %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----suptablaresultadosrecodificados----------------------------------------------------------------------------------------
+## ----suptablaresultadosrecodificados------------------------------------------
 tabla_recodificada <- sapply(
   tabla_en_bruto[, grep('^Valora.*', colnames(tabla_en_bruto))],
   function(x){
@@ -87,7 +89,7 @@ tabla_recodificada %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----suptablaresultadosparamatrizpareada------------------------------------------------------------------------------------
+## ----suptablaresultadosparamatrizpareada--------------------------------------
 tabla_col_renom <- tabla_recodificada
 cambiar_nombre_por_variable <- function(primera=T) {
   names(
@@ -108,7 +110,7 @@ tabla_col_renom %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----supmatrizahp, results='asis'-------------------------------------------------------------------------------------------
+## ----supmatrizahp, results='asis'---------------------------------------------
 matriz_ahp <- tabla_col_renom[, col_ord] %>%
   ahp.mat(atts = names(variables), negconvert = TRUE)
 map(matriz_ahp,
@@ -131,7 +133,7 @@ error %>%
   theme_minimal()
 
 
-## ----suprisimuladospaqahpsurvey---------------------------------------------------------------------------------------------
+## ----suprisimuladospaqahpsurvey-----------------------------------------------
 ri_sim <- t(data.frame(RI = c(0.0000000, 0.0000000, 0.5251686, 0.8836651, 1.1081014, 1.2492774, 1.3415514, 1.4048466, 1.4507197, 1.4857266, 1.5141022,1.5356638, 1.5545925, 1.5703498, 1.5839958)))
 colnames(ri_sim) <- 1:15
 ri_sim %>%
@@ -140,15 +142,15 @@ ri_sim %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----supprobandori----------------------------------------------------------------------------------------------------------
+## ----supprobandori------------------------------------------------------------
 tiempo_10k <- system.time(probandoRI <- ahp.ri(nsims = 10000, dim = 8, seed = 99))
 
 
-## ----supdefri---------------------------------------------------------------------------------------------------------------
+## ----supdefri-----------------------------------------------------------------
 RI <- ri_sim[8]
 
 
-## ----suprazondeconsistencia-------------------------------------------------------------------------------------------------
+## ----suprazondeconsistencia---------------------------------------------------
 cr <- matriz_ahp %>% ahp.cr(atts = names(variables), ri = RI)
 data.frame(`Persona consultada` = seq_along(cr), CR = cr, check.names = F) %>%
   estilo_kable(titulo = 'Razones de consistencia (consistency ratio) por persona consultada',
@@ -157,13 +159,13 @@ data.frame(`Persona consultada` = seq_along(cr), CR = cr, check.names = F) %>%
   column_spec(column = 1:2, width = "10em")
 
 
-## ----supumbrales------------------------------------------------------------------------------------------------------------
+## ----supumbrales--------------------------------------------------------------
 umbral_saaty <- 0.1
 umbral_alterno <- 0.15
 umbral <- ifelse(recod_repartida, umbral_alterno, umbral_saaty)
 
 
-## ----supnumconsistinconsist-------------------------------------------------------------------------------------------------
+## ----supnumconsistinconsist---------------------------------------------------
 table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() %>% 
   setNames(nm = c('Tipo', 'Número de cuestionarios')) %>% 
   estilo_kable(titulo = 'Número de cuestionarios según consistencia',
@@ -202,7 +204,29 @@ matriz_ahp %>%
   theme(legend.position = 'bottom', axis.text.x = element_text(size = 7))
 
 
-## ----supflujocompletoahp----------------------------------------------------------------------------------------------------
+## ----supatributopesocrboxplotsolocons, fig.cap='Preferencias individuales por atributo y ratio de consistencia, sólo respuestas consistentes', out.width='100%'----
+matriz_ahp[cr_indicador[,1]==1] %>% 
+  ahp.indpref(names(variables), method = "eigen") %>% 
+  mutate(`Persona consultada` = cr_indicador[cr_indicador[,1]==1, 'Persona consultada']) %>%
+  inner_join(cr_indicador[cr_indicador[,1]==1,], by = 'Persona consultada') %>%
+  gather(-matches('Persona|CR'), key = "var", value = "pref") %>%
+  ggplot(aes(x = var, y = pref)) + 
+  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "gray") +
+  geom_jitter(alpha = 0.6, height = 0, width = 0.1, color = "#00BA38") +
+  geom_boxplot(alpha = 0, width = 0.3, color = "#808080") +
+  scale_x_discrete("Atributo", labels = stringr::str_wrap(variables[sort(names(variables))], width = 10)) +
+  scale_y_continuous("Peso (valor propio dominante)", 
+                     labels = scales::percent, 
+                     breaks = c(seq(0,0.7,0.1))) +
+  guides(color=guide_legend(title=NULL)) +
+  labs(NULL, caption = paste("n =", nrow(cr_indicador[cr_indicador[,1]==1,]),
+                             ",", "CR promedio =",
+                           round(mean(cr[cr_indicador[,1]==1]),3))) +
+  theme_minimal() +
+  theme(legend.position = 'bottom', axis.text.x = element_text(size = 7))
+
+
+## ----supflujocompletoahp------------------------------------------------------
 flujo_completo_ahp <- ahp(df = tabla_col_renom[, col_ord], 
                           atts = names(variables), 
                           negconvert = TRUE, 
@@ -212,5 +236,12 @@ flujo_completo_ahp <- ahp(df = tabla_col_renom[, col_ord],
                           qt = 0.2,
                           censorcr = umbral,
                           agg = TRUE)
-flujo_completo_ahp
+# sum(flujo_completo_ahp$aggpref[,1]) == 1
+
+
+## ----umbralesapuntuaciones----------------------------------------------------
+puntuaciones_umbrales <- readODS::read_ods('fuentes/umbrales-criterios-ahp/puntuaciones.ods', sheet = 1)
+puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
