@@ -470,27 +470,40 @@ if(!any(grepl('^ind_esp_inters$', ls())) && interactive()){
 Distancia a accesos.
 
 ``` r
-# Para "OSM-DIST mean"
-if(!any(grepl('^osm_rcl$', ls()))){
-  osm_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'OSM-DIST mean',
-                          umbrales = c(50, 200, 500, 5000),
-                          nombre = 'Distancia a accesos OSM',
-                          ord_cat = 'nin_rev')
-}
-if(any(grepl('^osm_rcl$', ls()))){
-  p <- osm_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  osm_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
+objeto <- 'osm_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'OSM-DIST mean',
+    umbrales = c(50, 200, 500, 5000),
+    nombre = 'Distancia a accesos OSM',
+    ord_cat = 'nin_rev')
+)
 ```
 
+    ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
+    ##    12.76   289.04   534.24  1243.20  1412.68 32795.66        2
+
+``` r
+get(objeto)[c('violin', 'mapa_con_pais')]
+```
+
+    ## $violin
+
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/osmdist-1.png" width="100%" />
+
+    ## 
+    ## $mapa_con_pais
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/osmdist-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 3:
+Table 3: Intervalos de Distancia a accesos OSM
 </caption>
 <thead>
 <tr>
@@ -565,61 +578,54 @@ no idóneo
 </table>
 
 ``` r
-if(any(grepl('^osm_rcl$', ls())) && interactive()){
-  clipr::write_clip(osm_rcl$intervalos_y_etiquetas)
-}
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
 Estacionalidad térmica.
 
 ``` r
-# Para "CH-BIO bio04 temperature seasonality"
-summary(ind_esp_inters$`CH-BIO bio04 temperature seasonality`)
+objeto <- 'tseasonizzo_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'TSEASON-IZZO mean',
+    umbrales = c(0.8, 1.2, 1.6),
+    nombre = 'Estacionalidad térmica',
+    ord_cat = 'ni')
+)
 ```
 
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##   853.8  1055.7  1158.1  1194.7  1302.1  1663.8
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##   0.573   1.195   1.301   1.326   1.477   1.866     105
 
 ``` r
-ggplot(ind_esp_inters) +
-  aes(x = '', y = `CH-BIO bio04 temperature seasonality`) +
-  geom_boxplot(alpha = 0, width = 0.3) +
-  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
+get(objeto)[c('violin', 'mapa_con_pais')]
 ```
+
+    ## $violin
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadtermica-1.png" width="100%" />
 
-``` r
-if(!any(grepl('^chbio04_rcl$', ls()))){
-  chbio04_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'CH-BIO bio04 temperature seasonality',
-                          umbrales = c(1100, 1300, 1500),
-                          nombre = 'Estacionalidad térmica',
-                          ord_cat = 'ni')
-}
-if(any(grepl('^chbio04_rcl$', ls()))){
-  p <- chbio04_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  chbio04_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
-```
+    ## 
+    ## $mapa_con_pais
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadtermica-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 4:
+Table 4: Intervalos de Estacionalidad térmica
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-CH-BIO bio04 temperature seasonality intervalos
+TSEASON-IZZO mean intervalos
 </th>
 <th style="text-align:left;">
-CH-BIO bio04 temperature seasonality etiquetas
+TSEASON-IZZO mean etiquetas
 </th>
 <th style="text-align:right;">
 enteros_ordenados
@@ -629,7 +635,7 @@ enteros_ordenados
 <tbody>
 <tr>
 <td style="text-align:left;">
-\[854,1.1e+03\]
+\[0.573,0.8\]
 </td>
 <td style="text-align:left;">
 no idóneo
@@ -640,7 +646,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(1.1e+03,1.3e+03\]
+(0.8,1.2\]
 </td>
 <td style="text-align:left;">
 marginalmente idóneo
@@ -651,7 +657,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(1.3e+03,1.5e+03\]
+(1.2,1.6\]
 </td>
 <td style="text-align:left;">
 moderadamente idóneo
@@ -662,7 +668,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(1.5e+03,1.66e+03\]
+(1.6,1.87\]
 </td>
 <td style="text-align:left;">
 altamente idóneo
@@ -675,61 +681,54 @@ altamente idóneo
 </table>
 
 ``` r
-if(any(grepl('^chbio04_rcl$', ls())) && interactive()){
-  clipr::write_clip(chbio04_rcl$intervalos_y_etiquetas)
-}
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
 Estacionalidad pluviométrica.
 
 ``` r
-# Para "CH-BIO bio15 precipitation seasonality"
-summary(ind_esp_inters$`CH-BIO bio15 precipitation seasonality`)
+objeto <- 'pseasonizzo_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'PSEASON-IZZO mean',
+    umbrales = c(30, 40, 50),
+    nombre = 'Estacionalidad pluviométrica',
+    ord_cat = 'ni')
+)
 ```
 
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##   222.0   316.9   407.5   405.4   483.8   622.1
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##   19.51   31.14   43.51   42.76   52.55   89.60     105
 
 ``` r
-ggplot(ind_esp_inters) +
-  aes(x = '', y = `CH-BIO bio15 precipitation seasonality`) +
-  geom_boxplot(alpha = 0, width = 0.3) +
-  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
+get(objeto)[c('violin', 'mapa_con_pais')]
 ```
+
+    ## $violin
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadpluvio-1.png" width="100%" />
 
-``` r
-if(!any(grepl('^chbio15_rcl$', ls()))){
-  chbio15_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'CH-BIO bio15 precipitation seasonality',
-                          umbrales = c(300, 400, 500),
-                          nombre = 'Estacionalidad pluviométrica',
-                          ord_cat = 'ni')
-}
-if(any(grepl('^chbio15_rcl$', ls()))){
-  p <- chbio15_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  chbio15_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
-```
+    ## 
+    ## $mapa_con_pais
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadpluvio-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 5:
+Table 5: Intervalos de Estacionalidad pluviométrica
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-CH-BIO bio15 precipitation seasonality intervalos
+PSEASON-IZZO mean intervalos
 </th>
 <th style="text-align:left;">
-CH-BIO bio15 precipitation seasonality etiquetas
+PSEASON-IZZO mean etiquetas
 </th>
 <th style="text-align:right;">
 enteros_ordenados
@@ -739,7 +738,7 @@ enteros_ordenados
 <tbody>
 <tr>
 <td style="text-align:left;">
-\[222,300\]
+\[19.5,30\]
 </td>
 <td style="text-align:left;">
 no idóneo
@@ -750,7 +749,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(300,400\]
+(30,40\]
 </td>
 <td style="text-align:left;">
 marginalmente idóneo
@@ -761,7 +760,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(400,500\]
+(40,50\]
 </td>
 <td style="text-align:left;">
 moderadamente idóneo
@@ -772,7 +771,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(500,622\]
+(50,89.6\]
 </td>
 <td style="text-align:left;">
 altamente idóneo
@@ -785,53 +784,59 @@ altamente idóneo
 </table>
 
 ``` r
-if(any(grepl('^chbio15_rcl$', ls())) && interactive()){
-  clipr::write_clip(chbio15_rcl$intervalos_y_etiquetas)
-}
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+
+# Para comparar con CHELSA
+# objeto <- 'chbio15_rcl'
+# assign(
+#   objeto,
+#   generar_resumen_grafico_estadistico_criterios(
+#     variable = 'CH-BIO bio15 precipitation seasonality',
+#     umbrales = c(300, 400, 500),
+#     nombre = 'Estacionalidad pluviométrica',
+#     ord_cat = 'ni')
+# )
+# get(objeto)[c('violin', 'mapa_con_pais', 'intervalos_y_etiquetas_kable')]
+# # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
 Heterogeneidad de hábitat.
 
 ``` r
-# Para "GHH coefficient_of_variation_1km"
-summary(ind_esp_inters$`GHH coefficient_of_variation_1km`)
+objeto <- 'hethab_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'GHH coefficient_of_variation_1km',
+    umbrales = c(250, 500, 1500),
+    nombre = 'Heterogeneidad de hábitat',
+    ord_cat = 'in')
+)
 ```
 
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
     ##     0.0   317.6   399.6   481.4   529.5  3563.4
 
 ``` r
-ggplot(ind_esp_inters) +
-  aes(x = '', y = `GHH coefficient_of_variation_1km`) +
-  geom_boxplot(alpha = 0, width = 0.3) +
-  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
+get(objeto)[c('violin', 'mapa_con_pais')]
 ```
+
+    ## $violin
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/heterogeneidadhabitat-1.png" width="100%" />
 
-``` r
-if(!any(grepl('^hethab_rcl$', ls()))){
-  hethab_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'GHH coefficient_of_variation_1km',
-                          umbrales = c(250, 500, 1500),
-                          nombre = 'Heterogeneidad de hábitat',
-                          ord_cat = 'in')
-}
-if(any(grepl('^hethab_rcl$', ls()))){
-  p <- hethab_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  hethab_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
-```
+    ## 
+    ## $mapa_con_pais
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/heterogeneidadhabitat-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 6:
+Table 6: Intervalos de Heterogeneidad de hábitat
 </caption>
 <thead>
 <tr>
@@ -895,53 +900,46 @@ no idóneo
 </table>
 
 ``` r
-if(any(grepl('^hethab_rcl$', ls())) && interactive()){
-  clipr::write_clip(hethab_rcl$intervalos_y_etiquetas)
-}
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
 Distancia a cuerpos de agua y humedales.
 
 ``` r
-# Para "WBW-DIST"
-summary(ind_esp_inters$`WBW-DIST mean`)
+objeto <- 'wbwdist_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'WBW-DIST mean',
+    umbrales = c(1000, 2000, 3000),
+    nombre = 'Distancia a cuerpos de agua y humedales',
+    ord_cat = 'ni')
+)
 ```
 
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
     ##       0    2698    6069    7134   10545   26424
 
 ``` r
-ggplot(ind_esp_inters) +
-  aes(x = '', y = `WBW-DIST mean`) +
-  geom_boxplot(alpha = 0, width = 0.3) +
-  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
+get(objeto)[c('violin', 'mapa_con_pais')]
 ```
+
+    ## $violin
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/cuerposaguadist-1.png" width="100%" />
 
-``` r
-if(!any(grepl('^wbwdist_rcl$', ls()))){
-  wbwdist_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'WBW-DIST mean',
-                          umbrales = c(1000, 2000, 3000),
-                          nombre = 'Distancia a cuerpos de agua y humedales',
-                          ord_cat = 'ni')
-}
-if(any(grepl('^wbwdist_rcl$', ls()))){
-  p <- wbwdist_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  wbwdist_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
-```
+    ## 
+    ## $mapa_con_pais
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/cuerposaguadist-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 7:
+Table 7: Intervalos de Distancia a cuerpos de agua y humedales
 </caption>
 <thead>
 <tr>
@@ -1005,53 +1003,46 @@ altamente idóneo
 </table>
 
 ``` r
-if(any(grepl('^wbwdist_rcl$', ls())) && interactive()){
-  clipr::write_clip(wbwdist_rcl$intervalos_y_etiquetas)
-}
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
 Pendiente.
 
 ``` r
-# Para "G90 Slope"
-summary(ind_esp_inters$`G90 Slope`)
+objeto <- 'slope_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'G90 Slope',
+    umbrales = c(3, 9, 15),
+    nombre = 'Pendiente promedio',
+    ord_cat = 'in')
+)
 ```
 
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
     ##   0.000   1.370   4.489   6.773  10.840  32.705
 
 ``` r
-ggplot(ind_esp_inters) +
-  aes(x = '', y = `G90 Slope`) +
-  geom_boxplot(alpha = 0, width = 0.3) +
-  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
+get(objeto)[c('violin', 'mapa_con_pais')]
 ```
+
+    ## $violin
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/pendiente-1.png" width="100%" />
 
-``` r
-if(!any(grepl('^slope_rcl$', ls()))){
-  slope_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'G90 Slope',
-                          umbrales = c(3, 9, 15),
-                          nombre = 'Pendiente promedio',
-                          ord_cat = 'in')
-}
-if(any(grepl('^slope_rcl$', ls()))){
-  p <- slope_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  slope_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
-```
+    ## 
+    ## $mapa_con_pais
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/pendiente-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 8:
+Table 8: Intervalos de Pendiente promedio
 </caption>
 <thead>
 <tr>
@@ -1115,9 +1106,213 @@ no idóneo
 </table>
 
 ``` r
-if(any(grepl('^slope_rcl$', ls())) && interactive()){
-  clipr::write_clip(slope_rcl$intervalos_y_etiquetas)
-}
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+```
+
+Horas de insolación.
+
+``` r
+objeto <- 'insol_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'YINSOLTIME mean',
+    umbrales = c(3900, 4100, 4300),
+    nombre = 'Horas de insolación',
+    ord_cat = 'ni')
+)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##    3176    4092    4296    4232    4421    4483     104
+
+``` r
+get(objeto)[c('violin', 'mapa_con_pais')]
+```
+
+    ## $violin
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-2-1.png" width="100%" />
+
+    ## 
+    ## $mapa_con_pais
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-2-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 9: Intervalos de Horas de insolación
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+YINSOLTIME mean intervalos
+</th>
+<th style="text-align:left;">
+YINSOLTIME mean etiquetas
+</th>
+<th style="text-align:right;">
+enteros_ordenados
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+\[3.18e+03,3.9e+03\]
+</td>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(3.9e+03,4.1e+03\]
+</td>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(4.1e+03,4.3e+03\]
+</td>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(4.3e+03,4.48e+03\]
+</td>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+```
+
+Elevación.
+
+``` r
+objeto <- 'ele_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'CGIAR-ELE mean',
+    umbrales = c(200, 400, 800),
+    nombre = 'Elevación',
+    ord_cat = 'ni')
+)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##  -42.00   57.76  186.78  386.79  542.70 2791.69      35
+
+``` r
+get(objeto)[c('violin', 'mapa_con_pais')]
+```
+
+    ## $violin
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-1.png" width="100%" />
+
+    ## 
+    ## $mapa_con_pais
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 10: Intervalos de Elevación
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+CGIAR-ELE mean intervalos
+</th>
+<th style="text-align:left;">
+CGIAR-ELE mean etiquetas
+</th>
+<th style="text-align:right;">
+enteros_ordenados
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(200,400\]
+</td>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(400,800\]
+</td>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(800,2.79e+03\]
+</td>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+\[-42,200\]
+</td>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
 ## Información suplementaria
@@ -1251,7 +1446,7 @@ data.frame(
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 9: Tabla de recodificación de puntaciones de formulario a escala
+Table 11: Tabla de recodificación de puntaciones de formulario a escala
 AHP original
 </caption>
 <thead>
@@ -1344,7 +1539,7 @@ as.data.frame(variables) %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 10: Tabla de equivalencias de nombres de las variables evaluadas
+Table 12: Tabla de equivalencias de nombres de las variables evaluadas
 </caption>
 <thead>
 <tr>
@@ -1446,7 +1641,7 @@ tabla_en_bruto %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 11: Tabla de resultados en bruto (anonimizada) obtenida a partir
+Table 13: Tabla de resultados en bruto (anonimizada) obtenida a partir
 del rellenado del “Formulario de comparación pareada de criterios de
 identificación de sitios idóneos para una red de observación climática”
 </caption>
@@ -2387,7 +2582,7 @@ tabla_recodificada %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 12: Tabla de puntaciones recodificadas
+Table 14: Tabla de puntaciones recodificadas
 </caption>
 <thead>
 <tr>
@@ -3286,7 +3481,7 @@ En segundo lugar, aplicamos la recodificación de nombres de columnas de
 la tabla de respuestas, que originalmente eran transcripciones de las
 preguntas del formulario de Google. Este paso nos ayudó a representar
 nombres más cortos en la tabla que posteriormente usamos como insumo
-(ver tabla <a href="#tab:suptablaresultadosparamatrizpareada">13</a>)
+(ver tabla <a href="#tab:suptablaresultadosparamatrizpareada">15</a>)
 para crear la matriz de comparación por parejas del método AHP.
 
 ``` r
@@ -3312,7 +3507,7 @@ tabla_col_renom %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 13: Tabla de columnas renombradas (adaptada para la generación de
+Table 15: Tabla de columnas renombradas (adaptada para la generación de
 la matriz de comparación en parejas)
 </caption>
 <thead>
@@ -4182,7 +4377,7 @@ acce_temp
 </table>
 
 El conjunto de datos de la tabla
-<a href="#tab:suptablaresultadosparamatrizpareada">13</a> recoge las
+<a href="#tab:suptablaresultadosparamatrizpareada">15</a> recoge las
 respuestas dadas por las 9 personas consultada, cada una compuesta por
 28 comparaciones en parejas de criterios (8 criterios). Analicemos
 algunos ejemplos para ilustrar el flujo seguido en la recodificación y
@@ -4192,16 +4387,16 @@ La primera fila contiene las valoraciones realizadas por la persona
 consultada número 1. En la primera pregunta, “*Valora la importancia
 relativa de las variables horas de insolación y elevación*”, el
 consultado respondió “*33: Importancia moderada para elevación*” (ver
-tabla <a href="#tab:suptablaresultadosenbruto">11</a>). Dicha valoración
+tabla <a href="#tab:suptablaresultadosenbruto">13</a>). Dicha valoración
 fue recodificada a puntuaciones AHP con el valor 3 (ver tabla
-<a href="#tab:suptablaresultadosrecodificados">12</a>); nótese que el
+<a href="#tab:suptablaresultadosrecodificados">14</a>); nótese que el
 valor recodificado es positivo, dado que el criterio que recibió la
 mayor importancia fue el que ocupaba la segunda posición en la pregunta.
 
 Finalmente, tras realizar el renombrado, la columna en cuestión paso de
 nombrarse “*Valora la importancia relativa de las variables horas de
 insolación y elevación*” a `inso_elev` (ver tabla
-<a href="#tab:suptablaresultadosparamatrizpareada">13</a>). Esta cambio
+<a href="#tab:suptablaresultadosparamatrizpareada">15</a>). Esta cambio
 nos permitirá manejar atributos cortos en la matriz de comparación por
 parejas.
 
@@ -6703,7 +6898,7 @@ que puede ser provisto por el usuario a partir de simulaciones, que con
 el paquete `ahpsurvey` se puede generar mediante la función `ahp.ri`. El
 conjunto de $RI$ a continuación se generó a partir de `ahp.ri` con
 500000 simulaciones (ver tabla
-<a href="#tab:suprisimuladospaqahpsurvey">14</a>), y están contenidas en
+<a href="#tab:suprisimuladospaqahpsurvey">16</a>), y están contenidas en
 la viñeta principal de la documentación del paquete `ahpsurvey` (Cho
 2019):
 
@@ -6718,7 +6913,7 @@ ri_sim %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 14: Índices aleatorios generados por la función ahp.ri con 500000
+Table 16: Índices aleatorios generados por la función ahp.ri con 500000
 simulaciones para 1 a 15 atributos
 </caption>
 <thead>
@@ -6840,7 +7035,7 @@ tiempo_10k <- system.time(probandoRI <- ahp.ri(nsims = 10000, dim = 8, seed = 99
 El tiempo de cómputo fue relativamente pequeño (\~ 2 segundos) y el
 resultado para $RI$ es 1.399982, el cual se aproxima bastante al
 generado por Cho (2019) (tabla
-<a href="#tab:suprisimuladospaqahpsurvey">14</a>). Si generásemos un
+<a href="#tab:suprisimuladospaqahpsurvey">16</a>). Si generásemos un
 $RI$ con 500000 simulaciones, nos tomaría al menos un minuto y medio en
 una PC de altas prestaciones (o varios minutos en una PC común), y el
 resultado sería bastante parecido al mostrado por Cho (2019), por lo que
@@ -6853,7 +7048,7 @@ RI <- ri_sim[8]
 Con este índice aleatorio, calculamos la razón de consistencia `CR` de
 las respuestas aportadas por cada persona consultada, mediante la
 función `ahp.cr` aplicada a la matriz de comparación en parejas. La
-tabla <a href="#tab:suprazondeconsistencia">15</a> resume el cómputo de
+tabla <a href="#tab:suprazondeconsistencia">17</a> resume el cómputo de
 esta métrica.
 
 ``` r
@@ -6867,7 +7062,7 @@ data.frame(`Persona consultada` = seq_along(cr), CR = cr, check.names = F) %>%
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 15: Razones de consistencia (consistency ratio) por persona
+Table 17: Razones de consistencia (consistency ratio) por persona
 consultada
 </caption>
 <thead>
@@ -6967,7 +7162,7 @@ la elección se considera inconsistente (Thomas L. Saaty 1977). **En
 nuestro caso, elegimos el umbral de 0.1 para** $CR$, por lo que
 obtuvimos un total de 4 valoraciones consistentes (personas consultadas
 números 1, 2, 4, 9) y 5 inconsistentes (personas números 3, 5, 6, 7, 8)
-(comparar con tabla <a href="#tab:suprazondeconsistencia">15</a>).
+(comparar con tabla <a href="#tab:suprazondeconsistencia">17</a>).
 
 ``` r
 table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() %>% 
@@ -6980,7 +7175,7 @@ table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() 
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 16: Número de cuestionarios según consistencia
+Table 18: Número de cuestionarios según consistencia
 </caption>
 <thead>
 <tr>
@@ -7151,7 +7346,7 @@ et al. 2021). Para facilitar esta tarea, y garantizar reproducibilidad y
 consistencia, creamos funciones que realizaron la reclasificación de
 forma semitautomática. Los umbrales elegidos para definir las
 puntuaciones de criterios, están recogidos en la tabla (ver tabla
-<a href="#tab:umbralesapuntuaciones">17</a>).
+<a href="#tab:umbralesapuntuaciones">19</a>).
 
 ``` r
 puntuaciones_umbrales <- readODS::read_ods('fuentes/umbrales-criterios-ahp/puntuaciones.ods', sheet = 1)
@@ -7162,7 +7357,7 @@ puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digit
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 17: Puntuaciones de criterios para la selección de sitios de
+Table 19: Puntuaciones de criterios para la selección de sitios de
 estaciones meteoclimáticas
 </caption>
 <thead>
@@ -7309,16 +7504,16 @@ Pendiente (°)
 Horas de insolación (horas/año)
 </td>
 <td style="text-align:left;">
-NA
+(4.3e+03,4.48e+03\]
 </td>
 <td style="text-align:left;">
-NA
+(4.1e+03,4.3e+03\]
 </td>
 <td style="text-align:left;">
-NA
+(3.9e+03,4.1e+03\]
 </td>
 <td style="text-align:left;">
-NA
+\[3.18e+03,3.9e+03\]
 </td>
 </tr>
 <tr>
@@ -7326,16 +7521,16 @@ NA
 Elevación (metros snm)
 </td>
 <td style="text-align:left;">
-NA
+(800,2.79e+03\]
 </td>
 <td style="text-align:left;">
-NA
+(400,800\]
 </td>
 <td style="text-align:left;">
-NA
+(200,400\]
 </td>
 <td style="text-align:left;">
-NA
+\[-42,200\]
 </td>
 </tr>
 </tbody>
