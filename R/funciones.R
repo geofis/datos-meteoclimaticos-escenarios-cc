@@ -183,3 +183,67 @@ reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
   # Salida
   return(list(vectorial = vectorial, mapa = mapa, intervalos_y_etiquetas = intervalos_y_etiquetas))
 }
+
+generar_resumen_grafico_estadistico_criterios <- function(
+    variable = NULL, nombre = NULL, umbrales = NULL,
+    ord_cat = NULL, kable_caption = paste('Intervalos de', nombre)){
+  internal <- variable
+  resumen_estadistico <- tryCatch(
+    success <- summary(ind_esp_inters[, internal, drop=T]),
+    error = function(cond) {
+      message('Caught an error. This is the error message: ', cond, appendLF = TRUE)
+      return(NA)
+    }
+  )
+  print(resumen_estadistico)
+  violin <- tryCatch(
+    success <- ggplot(ind_esp_inters) +
+      aes(x = '', y = !!sym(internal)) +
+      geom_boxplot(alpha = 0, width = 0.3) +
+      geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
+      scale_y_continuous(trans = 'pseudo_log') +
+      theme_bw() +
+      theme(axis.title.x = element_blank()),
+    error = function(cond) {
+      message('Caught an error. This is the error message: ', cond, appendLF = TRUE)
+      return(NA)
+    }
+  )
+  reclasificacion <- tryCatch(
+    success <- reclasificar(
+      vectorial = ind_esp_inters, campo = internal,
+      umbrales = umbrales,
+      nombre = nombre,
+      ord_cat = ord_cat),
+    error = function(cond) {
+      message('Caught an error. This is the error message: ', cond, appendLF = TRUE)
+      return(NA)
+    }
+  )
+  mapa_con_pais <- tryCatch(
+    success <- reclasificacion$mapa +
+      geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50'),
+    error = function(cond) {
+      message('Caught an error. This is the error message: ', cond, appendLF = TRUE)
+      return(NA)
+    }
+  )
+  intervalos_y_etiquetas_kable <- tryCatch(
+    success <- reclasificacion$intervalos_y_etiquetas %>%
+      kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = kable_caption) %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T),
+    error = function(cond) {
+      message('Caught an error. This is the error message: ', cond, appendLF = TRUE)
+      return(NA)
+    }
+  )
+  return(list(
+    resumen_estadistico = resumen_estadistico,
+    violin = violin,
+    vectorial = reclasificacion[['vectorial']],
+    mapa = reclasificacion[['mapa']],
+    mapa_con_pais = mapa_con_pais,
+    intervalos_y_etiquetas = reclasificacion[['intervalos_y_etiquetas']],
+    intervalos_y_etiquetas_kable = intervalos_y_etiquetas_kable
+  ))
+}

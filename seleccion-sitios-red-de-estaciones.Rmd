@@ -88,9 +88,7 @@ kable_prefagg <- flujo_completo_ahp$aggpref %>%
 kable_prefagg
 ```
 
-
 ### Mapas de los subcriterios
-
 
 ```{r funcionesfuentescartograficas}
 source('R/funciones.R')
@@ -127,176 +125,151 @@ if(!any(grepl('^ind_esp_inters$', ls())) && interactive()){
 Distancia a accesos.
 
 ```{r osmdist}
-# Para "OSM-DIST mean"
-if(!any(grepl('^osm_rcl$', ls()))){
-  osm_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'OSM-DIST mean',
-                          umbrales = c(50, 200, 500, 5000),
-                          nombre = 'Distancia a accesos OSM',
-                          ord_cat = 'nin_rev')
-}
-if(any(grepl('^osm_rcl$', ls()))){
-  p <- osm_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  osm_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
-if(any(grepl('^osm_rcl$', ls())) && interactive()){
-  clipr::write_clip(osm_rcl$intervalos_y_etiquetas)
-}
+objeto <- 'osm_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'OSM-DIST mean',
+    umbrales = c(50, 200, 500, 5000),
+    nombre = 'Distancia a accesos OSM',
+    ord_cat = 'nin_rev')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
 Estacionalidad térmica.
 
 ```{r estacionalidadtermica}
-# Para "CH-BIO bio04 temperature seasonality"
-summary(ind_esp_inters$`CH-BIO bio04 temperature seasonality`)
-ggplot(ind_esp_inters) +
-  aes(x = '', y = `CH-BIO bio04 temperature seasonality`) +
-  geom_boxplot(alpha = 0, width = 0.3) +
-  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
-if(!any(grepl('^chbio04_rcl$', ls()))){
-  chbio04_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'CH-BIO bio04 temperature seasonality',
-                          umbrales = c(1100, 1300, 1500),
-                          nombre = 'Estacionalidad térmica',
-                          ord_cat = 'ni')
-}
-if(any(grepl('^chbio04_rcl$', ls()))){
-  p <- chbio04_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  chbio04_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
-if(any(grepl('^chbio04_rcl$', ls())) && interactive()){
-  clipr::write_clip(chbio04_rcl$intervalos_y_etiquetas)
-}
+objeto <- 'tseasonizzo_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'TSEASON-IZZO mean',
+    umbrales = c(0.8, 1.2, 1.6),
+    nombre = 'Estacionalidad térmica',
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
 Estacionalidad pluviométrica.
 
 ```{r estacionalidadpluvio}
-# Para "CH-BIO bio15 precipitation seasonality"
-summary(ind_esp_inters$`CH-BIO bio15 precipitation seasonality`)
-ggplot(ind_esp_inters) +
-  aes(x = '', y = `CH-BIO bio15 precipitation seasonality`) +
-  geom_boxplot(alpha = 0, width = 0.3) +
-  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
-if(!any(grepl('^chbio15_rcl$', ls()))){
-  chbio15_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'CH-BIO bio15 precipitation seasonality',
-                          umbrales = c(300, 400, 500),
-                          nombre = 'Estacionalidad pluviométrica',
-                          ord_cat = 'ni')
-}
-if(any(grepl('^chbio15_rcl$', ls()))){
-  p <- chbio15_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  chbio15_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
-if(any(grepl('^chbio15_rcl$', ls())) && interactive()){
-  clipr::write_clip(chbio15_rcl$intervalos_y_etiquetas)
-}
+objeto <- 'pseasonizzo_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'PSEASON-IZZO mean',
+    umbrales = c(30, 40, 50),
+    nombre = 'Estacionalidad pluviométrica',
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+
+# Para comparar con CHELSA
+# objeto <- 'chbio15_rcl'
+# assign(
+#   objeto,
+#   generar_resumen_grafico_estadistico_criterios(
+#     variable = 'CH-BIO bio15 precipitation seasonality',
+#     umbrales = c(300, 400, 500),
+#     nombre = 'Estacionalidad pluviométrica',
+#     ord_cat = 'ni')
+# )
+# get(objeto)[c('violin', 'mapa_con_pais', 'intervalos_y_etiquetas_kable')]
+# # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
 Heterogeneidad de hábitat.
 
 ```{r heterogeneidadhabitat}
-# Para "GHH coefficient_of_variation_1km"
-summary(ind_esp_inters$`GHH coefficient_of_variation_1km`)
-ggplot(ind_esp_inters) +
-  aes(x = '', y = `GHH coefficient_of_variation_1km`) +
-  geom_boxplot(alpha = 0, width = 0.3) +
-  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
-if(!any(grepl('^hethab_rcl$', ls()))){
-  hethab_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'GHH coefficient_of_variation_1km',
-                          umbrales = c(250, 500, 1500),
-                          nombre = 'Heterogeneidad de hábitat',
-                          ord_cat = 'in')
-}
-if(any(grepl('^hethab_rcl$', ls()))){
-  p <- hethab_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  hethab_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
-if(any(grepl('^hethab_rcl$', ls())) && interactive()){
-  clipr::write_clip(hethab_rcl$intervalos_y_etiquetas)
-}
+objeto <- 'hethab_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'GHH coefficient_of_variation_1km',
+    umbrales = c(250, 500, 1500),
+    nombre = 'Heterogeneidad de hábitat',
+    ord_cat = 'in')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
 Distancia a cuerpos de agua y humedales.
 
 ```{r cuerposaguadist}
-# Para "WBW-DIST"
-summary(ind_esp_inters$`WBW-DIST mean`)
-ggplot(ind_esp_inters) +
-  aes(x = '', y = `WBW-DIST mean`) +
-  geom_boxplot(alpha = 0, width = 0.3) +
-  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
-if(!any(grepl('^wbwdist_rcl$', ls()))){
-  wbwdist_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'WBW-DIST mean',
-                          umbrales = c(1000, 2000, 3000),
-                          nombre = 'Distancia a cuerpos de agua y humedales',
-                          ord_cat = 'ni')
-}
-if(any(grepl('^wbwdist_rcl$', ls()))){
-  p <- wbwdist_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  wbwdist_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
-if(any(grepl('^wbwdist_rcl$', ls())) && interactive()){
-  clipr::write_clip(wbwdist_rcl$intervalos_y_etiquetas)
-}
+objeto <- 'wbwdist_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'WBW-DIST mean',
+    umbrales = c(1000, 2000, 3000),
+    nombre = 'Distancia a cuerpos de agua y humedales',
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
 Pendiente.
 
 ```{r pendiente}
-# Para "G90 Slope"
-summary(ind_esp_inters$`G90 Slope`)
-ggplot(ind_esp_inters) +
-  aes(x = '', y = `G90 Slope`) +
-  geom_boxplot(alpha = 0, width = 0.3) +
-  geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
-if(!any(grepl('^slope_rcl$', ls()))){
-  slope_rcl <- reclasificar(vectorial = ind_esp_inters, campo = 'G90 Slope',
-                          umbrales = c(3, 9, 15),
-                          nombre = 'Pendiente promedio',
-                          ord_cat = 'in')
-}
-if(any(grepl('^slope_rcl$', ls()))){
-  p <- slope_rcl$mapa +
-    geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50')
-  print(p)
-  slope_rcl$intervalos_y_etiquetas %>% 
-    kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = '') %>%
-    kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-}
-if(any(grepl('^slope_rcl$', ls())) && interactive()){
-  clipr::write_clip(slope_rcl$intervalos_y_etiquetas)
-}
+objeto <- 'slope_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'G90 Slope',
+    umbrales = c(3, 9, 15),
+    nombre = 'Pendiente promedio',
+    ord_cat = 'in')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 ```
 
+Horas de insolación.
+
+```{r}
+objeto <- 'insol_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'YINSOLTIME mean',
+    umbrales = c(3900, 4100, 4300),
+    nombre = 'Horas de insolación',
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+```
+
+Elevación.
+
+```{r}
+objeto <- 'ele_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'CGIAR-ELE mean',
+    umbrales = c(200, 400, 800),
+    nombre = 'Elevación',
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+```
 
 ## Información suplementaria {#infosupl}
 
