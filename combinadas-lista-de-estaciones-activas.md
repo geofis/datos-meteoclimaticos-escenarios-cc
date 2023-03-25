@@ -53,7 +53,8 @@ fuente, el año actual (2022) no se hace constar hasta tanto haya
 transcurrido al completo.
 
 ``` r
-onamet <- map(1:4, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
+archivo_combinadas <- 'combinadas_v0.91.xlsx'
+onamet <- map(1:4, ~ read_xlsx(paste0('fuentes/combinadas/', archivo_combinadas), sheet = .x))
 lista_con_periodo <- bind_rows(sapply(2:4, function(x) onamet[[x]], simplify = F)) %>% 
    rename_at(., vars(-'id',-'nombre'), ~ paste('var_', .))
 indice_2022 <- sapply(lista_con_periodo %>% select(3:last_col()),
@@ -68,16 +69,18 @@ anadidas <- which(lista_con_periodo_2022_coord %>% pull(lat) %>% is.na())
 ```
 
 En la lista de estaciones meteorológicas convencionales con indicación
-de coordenadas, **se encontraron 83**, mientras que la lista de
-estaciones con indicación de periodo de medición contenía **77
-estaciones**. De las estaciones con indicación de periodo, **se
-encontraron un total de 36 estaciones registrando datos hasta 2022**. De
-estas, a **33 estaciones** se les localizaron sus homólogas en la lista
-de coordenadas, y a **3** (CABO ENGAÑO, LOYOLA (SCR ), SANTIAGO) no se
-les pudo localizar sus correspondientes homólogas con coordenadas. En el
-caso de SANTIAGO, la incertidumbre se debió a que hay varias estaciones
-en dicha ciudad, lo cual hacía difícil determinar con cuál de todas
-hacerla corresponder.
+de coordenadas, se encontraron 83, mientras que la lista de estaciones
+con indicación de periodo de medición contenía 77 estaciones. De las
+estaciones con indicación de periodo, se encontraron un total de 36
+estaciones registrando datos hasta 2022. De estas, a 32 estaciones se
+les localizaron sus homólogas en la lista de coordenadas, y a 4 (CABO
+ENGAÑO, LA VEGA, LOYOLA (SCR ), SANTIAGO) no se les pudo localizar sus
+correspondientes homólogas con coordenadas. En los casos de LA VEGA y
+SANTIAGO, la incertidumbre se debió a que hay varias estaciones en
+dichas ciudades, lo cual hacía difícil determinar con cuáles estaciones
+hacerlas corresponder. Por lo tanto, en los archivos facilitados, **se
+encontraron 87, de las que 36 se encontraban en estado “activa” y las
+restantes 51 en estado “inactiva o no reportada”**.
 
 Como se puede notar, **el mayor desafío que presentaron los datos de
 ONAMET, fue determinar la correspondencia de las estaciones entre listas
@@ -87,9 +90,9 @@ eran consistentes entre listas. Aunque muchas estaciones pudieron
 emparejarse, en algunos casos hicimos la correspondencia con
 incertidumbre o, directamente, no se pudo hacer la relación como ya se
 refirió (ver también comentarios en globos en el archivo
-`combinadas_v0.9.xlsx`). Entendemos que si cada estación contase con un
-identificador único, la correspondencia hubiese sido más eficiente y
-certera.
+combinadas_v0.91.xlsx). Entendemos que si cada estación contase con un
+identificador único, la correspondencia se hubiese realizado de forma
+más eficiente y certera.
 
 Generamos una columna de estado, asignando estado “activa” a las que
 recogen datos hasta 2022. Al mismo tiempo, para elaborar el mapa en
@@ -110,26 +113,29 @@ lista_con_periodo_2022_coord_todas <- lista_con_periodo_2022 %>%
       nombre_onamet == 'LOYOLA (SCR )' ~ 18.411929,
       nombre_onamet == 'SANTIAGO'  ~ 19.50054,
       nombre_onamet == 'CABO ENGAÑO'  ~ 18.616784,
+      nombre_onamet == 'LA VEGA'  ~ 19.22275,
       TRUE ~ lat),
     lon = case_when(
       nombre_onamet == 'LOYOLA (SCR )' ~ -70.112727,
       nombre_onamet == 'SANTIAGO'  ~ -70.69806,
       nombre_onamet == 'CABO ENGAÑO'  ~ -68.325500,
+      nombre_onamet == 'LA VEGA'  ~ -70.53108,
       TRUE ~ lon),
     estado = case_when(
       nombre_onamet == 'BANÍ' ~ 'inactiva o no reportada', #Lista de estaciones con coords.
-      nombre_onamet == 'LA VEGA - IATESA' ~ 'inactiva o no reportada', #Lista de estaciones con coords.
+      # nombre_onamet == 'LA VEGA - IATESA' ~ 'inactiva o no reportada', #Lista de estaciones con coords.
       TRUE ~ estado)
-    )
+    ) %>% 
+  select(id, nombre_onamet, lat, lon, h_m, estado) %>% 
+  inner_join(lista_con_periodo %>%
+              select(nombre, starts_with('var_')) %>% 
+              right_join(onamet[[1]] %>% select(nombre, nombre_onamet))
+            )
+# lista_con_periodo_2022_coord_todas %>% write_csv('estaciones_de_ONAMET_con_indicacion_de_estado.csv')
 ```
 
 ``` r
 lista_con_periodo_2022_coord_todas %>%
-  select(id, nombre_onamet, lat, lon, h_m, estado) %>% 
-  left_join(lista_con_periodo %>%
-              select(nombre, starts_with('var_')) %>% 
-              right_join(onamet[[1]] %>% select(nombre, nombre_onamet))
-            ) %>% 
   arrange(nombre_onamet) %>% 
   kable(booktabs=T) %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
@@ -2240,19 +2246,18 @@ inactiva o no reportada
 23551
 </td>
 <td style="text-align:left;">
-LA VEGA - IATESA
+LA VEGA
 </td>
 <td style="text-align:right;">
-19.25230
+19.22275
 </td>
 <td style="text-align:right;">
--70.55246
+-70.53108
 </td>
 <td style="text-align:right;">
-133
 </td>
 <td style="text-align:left;">
-inactiva o no reportada
+activa
 </td>
 <td style="text-align:left;">
 LA VEGA
@@ -2282,6 +2287,53 @@ LA VEGA
 </td>
 <td style="text-align:left;">
 1977-99,11-2021
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+LA VEGA - IATESA
+</td>
+<td style="text-align:right;">
+19.25230
+</td>
+<td style="text-align:right;">
+-70.55246
+</td>
+<td style="text-align:right;">
+133
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 </td>
@@ -4655,6 +4707,51 @@ YAMASA
 </tbody>
 </table>
 
+La siguiente tabla muestra un resumen por estado:
+
+``` r
+onamet_estado <- lista_con_periodo_2022_coord_todas %>%
+  group_by(estado) %>%
+  summarise(n = n())
+onamet_estado %>% 
+  kable(booktabs=T) %>%
+  kable_styling(
+    full_width = F,
+    latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+```
+
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+estado
+</th>
+<th style="text-align:right;">
+n
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+activa
+</td>
+<td style="text-align:right;">
+36
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:right;">
+51
+</td>
+</tr>
+</tbody>
+</table>
+
 El mapa de las estaciones de ONAMET, según el estado actual de las
 mismas, se muestra a continuación. Se recuerda que el mapa representa,
 cartográficamente, lo contenido en la lista de estaciones y los
@@ -4691,7 +4788,32 @@ leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
   addFullscreenControl()
 ```
 
-![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+``` r
+# Exportar
+ruta_gpkg_est_climaticas_onamet <- 'out/con_indicacion_estatus_onamet.gpkg'
+lista_con_periodo_2022_coord_todas_sf %>%
+  st_write(ruta_gpkg_est_climaticas_onamet, delete_dsn = T)
+```
+
+    ## Deleting source `out/con_indicacion_estatus_onamet.gpkg' failed
+    ## Writing layer `con_indicacion_estatus_onamet' to data source 
+    ##   `out/con_indicacion_estatus_onamet.gpkg' using driver `GPKG'
+    ## Writing 87 features with 18 fields and geometry type Point.
+
+``` r
+ruta_csv_est_climaticas_onamet <- 'out/con_indicacion_estatus_onamet.csv'
+lista_con_periodo_2022_coord_todas %>%
+  select(ID = id, Nombre = nombre_onamet, Estado = estado, Longitud = lon, Latitud = lat) %>%
+  write_csv(ruta_csv_est_climaticas_onamet)
+```
+
+> NOTA. Se han generado archivos GeoPackage
+> (out/con_indicacion_estatus_onamet.gpkg) y CSV
+> (out/con_indicacion_estatus_onamet.csv), de la lista de estaciones
+> climáticas de ONAMET, depuradas según el procedimiento explicado en el
+> texto.
 
 ### INDRHI
 
@@ -4705,7 +4827,7 @@ sobre el estado de las estaciones fueron complementadas con
 comunicaciones directas con personal del INDRHI.
 
 ``` r
-indrhi <- map(5:6, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
+indrhi <- map(5:6, ~ read_xlsx(paste0('fuentes/combinadas/', archivo_combinadas), sheet = .x))
 ```
 
 Las estaciones reportadas en el informe son de dos tipos generales:
@@ -12076,7 +12198,33 @@ leaflet(indrhi_hidrometricas_final_sf) %>%
   addFullscreenControl()
 ```
 
-![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+``` r
+# Exportar
+ruta_gpkg_est_hidrometricas_indrhi <- 'out/con_indicacion_estatus_hidrometricas_indrhi.gpkg'
+indrhi_hidrometricas_final_sf %>%
+  st_write(ruta_gpkg_est_hidrometricas_indrhi, delete_dsn = TRUE)
+```
+
+    ## Deleting source `out/con_indicacion_estatus_hidrometricas_indrhi.gpkg' failed
+    ## Writing layer `con_indicacion_estatus_hidrometricas_indrhi' to data source 
+    ##   `out/con_indicacion_estatus_hidrometricas_indrhi.gpkg' using driver `GPKG'
+    ## Writing 166 features with 11 fields and geometry type Point.
+
+``` r
+ruta_csv_est_hidrometricas_indrhi <- 'out/con_indicacion_estatus_hidrometricas_indrhi.csv'
+indrhi_hidrometricas_final %>%
+  select(ID = `Código`, Nombre = `Nombre de la estación`, Estado,
+         Longitud = lon_dd_consolidadas, Latitud = lat_dd_consolidadas) %>%
+  write_csv(ruta_csv_est_hidrometricas_indrhi)
+```
+
+> NOTA. Se han generado archivos GeoPackage
+> (out/con_indicacion_estatus_hidrometricas_indrhi.gpkg) y CSV
+> (out/con_indicacion_estatus_hidrometricas_indrhi.csv), de la lista de
+> estaciones hidrométricas de INDRHI, depuradas según el procedimiento
+> explicado en el texto.
 
 #### Estaciones climáticas
 
@@ -14621,4 +14769,30 @@ leaflet(indrhi_climaticas_depurado_ll_sf) %>%
   addFullscreenControl()
 ```
 
-![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+# Exportar
+ruta_gpkg_est_climaticas_indrhi <- 'out/con_indicacion_estatus_climaticas_indrhi.gpkg'
+indrhi_climaticas_depurado_ll_sf %>%
+  st_write(ruta_gpkg_est_climaticas_indrhi, delete_dsn = T)
+```
+
+    ## Deleting source `out/con_indicacion_estatus_climaticas_indrhi.gpkg' failed
+    ## Writing layer `con_indicacion_estatus_climaticas_indrhi' to data source 
+    ##   `out/con_indicacion_estatus_climaticas_indrhi.gpkg' using driver `GPKG'
+    ## Writing 54 features with 13 fields and geometry type Point.
+
+``` r
+ruta_csv_est_climaticas_indrhi <- 'out/con_indicacion_estatus_climaticas_indrhi.csv'
+indrhi_climaticas_depurado_ll %>%
+  select(Nombre = ESTACION, Estado,
+         Longitud = lon_dd, Latitud = lat_dd) %>%
+  write_csv(ruta_csv_est_climaticas_indrhi)
+```
+
+> NOTA. Se han generado archivos GeoPackage
+> (out/con_indicacion_estatus_climaticas_indrhi.gpkg) y CSV
+> (out/con_indicacion_estatus_climaticas_indrhi.csv), de la lista de
+> estaciones climáticas de INDRHI, depuradas según el procedimiento
+> explicado en el texto.

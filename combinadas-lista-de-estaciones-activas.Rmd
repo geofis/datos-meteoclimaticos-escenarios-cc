@@ -55,7 +55,8 @@ ONAMET aportó dos archivos, cada uno conteniendo listas de estaciones que enten
 Para decidir cuáles estaciones se consideran activas, se buscó, mediante expresión regular, la cadena de caracteres "2021" en las columnas que contenían fechas (e.g. columnas PR, TX, etc.) de las listas de estaciones con indicación de periodos de medición. Cada coincidencia señalaba una estación que colecta datos hasta 2022. Se buscó "2021" como equivalente de 2022 porque, como bien explicó ONAMET en el archivo fuente, el año actual (2022) no se hace constar hasta tanto haya transcurrido al completo.
 
 ```{r, results='hide'}
-onamet <- map(1:4, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
+archivo_combinadas <- 'combinadas_v0.91.xlsx'
+onamet <- map(1:4, ~ read_xlsx(paste0('fuentes/combinadas/', archivo_combinadas), sheet = .x))
 lista_con_periodo <- bind_rows(sapply(2:4, function(x) onamet[[x]], simplify = F)) %>% 
    rename_at(., vars(-'id',-'nombre'), ~ paste('var_', .))
 indice_2022 <- sapply(lista_con_periodo %>% select(3:last_col()),
@@ -69,9 +70,9 @@ lista_con_periodo_2022_coord <- lista_con_periodo_2022 %>% inner_join(onamet[[1]
 anadidas <- which(lista_con_periodo_2022_coord %>% pull(lat) %>% is.na())
 ```
 
-En la lista de estaciones meteorológicas convencionales con indicación de coordenadas, **se encontraron `r nrow(onamet[[1]])-length(grep('añadida por', onamet[[1]]$codigo, ignore.case = T))`**, mientras que la lista de estaciones con indicación de periodo de medición contenía **`r nrow(lista_con_periodo)` estaciones**. De las estaciones con indicación de periodo, **se encontraron un total de `r nrow(lista_con_periodo_2022)` estaciones registrando datos hasta 2022**. De estas, a **`r nrow(lista_con_periodo_2022_coord) - length(anadidas)` estaciones** se les localizaron sus homólogas en la lista de coordenadas, y a **`r length(anadidas)`** (`r paste(lista_con_periodo_2022_coord[anadidas, 'nombre', drop=T], collapse=', ')`) no se les pudo localizar sus correspondientes homólogas con coordenadas. En el caso de `r lista_con_periodo_2022_coord[anadidas[3], 'nombre', drop=T]`, la incertidumbre se debió a que hay varias estaciones en dicha ciudad, lo cual hacía difícil determinar con cuál de todas hacerla corresponder.
+En la lista de estaciones meteorológicas convencionales con indicación de coordenadas, se encontraron `r nrow(onamet[[1]])-length(grep('añadida por', onamet[[1]]$codigo, ignore.case = T))`, mientras que la lista de estaciones con indicación de periodo de medición contenía `r nrow(lista_con_periodo)` estaciones. De las estaciones con indicación de periodo, se encontraron un total de `r nrow(lista_con_periodo_2022)` estaciones registrando datos hasta 2022. De estas, a `r nrow(lista_con_periodo_2022_coord) - length(anadidas)` estaciones se les localizaron sus homólogas en la lista de coordenadas, y a `r length(anadidas)` (`r paste(lista_con_periodo_2022_coord[anadidas, 'nombre', drop=T], collapse=', ')`) no se les pudo localizar sus correspondientes homólogas con coordenadas. En los casos de `r paste(lista_con_periodo_2022_coord[anadidas[c(2,4)], 'nombre', drop=T], collapse = ' y ')`, la incertidumbre se debió a que hay varias estaciones en dichas ciudades, lo cual hacía difícil determinar con cuáles estaciones hacerlas corresponder. Por lo tanto, en los archivos facilitados, **se encontraron `r nrow(onamet[[1]])`, de las que `r nrow(lista_con_periodo_2022_coord)` se encontraban en estado "activa" y las restantes `r nrow(onamet[[1]]) - nrow(lista_con_periodo_2022_coord)` en estado "inactiva o no reportada"**.
 
-Como se puede notar, **el mayor desafío que presentaron los datos de ONAMET, fue determinar la correspondencia de las estaciones entre listas debido a la ausencia de un código (clave) común**. Si bien cada lista de estaciones asignaba códigos o nombres únicos a las estación, estos no eran consistentes entre listas. Aunque muchas estaciones pudieron emparejarse, en algunos casos hicimos la correspondencia con incertidumbre o, directamente, no se pudo hacer la relación como ya se refirió (ver también comentarios en globos en el archivo `combinadas_v0.9.xlsx`). Entendemos que si cada estación contase con un identificador único, la correspondencia hubiese sido más eficiente y certera.
+Como se puede notar, **el mayor desafío que presentaron los datos de ONAMET, fue determinar la correspondencia de las estaciones entre listas debido a la ausencia de un código (clave) común**. Si bien cada lista de estaciones asignaba códigos o nombres únicos a las estación, estos no eran consistentes entre listas. Aunque muchas estaciones pudieron emparejarse, en algunos casos hicimos la correspondencia con incertidumbre o, directamente, no se pudo hacer la relación como ya se refirió (ver también comentarios en globos en el archivo `r archivo_combinadas`). Entendemos que si cada estación contase con un identificador único, la correspondencia se hubiese realizado de forma más eficiente y certera.
 
 Generamos una columna de estado, asignando estado "activa" a las que recogen datos hasta 2022. Al mismo tiempo, para elaborar el mapa en secciones posteriores, asignamos coordenadas *ad hoc* a las estaciones que carecían de ellas. Incluimos la tabla resumen a continuación:
 
@@ -89,41 +90,41 @@ lista_con_periodo_2022_coord_todas <- lista_con_periodo_2022 %>%
       nombre_onamet == 'LOYOLA (SCR )' ~ 18.411929,
       nombre_onamet == 'SANTIAGO'  ~ 19.50054,
       nombre_onamet == 'CABO ENGAÑO'  ~ 18.616784,
+      nombre_onamet == 'LA VEGA'  ~ 19.22275,
       TRUE ~ lat),
     lon = case_when(
       nombre_onamet == 'LOYOLA (SCR )' ~ -70.112727,
       nombre_onamet == 'SANTIAGO'  ~ -70.69806,
       nombre_onamet == 'CABO ENGAÑO'  ~ -68.325500,
+      nombre_onamet == 'LA VEGA'  ~ -70.53108,
       TRUE ~ lon),
     estado = case_when(
       nombre_onamet == 'BANÍ' ~ 'inactiva o no reportada', #Lista de estaciones con coords.
-      nombre_onamet == 'LA VEGA - IATESA' ~ 'inactiva o no reportada', #Lista de estaciones con coords.
+      # nombre_onamet == 'LA VEGA - IATESA' ~ 'inactiva o no reportada', #Lista de estaciones con coords.
       TRUE ~ estado)
-    )
+    ) %>% 
+  select(id, nombre_onamet, lat, lon, h_m, estado) %>% 
+  inner_join(lista_con_periodo %>%
+              select(nombre, starts_with('var_')) %>% 
+              right_join(onamet[[1]] %>% select(nombre, nombre_onamet))
+            )
+# lista_con_periodo_2022_coord_todas %>% write_csv('estaciones_de_ONAMET_con_indicacion_de_estado.csv')
 ```
 
 ```{r}
 lista_con_periodo_2022_coord_todas %>%
-  select(id, nombre_onamet, lat, lon, h_m, estado) %>% 
-  left_join(lista_con_periodo %>%
-              select(nombre, starts_with('var_')) %>% 
-              right_join(onamet[[1]] %>% select(nombre, nombre_onamet))
-            ) %>% 
   arrange(nombre_onamet) %>% 
   kable(booktabs=T) %>%
   kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
   gsub(' NA ', '', .)
 ```
 
-El resumen por estado se refleja en la siguiente tabla:
+La siguiente tabla muestra un resumen por estado:
 
 ```{r}
-onamet_estado <- data.frame(
-  Estado = c('activa', 'inactiva o no reportada'),
-  n = c(
-    nrow(lista_con_periodo_2022),
-    83 - nrow(lista_con_periodo_2022)
-    ))
+onamet_estado <- lista_con_periodo_2022_coord_todas %>%
+  group_by(estado) %>%
+  summarise(n = n())
 onamet_estado %>% 
   kable(booktabs=T) %>%
   kable_styling(
@@ -164,16 +165,24 @@ leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
     options = layersControlOptions(collapsed = FALSE)) %>% 
   leaflet_map_view %>% 
   addFullscreenControl()
-# lista_con_periodo_2022_coord_todas_sf %>% 
-#   st_write('out/con_indicacion_estatus_onamet.gpkg')
+# Exportar
+ruta_gpkg_est_climaticas_onamet <- 'out/con_indicacion_estatus_onamet.gpkg'
+lista_con_periodo_2022_coord_todas_sf %>%
+  st_write(ruta_gpkg_est_climaticas_onamet, delete_dsn = T)
+ruta_csv_est_climaticas_onamet <- 'out/con_indicacion_estatus_onamet.csv'
+lista_con_periodo_2022_coord_todas %>%
+  select(ID = id, Nombre = nombre_onamet, Estado = estado, Longitud = lon, Latitud = lat) %>%
+  write_csv(ruta_csv_est_climaticas_onamet)
 ```
+
+> NOTA. Se han generado archivos GeoPackage (`r ruta_gpkg_est_climaticas_onamet`) y CSV (`r ruta_csv_est_climaticas_onamet`), de la lista de estaciones climáticas de ONAMET, depuradas según el procedimiento explicado en el texto.
 
 ### INDRHI
 
 En el caso de INDRHI se utilizó un único archivo como fuente (`Informe Final inventario estaciones hidrometeorológicas INDRHI, Rep. Dom..pdf`), el cual fue elaborado por personal técnico de la institución en 2019, con el objetivo de documentar el estado de sus estaciones hidroclimáticas. El documento nos fue entregado en formato PDF, por lo que hubo que extraer la información programáticamente. Las informaciones sobre el estado de las estaciones fueron complementadas con comunicaciones directas con personal del INDRHI.
 
 ```{r}
-indrhi <- map(5:6, ~ read_xlsx('fuentes/combinadas/combinadas_v0.9.xlsx', sheet = .x))
+indrhi <- map(5:6, ~ read_xlsx(paste0('fuentes/combinadas/', archivo_combinadas), sheet = .x))
 ```
 
 Las estaciones reportadas en el informe son de dos tipos generales: hidrométricas y climáticas. De las primeras, las hidrométricas, hay un total de `r nrow(indrhi[[1]])` estaciones, mientras que las climáticas representan un total de `r nrow(indrhi[[2]])-2` estaciones. En ambos casos, INDRHI clasificó las estaciones según "estado" en tres categorías: `r levels(factor(indrhi[[1]]$Estado))[c(1,3,2)]`. 
@@ -267,9 +276,19 @@ leaflet(indrhi_hidrometricas_final_sf) %>%
     options = layersControlOptions(collapsed = FALSE)) %>% 
   leaflet_map_view %>% 
   addFullscreenControl()
-# indrhi_hidrometricas_final_sf %>% 
-#   st_write('out/con_indicacion_estatus_hidrometricas_indrhi.gpkg')
+# Exportar
+ruta_gpkg_est_hidrometricas_indrhi <- 'out/con_indicacion_estatus_hidrometricas_indrhi.gpkg'
+indrhi_hidrometricas_final_sf %>%
+  st_write(ruta_gpkg_est_hidrometricas_indrhi, delete_dsn = TRUE)
+ruta_csv_est_hidrometricas_indrhi <- 'out/con_indicacion_estatus_hidrometricas_indrhi.csv'
+indrhi_hidrometricas_final %>%
+  select(ID = `Código`, Nombre = `Nombre de la estación`, Estado,
+         Longitud = lon_dd_consolidadas, Latitud = lat_dd_consolidadas) %>%
+  write_csv(ruta_csv_est_hidrometricas_indrhi)
 ```
+
+> NOTA. Se han generado archivos GeoPackage (`r ruta_gpkg_est_hidrometricas_indrhi`) y CSV (`r ruta_csv_est_hidrometricas_indrhi`), de la lista de estaciones hidrométricas de INDRHI, depuradas según el procedimiento explicado en el texto.
+
 
 #### Estaciones climáticas
 
@@ -367,9 +386,7 @@ indrhi_climaticas_depurado_ll_sf <- indrhi_climaticas_depurado_ll %>%
   mutate(excluir_sf = ifelse(is.na(lon_dd) | is.na(lat_dd), 'sí', 'no')) %>% 
   filter(excluir_sf=='no') %>% select(-excluir_sf) %>% 
   st_as_sf(coords = c('lon_dd', 'lat_dd'), crs = 4326)
-# st_write(indrhi_climaticas_depurado_ll_sf, 'out/indrhi_climaticas_depurado_ll_sf.gpkg')
 ```
-
 
 Del total de `r nrow(indrhi[[2]])` estaciones hidrométricas, para fines de representación, descartamos `r nrow(indrhi[[2]]) - nrow(indrhi_climaticas_depurado_ll_sf)` que no contaban con coordenadas. El mapa de estaciones climáticas (`r nrow(indrhi_climaticas_depurado_ll_sf)` estaciones), e indicación de sus correspondientes estados, se muestra a continuación.
 
@@ -397,6 +414,15 @@ leaflet(indrhi_climaticas_depurado_ll_sf) %>%
     options = layersControlOptions(collapsed = FALSE)) %>% 
   leaflet_map_view %>% 
   addFullscreenControl()
-# indrhi_climaticas_depurado_ll_sf %>% 
-#   st_write('out/con_indicacion_estatus_climaticas_indrhi.gpkg')
+# Exportar
+ruta_gpkg_est_climaticas_indrhi <- 'out/con_indicacion_estatus_climaticas_indrhi.gpkg'
+indrhi_climaticas_depurado_ll_sf %>%
+  st_write(ruta_gpkg_est_climaticas_indrhi, delete_dsn = T)
+ruta_csv_est_climaticas_indrhi <- 'out/con_indicacion_estatus_climaticas_indrhi.csv'
+indrhi_climaticas_depurado_ll %>%
+  select(Nombre = ESTACION, Estado,
+         Longitud = lon_dd, Latitud = lat_dd) %>%
+  write_csv(ruta_csv_est_climaticas_indrhi)
 ```
+
+> NOTA. Se han generado archivos GeoPackage (`r ruta_gpkg_est_climaticas_indrhi`) y CSV (`r ruta_csv_est_climaticas_indrhi`), de la lista de estaciones climáticas de INDRHI, depuradas según el procedimiento explicado en el texto.
