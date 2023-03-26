@@ -347,14 +347,7 @@ Utilizamos múltiples fuentes cartográficas ráster como variables de territori
 
 Las fuentes ráster son servidas bajo distintas resoluciones y sistemas de referencia, por lo que fue necesario aplicar algoritmos de reducción y consolidar resultados en una geometría común. Para ello, redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3 (*hex bins*) [@jose_ramon_martinez_batlle_2022_7367180]. Probamos distintas resoluciones de dicho índice, y tras algunas pruebas, elegimos la resolución "7". Con esta resolución, cubrimos el territorio dominicano más un área de influencia con aproximadamente 13,000 hexágonos de ca. 4$km^2$ cada uno. Dentro de cada hexágono, por medio de estadística zonal, obtuvimos la media de cada variable, la cual utilizamos como estadístico de referencia en la reclasificación descrita a continuación.
 
-Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios sugeridos por otros autores, así como adaptando umbrales convencionales a la realidad insular [@fao32agriculture; @rojasbriceno2021]. Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática. Los umbrales elegidos para definir las puntuaciones de criterios, están recogidos en la tabla (ver tabla \@ref(tab:umbralesapuntuaciones)).
-
-```{r umbralesapuntuaciones}
-puntuaciones_umbrales <- readODS::read_ods('fuentes/umbrales-criterios-ahp/puntuaciones.ods', sheet = 1)
-puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
-        caption = 'Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas') %>%
-  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-```
+Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios sugeridos por otros autores, así como adaptando umbrales convencionales a la realidad insular [@fao32agriculture; @rojasbriceno2021]. Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática.
 
 ### Modelización de la idoneidad según pesos
 

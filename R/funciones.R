@@ -140,10 +140,12 @@ reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
     umbrales_ampliados, include.lowest = T)
   vectorial[[campo_salida_etiq]] <- factor(vectorial[[campo_salida_interv]],
                                            labels = categorias)
-  vectorial[['enteros_ordenados']] <- as.integer(
+  # vectorial[[paste(campo, 'enteros_ordenados', sep = '_')]] <- as.integer(
+  vectorial[[paste(campo, 'puntuación')]] <- as.integer(
     factor(vectorial[[campo_salida_etiq]],
            levels = c(paste(fuente[1:4], fuente[5]))))
-  vectorial <- vectorial[c(campo_indice, campo_salida_interv, campo_salida_etiq, 'enteros_ordenados')]
+  # vectorial <- vectorial[c(campo_indice, campo_salida_interv, campo_salida_etiq, paste(campo, 'enteros_ordenados', sep = '_'))]
+  vectorial <- vectorial[c(campo_indice, campo_salida_interv, campo_salida_etiq, paste(campo, 'puntuación'))]
   
   # Crear mapa
   val_col <- c("altamente idóneo" = "#018571", "moderadamente idóneo" = "#80cdc1",
@@ -164,15 +166,15 @@ reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
       legend.text = element_text(size=6) #change legend text font size
       )
     
-  
-  # Invervalos y etiquetas
+  # Intervalos y etiquetas
   extraer_digitos_interv <- function(col) {
     as.numeric(gsub('(\\(|\\[)(\\d.*)(,.*)', '\\2', col))
   }
   intervalos_y_etiquetas <- vectorial %>% st_drop_geometry %>%
     select(all_of(campo_salida_interv),
            all_of(campo_salida_etiq),
-           all_of('enteros_ordenados')) %>% 
+           all_of(paste(campo, 'puntuación'))) %>% 
+           # all_of(paste(campo, 'enteros_ordenados', sep = '_'))) %>%
     distinct %>% 
     na.omit() %>% 
     mutate_at(.vars = campo_salida_interv,
@@ -185,7 +187,7 @@ reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
 }
 
 generar_resumen_grafico_estadistico_criterios <- function(
-    variable = NULL, nombre = NULL, umbrales = NULL,
+    variable = NULL, nombre = NULL, umbrales = NULL, 
     ord_cat = NULL, kable_caption = paste('Intervalos de', nombre)){
   internal <- variable
   resumen_estadistico <- tryCatch(
@@ -203,7 +205,11 @@ generar_resumen_grafico_estadistico_criterios <- function(
       geom_violin(alpha = 0.6, width = 0.8, color = "transparent", fill = "#00BA38") +
       scale_y_continuous(trans = 'pseudo_log') +
       theme_bw() +
-      theme(axis.title.x = element_blank()),
+      ylab(nombre) +
+      theme(axis.title.x = element_blank(),
+            plot.margin = margin(1, 6, 1, 6, "cm"),
+            plot.background = element_rect(fill = "white")
+            ),
     error = function(cond) {
       message('Caught an error. This is the error message: ', cond, appendLF = TRUE)
       return(NA)
@@ -220,6 +226,17 @@ generar_resumen_grafico_estadistico_criterios <- function(
       return(NA)
     }
   )
+  vectorial <- tryCatch(
+    success <- reclasificacion$vectorial %>% 
+      rename_with(~ stringr::str_replace(.x, 
+                                         pattern = internal, 
+                                         replacement = nombre), 
+                  matches(internal)),
+    error = function(cond) {
+      message('Caught an error. This is the error message: ', cond, appendLF = TRUE)
+      return(NA)
+    }
+  )
   mapa_con_pais <- tryCatch(
     success <- reclasificacion$mapa +
       geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50'),
@@ -228,8 +245,19 @@ generar_resumen_grafico_estadistico_criterios <- function(
       return(NA)
     }
   )
-  intervalos_y_etiquetas_kable <- tryCatch(
+  reclasificacion$intervalos_y_etiquetas <- tryCatch(
     success <- reclasificacion$intervalos_y_etiquetas %>%
+      rename_with(~ stringr::str_replace(.x, 
+                                       pattern = internal, 
+                                       replacement = nombre), 
+                matches(internal)),
+    error = function(cond) {
+      message('Caught an error. This is the error message: ', cond, appendLF = TRUE)
+      return(NA)
+    }
+  )
+  intervalos_y_etiquetas_kable <- tryCatch(
+    success <- reclasificacion$intervalos_y_etiquetas %>% 
       kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = kable_caption) %>%
       kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T),
     error = function(cond) {
@@ -240,7 +268,7 @@ generar_resumen_grafico_estadistico_criterios <- function(
   return(list(
     resumen_estadistico = resumen_estadistico,
     violin = violin,
-    vectorial = reclasificacion[['vectorial']],
+    vectorial = vectorial,
     mapa = reclasificacion[['mapa']],
     mapa_con_pais = mapa_con_pais,
     intervalos_y_etiquetas = reclasificacion[['intervalos_y_etiquetas']],

@@ -312,6 +312,7 @@ kable_prefagg <- flujo_completo_ahp$aggpref %>%
   as.data.frame() %>% 
   rownames_to_column('Variable') %>% 
   mutate(Variable = factor(Variable, labels = variables[sort(names(variables))])) %>% 
+  arrange(desc(AggPref)) %>% 
   estilo_kable(titulo = 'Preferencias agregadas',
                cubre_anchura = F) %>% 
   kable_styling(position = 'left') %>% 
@@ -339,13 +340,24 @@ SD.AggPref
 <tbody>
 <tr>
 <td style="text-align:left;width: 10em; ">
-distancia a accesos
+estacionalidad pluviométrica
 </td>
 <td style="text-align:right;width: 10em; ">
-0.07
+0.27
 </td>
 <td style="text-align:right;">
-0.03
+0.04
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10em; ">
+horas de insolación
+</td>
+<td style="text-align:right;width: 10em; ">
+0.18
+</td>
+<td style="text-align:right;">
+0.11
 </td>
 </tr>
 <tr>
@@ -361,13 +373,13 @@ estacionalidad térmica
 </tr>
 <tr>
 <td style="text-align:left;width: 10em; ">
-estacionalidad pluviométrica
+elevación
 </td>
 <td style="text-align:right;width: 10em; ">
-0.27
+0.12
 </td>
 <td style="text-align:right;">
-0.04
+0.05
 </td>
 </tr>
 <tr>
@@ -379,6 +391,17 @@ heterogeneidad de hábitat
 </td>
 <td style="text-align:right;">
 0.05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10em; ">
+distancia a accesos
+</td>
+<td style="text-align:right;width: 10em; ">
+0.07
+</td>
+<td style="text-align:right;">
+0.03
 </td>
 </tr>
 <tr>
@@ -401,28 +424,6 @@ pendiente
 </td>
 <td style="text-align:right;">
 0.02
-</td>
-</tr>
-<tr>
-<td style="text-align:left;width: 10em; ">
-horas de insolación
-</td>
-<td style="text-align:right;width: 10em; ">
-0.18
-</td>
-<td style="text-align:right;">
-0.11
-</td>
-</tr>
-<tr>
-<td style="text-align:left;width: 10em; ">
-elevación
-</td>
-<td style="text-align:right;width: 10em; ">
-0.12
-</td>
-<td style="text-align:right;">
-0.05
 </td>
 </tr>
 </tbody>
@@ -470,13 +471,18 @@ if(!any(grepl('^ind_esp_inters$', ls())) && interactive()){
 Distancia a accesos.
 
 ``` r
+# Objeto que acogerá nombres de objetos
+objetos <- character()
+```
+
+``` r
 objeto <- 'osm_rcl'
 assign(
   objeto,
   generar_resumen_grafico_estadistico_criterios(
     variable = 'OSM-DIST mean',
     umbrales = c(50, 200, 500, 5000),
-    nombre = 'Distancia a accesos OSM',
+    nombre = variables[[1]],
     ord_cat = 'nin_rev')
 )
 ```
@@ -503,18 +509,18 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 3: Intervalos de Distancia a accesos OSM
+Table 3: Intervalos de distancia a accesos
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-OSM-DIST mean intervalos
+distancia a accesos intervalos
 </th>
 <th style="text-align:left;">
-OSM-DIST mean etiquetas
+distancia a accesos etiquetas
 </th>
 <th style="text-align:right;">
-enteros_ordenados
+distancia a accesos puntuación
 </th>
 </tr>
 </thead>
@@ -579,6 +585,7 @@ no idóneo
 
 ``` r
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 ```
 
 Estacionalidad térmica.
@@ -589,8 +596,8 @@ assign(
   objeto,
   generar_resumen_grafico_estadistico_criterios(
     variable = 'TSEASON-IZZO mean',
-    umbrales = c(0.8, 1.2, 1.6),
-    nombre = 'Estacionalidad térmica',
+    umbrales = c(1.1, 1.3, 1.5),
+    nombre = variables[[2]],
     ord_cat = 'ni')
 )
 ```
@@ -617,25 +624,25 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 4: Intervalos de Estacionalidad térmica
+Table 4: Intervalos de estacionalidad térmica
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-TSEASON-IZZO mean intervalos
+estacionalidad térmica intervalos
 </th>
 <th style="text-align:left;">
-TSEASON-IZZO mean etiquetas
+estacionalidad térmica etiquetas
 </th>
 <th style="text-align:right;">
-enteros_ordenados
+estacionalidad térmica puntuación
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-\[0.573,0.8\]
+\[0.573,1.1\]
 </td>
 <td style="text-align:left;">
 no idóneo
@@ -646,7 +653,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(0.8,1.2\]
+(1.1,1.3\]
 </td>
 <td style="text-align:left;">
 marginalmente idóneo
@@ -657,7 +664,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(1.2,1.6\]
+(1.3,1.5\]
 </td>
 <td style="text-align:left;">
 moderadamente idóneo
@@ -668,7 +675,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(1.6,1.87\]
+(1.5,1.87\]
 </td>
 <td style="text-align:left;">
 altamente idóneo
@@ -682,6 +689,7 @@ altamente idóneo
 
 ``` r
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 ```
 
 Estacionalidad pluviométrica.
@@ -693,7 +701,7 @@ assign(
   generar_resumen_grafico_estadistico_criterios(
     variable = 'PSEASON-IZZO mean',
     umbrales = c(30, 40, 50),
-    nombre = 'Estacionalidad pluviométrica',
+    nombre = variables[[3]],
     ord_cat = 'ni')
 )
 ```
@@ -720,18 +728,18 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 5: Intervalos de Estacionalidad pluviométrica
+Table 5: Intervalos de estacionalidad pluviométrica
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-PSEASON-IZZO mean intervalos
+estacionalidad pluviométrica intervalos
 </th>
 <th style="text-align:left;">
-PSEASON-IZZO mean etiquetas
+estacionalidad pluviométrica etiquetas
 </th>
 <th style="text-align:right;">
-enteros_ordenados
+estacionalidad pluviométrica puntuación
 </th>
 </tr>
 </thead>
@@ -785,6 +793,7 @@ altamente idóneo
 
 ``` r
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 
 # Para comparar con CHELSA
 # objeto <- 'chbio15_rcl'
@@ -808,8 +817,8 @@ assign(
   objeto,
   generar_resumen_grafico_estadistico_criterios(
     variable = 'GHH coefficient_of_variation_1km',
-    umbrales = c(250, 500, 1500),
-    nombre = 'Heterogeneidad de hábitat',
+    umbrales = c(300, 450, 600),
+    nombre = variables[[4]],
     ord_cat = 'in')
 )
 ```
@@ -836,25 +845,25 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 6: Intervalos de Heterogeneidad de hábitat
+Table 6: Intervalos de heterogeneidad de hábitat
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-GHH coefficient_of_variation_1km intervalos
+heterogeneidad de hábitat intervalos
 </th>
 <th style="text-align:left;">
-GHH coefficient_of_variation_1km etiquetas
+heterogeneidad de hábitat etiquetas
 </th>
 <th style="text-align:right;">
-enteros_ordenados
+heterogeneidad de hábitat puntuación
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-\[0,250\]
+\[0,300\]
 </td>
 <td style="text-align:left;">
 altamente idóneo
@@ -865,7 +874,7 @@ altamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(250,500\]
+(300,450\]
 </td>
 <td style="text-align:left;">
 moderadamente idóneo
@@ -876,7 +885,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(500,1.5e+03\]
+(450,600\]
 </td>
 <td style="text-align:left;">
 marginalmente idóneo
@@ -887,7 +896,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-(1.5e+03,3.56e+03\]
+(600,3.56e+03\]
 </td>
 <td style="text-align:left;">
 no idóneo
@@ -901,6 +910,7 @@ no idóneo
 
 ``` r
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 ```
 
 Distancia a cuerpos de agua y humedales.
@@ -912,7 +922,7 @@ assign(
   generar_resumen_grafico_estadistico_criterios(
     variable = 'WBW-DIST mean',
     umbrales = c(1000, 2000, 3000),
-    nombre = 'Distancia a cuerpos de agua y humedales',
+    nombre = variables[[5]],
     ord_cat = 'ni')
 )
 ```
@@ -939,18 +949,18 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 7: Intervalos de Distancia a cuerpos de agua y humedales
+Table 7: Intervalos de distancia a cuerpos de agua
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-WBW-DIST mean intervalos
+distancia a cuerpos de agua intervalos
 </th>
 <th style="text-align:left;">
-WBW-DIST mean etiquetas
+distancia a cuerpos de agua etiquetas
 </th>
 <th style="text-align:right;">
-enteros_ordenados
+distancia a cuerpos de agua puntuación
 </th>
 </tr>
 </thead>
@@ -1004,6 +1014,7 @@ altamente idóneo
 
 ``` r
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 ```
 
 Pendiente.
@@ -1015,7 +1026,7 @@ assign(
   generar_resumen_grafico_estadistico_criterios(
     variable = 'G90 Slope',
     umbrales = c(3, 9, 15),
-    nombre = 'Pendiente promedio',
+    nombre = variables[[6]],
     ord_cat = 'in')
 )
 ```
@@ -1042,18 +1053,18 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 8: Intervalos de Pendiente promedio
+Table 8: Intervalos de pendiente
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-G90 Slope intervalos
+pendiente intervalos
 </th>
 <th style="text-align:left;">
-G90 Slope etiquetas
+pendiente etiquetas
 </th>
 <th style="text-align:right;">
-enteros_ordenados
+pendiente puntuación
 </th>
 </tr>
 </thead>
@@ -1107,6 +1118,7 @@ no idóneo
 
 ``` r
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 ```
 
 Horas de insolación.
@@ -1118,7 +1130,7 @@ assign(
   generar_resumen_grafico_estadistico_criterios(
     variable = 'YINSOLTIME mean',
     umbrales = c(3900, 4100, 4300),
-    nombre = 'Horas de insolación',
+    nombre = variables[[7]],
     ord_cat = 'ni')
 )
 ```
@@ -1132,12 +1144,12 @@ get(objeto)[c('violin', 'mapa_con_pais')]
 
     ## $violin
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-2-1.png" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-1.png" width="100%" />
 
     ## 
     ## $mapa_con_pais
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-2-2.png" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-2.png" width="100%" />
 
 ``` r
 get(objeto)[['intervalos_y_etiquetas_kable']]
@@ -1145,18 +1157,18 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 9: Intervalos de Horas de insolación
+Table 9: Intervalos de horas de insolación
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-YINSOLTIME mean intervalos
+horas de insolación intervalos
 </th>
 <th style="text-align:left;">
-YINSOLTIME mean etiquetas
+horas de insolación etiquetas
 </th>
 <th style="text-align:right;">
-enteros_ordenados
+horas de insolación puntuación
 </th>
 </tr>
 </thead>
@@ -1210,6 +1222,7 @@ altamente idóneo
 
 ``` r
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 ```
 
 Elevación.
@@ -1221,7 +1234,7 @@ assign(
   generar_resumen_grafico_estadistico_criterios(
     variable = 'CGIAR-ELE mean',
     umbrales = c(200, 400, 800),
-    nombre = 'Elevación',
+    nombre = variables[[8]],
     ord_cat = 'ni')
 )
 ```
@@ -1235,12 +1248,12 @@ get(objeto)[c('violin', 'mapa_con_pais')]
 
     ## $violin
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-1.png" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-4-1.png" width="100%" />
 
     ## 
     ## $mapa_con_pais
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-2.png" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-4-2.png" width="100%" />
 
 ``` r
 get(objeto)[['intervalos_y_etiquetas_kable']]
@@ -1248,18 +1261,18 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 10: Intervalos de Elevación
+Table 10: Intervalos de elevación
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-CGIAR-ELE mean intervalos
+elevación intervalos
 </th>
 <th style="text-align:left;">
-CGIAR-ELE mean etiquetas
+elevación etiquetas
 </th>
 <th style="text-align:right;">
-enteros_ordenados
+elevación puntuación
 </th>
 </tr>
 </thead>
@@ -1313,7 +1326,301 @@ no idóneo
 
 ``` r
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 ```
+
+### Umbrales de criterios
+
+Los umbrales elegidos para definir las puntuaciones de criterios, están
+recogidos en la tabla (ver tabla
+<a href="#tab:umbralesapuntuaciones">11</a>).
+
+``` r
+puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiquetas']] %>% 
+  pivot_longer(cols = -matches('puntuación|etiquetas'), names_to = 'criterio') %>%
+  mutate(criterio = gsub(' intervalos', '', criterio)) %>% 
+  group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
+  summarise(value = paste(value, collapse = ' y ')) %>% 
+  pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
+  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`)
+) %>% bind_rows()
+readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
+puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 11: Puntuaciones de criterios para la selección de sitios de
+estaciones meteoclimáticas
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+criterio
+</th>
+<th style="text-align:left;">
+altamente idóneo
+</th>
+<th style="text-align:left;">
+moderadamente idóneo
+</th>
+<th style="text-align:left;">
+marginalmente idóneo
+</th>
+<th style="text-align:left;">
+no idóneo
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+distancia a accesos
+</td>
+<td style="text-align:left;">
+(50,200\]
+</td>
+<td style="text-align:left;">
+(200,500\]
+</td>
+<td style="text-align:left;">
+(500,5e+03\]
+</td>
+<td style="text-align:left;">
+\[12.8,50\] y (5e+03,3.28e+04\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+estacionalidad térmica
+</td>
+<td style="text-align:left;">
+(1.5,1.87\]
+</td>
+<td style="text-align:left;">
+(1.3,1.5\]
+</td>
+<td style="text-align:left;">
+(1.1,1.3\]
+</td>
+<td style="text-align:left;">
+\[0.573,1.1\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+estacionalidad pluviométrica
+</td>
+<td style="text-align:left;">
+(50,89.6\]
+</td>
+<td style="text-align:left;">
+(40,50\]
+</td>
+<td style="text-align:left;">
+(30,40\]
+</td>
+<td style="text-align:left;">
+\[19.5,30\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+heterogeneidad de hábitat
+</td>
+<td style="text-align:left;">
+\[0,300\]
+</td>
+<td style="text-align:left;">
+(300,450\]
+</td>
+<td style="text-align:left;">
+(450,600\]
+</td>
+<td style="text-align:left;">
+(600,3.56e+03\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+distancia a cuerpos de agua
+</td>
+<td style="text-align:left;">
+(3e+03,2.64e+04\]
+</td>
+<td style="text-align:left;">
+(2e+03,3e+03\]
+</td>
+<td style="text-align:left;">
+(1e+03,2e+03\]
+</td>
+<td style="text-align:left;">
+\[0,1e+03\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pendiente
+</td>
+<td style="text-align:left;">
+\[0,3\]
+</td>
+<td style="text-align:left;">
+(3,9\]
+</td>
+<td style="text-align:left;">
+(9,15\]
+</td>
+<td style="text-align:left;">
+(15,32.7\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+horas de insolación
+</td>
+<td style="text-align:left;">
+(4.3e+03,4.48e+03\]
+</td>
+<td style="text-align:left;">
+(4.1e+03,4.3e+03\]
+</td>
+<td style="text-align:left;">
+(3.9e+03,4.1e+03\]
+</td>
+<td style="text-align:left;">
+\[3.18e+03,3.9e+03\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+elevación
+</td>
+<td style="text-align:left;">
+(800,2.79e+03\]
+</td>
+<td style="text-align:left;">
+(400,800\]
+</td>
+<td style="text-align:left;">
+(200,400\]
+</td>
+<td style="text-align:left;">
+\[-42,200\]
+</td>
+</tr>
+</tbody>
+</table>
+
+### Representación reclasificada de criterios y puntuaciones agregadas
+
+Unir los vectoriales de cada criterio y representar mapa.
+
+``` r
+all_criteria <- map(objetos[2:length(objetos)], ~ get(.x)[['vectorial']] %>% st_drop_geometry) %>% 
+  prepend(list(get(objetos[1])[['vectorial']])) %>% 
+  reduce(left_join, by = "hex_id")
+all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg' using driver `GPKG'
+    ## Writing layer `intervalos_etiquetas_puntuaciones_AHP_criterios_separados' to data source 
+    ##   `out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg' using driver `GPKG'
+    ## Writing 13152 features with 25 fields and geometry type Unknown (any).
+
+Mapas puntuaciones reclasificadas de cada criterio.
+
+``` r
+paleta <- c("altamente idóneo" = "#018571", "moderadamente idóneo" = "#80cdc1",
+               "marginalmente idóneo" = "#dfd2b3", "no idóneo" = "#a6611a")
+all_criteria_mapa <- all_criteria %>%
+  select(all_of(contains('etiquetas'))) %>% 
+  rename_with(~ stringr::str_replace(.x, 
+                                       pattern = ' etiquetas', 
+                                       replacement = ''), 
+                matches('etiquetas')) %>% 
+  pivot_longer(cols = -geometry) %>% 
+  ggplot +
+  aes(fill = value) +
+  geom_sf(lwd=0) + 
+  scale_fill_manual(values = paleta) +
+  labs(title = paste('Reclasificación de valores de criterios')) +
+  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
+  facet_wrap(~ name, ncol = 2) +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.key.size = unit(0.5, 'cm'), #change legend key size
+    legend.key.height = unit(0.5, 'cm'), #change legend key height
+    legend.key.width = unit(0.5, 'cm'), #change legend key width
+    legend.title = element_blank(), #change legend title font size
+    legend.text = element_text(size=2) #change legend text font size
+    )
+if(interactive()) dev.new()
+all_criteria_mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-6-1.png" width="100%" />
+
+Generar mapa de puntuación agregada.
+
+``` r
+nombres_ahp_obj_sf <- data.frame(
+  `Nombre objeto sf` = paste(variables, 'puntuación'),
+  Etiqueta = variables, check.names = F) %>%
+  rownames_to_column('Nombre AHP')
+pesos <- flujo_completo_ahp$aggpref %>% as.data.frame %>%
+  rownames_to_column('Nombre AHP') %>% 
+  inner_join(nombres_ahp_obj_sf)
+all_criteria_scores <- all_criteria %>%
+  st_drop_geometry() %>% 
+  select(all_of(c('hex_id', grep(' puntuación', colnames(all_criteria), value = T)))) %>%
+  pivot_longer(-hex_id, names_to = 'Nombre objeto sf', values_to = 'Puntuación') %>% 
+  inner_join(pesos %>% select(`Nombre objeto sf`, Etiqueta, peso=AggPref)) %>% 
+  mutate(`Puntuación ponderada` = peso * `Puntuación`) %>% 
+  group_by(hex_id) %>%
+  summarise(`Puntuación agregada` = sum(`Puntuación ponderada`, na.rm = T)) %>%
+  inner_join(all_criteria) %>% 
+  st_sf(sf_column_name = 'geometry')
+summary(all_criteria_scores$`Puntuación agregada`)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##  0.3652  2.4258  2.7279  2.6899  2.9677  3.7734
+
+``` r
+all_criteria_scores %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg' using driver `GPKG'
+    ## Writing layer `intervalos_etiquetas_puntuaciones_AHP_criterios_agregados' to data source 
+    ##   `out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg' using driver `GPKG'
+    ## Writing 13152 features with 26 fields and geometry type Unknown (any).
+
+``` r
+if(interactive()) dev.new()
+all_criteria_scores %>% 
+  mutate(`Puntuación agregada` = scale(`Puntuación agregada`)) %>% 
+  ggplot +
+  aes(fill = `Puntuación agregada`) +
+  geom_sf(lwd=0) + 
+  scale_fill_fermenter(palette = 'BrBG', direction = 1, breaks = c(-1, 0, 1)) +
+  labs(title = paste('Puntuación agregada')) +
+  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.key.size = unit(0.5, 'cm'), #change legend key size
+    legend.key.height = unit(0.5, 'cm'), #change legend key height
+    legend.key.width = unit(0.5, 'cm'), #change legend key width
+    legend.title = element_blank(), #change legend title font size
+    legend.text = element_text(size=3) #change legend text font size
+    )
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-7-1.png" width="100%" />
 
 ## Información suplementaria
 
@@ -1446,7 +1753,7 @@ data.frame(
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 11: Tabla de recodificación de puntaciones de formulario a escala
+Table 12: Tabla de recodificación de puntaciones de formulario a escala
 AHP original
 </caption>
 <thead>
@@ -1539,7 +1846,7 @@ as.data.frame(variables) %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 12: Tabla de equivalencias de nombres de las variables evaluadas
+Table 13: Tabla de equivalencias de nombres de las variables evaluadas
 </caption>
 <thead>
 <tr>
@@ -1641,7 +1948,7 @@ tabla_en_bruto %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 13: Tabla de resultados en bruto (anonimizada) obtenida a partir
+Table 14: Tabla de resultados en bruto (anonimizada) obtenida a partir
 del rellenado del “Formulario de comparación pareada de criterios de
 identificación de sitios idóneos para una red de observación climática”
 </caption>
@@ -2582,7 +2889,7 @@ tabla_recodificada %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 14: Tabla de puntaciones recodificadas
+Table 15: Tabla de puntaciones recodificadas
 </caption>
 <thead>
 <tr>
@@ -3481,7 +3788,7 @@ En segundo lugar, aplicamos la recodificación de nombres de columnas de
 la tabla de respuestas, que originalmente eran transcripciones de las
 preguntas del formulario de Google. Este paso nos ayudó a representar
 nombres más cortos en la tabla que posteriormente usamos como insumo
-(ver tabla <a href="#tab:suptablaresultadosparamatrizpareada">15</a>)
+(ver tabla <a href="#tab:suptablaresultadosparamatrizpareada">16</a>)
 para crear la matriz de comparación por parejas del método AHP.
 
 ``` r
@@ -3507,7 +3814,7 @@ tabla_col_renom %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 15: Tabla de columnas renombradas (adaptada para la generación de
+Table 16: Tabla de columnas renombradas (adaptada para la generación de
 la matriz de comparación en parejas)
 </caption>
 <thead>
@@ -4377,7 +4684,7 @@ acce_temp
 </table>
 
 El conjunto de datos de la tabla
-<a href="#tab:suptablaresultadosparamatrizpareada">15</a> recoge las
+<a href="#tab:suptablaresultadosparamatrizpareada">16</a> recoge las
 respuestas dadas por las 9 personas consultada, cada una compuesta por
 28 comparaciones en parejas de criterios (8 criterios). Analicemos
 algunos ejemplos para ilustrar el flujo seguido en la recodificación y
@@ -4387,16 +4694,16 @@ La primera fila contiene las valoraciones realizadas por la persona
 consultada número 1. En la primera pregunta, “*Valora la importancia
 relativa de las variables horas de insolación y elevación*”, el
 consultado respondió “*33: Importancia moderada para elevación*” (ver
-tabla <a href="#tab:suptablaresultadosenbruto">13</a>). Dicha valoración
+tabla <a href="#tab:suptablaresultadosenbruto">14</a>). Dicha valoración
 fue recodificada a puntuaciones AHP con el valor 3 (ver tabla
-<a href="#tab:suptablaresultadosrecodificados">14</a>); nótese que el
+<a href="#tab:suptablaresultadosrecodificados">15</a>); nótese que el
 valor recodificado es positivo, dado que el criterio que recibió la
 mayor importancia fue el que ocupaba la segunda posición en la pregunta.
 
 Finalmente, tras realizar el renombrado, la columna en cuestión paso de
 nombrarse “*Valora la importancia relativa de las variables horas de
 insolación y elevación*” a `inso_elev` (ver tabla
-<a href="#tab:suptablaresultadosparamatrizpareada">15</a>). Esta cambio
+<a href="#tab:suptablaresultadosparamatrizpareada">16</a>). Esta cambio
 nos permitirá manejar atributos cortos en la matriz de comparación por
 parejas.
 
@@ -6898,7 +7205,7 @@ que puede ser provisto por el usuario a partir de simulaciones, que con
 el paquete `ahpsurvey` se puede generar mediante la función `ahp.ri`. El
 conjunto de $RI$ a continuación se generó a partir de `ahp.ri` con
 500000 simulaciones (ver tabla
-<a href="#tab:suprisimuladospaqahpsurvey">16</a>), y están contenidas en
+<a href="#tab:suprisimuladospaqahpsurvey">17</a>), y están contenidas en
 la viñeta principal de la documentación del paquete `ahpsurvey` (Cho
 2019):
 
@@ -6913,7 +7220,7 @@ ri_sim %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 16: Índices aleatorios generados por la función ahp.ri con 500000
+Table 17: Índices aleatorios generados por la función ahp.ri con 500000
 simulaciones para 1 a 15 atributos
 </caption>
 <thead>
@@ -7035,7 +7342,7 @@ tiempo_10k <- system.time(probandoRI <- ahp.ri(nsims = 10000, dim = 8, seed = 99
 El tiempo de cómputo fue relativamente pequeño (\~ 2 segundos) y el
 resultado para $RI$ es 1.399982, el cual se aproxima bastante al
 generado por Cho (2019) (tabla
-<a href="#tab:suprisimuladospaqahpsurvey">16</a>). Si generásemos un
+<a href="#tab:suprisimuladospaqahpsurvey">17</a>). Si generásemos un
 $RI$ con 500000 simulaciones, nos tomaría al menos un minuto y medio en
 una PC de altas prestaciones (o varios minutos en una PC común), y el
 resultado sería bastante parecido al mostrado por Cho (2019), por lo que
@@ -7048,7 +7355,7 @@ RI <- ri_sim[8]
 Con este índice aleatorio, calculamos la razón de consistencia `CR` de
 las respuestas aportadas por cada persona consultada, mediante la
 función `ahp.cr` aplicada a la matriz de comparación en parejas. La
-tabla <a href="#tab:suprazondeconsistencia">17</a> resume el cómputo de
+tabla <a href="#tab:suprazondeconsistencia">18</a> resume el cómputo de
 esta métrica.
 
 ``` r
@@ -7062,7 +7369,7 @@ data.frame(`Persona consultada` = seq_along(cr), CR = cr, check.names = F) %>%
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 17: Razones de consistencia (consistency ratio) por persona
+Table 18: Razones de consistencia (consistency ratio) por persona
 consultada
 </caption>
 <thead>
@@ -7162,7 +7469,7 @@ la elección se considera inconsistente (Thomas L. Saaty 1977). **En
 nuestro caso, elegimos el umbral de 0.1 para** $CR$, por lo que
 obtuvimos un total de 4 valoraciones consistentes (personas consultadas
 números 1, 2, 4, 9) y 5 inconsistentes (personas números 3, 5, 6, 7, 8)
-(comparar con tabla <a href="#tab:suprazondeconsistencia">17</a>).
+(comparar con tabla <a href="#tab:suprazondeconsistencia">18</a>).
 
 ``` r
 table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() %>% 
@@ -7175,7 +7482,7 @@ table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() 
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 18: Número de cuestionarios según consistencia
+Table 19: Número de cuestionarios según consistencia
 </caption>
 <thead>
 <tr>
@@ -7344,197 +7651,7 @@ aplicando criterios sugeridos por otros autores, así como adaptando
 umbrales convencionales a la realidad insular (FAO, n.d.; Rojas Briceño
 et al. 2021). Para facilitar esta tarea, y garantizar reproducibilidad y
 consistencia, creamos funciones que realizaron la reclasificación de
-forma semitautomática. Los umbrales elegidos para definir las
-puntuaciones de criterios, están recogidos en la tabla (ver tabla
-<a href="#tab:umbralesapuntuaciones">19</a>).
-
-``` r
-puntuaciones_umbrales <- readODS::read_ods('fuentes/umbrales-criterios-ahp/puntuaciones.ods', sheet = 1)
-puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
-        caption = 'Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas') %>%
-  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-```
-
-<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-<caption>
-Table 19: Puntuaciones de criterios para la selección de sitios de
-estaciones meteoclimáticas
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-Etiquetas
-</th>
-<th style="text-align:left;">
-altamente idóneo
-</th>
-<th style="text-align:left;">
-moderadamente idóneo
-</th>
-<th style="text-align:left;">
-marginalmente idóneo
-</th>
-<th style="text-align:left;">
-no idóneo
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-Escala ordinal
-</td>
-<td style="text-align:left;">
-4
-</td>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Distancia a accesos (m) \[OSM-DIST\]
-</td>
-<td style="text-align:left;">
-(50,300\]
-</td>
-<td style="text-align:left;">
-(300,500\]
-</td>
-<td style="text-align:left;">
-(500,5e+03\]
-</td>
-<td style="text-align:left;">
-\[12.8,50\] (5e+03,3.28e+04\]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Estacionalidad térmica (°C/100x0.1)
-</td>
-<td style="text-align:left;">
-(1.5e+03,1.66e+03\]
-</td>
-<td style="text-align:left;">
-(1.3e+03,1.5e+03\]
-</td>
-<td style="text-align:left;">
-(1.1e+03,1.3e+03\]
-</td>
-<td style="text-align:left;">
-\[854,1.1e+03\]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Estacionalidad pluviométrica (kg x m-2 x 0.1)
-</td>
-<td style="text-align:left;">
-(500,622\]
-</td>
-<td style="text-align:left;">
-(400,500\]
-</td>
-<td style="text-align:left;">
-(300,400\]
-</td>
-<td style="text-align:left;">
-\[222,300\]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Heterogeneidad de hábitat (coef. variación)
-</td>
-<td style="text-align:left;">
-\[0,250\]
-</td>
-<td style="text-align:left;">
-(250,500\]
-</td>
-<td style="text-align:left;">
-(500,1.5e+03\]
-</td>
-<td style="text-align:left;">
-(1.5e+03,3.56e+03\]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Distancia a cuerpos de agua (km)
-</td>
-<td style="text-align:left;">
-(3e+03,2.64e+04\]
-</td>
-<td style="text-align:left;">
-(2e+03,3e+03\]
-</td>
-<td style="text-align:left;">
-(1e+03,2e+03\]
-</td>
-<td style="text-align:left;">
-\[0,1e+03\]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Pendiente (°)
-</td>
-<td style="text-align:left;">
-\[0,3\]
-</td>
-<td style="text-align:left;">
-(3,9\]
-</td>
-<td style="text-align:left;">
-(9,15\]
-</td>
-<td style="text-align:left;">
-(15,32.7\]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Horas de insolación (horas/año)
-</td>
-<td style="text-align:left;">
-(4.3e+03,4.48e+03\]
-</td>
-<td style="text-align:left;">
-(4.1e+03,4.3e+03\]
-</td>
-<td style="text-align:left;">
-(3.9e+03,4.1e+03\]
-</td>
-<td style="text-align:left;">
-\[3.18e+03,3.9e+03\]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Elevación (metros snm)
-</td>
-<td style="text-align:left;">
-(800,2.79e+03\]
-</td>
-<td style="text-align:left;">
-(400,800\]
-</td>
-<td style="text-align:left;">
-(200,400\]
-</td>
-<td style="text-align:left;">
-\[-42,200\]
-</td>
-</tr>
-</tbody>
-</table>
+forma semitautomática.
 
 ### Modelización de la idoneidad según pesos
 
