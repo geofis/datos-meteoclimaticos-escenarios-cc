@@ -1,5 +1,5 @@
 ---
-title: "Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas en República Dominicana, usando AHP y análisis de autocorrelación espacial"
+title: "Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas en República Dominicana usando decisión multicriterio"
 author: "José Martínez<br>Michela Izzo"
 output:
   # bookdown::github_document2:
@@ -45,7 +45,17 @@ if(cargar_script_supl_met) {
 
 ## Introducción
 
-El método de selección de alternativas multicriterio AHP (*Analytic Hierarchy Process*) se fundamenta en la teoría de la toma de decisiones multicriterio (MCA) y la teoría de la jerarquía analítica. Fue desarrollado por Thomas Saaty en la década de 1970 [@saaty1977], con varias revisiones posteriores [@saaty2001; @saaty2007], y se utiliza para tomar decisiones cuando se deben considerar múltiples criterios y alternativas. Tradicionalmente, el método AHP se ha utilizado en investigaciones del ámbito de las ingenierías, ciencias sociales, económicas y empresariales, e igualmente en la toma de decisiones donde intervienen datos geoespaciales [@saaty2013; @darko2019; @podvezko2009; @subramanian2012; @breaz2017]. Recientemente, fue usado de forma eficiente en la selección de sitios idóneos para la instalación de estaciones meteoclimáticas en Perú [@rojasbriceno2021].
+Las estaciones meteorológicas y climáticas son imprescindibles recopilación de datos precisos y actualizados sobre el clima y las condiciones atmosféricas en una determinada región. Los datos producidos por las estaciones son utilizados por diversas disciplinas, desde la meteorología a la climatología, pasando por múltiples aplicaciones de la ingeniería, la producción agraria, el urbanismo y la geografía, entre otros campos [@world1996guia; @wmo2017guia; @wmo2017guide].
+
+Una buena red es esencial para la toma de decisiones informadas en una variedad de campos y es fundamental para el bienestar y la seguridad de las comunidades y del medio ambiente en general. Planificar una red adecuada de estaciones meteorológicas y climáticas (EMC) es fundamental para la gestión del territorio. Estudios previos, incluyendo en la República Dominicana, indican la falta de EMC en áreas importantes, una distribución espacial no uniforme y una precisión variable debido a sitios inadecuados [@theochari2021hydrometeorological; @rojasbriceno2021; @frei2003designing; @proyecto2019pma].
+
+La mayor parte de los países han evaluado, algunos incluso varias veces, el diseño de su red de estaciones, y han propuesto mejoras que en muchos casos han implementado satisfactoriamente [@frei2003]. También, varios países disponen de protocolos para la selección de sitios, los cuales comúnmente se han armonizado con estándares de la OMM o los amplían para adaptarlos a las particularidades de su territorio y a los usos previstos [@rojasbriceno2021; @theochari2021].
+
+La República Dominicana es altamente vulnerable a los impactos del cambio climático y una red insuficiente de estaciones meteorológicas exacerba esta vulnerabilidad. Es necesario mejorar y expandir la red de estaciones meteorológicas, lo que requiere inversión en tecnología e infraestructura, así como alianzas entre agencias gubernamentales, entidades privadas e instituciones de investigación [CITAS]. Sin embargo, para realizar inversiones que optimicen al máximo los escasos recursos disponibles, se requiere producir, evaluar y seleccionar alternativas de redes de EMC utilizando criterios debidamente ponderados.
+
+Varias investigaciones consultadas, concernientes al diseño de redes de estaciones climáticas, meteorológicas e hidrometeorológicas, coinciden en señalar que la metodología idónea para el diseño de redes de estaciones debería incluir una análisis multicriterio (MCA), y su extensión para la toma de decisiones (MCDM, siglas en inglés de *"toma de decisiones basada en multicriterio"*). Esta familia de métodos se basa en la colecta y análisis, mediante sistemas de información geográfica (SIG), de atributos de terreno integrados por grandes volúmenes de datos geoespaciales del territorio a instrumentar, pero al mismo tiempo incluyendo criterios específicos del público meta también espacializados en el territorio [@rojasbriceno2021; @theochari2021hydrometeorological; @tekleyohannes2021]. Aunque, varias investigaciones han mostrado el buen rendimiento que aportan determinadas técnicas geoestadísticas tradicionales [@ali2018; @valipour2019], así como algoritmos contemporáneos de *deep learning* en combinación con técnicas tradicionales [@safavi2021], o incluso la entropía [@bertini2021], los métodos MCA son preferidos por su facilidad de uso y porque ayudan a comprender mejor los atributos de terreno.
+
+El denominado "proceso analítico jerárquico", mejor conocido como AHP (*analytic hierarchy process*), es un método de selección de alternativas multicriterio que se fundamenta en la teoría general de los MCA, así como en la base de conocimientos de la jerarquía analítica. Fue desarrollado por Thomas Saaty en la década de 1970 [@saaty1977], con varias revisiones posteriores [@saaty2001; @saaty2007], y se utiliza para tomar decisiones cuando se deben considerar múltiples criterios y alternativas. Tradicionalmente, el método AHP se ha utilizado en investigaciones del ámbito de las ingenierías, ciencias sociales, económicas y empresariales, e igualmente en la toma de decisiones donde intervienen datos geoespaciales [@saaty2013; @darko2019; @podvezko2009; @subramanian2012; @breaz2017]. Recientemente, fue usado de forma eficiente en la selección de sitios idóneos para la instalación de estaciones meteoclimáticas en Perú [@rojasbriceno2021].
 
 El método AHP consiste en descomponer un problema complejo en una estructura jerárquica de criterios y subcriterios, para luego comparar distintas alternativas en función de cada uno de dichos criterios. El proceso se realiza en varias etapas, que incluyen, identificar los objetivos y criterios relevantes para el problema, crear una estructura jerárquica de los criterios y subcriterios, comparar los criterios y subcriterios mediante una matriz de comparación en parejas (paso clave), calcular los valores de prioridad de cada criterio (paso clave), comparar las alternativas, calcular los valores de prioridad de cada alternativa en función de cada criterio y, finalmente, calcular los valores totales de prioridad de cada alternativa.
 
@@ -55,341 +65,58 @@ En este estudio, aplicamos AHP para seleccionar sitios idóneos donde instalar e
 
 ## Materiales y método
 
-El método AHP se utiliza para seleccionar la mejor opción entre diferentes alternativas, utilizando criterios de selección ponderados por personas con conocimiento del problema [@saaty2013]. Las repuestas originales normalmente deben organizarse y recodificarse y, posteriormente, se debe evaluar su consistencia. A continuación, se seleccionan las respuestas consistentes, o se ajustan las inconsistentes, y se establece la ponderación de criterios. Finalmente, la ponderación definida, se aplica a las fuentes de información disponible para obtener una lista de alternativas, de entre las cuales, se selecciona la más idónea de acuerdo con los criterios definidos.
+Aplicamos una secuencia de tres técnicas interdependientes para formular distintas alternativas de redes de observación meteoclimático. En primer lugar, aplicamos un **proceso analítico jerárquico (AHP)**, que se utiliza para seleccionar la mejor opción entre diferentes alternativas, utilizando criterios de selección ponderados por personas con conocimiento del problema [@saaty2013]. Las repuestas originales normalmente deben organizarse y recodificarse y, posteriormente, se debe evaluar su consistencia. A continuación, se seleccionan las respuestas consistentes, o se ajustan las inconsistentes, y se establece la ponderación de criterios. Finalmente, la ponderación definida, se aplica a las fuentes de información disponible para obtener una lista de alternativas, de entre las cuales, se selecciona la más idónea de acuerdo con los criterios definidos.
 
 Tanto el diseño de los formularios, como el procesamiento de respuestas y la ponderación de criterios, los realizamos empleando lenguajes de programación. Para diseñar los formularios, empleamos paquetes y funciones de Python, mientras que para los análisis nos auxiliamos del paquete `ahpsurvey` y otros del entorno de programación estadística R, diseñado para tales fines [@cho2019ahpsurvey; @rcoreteam2021r; @whicham2019welcome]. Describimos estos pasos detalladamente en la sección [Información suplementaria](#infosupl).
 
+Los resultados de la aplicación del método AHP fueron usados como entrada de una **simple aplicación de factores limitantes**, específicamente de localización de accesos y cuerpos de agua. Esto consistió en, simplemente, eliminar aquellos hexágonos que se encontraran dentro en la categoría "no idóneo" para los criterios "distancia a accesos" y "distancia a cuerpos de agua".
+
+Finalmente, al resultado del análisis anterior, le aplicamos un **análisis de proximidad entre estaciones existentes y propuestas**, utilizando umbrales de separación propuestos por la Organización Meteorológica Mundial [@design1976hydrological; @wmo2020guide]. Esto tuvo como objetivo proponer alternativas que garantizaran homogeneidad en la distribución espacial de los sitios propuestos (más detalles en la sección [Información suplementaria](#infosupl)).
+
 ## Resultados
 
-### Importancia de los criterios
+La importancia otorgada por expertos por medio del método AHP a los criterios preseleccionados, generó la tabla de pesos agregados. 
 
-Las tablas \@ref(tab:prefind) y \@ref(tab:prefagg) muestran las preferencias individuales y agregadas, respectivamente, de las personas entrevistadas cuyas respuestas fueron consistentes.
 
-```{r prefind}
-kable_prefind <- flujo_completo_ahp$indpref %>% 
-  mutate(`Persona consultada` = cr_indicador[cr_indicador[,1]==1, 'Persona consultada']) %>% 
-  relocate(`Persona consultada`) %>% 
-  estilo_kable(titulo = 'Preferencias individuales',
-               cubre_anchura = F) %>% 
-  kable_styling(position = 'left') %>% 
-  column_spec(column = 1:2, width = "10em")
-kable_prefind
-```
-
-```{r prefagg}
-kable_prefagg <- flujo_completo_ahp$aggpref %>%
-  as.data.frame() %>% 
-  rownames_to_column('Variable') %>% 
-  mutate(Variable = factor(Variable, labels = variables[sort(names(variables))])) %>% 
-  arrange(desc(AggPref)) %>% 
-  estilo_kable(titulo = 'Preferencias agregadas',
-               cubre_anchura = F) %>% 
-  kable_styling(position = 'left') %>% 
-  column_spec(column = 1:2, width = "10em")
+```{r}
 kable_prefagg
 ```
 
-### Mapas de los subcriterios
 
-```{r funcionesfuentescartograficas}
-source('R/funciones.R')
-library(sf)
-library(kableExtra)
-res_h3 <- 7 #Escribir un valor entre 4 y 7, ambos extremos inclusive
-ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
-# ez_ver <- 'da5b4ed7c6b126fce15f8980b7a0b389937f7f35/'
-ez_ver <- 'd7f79365168e688f0d78f521e53fbf2da19244ef/'
-ind_esp_url <- paste0(ruta_ez_gh, ez_ver, 'out/all_sources_all_variables_res_', res_h3, '.gpkg')
-ind_esp_url
-if(!any(grepl('^ind_esp$', ls()))){
-  ind_esp <- st_read(ind_esp_url, optional = T, quiet = T)
-  st_geometry(ind_esp) <- "geometry"
-  ind_esp <- st_transform(ind_esp, 32619)
-}
-if(!any(grepl('^pais_url$', ls()))){
-  pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
-  pais <- invisible(st_read(pais_url, optional = T, layer = 'pais', quiet = T))
-  st_geometry(pais) <- "geometry"
-  pais <- st_transform(pais, 32619)
-}
-if(!any(grepl('^ind_esp_inters$', ls()))){
-  ind_esp_inters <- st_intersection(pais, ind_esp)
-  colnames(ind_esp_inters) <- colnames(ind_esp)
-  ind_esp_inters$area_sq_m <- units::drop_units(st_area(ind_esp_inters))
-  ind_esp_inters$area_sq_km <- units::drop_units(st_area(ind_esp_inters))/1000000
-}
-if(!any(grepl('^ind_esp_inters$', ls())) && interactive()){
-  print(ind_esp_inters)
-}
-```
 
-Distancia a accesos.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Restricciones por accesibilidad y cuerpos de aguas
+
+
 
 ```{r}
-# Objeto que acogerá nombres de objetos
-objetos <- character()
+
 ```
 
 
-```{r osmdist}
-objeto <- 'osm_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'OSM-DIST mean',
-    umbrales = c(50, 200, 500, 5000),
-    nombre = variables[[1]],
-    ord_cat = 'nin_rev')
-)
-get(objeto)[c('violin', 'mapa_con_pais')]
-get(objeto)[['intervalos_y_etiquetas_kable']]
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Estacionalidad térmica.
-
-```{r estacionalidadtermica}
-objeto <- 'tseasonizzo_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'TSEASON-IZZO mean',
-    umbrales = c(1.1, 1.3, 1.5),
-    nombre = variables[[2]],
-    ord_cat = 'ni')
-)
-get(objeto)[c('violin', 'mapa_con_pais')]
-get(objeto)[['intervalos_y_etiquetas_kable']]
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Estacionalidad pluviométrica.
-
-```{r estacionalidadpluvio}
-objeto <- 'pseasonizzo_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'PSEASON-IZZO mean',
-    umbrales = c(30, 40, 50),
-    nombre = variables[[3]],
-    ord_cat = 'ni')
-)
-get(objeto)[c('violin', 'mapa_con_pais')]
-get(objeto)[['intervalos_y_etiquetas_kable']]
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-
-# Para comparar con CHELSA
-# objeto <- 'chbio15_rcl'
-# assign(
-#   objeto,
-#   generar_resumen_grafico_estadistico_criterios(
-#     variable = 'CH-BIO bio15 precipitation seasonality',
-#     umbrales = c(300, 400, 500),
-#     nombre = 'Estacionalidad pluviométrica',
-#     ord_cat = 'ni')
-# )
-# get(objeto)[c('violin', 'mapa_con_pais', 'intervalos_y_etiquetas_kable')]
-# # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-```
-
-Heterogeneidad de hábitat.
-
-```{r heterogeneidadhabitat}
-objeto <- 'hethab_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'GHH coefficient_of_variation_1km',
-    umbrales = c(300, 450, 600),
-    nombre = variables[[4]],
-    ord_cat = 'in')
-)
-get(objeto)[c('violin', 'mapa_con_pais')]
-get(objeto)[['intervalos_y_etiquetas_kable']]
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Distancia a cuerpos de agua y humedales.
-
-```{r cuerposaguadist}
-objeto <- 'wbwdist_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'WBW-DIST mean',
-    umbrales = c(1000, 2000, 3000),
-    nombre = variables[[5]],
-    ord_cat = 'ni')
-)
-get(objeto)[c('violin', 'mapa_con_pais')]
-get(objeto)[['intervalos_y_etiquetas_kable']]
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Pendiente.
-
-```{r pendiente}
-objeto <- 'slope_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'G90 Slope',
-    umbrales = c(3, 9, 15),
-    nombre = variables[[6]],
-    ord_cat = 'in')
-)
-get(objeto)[c('violin', 'mapa_con_pais')]
-get(objeto)[['intervalos_y_etiquetas_kable']]
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Horas de insolación.
-
-```{r}
-objeto <- 'insol_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'YINSOLTIME mean',
-    umbrales = c(3900, 4100, 4300),
-    nombre = variables[[7]],
-    ord_cat = 'ni')
-)
-get(objeto)[c('violin', 'mapa_con_pais')]
-get(objeto)[['intervalos_y_etiquetas_kable']]
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Elevación.
-
-```{r}
-objeto <- 'ele_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'CGIAR-ELE mean',
-    umbrales = c(200, 400, 800),
-    nombre = variables[[8]],
-    ord_cat = 'ni')
-)
-get(objeto)[c('violin', 'mapa_con_pais')]
-get(objeto)[['intervalos_y_etiquetas_kable']]
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-### Umbrales de criterios
-
-Los umbrales elegidos para definir las puntuaciones de criterios, están recogidos en la tabla (ver tabla \@ref(tab:umbralesapuntuaciones)).
-
-```{r umbralesapuntuaciones}
-puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiquetas']] %>% 
-  pivot_longer(cols = -matches('puntuación|etiquetas'), names_to = 'criterio') %>%
-  mutate(criterio = gsub(' intervalos', '', criterio)) %>% 
-  group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
-  summarise(value = paste(value, collapse = ' y ')) %>% 
-  pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
-  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`)
-) %>% bind_rows()
-readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
-puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
-        caption = 'Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas') %>%
-  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-```
-
-
-### Representación reclasificada de criterios y puntuaciones agregadas
-
-Unir los vectoriales de cada criterio y representar mapa.
-
-```{r}
-all_criteria <- map(objetos[2:length(objetos)], ~ get(.x)[['vectorial']] %>% st_drop_geometry) %>% 
-  prepend(list(get(objetos[1])[['vectorial']])) %>% 
-  reduce(left_join, by = "hex_id")
-all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg', delete_dsn = T)
-```
-
-Mapas puntuaciones reclasificadas de cada criterio.
-
-```{r, fig.width=8, fig.height=12}
-paleta <- c("altamente idóneo" = "#018571", "moderadamente idóneo" = "#80cdc1",
-               "marginalmente idóneo" = "#dfd2b3", "no idóneo" = "#a6611a")
-all_criteria_mapa <- all_criteria %>%
-  select(all_of(contains('etiquetas'))) %>% 
-  rename_with(~ stringr::str_replace(.x, 
-                                       pattern = ' etiquetas', 
-                                       replacement = ''), 
-                matches('etiquetas')) %>% 
-  pivot_longer(cols = -geometry) %>% 
-  ggplot +
-  aes(fill = value) +
-  geom_sf(lwd=0) + 
-  scale_fill_manual(values = paleta) +
-  labs(title = paste('Reclasificación de valores de criterios')) +
-  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
-  facet_wrap(~ name, ncol = 2) +
-  theme_bw() +
-  theme(
-    legend.position = 'bottom',
-    legend.key.size = unit(0.5, 'cm'), #change legend key size
-    legend.key.height = unit(0.5, 'cm'), #change legend key height
-    legend.key.width = unit(0.5, 'cm'), #change legend key width
-    legend.title = element_blank(), #change legend title font size
-    legend.text = element_text(size=2) #change legend text font size
-    )
-if(interactive()) dev.new()
-all_criteria_mapa
-```
-
-Generar mapa de puntuación agregada.
-
-```{r}
-nombres_ahp_obj_sf <- data.frame(
-  `Nombre objeto sf` = paste(variables, 'puntuación'),
-  Etiqueta = variables, check.names = F) %>%
-  rownames_to_column('Nombre AHP')
-pesos <- flujo_completo_ahp$aggpref %>% as.data.frame %>%
-  rownames_to_column('Nombre AHP') %>% 
-  inner_join(nombres_ahp_obj_sf)
-all_criteria_scores <- all_criteria %>%
-  st_drop_geometry() %>% 
-  select(all_of(c('hex_id', grep(' puntuación', colnames(all_criteria), value = T)))) %>%
-  pivot_longer(-hex_id, names_to = 'Nombre objeto sf', values_to = 'Puntuación') %>% 
-  inner_join(pesos %>% select(`Nombre objeto sf`, Etiqueta, peso=AggPref)) %>% 
-  mutate(`Puntuación ponderada` = peso * `Puntuación`) %>% 
-  group_by(hex_id) %>%
-  summarise(`Puntuación agregada` = sum(`Puntuación ponderada`, na.rm = T)) %>%
-  inner_join(all_criteria) %>% 
-  st_sf(sf_column_name = 'geometry')
-summary(all_criteria_scores$`Puntuación agregada`)
-all_criteria_scores %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg', delete_dsn = T)
-if(interactive()) dev.new()
-all_criteria_scores %>% 
-  mutate(`Puntuación agregada` = scale(`Puntuación agregada`)) %>% 
-  ggplot +
-  aes(fill = `Puntuación agregada`) +
-  geom_sf(lwd=0) + 
-  scale_fill_fermenter(palette = 'BrBG', direction = 1, breaks = c(-1, 0, 1)) +
-  labs(title = paste('Puntuación agregada')) +
-  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
-  theme_bw() +
-  theme(
-    legend.position = 'bottom',
-    legend.key.size = unit(0.5, 'cm'), #change legend key size
-    legend.key.height = unit(0.5, 'cm'), #change legend key height
-    legend.key.width = unit(0.5, 'cm'), #change legend key width
-    legend.title = element_blank(), #change legend title font size
-    legend.text = element_text(size=3) #change legend text font size
-    )
-```
+### Aplicación de criterios de proximidad, meta final
 
 
 ## Información suplementaria {#infosupl}

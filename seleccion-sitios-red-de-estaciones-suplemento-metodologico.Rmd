@@ -1,5 +1,5 @@
 ---
-title: "Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas usando AHP y análisis de autocorrelación espacial. Suplemento metodológico"
+title: "Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas usando decisión multicriterio. Suplemento metodológico"
 author: "José Martínez<br>Michela Izzo"
 output:
   # bookdown::github_document2:
@@ -32,7 +32,14 @@ knitr::opts_chunk$set(
 
 `r if(knitr::opts_knit$get("rmarkdown.pandoc.to") == 'latex') 'Versión HTML (quizá más legible), [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/ponderacion-variables-ahp.html)'`
 
-## Suplemento metodológico para la selección de sitios para el establecimiento de una red de estaciones meteoclimáticas usando AHP y análisis de autocorrelación espacial
+
+## Procedimiento
+
+Aplicamos una secuencia de tres técnicas interdependientes para formular distintas alternativas de redes de observación meteoclimático. En primer lugar, aplicamos un **proceso analítico jerárquico (AHP)**. Posteriormente, los resultados del AHP fueron usados como entrada de una **simple aplicación de factores limitantes**, específicamente de localización de accesos y cuerpos de agua. Finalmente, al resultado del análisis anterior, le aplicamos un **análisis de proximidad** para proponer alternativas que garantizaran homogeneidad en la distribución espacial de los sitios propuestos.
+
+## Aplicación del método AHP
+
+### Paquetes y funciones
 
 ```{r suppaquetes}
 library(kableExtra)
@@ -324,9 +331,9 @@ matriz_ahp[cr_indicador[,1]==1] %>%
   theme(legend.position = 'bottom', axis.text.x = element_text(size = 7))
 ```
 
-### Flujo de procesamiento completo AHP sin diagnósticos intermedios
+### Matriz de pesos
 
-El flujo de procesamiento completo retorna la matriz de pesos de acuerdo con el umbral de consistencia elegido, que en nuestro caso es `r umbral`. De esta manera, generamos una matriz de pesos sólo con las respuestas consistentes. Verificamos igualmente que la suma de los pesos sea igual a 1.
+Para la aplicación de los criterios, primero obtuvimos la matriz de preferencias individuales y agregadas, conteniendo los pesos otorgados a cada criterio. Mediante el método de procesamiento abreviado mostrado a continuación, obtuvimos la matriz de pesos de acuerdo con el umbral de consistencia elegido, que en nuestro caso es `r umbral`. De esta manera, generamos una matriz de pesos sólo con las respuestas consistentes. Verificamos igualmente que la suma de los pesos sea igual a 1.
 
 ```{r supflujocompletoahp}
 flujo_completo_ahp <- ahp(df = tabla_col_renom[, col_ord], 
@@ -341,18 +348,328 @@ flujo_completo_ahp <- ahp(df = tabla_col_renom[, col_ord],
 # sum(flujo_completo_ahp$aggpref[,1]) == 1
 ```
 
-### Obtención, reducción y reclasificación de fuentes cartográficas
+Las tablas \@ref(tab:prefind) y \@ref(tab:prefagg) muestran las preferencias individuales y agregadas, respectivamente, de las personas entrevistadas cuyas respuestas fueron consistentes. Las matriz agregada constituye el resultado principal del AHP, el cual aplicaremos a los criterios reclasificados. En las secciones siguientes, explicamos en detalle el procedimiento seguido para la reclasificación de criterios y la aplicación de los pesos obtenidos por el método AHP.
 
-Utilizamos múltiples fuentes cartográficas ráster como variables de territorio para modelizar la idoneidad de sitios candidatos para la instalación de estaciones meteoclimáticas. Originalmente, disponíamos de más de 100 fuentes ráster para realizar nuestros análisis, pero elegimos sólo ocho de ellas por considerarlas relevantes siguiendo recomendaciones de estudios previos [@rojasbriceno2021]. Estas ocho variables fueron ponderadas por el personal experto mediante el proceso descrito anteriormente.
+```{r prefind}
+kable_prefind <- flujo_completo_ahp$indpref %>% 
+  mutate(`Persona consultada` = cr_indicador[cr_indicador[,1]==1, 'Persona consultada']) %>% 
+  relocate(`Persona consultada`) %>% 
+  estilo_kable(titulo = 'Preferencias individuales',
+               cubre_anchura = F) %>% 
+  kable_styling(position = 'left') %>% 
+  column_spec(column = 1:2, width = "10em")
+kable_prefind
+```
 
-Las fuentes ráster son servidas bajo distintas resoluciones y sistemas de referencia, por lo que fue necesario aplicar algoritmos de reducción y consolidar resultados en una geometría común. Para ello, redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3 (*hex bins*) [@jose_ramon_martinez_batlle_2022_7367180]. Probamos distintas resoluciones de dicho índice, y tras algunas pruebas, elegimos la resolución "7". Con esta resolución, cubrimos el territorio dominicano más un área de influencia con aproximadamente 13,000 hexágonos de ca. 4$km^2$ cada uno. Dentro de cada hexágono, por medio de estadística zonal, obtuvimos la media de cada variable, la cual utilizamos como estadístico de referencia en la reclasificación descrita a continuación.
+```{r prefagg}
+kable_prefagg <- flujo_completo_ahp$aggpref %>%
+  as.data.frame() %>% 
+  rownames_to_column('Variable') %>% 
+  mutate(Variable = factor(Variable, labels = variables[sort(names(variables))])) %>% 
+  arrange(desc(AggPref)) %>% 
+  estilo_kable(titulo = 'Preferencias agregadas',
+               cubre_anchura = F) %>% 
+  kable_styling(position = 'left') %>% 
+  column_spec(column = 1:2, width = "10em")
+kable_prefagg
+```
 
-Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios sugeridos por otros autores, así como adaptando umbrales convencionales a la realidad insular [@fao32agriculture; @rojasbriceno2021]. Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática.
+## Reclasificación de fuentes cartográficas: valores originales, intervalos, representación de la reclasificación
+
+Utilizamos múltiples fuentes cartográficas como variables de territorio para modelizar la idoneidad de sitios candidatos para la instalación de estaciones meteoclimáticas. Originalmente, disponíamos de más de 100 fuentes para realizar nuestros análisis, pero elegimos sólo ocho de ellas en la ponderación realizada por expertos para el método AHP, por considerarlas relevantes siguiendo recomendaciones de estudios previos [@rojasbriceno2021].
+
+Las fuentes disponibles eran capas ráster servidas bajo distintas resoluciones y sistemas de referencia, por lo que fue necesario aplicar algoritmos de estadística zonal (reducción) y consolidar resultados en una geometría vectorial común. Para ello, redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3 (*hex bins*) [@jose_ramon_martinez_batlle_2022_7367180]. Probamos distintas resoluciones de dicho índice, y tras algunas pruebas, elegimos la resolución "7". Con esta resolución, cubrimos el territorio dominicano (más un área de influencia) con aproximadamente 13,000 hexágonos de ca. 4$km^2$ cada uno. Dentro de cada hexágono, por medio de estadística zonal, obtuvimos la media de cada variable, la cual utilizamos como estadístico de referencia en la reclasificación descrita a continuación.
+
+Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios definidos por el equipo de investigación para cada criterio, para lo cual utilizamos conocimiento experto y referencias bibliográficas especializadas en redes de monitoreo meteoclimático, y adaptando las escalas a la realidad insular [@fao32agriculture; @rojasbriceno2021]. A cada criterio, y para cada hexágono, asignamos un entero en una escala ordinal del 1 al 4 (de "no idóneo" a "altamente idóneo"). Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática. Representamos a continuación, para cada criterio, los valores originales mediante gráfico de violín, mostramos los intervalos usados en la reclasificación, y la representamos cartográficamente.
+
+
+```{r funcionesfuentescartograficas}
+source('R/funciones.R')
+library(sf)
+library(kableExtra)
+res_h3 <- 7 #Escribir un valor entre 4 y 7, ambos extremos inclusive
+ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
+# ez_ver <- 'da5b4ed7c6b126fce15f8980b7a0b389937f7f35/'
+ez_ver <- 'd7f79365168e688f0d78f521e53fbf2da19244ef/'
+ind_esp_url <- paste0(ruta_ez_gh, ez_ver, 'out/all_sources_all_variables_res_', res_h3, '.gpkg')
+ind_esp_url
+if(!any(grepl('^ind_esp$', ls()))){
+  ind_esp <- st_read(ind_esp_url, optional = T, quiet = T)
+  st_geometry(ind_esp) <- "geometry"
+  ind_esp <- st_transform(ind_esp, 32619)
+}
+if(!any(grepl('^pais_url$', ls()))){
+  pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
+  pais <- invisible(st_read(pais_url, optional = T, layer = 'pais', quiet = T))
+  st_geometry(pais) <- "geometry"
+  pais <- st_transform(pais, 32619)
+}
+if(!any(grepl('^ind_esp_inters$', ls()))){
+  ind_esp_inters <- st_intersection(pais, ind_esp)
+  colnames(ind_esp_inters) <- colnames(ind_esp)
+  ind_esp_inters$area_sq_m <- units::drop_units(st_area(ind_esp_inters))
+  ind_esp_inters$area_sq_km <- units::drop_units(st_area(ind_esp_inters))/1000000
+}
+if(!any(grepl('^ind_esp_inters$', ls())) && interactive()){
+  print(ind_esp_inters)
+}
+```
+
+Definición de los objetos de reclasificación de los criterios.
+
+```{r}
+# Objeto que acogerá nombres de objetos
+objetos <- character()
+```
+
+### Criterio 1. Distancia a accesos.
+
+```{r osmdist}
+objeto <- 'osm_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'OSM-DIST mean',
+    umbrales = c(50, 200, 500, 5000),
+    nombre = variables[[1]],
+    ord_cat = 'nin_rev')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 2. Estacionalidad térmica.
+
+```{r estacionalidadtermica}
+objeto <- 'tseasonizzo_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'TSEASON-IZZO mean',
+    umbrales = c(1.1, 1.3, 1.5),
+    nombre = variables[[2]],
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 3. Estacionalidad pluviométrica.
+
+```{r estacionalidadpluvio}
+objeto <- 'pseasonizzo_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'PSEASON-IZZO mean',
+    umbrales = c(30, 40, 50),
+    nombre = variables[[3]],
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 4. Heterogeneidad de hábitat.
+
+```{r heterogeneidadhabitat}
+objeto <- 'hethab_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'GHH coefficient_of_variation_1km',
+    umbrales = c(300, 450, 600),
+    nombre = variables[[4]],
+    ord_cat = 'in')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 5. Distancia a cuerpos de agua y humedales.
+
+```{r cuerposaguadist}
+objeto <- 'wbwdist_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'WBW-DIST mean',
+    umbrales = c(1000, 2000, 3000),
+    nombre = variables[[5]],
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 6. Pendiente.
+
+```{r pendiente}
+objeto <- 'slope_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'G90 Slope',
+    umbrales = c(3, 9, 15),
+    nombre = variables[[6]],
+    ord_cat = 'in')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 7. Horas de insolación.
+
+```{r}
+objeto <- 'insol_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'YINSOLTIME mean',
+    umbrales = c(3900, 4100, 4300),
+    nombre = variables[[7]],
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 8. Elevación.
+
+```{r}
+objeto <- 'ele_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'CGIAR-ELE mean',
+    umbrales = c(200, 400, 800),
+    nombre = variables[[8]],
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Umbrales consolidados
+
+Los umbrales elegidos para definir las puntuaciones de criterios, están recogidos en la tabla (ver tabla \@ref(tab:umbralesapuntuaciones)).
+
+```{r umbralesapuntuaciones}
+puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiquetas']] %>% 
+  pivot_longer(cols = -matches('puntuación|etiquetas'), names_to = 'criterio') %>%
+  mutate(criterio = gsub(' intervalos', '', criterio)) %>% 
+  group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
+  summarise(value = paste(value, collapse = ' y ')) %>% 
+  pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
+  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`)
+) %>% bind_rows()
+readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
+puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+### Representación consolidada de las reclasificaciones y puntuaciones agregadas
+
+Unir los vectoriales de cada criterio y representar mapa.
+
+```{r}
+all_criteria <- map(objetos[2:length(objetos)], ~ get(.x)[['vectorial']] %>% st_drop_geometry) %>% 
+  prepend(list(get(objetos[1])[['vectorial']])) %>% 
+  reduce(left_join, by = "hex_id")
+all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg', delete_dsn = T)
+```
+
+Mapas puntuaciones reclasificadas de cada criterio.
+
+```{r, fig.width=8, fig.height=12}
+paleta <- c("altamente idóneo" = "#018571", "moderadamente idóneo" = "#80cdc1",
+               "marginalmente idóneo" = "#dfd2b3", "no idóneo" = "#a6611a")
+all_criteria_mapa <- all_criteria %>%
+  select(all_of(contains('etiquetas'))) %>% 
+  rename_with(~ stringr::str_replace(.x, 
+                                       pattern = ' etiquetas', 
+                                       replacement = ''), 
+                matches('etiquetas')) %>% 
+  pivot_longer(cols = -geometry) %>% 
+  ggplot +
+  aes(fill = value) +
+  geom_sf(lwd=0) + 
+  scale_fill_manual(values = paleta) +
+  labs(title = paste('Reclasificación de valores de criterios')) +
+  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
+  facet_wrap(~ name, ncol = 2) +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.key.size = unit(0.5, 'cm'), #change legend key size
+    legend.key.height = unit(0.5, 'cm'), #change legend key height
+    legend.key.width = unit(0.5, 'cm'), #change legend key width
+    legend.title = element_blank(), #change legend title font size
+    legend.text = element_text(size=2) #change legend text font size
+    )
+if(interactive()) dev.new()
+all_criteria_mapa
+```
+
+Generar mapa de puntuación agregada.
+
+```{r}
+nombres_ahp_obj_sf <- data.frame(
+  `Nombre objeto sf` = paste(variables, 'puntuación'),
+  Etiqueta = variables, check.names = F) %>%
+  rownames_to_column('Nombre AHP')
+pesos <- flujo_completo_ahp$aggpref %>% as.data.frame %>%
+  rownames_to_column('Nombre AHP') %>% 
+  inner_join(nombres_ahp_obj_sf)
+all_criteria_scores <- all_criteria %>%
+  st_drop_geometry() %>% 
+  select(all_of(c('hex_id', grep(' puntuación', colnames(all_criteria), value = T)))) %>%
+  pivot_longer(-hex_id, names_to = 'Nombre objeto sf', values_to = 'Puntuación') %>% 
+  inner_join(pesos %>% select(`Nombre objeto sf`, Etiqueta, peso=AggPref)) %>% 
+  mutate(`Puntuación ponderada` = peso * `Puntuación`) %>% 
+  group_by(hex_id) %>%
+  summarise(`Puntuación agregada` = sum(`Puntuación ponderada`, na.rm = T)) %>%
+  inner_join(all_criteria) %>% 
+  st_sf(sf_column_name = 'geometry')
+summary(all_criteria_scores$`Puntuación agregada`)
+all_criteria_scores %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg', delete_dsn = T)
+if(interactive()) dev.new()
+all_criteria_scores %>% 
+  mutate(`Puntuación agregada` = scale(`Puntuación agregada`)) %>% 
+  ggplot +
+  aes(fill = `Puntuación agregada`) +
+  geom_sf(lwd=0) + 
+  scale_fill_fermenter(palette = 'BrBG', direction = 1, breaks = c(-1, 0, 1)) +
+  labs(title = paste('Puntuación agregada')) +
+  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.key.size = unit(0.5, 'cm'), #change legend key size
+    legend.key.height = unit(0.5, 'cm'), #change legend key height
+    legend.key.width = unit(0.5, 'cm'), #change legend key width
+    legend.title = element_blank(), #change legend title font size
+    legend.text = element_text(size=3) #change legend text font size
+    )
+```
+
+
 
 ### Modelización de la idoneidad según pesos
-
-
-
-### Evaluación de autocorrelación y proximidad
-
-TODO

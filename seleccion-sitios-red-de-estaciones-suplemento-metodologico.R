@@ -1,4 +1,4 @@
-## ----supsetup, include=FALSE------------------------------------------------------------------------------------------------
+## ----supsetup, include=FALSE--------------------------------------------------
 knitr::opts_chunk$set(
   cache = F, 
   echo = TRUE,
@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
 # options(digits = 3)
 
 
-## ----suppaquetes------------------------------------------------------------------------------------------------------------
+## ----suppaquetes--------------------------------------------------------------
 library(kableExtra)
 library(tidyverse)
 library(ahpsurvey)
@@ -19,7 +19,7 @@ estilo_kable <- function(df, titulo = '', cubre_anchura = T) {
 }
 
 
-## ----supvariables-----------------------------------------------------------------------------------------------------------
+## ----supvariables-------------------------------------------------------------
 variables <- c(
     acce = "distancia a accesos",
     temp = "estacionalidad térmica",
@@ -33,7 +33,7 @@ variables <- c(
 col_ord <- as.vector(sapply(as.data.frame(combn(names(variables), 2)), paste0, collapse = '_'))
 
 
-## ----suptabequivalencias----------------------------------------------------------------------------------------------------
+## ----suptabequivalencias------------------------------------------------------
 valor_formulario <- c('(100)', '(66)', '(33)', '0', '33', '66', '100')
 recod_repartida <- FALSE
 if(recod_repartida) {
@@ -57,7 +57,7 @@ data.frame(
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----supimpresiontabequivalencias-------------------------------------------------------------------------------------------
+## ----supimpresiontabequivalencias---------------------------------------------
 as.data.frame(variables) %>% 
   rownames_to_column() %>% 
   setNames(nm = c('Código', 'Nombre completo')) %>% 
@@ -66,7 +66,7 @@ as.data.frame(variables) %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----suptablaresultadosenbruto----------------------------------------------------------------------------------------------
+## ----suptablaresultadosenbruto------------------------------------------------
 tabla_original <- read_csv('fuentes/respuestas-ahp/respuestas.csv')
 tabla_en_bruto <- tabla_original[, -grep('Marca|Opcionalmente', colnames(tabla_original))]
 tabla_en_bruto %>% 
@@ -75,7 +75,7 @@ tabla_en_bruto %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----suptablaresultadosrecodificados----------------------------------------------------------------------------------------
+## ----suptablaresultadosrecodificados------------------------------------------
 tabla_recodificada <- sapply(
   tabla_en_bruto[, grep('^Valora.*', colnames(tabla_en_bruto))],
   function(x){
@@ -89,7 +89,7 @@ tabla_recodificada %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----suptablaresultadosparamatrizpareada------------------------------------------------------------------------------------
+## ----suptablaresultadosparamatrizpareada--------------------------------------
 tabla_col_renom <- tabla_recodificada
 cambiar_nombre_por_variable <- function(primera=T) {
   names(
@@ -110,7 +110,7 @@ tabla_col_renom %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----supmatrizahp, results='asis'-------------------------------------------------------------------------------------------
+## ----supmatrizahp, results='asis'---------------------------------------------
 matriz_ahp <- tabla_col_renom[, col_ord] %>%
   ahp.mat(atts = names(variables), negconvert = TRUE)
 map(matriz_ahp,
@@ -133,7 +133,7 @@ error %>%
   theme_minimal()
 
 
-## ----suprisimuladospaqahpsurvey---------------------------------------------------------------------------------------------
+## ----suprisimuladospaqahpsurvey-----------------------------------------------
 ri_sim <- t(data.frame(RI = c(0.0000000, 0.0000000, 0.5251686, 0.8836651, 1.1081014, 1.2492774, 1.3415514, 1.4048466, 1.4507197, 1.4857266, 1.5141022,1.5356638, 1.5545925, 1.5703498, 1.5839958)))
 colnames(ri_sim) <- 1:15
 ri_sim %>%
@@ -142,15 +142,15 @@ ri_sim %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 
 
-## ----supprobandori----------------------------------------------------------------------------------------------------------
+## ----supprobandori------------------------------------------------------------
 tiempo_10k <- system.time(probandoRI <- ahp.ri(nsims = 10000, dim = 8, seed = 99))
 
 
-## ----supdefri---------------------------------------------------------------------------------------------------------------
+## ----supdefri-----------------------------------------------------------------
 RI <- ri_sim[8]
 
 
-## ----suprazondeconsistencia-------------------------------------------------------------------------------------------------
+## ----suprazondeconsistencia---------------------------------------------------
 cr <- matriz_ahp %>% ahp.cr(atts = names(variables), ri = RI)
 data.frame(`Persona consultada` = seq_along(cr), CR = cr, check.names = F) %>%
   estilo_kable(titulo = 'Razones de consistencia (consistency ratio) por persona consultada',
@@ -159,13 +159,13 @@ data.frame(`Persona consultada` = seq_along(cr), CR = cr, check.names = F) %>%
   column_spec(column = 1:2, width = "10em")
 
 
-## ----supumbrales------------------------------------------------------------------------------------------------------------
+## ----supumbrales--------------------------------------------------------------
 umbral_saaty <- 0.1
 umbral_alterno <- 0.15
 umbral <- ifelse(recod_repartida, umbral_alterno, umbral_saaty)
 
 
-## ----supnumconsistinconsist-------------------------------------------------------------------------------------------------
+## ----supnumconsistinconsist---------------------------------------------------
 table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() %>% 
   setNames(nm = c('Tipo', 'Número de cuestionarios')) %>% 
   estilo_kable(titulo = 'Número de cuestionarios según consistencia',
@@ -226,7 +226,7 @@ matriz_ahp[cr_indicador[,1]==1] %>%
   theme(legend.position = 'bottom', axis.text.x = element_text(size = 7))
 
 
-## ----supflujocompletoahp----------------------------------------------------------------------------------------------------
+## ----supflujocompletoahp------------------------------------------------------
 flujo_completo_ahp <- ahp(df = tabla_col_renom[, col_ord], 
                           atts = names(variables), 
                           negconvert = TRUE, 
@@ -237,4 +237,285 @@ flujo_completo_ahp <- ahp(df = tabla_col_renom[, col_ord],
                           censorcr = umbral,
                           agg = TRUE)
 # sum(flujo_completo_ahp$aggpref[,1]) == 1
+
+
+## ----prefind------------------------------------------------------------------
+kable_prefind <- flujo_completo_ahp$indpref %>% 
+  mutate(`Persona consultada` = cr_indicador[cr_indicador[,1]==1, 'Persona consultada']) %>% 
+  relocate(`Persona consultada`) %>% 
+  estilo_kable(titulo = 'Preferencias individuales',
+               cubre_anchura = F) %>% 
+  kable_styling(position = 'left') %>% 
+  column_spec(column = 1:2, width = "10em")
+kable_prefind
+
+
+## ----prefagg------------------------------------------------------------------
+kable_prefagg <- flujo_completo_ahp$aggpref %>%
+  as.data.frame() %>% 
+  rownames_to_column('Variable') %>% 
+  mutate(Variable = factor(Variable, labels = variables[sort(names(variables))])) %>% 
+  arrange(desc(AggPref)) %>% 
+  estilo_kable(titulo = 'Preferencias agregadas',
+               cubre_anchura = F) %>% 
+  kable_styling(position = 'left') %>% 
+  column_spec(column = 1:2, width = "10em")
+kable_prefagg
+
+
+## ----funcionesfuentescartograficas--------------------------------------------
+source('R/funciones.R')
+library(sf)
+library(kableExtra)
+res_h3 <- 7 #Escribir un valor entre 4 y 7, ambos extremos inclusive
+ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
+# ez_ver <- 'da5b4ed7c6b126fce15f8980b7a0b389937f7f35/'
+ez_ver <- 'd7f79365168e688f0d78f521e53fbf2da19244ef/'
+ind_esp_url <- paste0(ruta_ez_gh, ez_ver, 'out/all_sources_all_variables_res_', res_h3, '.gpkg')
+ind_esp_url
+if(!any(grepl('^ind_esp$', ls()))){
+  ind_esp <- st_read(ind_esp_url, optional = T, quiet = T)
+  st_geometry(ind_esp) <- "geometry"
+  ind_esp <- st_transform(ind_esp, 32619)
+}
+if(!any(grepl('^pais_url$', ls()))){
+  pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
+  pais <- invisible(st_read(pais_url, optional = T, layer = 'pais', quiet = T))
+  st_geometry(pais) <- "geometry"
+  pais <- st_transform(pais, 32619)
+}
+if(!any(grepl('^ind_esp_inters$', ls()))){
+  ind_esp_inters <- st_intersection(pais, ind_esp)
+  colnames(ind_esp_inters) <- colnames(ind_esp)
+  ind_esp_inters$area_sq_m <- units::drop_units(st_area(ind_esp_inters))
+  ind_esp_inters$area_sq_km <- units::drop_units(st_area(ind_esp_inters))/1000000
+}
+if(!any(grepl('^ind_esp_inters$', ls())) && interactive()){
+  print(ind_esp_inters)
+}
+
+
+## -----------------------------------------------------------------------------
+# Objeto que acogerá nombres de objetos
+objetos <- character()
+
+
+## ----osmdist------------------------------------------------------------------
+objeto <- 'osm_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'OSM-DIST mean',
+    umbrales = c(50, 200, 500, 5000),
+    nombre = variables[[1]],
+    ord_cat = 'nin_rev')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+
+
+## ----estacionalidadtermica----------------------------------------------------
+objeto <- 'tseasonizzo_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'TSEASON-IZZO mean',
+    umbrales = c(1.1, 1.3, 1.5),
+    nombre = variables[[2]],
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+
+
+## ----estacionalidadpluvio-----------------------------------------------------
+objeto <- 'pseasonizzo_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'PSEASON-IZZO mean',
+    umbrales = c(30, 40, 50),
+    nombre = variables[[3]],
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+
+
+## ----heterogeneidadhabitat----------------------------------------------------
+objeto <- 'hethab_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'GHH coefficient_of_variation_1km',
+    umbrales = c(300, 450, 600),
+    nombre = variables[[4]],
+    ord_cat = 'in')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+
+
+## ----cuerposaguadist----------------------------------------------------------
+objeto <- 'wbwdist_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'WBW-DIST mean',
+    umbrales = c(1000, 2000, 3000),
+    nombre = variables[[5]],
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+
+
+## ----pendiente----------------------------------------------------------------
+objeto <- 'slope_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'G90 Slope',
+    umbrales = c(3, 9, 15),
+    nombre = variables[[6]],
+    ord_cat = 'in')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+
+
+## -----------------------------------------------------------------------------
+objeto <- 'insol_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'YINSOLTIME mean',
+    umbrales = c(3900, 4100, 4300),
+    nombre = variables[[7]],
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+
+
+## -----------------------------------------------------------------------------
+objeto <- 'ele_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'CGIAR-ELE mean',
+    umbrales = c(200, 400, 800),
+    nombre = variables[[8]],
+    ord_cat = 'ni')
+)
+get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['intervalos_y_etiquetas_kable']]
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+
+
+## ----umbralesapuntuaciones----------------------------------------------------
+puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiquetas']] %>% 
+  pivot_longer(cols = -matches('puntuación|etiquetas'), names_to = 'criterio') %>%
+  mutate(criterio = gsub(' intervalos', '', criterio)) %>% 
+  group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
+  summarise(value = paste(value, collapse = ' y ')) %>% 
+  pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
+  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`)
+) %>% bind_rows()
+readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
+puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+
+
+## -----------------------------------------------------------------------------
+all_criteria <- map(objetos[2:length(objetos)], ~ get(.x)[['vectorial']] %>% st_drop_geometry) %>% 
+  prepend(list(get(objetos[1])[['vectorial']])) %>% 
+  reduce(left_join, by = "hex_id")
+all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg', delete_dsn = T)
+
+
+## ---- fig.width=8, fig.height=12----------------------------------------------
+paleta <- c("altamente idóneo" = "#018571", "moderadamente idóneo" = "#80cdc1",
+               "marginalmente idóneo" = "#dfd2b3", "no idóneo" = "#a6611a")
+all_criteria_mapa <- all_criteria %>%
+  select(all_of(contains('etiquetas'))) %>% 
+  rename_with(~ stringr::str_replace(.x, 
+                                       pattern = ' etiquetas', 
+                                       replacement = ''), 
+                matches('etiquetas')) %>% 
+  pivot_longer(cols = -geometry) %>% 
+  ggplot +
+  aes(fill = value) +
+  geom_sf(lwd=0) + 
+  scale_fill_manual(values = paleta) +
+  labs(title = paste('Reclasificación de valores de criterios')) +
+  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
+  facet_wrap(~ name, ncol = 2) +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.key.size = unit(0.5, 'cm'), #change legend key size
+    legend.key.height = unit(0.5, 'cm'), #change legend key height
+    legend.key.width = unit(0.5, 'cm'), #change legend key width
+    legend.title = element_blank(), #change legend title font size
+    legend.text = element_text(size=2) #change legend text font size
+    )
+if(interactive()) dev.new()
+all_criteria_mapa
+
+
+## -----------------------------------------------------------------------------
+nombres_ahp_obj_sf <- data.frame(
+  `Nombre objeto sf` = paste(variables, 'puntuación'),
+  Etiqueta = variables, check.names = F) %>%
+  rownames_to_column('Nombre AHP')
+pesos <- flujo_completo_ahp$aggpref %>% as.data.frame %>%
+  rownames_to_column('Nombre AHP') %>% 
+  inner_join(nombres_ahp_obj_sf)
+all_criteria_scores <- all_criteria %>%
+  st_drop_geometry() %>% 
+  select(all_of(c('hex_id', grep(' puntuación', colnames(all_criteria), value = T)))) %>%
+  pivot_longer(-hex_id, names_to = 'Nombre objeto sf', values_to = 'Puntuación') %>% 
+  inner_join(pesos %>% select(`Nombre objeto sf`, Etiqueta, peso=AggPref)) %>% 
+  mutate(`Puntuación ponderada` = peso * `Puntuación`) %>% 
+  group_by(hex_id) %>%
+  summarise(`Puntuación agregada` = sum(`Puntuación ponderada`, na.rm = T)) %>%
+  inner_join(all_criteria) %>% 
+  st_sf(sf_column_name = 'geometry')
+summary(all_criteria_scores$`Puntuación agregada`)
+all_criteria_scores %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg', delete_dsn = T)
+if(interactive()) dev.new()
+all_criteria_scores %>% 
+  mutate(`Puntuación agregada` = scale(`Puntuación agregada`)) %>% 
+  ggplot +
+  aes(fill = `Puntuación agregada`) +
+  geom_sf(lwd=0) + 
+  scale_fill_fermenter(palette = 'BrBG', direction = 1, breaks = c(-1, 0, 1)) +
+  labs(title = paste('Puntuación agregada')) +
+  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.key.size = unit(0.5, 'cm'), #change legend key size
+    legend.key.height = unit(0.5, 'cm'), #change legend key height
+    legend.key.width = unit(0.5, 'cm'), #change legend key width
+    legend.title = element_blank(), #change legend title font size
+    legend.text = element_text(size=3) #change legend text font size
+    )
 
