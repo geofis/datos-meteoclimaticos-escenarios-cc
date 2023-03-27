@@ -45,15 +45,15 @@ if(cargar_script_supl_met) {
 
 ## Introducción
 
-Las estaciones meteorológicas y climáticas son imprescindibles recopilación de datos precisos y actualizados sobre el clima y las condiciones atmosféricas en una determinada región. Los datos producidos por las estaciones son utilizados por diversas disciplinas, desde la meteorología a la climatología, pasando por múltiples aplicaciones de la ingeniería, la producción agraria, el urbanismo y la geografía, entre otros campos [@world1996guia; @wmo2017guia; @wmo2017guide].
+Las estaciones meteorológicas y climáticas (EMC) son imprescindibles para la recopilación de datos precisos y actualizados sobre el clima y el tiempo atmosférico en una determinada región. Las aplicaciones de los datos recogidos por las EMC trascienden el ámbito de la meteorología y la climatología, pues su uso es bastante extendido en áreas de la ingeniería, la producción agraria, el urbanismo, la geografía, entre otros campos [@design1976hydrological; @Marchi2019EvaluatingWV; @vanWilgen2016RisingTA; @Chung2018SpatialAO]. Los datos proporcionados por estas estaciones ayudan a prever fenómenos meteorológicos extremos, como tormentas tropicales, huracanes, tornados y sequías, lo que permite a la población prepararse para responder adecuadamente. Asimismo, con estos datos se realizan múltiples estudios científicos sobre el clima y el cambio climático, lo que ayuda a comprender mejor la dinámica de la atmósfera y sus efectos sobre el planeta, contribuyendo en última instancia a informar y mejorar las estrategias de planificación [@world1996guia; @wmo2017guia; @wmo2017guide].
 
-Una buena red es esencial para la toma de decisiones informadas en una variedad de campos y es fundamental para el bienestar y la seguridad de las comunidades y del medio ambiente en general. Planificar una red adecuada de estaciones meteorológicas y climáticas (EMC) es fundamental para la gestión del territorio. Estudios previos, incluyendo en la República Dominicana, indican la falta de EMC en áreas importantes, una distribución espacial no uniforme y una precisión variable debido a sitios inadecuados [@theochari2021hydrometeorological; @rojasbriceno2021; @frei2003designing; @proyecto2019pma].
+Una buena red de EMC es esencial para la toma de decisiones informadas en una variedad de campos, y es fundamental para el bienestar y la seguridad de las comunidades y del medio ambiente en general. En general, planificar una red adecuada de EMC es fundamental para la gestión del territorio. Estudios previos, incluyendo algunos realizados en la República Dominicana, indican que faltan EMC en áreas importantes, y que la distribución espacial de la red no es homogénea, lo cual probablemente afecta la precisión del dato recogido [@theochari2021hydrometeorological; @rojasbriceno2021; @frei2003designing; @proyecto2019pma].
 
-La mayor parte de los países han evaluado, algunos incluso varias veces, el diseño de su red de estaciones, y han propuesto mejoras que en muchos casos han implementado satisfactoriamente [@frei2003]. También, varios países disponen de protocolos para la selección de sitios, los cuales comúnmente se han armonizado con estándares de la OMM o los amplían para adaptarlos a las particularidades de su territorio y a los usos previstos [@rojasbriceno2021; @theochari2021].
+Varios países han evaluado el diseño de su red de estaciones, algunos incluso en múltiples ocasiones, y han propuesto mejoras que en muchos casos han implementado satisfactoriamente [@frei2003designing]. En algunos casos, disponen de protocolos para la selección de sitios, los cuales comúnmente han armonizado con estándares generales de la OMM, o amplían estos últimos para adaptarlos a las particularidades de su territorio y a los usos previstos [@rojasbriceno2021; @theochari2021hydrometeorological].
 
-La República Dominicana es altamente vulnerable a los impactos del cambio climático y una red insuficiente de estaciones meteorológicas exacerba esta vulnerabilidad. Es necesario mejorar y expandir la red de estaciones meteorológicas, lo que requiere inversión en tecnología e infraestructura, así como alianzas entre agencias gubernamentales, entidades privadas e instituciones de investigación [CITAS]. Sin embargo, para realizar inversiones que optimicen al máximo los escasos recursos disponibles, se requiere producir, evaluar y seleccionar alternativas de redes de EMC utilizando criterios debidamente ponderados.
+La República Dominicana es altamente vulnerable a los impactos del cambio climático, por lo que una red de EMC insuficiente exacerba esta vulnerabilidad [@Le2019ClimateCA; @Lohmann2016ComparingVA; @Izzo2010ANC; @Roson2013AMF; @LincolnLenderking2020ClimateCA; @Mackay2017TheFO]. Es necesario mejorar y expandir la red de estaciones meteorológicas, para lo cual se requiere inversión en tecnología e infraestructura, así como alianzas entre agencias gubernamentales, entidades privadas e instituciones de investigación [@proyecto2019pma]. Sin embargo, para realizar inversiones que optimicen al máximo los escasos recursos disponibles, se requiere diseñar, evaluar y seleccionar alternativas de redes de EMC utilizando criterios ponderados.
 
-Varias investigaciones consultadas, concernientes al diseño de redes de estaciones climáticas, meteorológicas e hidrometeorológicas, coinciden en señalar que la metodología idónea para el diseño de redes de estaciones debería incluir una análisis multicriterio (MCA), y su extensión para la toma de decisiones (MCDM, siglas en inglés de *"toma de decisiones basada en multicriterio"*). Esta familia de métodos se basa en la colecta y análisis, mediante sistemas de información geográfica (SIG), de atributos de terreno integrados por grandes volúmenes de datos geoespaciales del territorio a instrumentar, pero al mismo tiempo incluyendo criterios específicos del público meta también espacializados en el territorio [@rojasbriceno2021; @theochari2021hydrometeorological; @tekleyohannes2021]. Aunque, varias investigaciones han mostrado el buen rendimiento que aportan determinadas técnicas geoestadísticas tradicionales [@ali2018; @valipour2019], así como algoritmos contemporáneos de *deep learning* en combinación con técnicas tradicionales [@safavi2021], o incluso la entropía [@bertini2021], los métodos MCA son preferidos por su facilidad de uso y porque ayudan a comprender mejor los atributos de terreno.
+Varias investigaciones consultadas, concernientes al diseño de redes de estaciones climáticas, meteorológicas e hidrometeorológicas, coinciden en señalar que la metodología idónea para el diseño de redes de estaciones puede realizarse mediante una análisis multicriterio (del inglés *multi-criteria decision analysis*, MCDA), específicamente, la técnica de toma de decisiones basadas en múltiples criterio (MCDM, siglas de *multi-criteria decision-making*) [@thiriez1975multiple; @koksalan2011multiple; @encyclopedia3010006]. La aplicación de esta familia de métodos en el ámbito de la planificación física y/o territorial, se apoya en la colecta y análisis de atributos de terreno integrados por grandes volúmenes de datos geoespaciales y, al mismo tiempo, incluyendo criterios específicos del público meta también espacializados en el territorio, empleando para ello sistemas de información geográfica (SIG) [@rojasbriceno2021; @theochari2021hydrometeorological; @tekleyohannes2021; @chakhar2008spatial; @malczewski2004gis; @eastman1998multi]. Aunque, varias investigaciones han mostrado el buen rendimiento que aportan determinadas técnicas geoestadísticas tradicionales [@ali2018; @valipour2019], así como algoritmos contemporáneos de *deep learning* en combinación con técnicas tradicionales [@safavi2021], o incluso la entropía [@bertini2021], los métodos MCA son preferidos por su facilidad de uso y porque ayudan a comprender mejor los atributos de terreno.
 
 El denominado "proceso analítico jerárquico", mejor conocido como AHP (*analytic hierarchy process*), es un método de selección de alternativas multicriterio que se fundamenta en la teoría general de los MCA, así como en la base de conocimientos de la jerarquía analítica. Fue desarrollado por Thomas Saaty en la década de 1970 [@saaty1977], con varias revisiones posteriores [@saaty2001; @saaty2007], y se utiliza para tomar decisiones cuando se deben considerar múltiples criterios y alternativas. Tradicionalmente, el método AHP se ha utilizado en investigaciones del ámbito de las ingenierías, ciencias sociales, económicas y empresariales, e igualmente en la toma de decisiones donde intervienen datos geoespaciales [@saaty2013; @darko2019; @podvezko2009; @subramanian2012; @breaz2017]. Recientemente, fue usado de forma eficiente en la selección de sitios idóneos para la instalación de estaciones meteoclimáticas en Perú [@rojasbriceno2021].
 
@@ -65,49 +65,47 @@ En este estudio, aplicamos AHP para seleccionar sitios idóneos donde instalar e
 
 ## Materiales y método
 
-Aplicamos una secuencia de tres técnicas interdependientes para formular distintas alternativas de redes de observación meteoclimático. En primer lugar, aplicamos un **proceso analítico jerárquico (AHP)**, que se utiliza para seleccionar la mejor opción entre diferentes alternativas, utilizando criterios de selección ponderados por personas con conocimiento del problema [@saaty2013]. Las repuestas originales normalmente deben organizarse y recodificarse y, posteriormente, se debe evaluar su consistencia. A continuación, se seleccionan las respuestas consistentes, o se ajustan las inconsistentes, y se establece la ponderación de criterios. Finalmente, la ponderación definida, se aplica a las fuentes de información disponible para obtener una lista de alternativas, de entre las cuales, se selecciona la más idónea de acuerdo con los criterios definidos.
+Aplicamos una secuencia de tres técnicas interdependientes para formular distintas alternativas de redes de observación meteoclimática, centrándonos en la selección de sitios idóneos para EMC. En primer lugar, aplicamos un **proceso analítico jerárquico (AHP)**, que se utiliza para seleccionar la mejor opción entre diferentes alternativas, utilizando criterios de selección ponderados por personas con conocimiento del problema [@saaty2013]. Las repuestas originales normalmente deben organizarse y recodificarse y, posteriormente, se debe evaluar su consistencia. A continuación, se seleccionan las respuestas consistentes, o se ajustan las inconsistentes, y se establece la ponderación de criterios. Finalmente, la ponderación definida, se aplica a las fuentes de información disponible para obtener una lista de alternativas, de entre las cuales, se selecciona la más idónea de acuerdo con los criterios definidos.
 
 Tanto el diseño de los formularios, como el procesamiento de respuestas y la ponderación de criterios, los realizamos empleando lenguajes de programación. Para diseñar los formularios, empleamos paquetes y funciones de Python, mientras que para los análisis nos auxiliamos del paquete `ahpsurvey` y otros del entorno de programación estadística R, diseñado para tales fines [@cho2019ahpsurvey; @rcoreteam2021r; @whicham2019welcome]. Describimos estos pasos detalladamente en la sección [Información suplementaria](#infosupl).
 
-Los resultados de la aplicación del método AHP fueron usados como entrada de una **simple aplicación de factores limitantes**, específicamente de localización de accesos y cuerpos de agua. Esto consistió en, simplemente, eliminar aquellos hexágonos que se encontraran dentro en la categoría "no idóneo" para los criterios "distancia a accesos" y "distancia a cuerpos de agua".
+Los resultados de la aplicación del método AHP fueron usados como entrada para realizar una simple **exclusión por factores limitantes**, específicamente la eliminación de hexágonos por su localización respecto de accesos y cuerpos de agua. Esto consistió en, simplemente, eliminar aquellos hexágonos que se encontraran dentro en la categoría "no idóneo" para los criterios "distancia a accesos" y "distancia a cuerpos de agua".
 
-Finalmente, al resultado del análisis anterior, le aplicamos un **análisis de proximidad entre estaciones existentes y propuestas**, utilizando umbrales de separación propuestos por la Organización Meteorológica Mundial [@design1976hydrological; @wmo2020guide]. Esto tuvo como objetivo proponer alternativas que garantizaran homogeneidad en la distribución espacial de los sitios propuestos (más detalles en la sección [Información suplementaria](#infosupl)).
+Finalmente, al resultado del procedimiento anterior, le aplicamos un **análisis de proximidad respecto de estaciones existentes** con el objetivo de garantizar homogeneidad espacial y evitar redundancia. Para este fin, utilizamos umbrales de separación propuestos por la Organización Meteorológica Mundial [@design1976hydrological; @wmo2020guide] (más detalles en la sección [Información suplementaria](#infosupl)).
 
 ## Resultados
 
-La importancia otorgada por expertos por medio del método AHP a los criterios preseleccionados, generó la tabla de pesos agregados. 
+### Proceso analítico jerárquico (AHP) y reclasificación de fuentes cartográficas
+
+De los ocho criterios elegidos a priori para valoración por expertos y expertas, los cuatro que recibieron la mayor ponderación agregada, en orden descendente, fueron `r paste(as.character(prefagg[1:3, 'Variable', drop=T]), collapse = ', ')` y  `r as.character(prefagg[4, 'Variable', drop=T])`. La importancia de cada criterio, incluyendo su desviación estándar, puede consultarse la tabla \@ref(tab:preferenciasagregadas)
 
 
-```{r}
-kable_prefagg
+```{r preferenciasagregadas}
+prefagg %>% 
+  estilo_kable(titulo = 'Preferencias agregadas',
+               cubre_anchura = F) %>% 
+  kable_styling(position = 'left') %>% 
+  column_spec(column = 1:2, width = "10em")
+```
+
+Las puntuaciones reclasificadas de cada criterio mostraron una amplia variabilidad de la superficie ocupada por cada categoría (ver tabla \@ref(tab:areasproporcionales)). De los criterios ponderados con un alto peso dentro de la valoración AHP, las estacionalidades pluviométrica y térmica presentaron proporciones relativamente equilibradas del territorio según las cuatro clases de idoneidad. Por otra parte, el criterio horas de insolación, mostró una importante acumulación de áreas idóneas (altamente idóneas y moderadamente idóneas) para el establecimiento de estaciones. Por el contrario, el criterio elevación resultó predominantemente no idóneo y marginalmente idóneo. Esto se debió a que los sistemas montañosos dominicanos presentan las menores densidades de estaciones meteoclimáticas, por lo que se prefirió impulsar la idoneidad de la topografía elevada para el establecimiento de EMC.
+
+```{r areasproporcionales}
+areas_proporcionales %>%
+  kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Áreas proporcionales por cada criterios para la selección de sitios de estaciones meteoclimáticas') %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+En términos de distribución espacial, el patrón más común fue el de tipo concentrado (ver figura \@ref(fig:mapacriteriospuntuaciones)). Todos los criterios presentaron autocorrelación espacial positiva, lo que significa que los hexágonos se aglomeran en cúmulos de valores grandes ("grumos" de hexágonos idóneos, formando *hotspots*) y/o pequeños (cúmulos de hexágonos no idóneos, formando *coldspots*). Destaca, aunque era esperable, la particular la distribución espacial de la distancia a cuerpos de agua, con un patrón muy homogéneo y monótono de hexágonos de alta idoneidad.
+
+```{r mapacriteriospuntuaciones, fig.width=8, fig.height=12, fig.cap='Mapas puntuaciones reclasificadas de cada criterio'}
+all_criteria_mapa
 ```
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Restricciones por accesibilidad y cuerpos de aguas
+### Exclusión por factores limitantes
 
 
 
@@ -116,7 +114,7 @@ kable_prefagg
 ```
 
 
-### Aplicación de criterios de proximidad, meta final
+### Análisis de proximidad respecto de estaciones existentes
 
 
 ## Información suplementaria {#infosupl}

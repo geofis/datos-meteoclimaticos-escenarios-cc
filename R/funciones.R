@@ -237,6 +237,32 @@ generar_resumen_grafico_estadistico_criterios <- function(
       return(NA)
     }
   )
+  area_proporcional <- tryCatch(
+    success <- vectorial %>%
+      mutate(
+        área = units::drop_units(st_area(geometry)),
+        `área total` = sum(units::drop_units(st_area(geometry)))) %>%
+      st_drop_geometry %>%
+      group_by(across(all_of(matches('etiquetas')))) %>%
+      summarise(proporción = sum(área, na.rm = T)/first(`área total`)*100) %>%
+      na.omit() %>%
+      mutate(proporción = as.numeric(scale(proporción, center = FALSE,
+                                scale = sum(proporción, na.rm = TRUE)/100))),
+    error = function(cond) {
+      message('Caught an error. This is the error message: ', cond, appendLF = TRUE)
+      return(NA)
+    }
+  )
+  area_proporcional_kable <- tryCatch(
+    success <- area_proporcional %>% 
+      kable(format = 'html', escape = F, booktabs = T, digits = 2,
+            caption = paste('Áreas proporcionales de', nombre)) %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T),
+    error = function(cond) {
+      message('Caught an error. This is the error message: ', cond, appendLF = TRUE)
+      return(NA)
+    }
+  )
   mapa_con_pais <- tryCatch(
     success <- reclasificacion$mapa +
       geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50'),
@@ -269,6 +295,8 @@ generar_resumen_grafico_estadistico_criterios <- function(
     resumen_estadistico = resumen_estadistico,
     violin = violin,
     vectorial = vectorial,
+    area_proporcional = area_proporcional,
+    area_proporcional_kable = area_proporcional_kable,
     mapa = reclasificacion[['mapa']],
     mapa_con_pais = mapa_con_pais,
     intervalos_y_etiquetas = reclasificacion[['intervalos_y_etiquetas']],

@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
 library(kableExtra)
 library(tidyverse)
 library(ahpsurvey)
+library(janitor)
 estilo_kable <- function(df, titulo = '', cubre_anchura = T) {
   df %>% kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = titulo) %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = cubre_anchura)
@@ -251,11 +252,12 @@ kable_prefind
 
 
 ## ----prefagg------------------------------------------------------------------
-kable_prefagg <- flujo_completo_ahp$aggpref %>%
+prefagg <- flujo_completo_ahp$aggpref %>%
   as.data.frame() %>% 
   rownames_to_column('Variable') %>% 
   mutate(Variable = factor(Variable, labels = variables[sort(names(variables))])) %>% 
-  arrange(desc(AggPref)) %>% 
+  arrange(desc(AggPref))
+kable_prefagg <- prefagg %>% 
   estilo_kable(titulo = 'Preferencias agregadas',
                cubre_anchura = F) %>% 
   kable_styling(position = 'left') %>% 
@@ -311,6 +313,7 @@ assign(
     ord_cat = 'nin_rev')
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
+get(objeto)[['area_proporcional_kable']]
 get(objeto)[['intervalos_y_etiquetas_kable']]
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 if(!objeto %in% objetos) objetos <- c(objetos, objeto)
@@ -328,6 +331,7 @@ assign(
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
+get(objeto)[['area_proporcional_kable']]
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 
@@ -344,6 +348,7 @@ assign(
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
+get(objeto)[['area_proporcional_kable']]
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 
@@ -360,6 +365,7 @@ assign(
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
+get(objeto)[['area_proporcional_kable']]
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 
@@ -376,6 +382,7 @@ assign(
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
+get(objeto)[['area_proporcional_kable']]
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 
@@ -392,6 +399,7 @@ assign(
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
+get(objeto)[['area_proporcional_kable']]
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 
@@ -408,6 +416,7 @@ assign(
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
+get(objeto)[['area_proporcional_kable']]
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 
@@ -424,6 +433,7 @@ assign(
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
+get(objeto)[['area_proporcional_kable']]
 # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
 if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 
@@ -438,9 +448,25 @@ puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiqueta
   select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`)
 ) %>% bind_rows()
 readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
-puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
+puntuaciones_umbrales_kable <- puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
         caption = 'Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas') %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+puntuaciones_umbrales_kable
+
+
+## ----areasproporcionales------------------------------------------------------
+areas_proporcionales <- map(objetos, function(x) get(x)[['area_proporcional']] %>% 
+  pivot_longer(cols = -matches('proporción'), names_to = 'criterio') %>%
+  mutate(criterio = gsub(' etiquetas', '', criterio)) %>% 
+  pivot_wider(names_from = value, values_from = proporción)) %>% bind_rows() %>% 
+  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`) %>% 
+  adorn_totals('col') 
+readODS::write_ods(x = areas_proporcionales,
+                   path = 'fuentes/umbrales-criterios-ahp/areas_proporcionales.ods')
+areas_proporcionales_kable <- areas_proporcionales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Áreas proporcionales por cada criterios para la selección de sitios de estaciones meteoclimáticas') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+areas_proporcionales_kable
 
 
 ## -----------------------------------------------------------------------------

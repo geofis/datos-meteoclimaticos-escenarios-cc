@@ -1,6 +1,5 @@
 Selección de sitios para el establecimiento de una red de estaciones
-meteoclimáticas en República Dominicana, usando AHP y análisis de
-autocorrelación espacial
+meteoclimáticas en República Dominicana usando decisión multicriterio
 ================
 José Martínez<br>Michela Izzo
 
@@ -9,9 +8,85 @@ Versión HTML (más legible e interactiva),
 
 ## Introducción
 
-El método de selección de alternativas multicriterio AHP (*Analytic
-Hierarchy Process*) se fundamenta en la teoría de la toma de decisiones
-multicriterio (MCA) y la teoría de la jerarquía analítica. Fue
+Las estaciones meteorológicas y climáticas (EMC) son imprescindibles
+para la recopilación de datos precisos y actualizados sobre el clima y
+el tiempo atmosférico en una determinada región. Las aplicaciones de los
+datos recogidos por las EMC trascienden el ámbito de la meteorología y
+la climatología, pues su uso es bastante extendido en áreas de la
+ingeniería, la producción agraria, el urbanismo, la geografía, entre
+otros campos (World Meteorological Organization (WMO) and The
+International Association of Hydrological Sciences 1976; Marchi et al.
+2019; Wilgen et al. 2016; Chung, Abdel-Aty, and Lee 2018). Los datos
+proporcionados por estas estaciones ayudan a prever fenómenos
+meteorológicos extremos, como tormentas tropicales, huracanes, tornados
+y sequías, lo que permite a la población prepararse para responder
+adecuadamente. Asimismo, con estos datos se realizan múltiples estudios
+científicos sobre el clima y el cambio climático, lo que ayuda a
+comprender mejor la dinámica de la atmósfera y sus efectos sobre el
+planeta, contribuyendo en última instancia a informar y mejorar las
+estrategias de planificación (World Meteorological Organization (WMO)
+1996, 2017a, 2017b).
+
+Una buena red de EMC es esencial para la toma de decisiones informadas
+en una variedad de campos, y es fundamental para el bienestar y la
+seguridad de las comunidades y del medio ambiente en general. En
+general, planificar una red adecuada de EMC es fundamental para la
+gestión del territorio. Estudios previos, incluyendo algunos realizados
+en la República Dominicana, indican que faltan EMC en áreas importantes,
+y que la distribución espacial de la red no es homogénea, lo cual
+probablemente afecta la precisión del dato recogido (Theochari et al.
+2021; Rojas Briceño et al. 2021; Frei 2003; Programa Mundial de
+Alimentos (PMA) 2019).
+
+Varios países han evaluado el diseño de su red de estaciones, algunos
+incluso en múltiples ocasiones, y han propuesto mejoras que en muchos
+casos han implementado satisfactoriamente (Frei 2003). En algunos casos,
+disponen de protocolos para la selección de sitios, los cuales
+comúnmente han armonizado con estándares generales de la OMM, o amplían
+estos últimos para adaptarlos a las particularidades de su territorio y
+a los usos previstos (Rojas Briceño et al. 2021; Theochari et al. 2021).
+
+La República Dominicana es altamente vulnerable a los impactos del
+cambio climático, por lo que una red de EMC insuficiente exacerba esta
+vulnerabilidad (Le 2019; Lohmann 2016; Izzo et al. 2010; Roson 2013;
+Lenderking, Robinson, and Carlson 2020; Mackay and Spencer 2017). Es
+necesario mejorar y expandir la red de estaciones meteorológicas, para
+lo cual se requiere inversión en tecnología e infraestructura, así como
+alianzas entre agencias gubernamentales, entidades privadas e
+instituciones de investigación (Programa Mundial de Alimentos (PMA)
+2019). Sin embargo, para realizar inversiones que optimicen al máximo
+los escasos recursos disponibles, se requiere diseñar, evaluar y
+seleccionar alternativas de redes de EMC utilizando criterios
+ponderados.
+
+Varias investigaciones consultadas, concernientes al diseño de redes de
+estaciones climáticas, meteorológicas e hidrometeorológicas, coinciden
+en señalar que la metodología idónea para el diseño de redes de
+estaciones puede realizarse mediante una análisis multicriterio (del
+inglés *multi-criteria decision analysis*, MCDA), específicamente, la
+técnica de toma de decisiones basadas en múltiples criterio (MCDM,
+siglas de *multi-criteria decision-making*) (Thiriez and Zionts 1975;
+Köksalan, Wallenius, and Zionts 2011; Taherdoost and Madanchian 2023).
+La aplicación de esta familia de métodos en el ámbito de la
+planificación física y/o territorial, se apoya en la colecta y análisis
+de atributos de terreno integrados por grandes volúmenes de datos
+geoespaciales y, al mismo tiempo, incluyendo criterios específicos del
+público meta también espacializados en el territorio, empleando para
+ello sistemas de información geográfica (SIG) (Rojas Briceño et al.
+2021; Theochari et al. 2021; Tekleyohannes et al. 2021; Chakhar and
+Mousseau 2008; Malczewski 2004; Eastman, Jiang, and Toledano 1998).
+Aunque, varias investigaciones han mostrado el buen rendimiento que
+aportan determinadas técnicas geoestadísticas tradicionales (Ali and
+Othman 2018; Valipour, Ghorbani, and Asadi 2019), así como algoritmos
+contemporáneos de *deep learning* en combinación con técnicas
+tradicionales (Safavi, Siuki, and Hashemi 2021), o incluso la entropía
+(Bertini et al. 2021), los métodos MCA son preferidos por su facilidad
+de uso y porque ayudan a comprender mejor los atributos de terreno.
+
+El denominado “proceso analítico jerárquico”, mejor conocido como AHP
+(*analytic hierarchy process*), es un método de selección de
+alternativas multicriterio que se fundamenta en la teoría general de los
+MCA, así como en la base de conocimientos de la jerarquía analítica. Fue
 desarrollado por Thomas Saaty en la década de 1970 (Thomas L. Saaty
 1977), con varias revisiones posteriores (Thomas L. Saaty 2001; Thomas
 L. Saaty and Tran 2007), y se utiliza para tomar decisiones cuando se
@@ -53,10 +128,14 @@ personas con experiencia en temas climáticos y meteorológicos.
 
 ## Materiales y método
 
-El método AHP se utiliza para seleccionar la mejor opción entre
-diferentes alternativas, utilizando criterios de selección ponderados
-por personas con conocimiento del problema (Thomas L. Saaty 2013). Las
-repuestas originales normalmente deben organizarse y recodificarse y,
+Aplicamos una secuencia de tres técnicas interdependientes para formular
+distintas alternativas de redes de observación meteoclimática,
+centrándonos en la selección de sitios idóneos para EMC. En primer
+lugar, aplicamos un **proceso analítico jerárquico (AHP)**, que se
+utiliza para seleccionar la mejor opción entre diferentes alternativas,
+utilizando criterios de selección ponderados por personas con
+conocimiento del problema (Thomas L. Saaty 2013). Las repuestas
+originales normalmente deben organizarse y recodificarse y,
 posteriormente, se debe evaluar su consistencia. A continuación, se
 seleccionan las respuestas consistentes, o se ajustan las
 inconsistentes, y se establece la ponderación de criterios. Finalmente,
@@ -73,256 +152,45 @@ diseñado para tales fines (Cho 2019; R Core Team 2021; Wickham et al.
 2019). Describimos estos pasos detalladamente en la sección [Información
 suplementaria](#infosupl).
 
+Los resultados de la aplicación del método AHP fueron usados como
+entrada para realizar una simple **exclusión por factores limitantes**,
+específicamente la eliminación de hexágonos por su localización respecto
+de accesos y cuerpos de agua. Esto consistió en, simplemente, eliminar
+aquellos hexágonos que se encontraran dentro en la categoría “no idóneo”
+para los criterios “distancia a accesos” y “distancia a cuerpos de
+agua”.
+
+Finalmente, al resultado del procedimiento anterior, le aplicamos un
+**análisis de proximidad respecto de estaciones existentes** con el
+objetivo de garantizar homogeneidad espacial y evitar redundancia. Para
+este fin, utilizamos umbrales de separación propuestos por la
+Organización Meteorológica Mundial (World Meteorological Organization
+(WMO) and The International Association of Hydrological Sciences 1976;
+World Meteorological Organization (WMO) 2020) (más detalles en la
+sección [Información suplementaria](#infosupl)).
+
 ## Resultados
 
-### Importancia de los criterios
+### Proceso analítico jerárquico (AHP) y reclasificación de fuentes cartográficas
 
-Las tablas <a href="#tab:prefind">1</a> y <a href="#tab:prefagg">2</a>
-muestran las preferencias individuales y agregadas, respectivamente, de
-las personas entrevistadas cuyas respuestas fueron consistentes.
-
-``` r
-kable_prefind <- flujo_completo_ahp$indpref %>% 
-  mutate(`Persona consultada` = cr_indicador[cr_indicador[,1]==1, 'Persona consultada']) %>% 
-  relocate(`Persona consultada`) %>% 
-  estilo_kable(titulo = 'Preferencias individuales',
-               cubre_anchura = F) %>% 
-  kable_styling(position = 'left') %>% 
-  column_spec(column = 1:2, width = "10em")
-kable_prefind
-```
-
-<table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
-<caption>
-Table 1: Preferencias individuales
-</caption>
-<thead>
-<tr>
-<th style="text-align:right;">
-Persona consultada
-</th>
-<th style="text-align:right;">
-acce
-</th>
-<th style="text-align:right;">
-temp
-</th>
-<th style="text-align:right;">
-pluv
-</th>
-<th style="text-align:right;">
-habi
-</th>
-<th style="text-align:right;">
-agua
-</th>
-<th style="text-align:right;">
-pend
-</th>
-<th style="text-align:right;">
-inso
-</th>
-<th style="text-align:right;">
-elev
-</th>
-<th style="text-align:right;">
-CR
-</th>
-<th style="text-align:left;">
-top1
-</th>
-<th style="text-align:left;">
-top2
-</th>
-<th style="text-align:left;">
-top3
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:right;width: 10em; ">
-1
-</td>
-<td style="text-align:right;width: 10em; ">
-0.04
-</td>
-<td style="text-align:right;">
-0.22
-</td>
-<td style="text-align:right;">
-0.32
-</td>
-<td style="text-align:right;">
-0.16
-</td>
-<td style="text-align:right;">
-0.02
-</td>
-<td style="text-align:right;">
-0.02
-</td>
-<td style="text-align:right;">
-0.08
-</td>
-<td style="text-align:right;">
-0.14
-</td>
-<td style="text-align:right;">
-0.09
-</td>
-<td style="text-align:left;">
-acce_pend
-</td>
-<td style="text-align:left;">
-pluv_elev
-</td>
-<td style="text-align:left;">
-pend_inso
-</td>
-</tr>
-<tr>
-<td style="text-align:right;width: 10em; ">
-2
-</td>
-<td style="text-align:right;width: 10em; ">
-0.09
-</td>
-<td style="text-align:right;">
-0.23
-</td>
-<td style="text-align:right;">
-0.25
-</td>
-<td style="text-align:right;">
-0.07
-</td>
-<td style="text-align:right;">
-0.07
-</td>
-<td style="text-align:right;">
-0.03
-</td>
-<td style="text-align:right;">
-0.11
-</td>
-<td style="text-align:right;">
-0.16
-</td>
-<td style="text-align:right;">
-0.07
-</td>
-<td style="text-align:left;">
-habi_agua
-</td>
-<td style="text-align:left;">
-habi_inso
-</td>
-<td style="text-align:left;">
-pluv_agua
-</td>
-</tr>
-<tr>
-<td style="text-align:right;width: 10em; ">
-4
-</td>
-<td style="text-align:right;width: 10em; ">
-0.06
-</td>
-<td style="text-align:right;">
-0.05
-</td>
-<td style="text-align:right;">
-0.28
-</td>
-<td style="text-align:right;">
-0.05
-</td>
-<td style="text-align:right;">
-0.06
-</td>
-<td style="text-align:right;">
-0.06
-</td>
-<td style="text-align:right;">
-0.31
-</td>
-<td style="text-align:right;">
-0.14
-</td>
-<td style="text-align:right;">
-0.07
-</td>
-<td style="text-align:left;">
-temp_inso
-</td>
-<td style="text-align:left;">
-habi_inso
-</td>
-<td style="text-align:left;">
-temp_pend
-</td>
-</tr>
-<tr>
-<td style="text-align:right;width: 10em; ">
-9
-</td>
-<td style="text-align:right;width: 10em; ">
-0.10
-</td>
-<td style="text-align:right;">
-0.19
-</td>
-<td style="text-align:right;">
-0.25
-</td>
-<td style="text-align:right;">
-0.07
-</td>
-<td style="text-align:right;">
-0.09
-</td>
-<td style="text-align:right;">
-0.04
-</td>
-<td style="text-align:right;">
-0.22
-</td>
-<td style="text-align:right;">
-0.04
-</td>
-<td style="text-align:right;">
-0.06
-</td>
-<td style="text-align:left;">
-habi_agua
-</td>
-<td style="text-align:left;">
-agua_elev
-</td>
-<td style="text-align:left;">
-acce_elev
-</td>
-</tr>
-</tbody>
-</table>
+De los ocho criterios elegidos a priori para valoración por expertos y
+expertas, los cuatro que recibieron la mayor ponderación agregada, en
+orden descendente, fueron estacionalidad pluviométrica, horas de
+insolación, estacionalidad térmica y elevación. La importancia de cada
+criterio, incluyendo su desviación estándar, puede consultarse la tabla
+<a href="#tab:preferenciasagregadas">1</a>
 
 ``` r
-kable_prefagg <- flujo_completo_ahp$aggpref %>%
-  as.data.frame() %>% 
-  rownames_to_column('Variable') %>% 
-  mutate(Variable = factor(Variable, labels = variables[sort(names(variables))])) %>% 
-  arrange(desc(AggPref)) %>% 
+prefagg %>% 
   estilo_kable(titulo = 'Preferencias agregadas',
                cubre_anchura = F) %>% 
   kable_styling(position = 'left') %>% 
   column_spec(column = 1:2, width = "10em")
-kable_prefagg
 ```
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 2: Preferencias agregadas
+Table 1: Preferencias agregadas
 </caption>
 <thead>
 <tr>
@@ -429,948 +297,52 @@ pendiente
 </tbody>
 </table>
 
-### Mapas de los subcriterios
+Las puntuaciones reclasificadas de cada criterio mostraron una amplia
+variabilidad de la superficie ocupada por cada categoría (ver tabla
+<a href="#tab:areasproporcionales">2</a>). De los criterios ponderados
+con un alto peso dentro de la valoración AHP, las estacionalidades
+pluviométrica y térmica presentaron proporciones relativamente
+equilibradas del territorio según las cuatro clases de idoneidad. Por
+otra parte, el criterio horas de insolación, mostró una importante
+acumulación de áreas idóneas (altamente idóneas y moderadamente idóneas)
+para el establecimiento de estaciones. Por el contrario, el criterio
+elevación resultó predominantemente no idóneo y marginalmente idóneo.
+Esto se debió a que los sistemas montañosos dominicanos presentan las
+menores densidades de estaciones meteoclimáticas, por lo que se prefirió
+impulsar la idoneidad de la topografía elevada para el establecimiento
+de EMC.
 
 ``` r
-source('R/funciones.R')
-library(sf)
-library(kableExtra)
-res_h3 <- 7 #Escribir un valor entre 4 y 7, ambos extremos inclusive
-ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
-# ez_ver <- 'da5b4ed7c6b126fce15f8980b7a0b389937f7f35/'
-ez_ver <- 'd7f79365168e688f0d78f521e53fbf2da19244ef/'
-ind_esp_url <- paste0(ruta_ez_gh, ez_ver, 'out/all_sources_all_variables_res_', res_h3, '.gpkg')
-ind_esp_url
-```
-
-    ## [1] "https://raw.githubusercontent.com/geofis/zonal-statistics/d7f79365168e688f0d78f521e53fbf2da19244ef/out/all_sources_all_variables_res_7.gpkg"
-
-``` r
-if(!any(grepl('^ind_esp$', ls()))){
-  ind_esp <- st_read(ind_esp_url, optional = T, quiet = T)
-  st_geometry(ind_esp) <- "geometry"
-  ind_esp <- st_transform(ind_esp, 32619)
-}
-if(!any(grepl('^pais_url$', ls()))){
-  pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
-  pais <- invisible(st_read(pais_url, optional = T, layer = 'pais', quiet = T))
-  st_geometry(pais) <- "geometry"
-  pais <- st_transform(pais, 32619)
-}
-if(!any(grepl('^ind_esp_inters$', ls()))){
-  ind_esp_inters <- st_intersection(pais, ind_esp)
-  colnames(ind_esp_inters) <- colnames(ind_esp)
-  ind_esp_inters$area_sq_m <- units::drop_units(st_area(ind_esp_inters))
-  ind_esp_inters$area_sq_km <- units::drop_units(st_area(ind_esp_inters))/1000000
-}
-if(!any(grepl('^ind_esp_inters$', ls())) && interactive()){
-  print(ind_esp_inters)
-}
-```
-
-Distancia a accesos.
-
-``` r
-# Objeto que acogerá nombres de objetos
-objetos <- character()
-```
-
-``` r
-objeto <- 'osm_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'OSM-DIST mean',
-    umbrales = c(50, 200, 500, 5000),
-    nombre = variables[[1]],
-    ord_cat = 'nin_rev')
-)
-```
-
-    ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
-    ##    12.76   289.04   534.24  1243.20  1412.68 32795.66        2
-
-``` r
-get(objeto)[c('violin', 'mapa_con_pais')]
-```
-
-    ## $violin
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/osmdist-1.png" width="100%" />
-
-    ## 
-    ## $mapa_con_pais
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/osmdist-2.png" width="100%" />
-
-``` r
-get(objeto)[['intervalos_y_etiquetas_kable']]
+areas_proporcionales %>%
+  kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Áreas proporcionales por cada criterios para la selección de sitios de estaciones meteoclimáticas') %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 3: Intervalos de distancia a accesos
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-distancia a accesos intervalos
-</th>
-<th style="text-align:left;">
-distancia a accesos etiquetas
-</th>
-<th style="text-align:right;">
-distancia a accesos puntuación
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-\[12.8,50\]
-</td>
-<td style="text-align:left;">
-no idóneo
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(50,200\]
-</td>
-<td style="text-align:left;">
-altamente idóneo
-</td>
-<td style="text-align:right;">
-4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(200,500\]
-</td>
-<td style="text-align:left;">
-moderadamente idóneo
-</td>
-<td style="text-align:right;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(500,5e+03\]
-</td>
-<td style="text-align:left;">
-marginalmente idóneo
-</td>
-<td style="text-align:right;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(5e+03,3.28e+04\]
-</td>
-<td style="text-align:left;">
-no idóneo
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Estacionalidad térmica.
-
-``` r
-objeto <- 'tseasonizzo_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'TSEASON-IZZO mean',
-    umbrales = c(1.1, 1.3, 1.5),
-    nombre = variables[[2]],
-    ord_cat = 'ni')
-)
-```
-
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    ##   0.573   1.195   1.301   1.326   1.477   1.866     105
-
-``` r
-get(objeto)[c('violin', 'mapa_con_pais')]
-```
-
-    ## $violin
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadtermica-1.png" width="100%" />
-
-    ## 
-    ## $mapa_con_pais
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadtermica-2.png" width="100%" />
-
-``` r
-get(objeto)[['intervalos_y_etiquetas_kable']]
-```
-
-<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-<caption>
-Table 4: Intervalos de estacionalidad térmica
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-estacionalidad térmica intervalos
-</th>
-<th style="text-align:left;">
-estacionalidad térmica etiquetas
-</th>
-<th style="text-align:right;">
-estacionalidad térmica puntuación
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-\[0.573,1.1\]
-</td>
-<td style="text-align:left;">
-no idóneo
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(1.1,1.3\]
-</td>
-<td style="text-align:left;">
-marginalmente idóneo
-</td>
-<td style="text-align:right;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(1.3,1.5\]
-</td>
-<td style="text-align:left;">
-moderadamente idóneo
-</td>
-<td style="text-align:right;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(1.5,1.87\]
-</td>
-<td style="text-align:left;">
-altamente idóneo
-</td>
-<td style="text-align:right;">
-4
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Estacionalidad pluviométrica.
-
-``` r
-objeto <- 'pseasonizzo_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'PSEASON-IZZO mean',
-    umbrales = c(30, 40, 50),
-    nombre = variables[[3]],
-    ord_cat = 'ni')
-)
-```
-
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    ##   19.51   31.14   43.51   42.76   52.55   89.60     105
-
-``` r
-get(objeto)[c('violin', 'mapa_con_pais')]
-```
-
-    ## $violin
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadpluvio-1.png" width="100%" />
-
-    ## 
-    ## $mapa_con_pais
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadpluvio-2.png" width="100%" />
-
-``` r
-get(objeto)[['intervalos_y_etiquetas_kable']]
-```
-
-<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-<caption>
-Table 5: Intervalos de estacionalidad pluviométrica
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-estacionalidad pluviométrica intervalos
-</th>
-<th style="text-align:left;">
-estacionalidad pluviométrica etiquetas
-</th>
-<th style="text-align:right;">
-estacionalidad pluviométrica puntuación
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-\[19.5,30\]
-</td>
-<td style="text-align:left;">
-no idóneo
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(30,40\]
-</td>
-<td style="text-align:left;">
-marginalmente idóneo
-</td>
-<td style="text-align:right;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(40,50\]
-</td>
-<td style="text-align:left;">
-moderadamente idóneo
-</td>
-<td style="text-align:right;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(50,89.6\]
-</td>
-<td style="text-align:left;">
-altamente idóneo
-</td>
-<td style="text-align:right;">
-4
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-
-# Para comparar con CHELSA
-# objeto <- 'chbio15_rcl'
-# assign(
-#   objeto,
-#   generar_resumen_grafico_estadistico_criterios(
-#     variable = 'CH-BIO bio15 precipitation seasonality',
-#     umbrales = c(300, 400, 500),
-#     nombre = 'Estacionalidad pluviométrica',
-#     ord_cat = 'ni')
-# )
-# get(objeto)[c('violin', 'mapa_con_pais', 'intervalos_y_etiquetas_kable')]
-# # clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-```
-
-Heterogeneidad de hábitat.
-
-``` r
-objeto <- 'hethab_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'GHH coefficient_of_variation_1km',
-    umbrales = c(300, 450, 600),
-    nombre = variables[[4]],
-    ord_cat = 'in')
-)
-```
-
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##     0.0   317.6   399.6   481.4   529.5  3563.4
-
-``` r
-get(objeto)[c('violin', 'mapa_con_pais')]
-```
-
-    ## $violin
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/heterogeneidadhabitat-1.png" width="100%" />
-
-    ## 
-    ## $mapa_con_pais
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/heterogeneidadhabitat-2.png" width="100%" />
-
-``` r
-get(objeto)[['intervalos_y_etiquetas_kable']]
-```
-
-<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-<caption>
-Table 6: Intervalos de heterogeneidad de hábitat
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-heterogeneidad de hábitat intervalos
-</th>
-<th style="text-align:left;">
-heterogeneidad de hábitat etiquetas
-</th>
-<th style="text-align:right;">
-heterogeneidad de hábitat puntuación
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-\[0,300\]
-</td>
-<td style="text-align:left;">
-altamente idóneo
-</td>
-<td style="text-align:right;">
-4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(300,450\]
-</td>
-<td style="text-align:left;">
-moderadamente idóneo
-</td>
-<td style="text-align:right;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(450,600\]
-</td>
-<td style="text-align:left;">
-marginalmente idóneo
-</td>
-<td style="text-align:right;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(600,3.56e+03\]
-</td>
-<td style="text-align:left;">
-no idóneo
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Distancia a cuerpos de agua y humedales.
-
-``` r
-objeto <- 'wbwdist_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'WBW-DIST mean',
-    umbrales = c(1000, 2000, 3000),
-    nombre = variables[[5]],
-    ord_cat = 'ni')
-)
-```
-
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##       0    2698    6069    7134   10545   26424
-
-``` r
-get(objeto)[c('violin', 'mapa_con_pais')]
-```
-
-    ## $violin
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/cuerposaguadist-1.png" width="100%" />
-
-    ## 
-    ## $mapa_con_pais
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/cuerposaguadist-2.png" width="100%" />
-
-``` r
-get(objeto)[['intervalos_y_etiquetas_kable']]
-```
-
-<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-<caption>
-Table 7: Intervalos de distancia a cuerpos de agua
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-distancia a cuerpos de agua intervalos
-</th>
-<th style="text-align:left;">
-distancia a cuerpos de agua etiquetas
-</th>
-<th style="text-align:right;">
-distancia a cuerpos de agua puntuación
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-\[0,1e+03\]
-</td>
-<td style="text-align:left;">
-no idóneo
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(1e+03,2e+03\]
-</td>
-<td style="text-align:left;">
-marginalmente idóneo
-</td>
-<td style="text-align:right;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(2e+03,3e+03\]
-</td>
-<td style="text-align:left;">
-moderadamente idóneo
-</td>
-<td style="text-align:right;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(3e+03,2.64e+04\]
-</td>
-<td style="text-align:left;">
-altamente idóneo
-</td>
-<td style="text-align:right;">
-4
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Pendiente.
-
-``` r
-objeto <- 'slope_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'G90 Slope',
-    umbrales = c(3, 9, 15),
-    nombre = variables[[6]],
-    ord_cat = 'in')
-)
-```
-
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##   0.000   1.370   4.489   6.773  10.840  32.705
-
-``` r
-get(objeto)[c('violin', 'mapa_con_pais')]
-```
-
-    ## $violin
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/pendiente-1.png" width="100%" />
-
-    ## 
-    ## $mapa_con_pais
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/pendiente-2.png" width="100%" />
-
-``` r
-get(objeto)[['intervalos_y_etiquetas_kable']]
-```
-
-<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-<caption>
-Table 8: Intervalos de pendiente
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-pendiente intervalos
-</th>
-<th style="text-align:left;">
-pendiente etiquetas
-</th>
-<th style="text-align:right;">
-pendiente puntuación
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-\[0,3\]
-</td>
-<td style="text-align:left;">
-altamente idóneo
-</td>
-<td style="text-align:right;">
-4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(3,9\]
-</td>
-<td style="text-align:left;">
-moderadamente idóneo
-</td>
-<td style="text-align:right;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(9,15\]
-</td>
-<td style="text-align:left;">
-marginalmente idóneo
-</td>
-<td style="text-align:right;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(15,32.7\]
-</td>
-<td style="text-align:left;">
-no idóneo
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Horas de insolación.
-
-``` r
-objeto <- 'insol_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'YINSOLTIME mean',
-    umbrales = c(3900, 4100, 4300),
-    nombre = variables[[7]],
-    ord_cat = 'ni')
-)
-```
-
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    ##    3176    4092    4296    4232    4421    4483     104
-
-``` r
-get(objeto)[c('violin', 'mapa_con_pais')]
-```
-
-    ## $violin
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-1.png" width="100%" />
-
-    ## 
-    ## $mapa_con_pais
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-2.png" width="100%" />
-
-``` r
-get(objeto)[['intervalos_y_etiquetas_kable']]
-```
-
-<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-<caption>
-Table 9: Intervalos de horas de insolación
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-horas de insolación intervalos
-</th>
-<th style="text-align:left;">
-horas de insolación etiquetas
-</th>
-<th style="text-align:right;">
-horas de insolación puntuación
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-\[3.18e+03,3.9e+03\]
-</td>
-<td style="text-align:left;">
-no idóneo
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(3.9e+03,4.1e+03\]
-</td>
-<td style="text-align:left;">
-marginalmente idóneo
-</td>
-<td style="text-align:right;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(4.1e+03,4.3e+03\]
-</td>
-<td style="text-align:left;">
-moderadamente idóneo
-</td>
-<td style="text-align:right;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(4.3e+03,4.48e+03\]
-</td>
-<td style="text-align:left;">
-altamente idóneo
-</td>
-<td style="text-align:right;">
-4
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-Elevación.
-
-``` r
-objeto <- 'ele_rcl'
-assign(
-  objeto,
-  generar_resumen_grafico_estadistico_criterios(
-    variable = 'CGIAR-ELE mean',
-    umbrales = c(200, 400, 800),
-    nombre = variables[[8]],
-    ord_cat = 'ni')
-)
-```
-
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    ##  -42.00   57.76  186.78  386.79  542.70 2791.69      35
-
-``` r
-get(objeto)[c('violin', 'mapa_con_pais')]
-```
-
-    ## $violin
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-4-1.png" width="100%" />
-
-    ## 
-    ## $mapa_con_pais
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-4-2.png" width="100%" />
-
-``` r
-get(objeto)[['intervalos_y_etiquetas_kable']]
-```
-
-<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-<caption>
-Table 10: Intervalos de elevación
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-elevación intervalos
-</th>
-<th style="text-align:left;">
-elevación etiquetas
-</th>
-<th style="text-align:right;">
-elevación puntuación
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-(200,400\]
-</td>
-<td style="text-align:left;">
-marginalmente idóneo
-</td>
-<td style="text-align:right;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(400,800\]
-</td>
-<td style="text-align:left;">
-moderadamente idóneo
-</td>
-<td style="text-align:right;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-(800,2.79e+03\]
-</td>
-<td style="text-align:left;">
-altamente idóneo
-</td>
-<td style="text-align:right;">
-4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-\[-42,200\]
-</td>
-<td style="text-align:left;">
-no idóneo
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
-# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
-if(!objeto %in% objetos) objetos <- c(objetos, objeto)
-```
-
-### Umbrales de criterios
-
-Los umbrales elegidos para definir las puntuaciones de criterios, están
-recogidos en la tabla (ver tabla
-<a href="#tab:umbralesapuntuaciones">11</a>).
-
-``` r
-puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiquetas']] %>% 
-  pivot_longer(cols = -matches('puntuación|etiquetas'), names_to = 'criterio') %>%
-  mutate(criterio = gsub(' intervalos', '', criterio)) %>% 
-  group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
-  summarise(value = paste(value, collapse = ' y ')) %>% 
-  pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
-  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`)
-) %>% bind_rows()
-readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
-puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
-        caption = 'Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas') %>%
-  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
-```
-
-<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-<caption>
-Table 11: Puntuaciones de criterios para la selección de sitios de
-estaciones meteoclimáticas
+Table 2: Áreas proporcionales por cada criterios para la selección de
+sitios de estaciones meteoclimáticas
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
 criterio
 </th>
-<th style="text-align:left;">
+<th style="text-align:right;">
 altamente idóneo
 </th>
-<th style="text-align:left;">
+<th style="text-align:right;">
 moderadamente idóneo
 </th>
-<th style="text-align:left;">
+<th style="text-align:right;">
 marginalmente idóneo
 </th>
-<th style="text-align:left;">
+<th style="text-align:right;">
 no idóneo
+</th>
+<th style="text-align:right;">
+Total
 </th>
 </tr>
 </thead>
@@ -1379,260 +351,213 @@ no idóneo
 <td style="text-align:left;">
 distancia a accesos
 </td>
-<td style="text-align:left;">
-(50,200\]
+<td style="text-align:right;">
+11.54
 </td>
-<td style="text-align:left;">
-(200,500\]
+<td style="text-align:right;">
+33.77
 </td>
-<td style="text-align:left;">
-(500,5e+03\]
+<td style="text-align:right;">
+48.85
 </td>
-<td style="text-align:left;">
-\[12.8,50\] y (5e+03,3.28e+04\]
+<td style="text-align:right;">
+5.84
+</td>
+<td style="text-align:right;">
+100
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 estacionalidad térmica
 </td>
-<td style="text-align:left;">
-(1.5,1.87\]
+<td style="text-align:right;">
+22.17
 </td>
-<td style="text-align:left;">
-(1.3,1.5\]
+<td style="text-align:right;">
+28.11
 </td>
-<td style="text-align:left;">
-(1.1,1.3\]
+<td style="text-align:right;">
+38.39
 </td>
-<td style="text-align:left;">
-\[0.573,1.1\]
+<td style="text-align:right;">
+11.33
+</td>
+<td style="text-align:right;">
+100
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 estacionalidad pluviométrica
 </td>
-<td style="text-align:left;">
-(50,89.6\]
+<td style="text-align:right;">
+33.90
 </td>
-<td style="text-align:left;">
-(40,50\]
+<td style="text-align:right;">
+22.95
 </td>
-<td style="text-align:left;">
-(30,40\]
+<td style="text-align:right;">
+21.67
 </td>
-<td style="text-align:left;">
-\[19.5,30\]
+<td style="text-align:right;">
+21.47
+</td>
+<td style="text-align:right;">
+100
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 heterogeneidad de hábitat
 </td>
-<td style="text-align:left;">
-\[0,300\]
+<td style="text-align:right;">
+19.88
 </td>
-<td style="text-align:left;">
-(300,450\]
+<td style="text-align:right;">
+43.74
 </td>
-<td style="text-align:left;">
-(450,600\]
+<td style="text-align:right;">
+20.16
 </td>
-<td style="text-align:left;">
-(600,3.56e+03\]
+<td style="text-align:right;">
+16.22
+</td>
+<td style="text-align:right;">
+100
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 distancia a cuerpos de agua
 </td>
-<td style="text-align:left;">
-(3e+03,2.64e+04\]
+<td style="text-align:right;">
+75.04
 </td>
-<td style="text-align:left;">
-(2e+03,3e+03\]
+<td style="text-align:right;">
+8.04
 </td>
-<td style="text-align:left;">
-(1e+03,2e+03\]
+<td style="text-align:right;">
+8.72
 </td>
-<td style="text-align:left;">
-\[0,1e+03\]
+<td style="text-align:right;">
+8.20
+</td>
+<td style="text-align:right;">
+100
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 pendiente
 </td>
-<td style="text-align:left;">
-\[0,3\]
+<td style="text-align:right;">
+39.60
 </td>
-<td style="text-align:left;">
-(3,9\]
+<td style="text-align:right;">
+28.86
 </td>
-<td style="text-align:left;">
-(9,15\]
+<td style="text-align:right;">
+16.92
 </td>
-<td style="text-align:left;">
-(15,32.7\]
+<td style="text-align:right;">
+14.63
+</td>
+<td style="text-align:right;">
+100
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 horas de insolación
 </td>
-<td style="text-align:left;">
-(4.3e+03,4.48e+03\]
+<td style="text-align:right;">
+48.23
 </td>
-<td style="text-align:left;">
-(4.1e+03,4.3e+03\]
+<td style="text-align:right;">
+25.06
 </td>
-<td style="text-align:left;">
-(3.9e+03,4.1e+03\]
+<td style="text-align:right;">
+16.03
 </td>
-<td style="text-align:left;">
-\[3.18e+03,3.9e+03\]
+<td style="text-align:right;">
+10.68
+</td>
+<td style="text-align:right;">
+100
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 elevación
 </td>
-<td style="text-align:left;">
-(800,2.79e+03\]
+<td style="text-align:right;">
+17.05
 </td>
-<td style="text-align:left;">
-(400,800\]
+<td style="text-align:right;">
+16.03
 </td>
-<td style="text-align:left;">
-(200,400\]
+<td style="text-align:right;">
+16.53
 </td>
-<td style="text-align:left;">
-\[-42,200\]
+<td style="text-align:right;">
+50.39
+</td>
+<td style="text-align:right;">
+100
 </td>
 </tr>
 </tbody>
 </table>
 
-### Representación reclasificada de criterios y puntuaciones agregadas
-
-Unir los vectoriales de cada criterio y representar mapa.
-
-``` r
-all_criteria <- map(objetos[2:length(objetos)], ~ get(.x)[['vectorial']] %>% st_drop_geometry) %>% 
-  prepend(list(get(objetos[1])[['vectorial']])) %>% 
-  reduce(left_join, by = "hex_id")
-all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg', delete_dsn = T)
-```
-
-    ## Deleting source `out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg' using driver `GPKG'
-    ## Writing layer `intervalos_etiquetas_puntuaciones_AHP_criterios_separados' to data source 
-    ##   `out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg' using driver `GPKG'
-    ## Writing 13152 features with 25 fields and geometry type Unknown (any).
-
-Mapas puntuaciones reclasificadas de cada criterio.
+En términos de distribución espacial, el patrón más común fue el de tipo
+concentrado (ver figura
+<a href="#fig:mapacriteriospuntuaciones"><strong>??</strong></a>). Todos
+los criterios presentaron autocorrelación espacial positiva, lo que
+significa que los hexágonos se aglomeran en cúmulos de valores grandes
+(“grumos” de hexágonos idóneos, formando *hotspots*) y/o pequeños
+(cúmulos de hexágonos no idóneos, formando *coldspots*). Destaca, aunque
+era esperable, la particular la distribución espacial de la distancia a
+cuerpos de agua, con un patrón muy homogéneo y monótono de hexágonos de
+alta idoneidad.
 
 ``` r
-paleta <- c("altamente idóneo" = "#018571", "moderadamente idóneo" = "#80cdc1",
-               "marginalmente idóneo" = "#dfd2b3", "no idóneo" = "#a6611a")
-all_criteria_mapa <- all_criteria %>%
-  select(all_of(contains('etiquetas'))) %>% 
-  rename_with(~ stringr::str_replace(.x, 
-                                       pattern = ' etiquetas', 
-                                       replacement = ''), 
-                matches('etiquetas')) %>% 
-  pivot_longer(cols = -geometry) %>% 
-  ggplot +
-  aes(fill = value) +
-  geom_sf(lwd=0) + 
-  scale_fill_manual(values = paleta) +
-  labs(title = paste('Reclasificación de valores de criterios')) +
-  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
-  facet_wrap(~ name, ncol = 2) +
-  theme_bw() +
-  theme(
-    legend.position = 'bottom',
-    legend.key.size = unit(0.5, 'cm'), #change legend key size
-    legend.key.height = unit(0.5, 'cm'), #change legend key height
-    legend.key.width = unit(0.5, 'cm'), #change legend key width
-    legend.title = element_blank(), #change legend title font size
-    legend.text = element_text(size=2) #change legend text font size
-    )
-if(interactive()) dev.new()
 all_criteria_mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-6-1.png" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/mapacriteriospuntuaciones-1.png" alt="Mapas puntuaciones reclasificadas de cada criterio" width="100%" />
 
-Generar mapa de puntuación agregada.
+### Exclusión por factores limitantes
 
-``` r
-nombres_ahp_obj_sf <- data.frame(
-  `Nombre objeto sf` = paste(variables, 'puntuación'),
-  Etiqueta = variables, check.names = F) %>%
-  rownames_to_column('Nombre AHP')
-pesos <- flujo_completo_ahp$aggpref %>% as.data.frame %>%
-  rownames_to_column('Nombre AHP') %>% 
-  inner_join(nombres_ahp_obj_sf)
-all_criteria_scores <- all_criteria %>%
-  st_drop_geometry() %>% 
-  select(all_of(c('hex_id', grep(' puntuación', colnames(all_criteria), value = T)))) %>%
-  pivot_longer(-hex_id, names_to = 'Nombre objeto sf', values_to = 'Puntuación') %>% 
-  inner_join(pesos %>% select(`Nombre objeto sf`, Etiqueta, peso=AggPref)) %>% 
-  mutate(`Puntuación ponderada` = peso * `Puntuación`) %>% 
-  group_by(hex_id) %>%
-  summarise(`Puntuación agregada` = sum(`Puntuación ponderada`, na.rm = T)) %>%
-  inner_join(all_criteria) %>% 
-  st_sf(sf_column_name = 'geometry')
-summary(all_criteria_scores$`Puntuación agregada`)
-```
-
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##  0.3652  2.4258  2.7279  2.6899  2.9677  3.7734
-
-``` r
-all_criteria_scores %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg', delete_dsn = T)
-```
-
-    ## Deleting source `out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg' using driver `GPKG'
-    ## Writing layer `intervalos_etiquetas_puntuaciones_AHP_criterios_agregados' to data source 
-    ##   `out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg' using driver `GPKG'
-    ## Writing 13152 features with 26 fields and geometry type Unknown (any).
-
-``` r
-if(interactive()) dev.new()
-all_criteria_scores %>% 
-  mutate(`Puntuación agregada` = scale(`Puntuación agregada`)) %>% 
-  ggplot +
-  aes(fill = `Puntuación agregada`) +
-  geom_sf(lwd=0) + 
-  scale_fill_fermenter(palette = 'BrBG', direction = 1, breaks = c(-1, 0, 1)) +
-  labs(title = paste('Puntuación agregada')) +
-  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
-  theme_bw() +
-  theme(
-    legend.position = 'bottom',
-    legend.key.size = unit(0.5, 'cm'), #change legend key size
-    legend.key.height = unit(0.5, 'cm'), #change legend key height
-    legend.key.width = unit(0.5, 'cm'), #change legend key width
-    legend.title = element_blank(), #change legend title font size
-    legend.text = element_text(size=3) #change legend text font size
-    )
-```
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-7-1.png" width="100%" />
+### Análisis de proximidad respecto de estaciones existentes
 
 ## Información suplementaria
 
 Versión HTML (más legible e interactiva),
 [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/ponderacion-variables-ahp.html)
 
-## Suplemento metodológico para la selección de sitios para el establecimiento de una red de estaciones meteoclimáticas usando AHP y análisis de autocorrelación espacial
+## Procedimiento
+
+Aplicamos una secuencia de tres técnicas interdependientes para formular
+distintas alternativas de redes de observación meteoclimático. En primer
+lugar, aplicamos un **proceso analítico jerárquico (AHP)**.
+Posteriormente, los resultados del AHP fueron usados como entrada de una
+simple **exclusión por factores limitantes**, específicamente excluir
+hexágonos por su localización respecto de accesos y cuerpos de agua.
+Finalmente, al resultado del análisis anterior, le aplicamos un
+**análisis de proximidad respecto de estaciones existentes** con el
+objetivo de garantizar que las alternativas fuesen homogéneas en
+términos de distribución espacial.
+
+## Aplicación del método AHP
+
+### Paquetes y funciones
 
 ``` r
 library(kableExtra)
 library(tidyverse)
 library(ahpsurvey)
+library(janitor)
 estilo_kable <- function(df, titulo = '', cubre_anchura = T) {
   df %>% kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = titulo) %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = cubre_anchura)
@@ -1753,7 +678,7 @@ data.frame(
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 12: Tabla de recodificación de puntaciones de formulario a escala
+Table 3: Tabla de recodificación de puntaciones de formulario a escala
 AHP original
 </caption>
 <thead>
@@ -1846,7 +771,7 @@ as.data.frame(variables) %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 13: Tabla de equivalencias de nombres de las variables evaluadas
+Table 4: Tabla de equivalencias de nombres de las variables evaluadas
 </caption>
 <thead>
 <tr>
@@ -1948,7 +873,7 @@ tabla_en_bruto %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 14: Tabla de resultados en bruto (anonimizada) obtenida a partir
+Table 5: Tabla de resultados en bruto (anonimizada) obtenida a partir
 del rellenado del “Formulario de comparación pareada de criterios de
 identificación de sitios idóneos para una red de observación climática”
 </caption>
@@ -2889,7 +1814,7 @@ tabla_recodificada %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 15: Tabla de puntaciones recodificadas
+Table 6: Tabla de puntaciones recodificadas
 </caption>
 <thead>
 <tr>
@@ -3788,7 +2713,7 @@ En segundo lugar, aplicamos la recodificación de nombres de columnas de
 la tabla de respuestas, que originalmente eran transcripciones de las
 preguntas del formulario de Google. Este paso nos ayudó a representar
 nombres más cortos en la tabla que posteriormente usamos como insumo
-(ver tabla <a href="#tab:suptablaresultadosparamatrizpareada">16</a>)
+(ver tabla <a href="#tab:suptablaresultadosparamatrizpareada">7</a>)
 para crear la matriz de comparación por parejas del método AHP.
 
 ``` r
@@ -3814,7 +2739,7 @@ tabla_col_renom %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 16: Tabla de columnas renombradas (adaptada para la generación de
+Table 7: Tabla de columnas renombradas (adaptada para la generación de
 la matriz de comparación en parejas)
 </caption>
 <thead>
@@ -4684,7 +3609,7 @@ acce_temp
 </table>
 
 El conjunto de datos de la tabla
-<a href="#tab:suptablaresultadosparamatrizpareada">16</a> recoge las
+<a href="#tab:suptablaresultadosparamatrizpareada">7</a> recoge las
 respuestas dadas por las 9 personas consultada, cada una compuesta por
 28 comparaciones en parejas de criterios (8 criterios). Analicemos
 algunos ejemplos para ilustrar el flujo seguido en la recodificación y
@@ -4694,16 +3619,16 @@ La primera fila contiene las valoraciones realizadas por la persona
 consultada número 1. En la primera pregunta, “*Valora la importancia
 relativa de las variables horas de insolación y elevación*”, el
 consultado respondió “*33: Importancia moderada para elevación*” (ver
-tabla <a href="#tab:suptablaresultadosenbruto">14</a>). Dicha valoración
+tabla <a href="#tab:suptablaresultadosenbruto">5</a>). Dicha valoración
 fue recodificada a puntuaciones AHP con el valor 3 (ver tabla
-<a href="#tab:suptablaresultadosrecodificados">15</a>); nótese que el
+<a href="#tab:suptablaresultadosrecodificados">6</a>); nótese que el
 valor recodificado es positivo, dado que el criterio que recibió la
 mayor importancia fue el que ocupaba la segunda posición en la pregunta.
 
 Finalmente, tras realizar el renombrado, la columna en cuestión paso de
 nombrarse “*Valora la importancia relativa de las variables horas de
 insolación y elevación*” a `inso_elev` (ver tabla
-<a href="#tab:suptablaresultadosparamatrizpareada">16</a>). Esta cambio
+<a href="#tab:suptablaresultadosparamatrizpareada">7</a>). Esta cambio
 nos permitirá manejar atributos cortos en la matriz de comparación por
 parejas.
 
@@ -7205,7 +6130,7 @@ que puede ser provisto por el usuario a partir de simulaciones, que con
 el paquete `ahpsurvey` se puede generar mediante la función `ahp.ri`. El
 conjunto de $RI$ a continuación se generó a partir de `ahp.ri` con
 500000 simulaciones (ver tabla
-<a href="#tab:suprisimuladospaqahpsurvey">17</a>), y están contenidas en
+<a href="#tab:suprisimuladospaqahpsurvey">8</a>), y están contenidas en
 la viñeta principal de la documentación del paquete `ahpsurvey` (Cho
 2019):
 
@@ -7220,7 +6145,7 @@ ri_sim %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 17: Índices aleatorios generados por la función ahp.ri con 500000
+Table 8: Índices aleatorios generados por la función ahp.ri con 500000
 simulaciones para 1 a 15 atributos
 </caption>
 <thead>
@@ -7342,9 +6267,9 @@ tiempo_10k <- system.time(probandoRI <- ahp.ri(nsims = 10000, dim = 8, seed = 99
 El tiempo de cómputo fue relativamente pequeño (\~ 2 segundos) y el
 resultado para $RI$ es 1.399982, el cual se aproxima bastante al
 generado por Cho (2019) (tabla
-<a href="#tab:suprisimuladospaqahpsurvey">17</a>). Si generásemos un
-$RI$ con 500000 simulaciones, nos tomaría al menos un minuto y medio en
-una PC de altas prestaciones (o varios minutos en una PC común), y el
+<a href="#tab:suprisimuladospaqahpsurvey">8</a>). Si generásemos un $RI$
+con 500000 simulaciones, nos tomaría al menos un minuto y medio en una
+PC de altas prestaciones (o varios minutos en una PC común), y el
 resultado sería bastante parecido al mostrado por Cho (2019), por lo que
 nos parece conveniente usar este último ($RI=1.4048466$).
 
@@ -7355,7 +6280,7 @@ RI <- ri_sim[8]
 Con este índice aleatorio, calculamos la razón de consistencia `CR` de
 las respuestas aportadas por cada persona consultada, mediante la
 función `ahp.cr` aplicada a la matriz de comparación en parejas. La
-tabla <a href="#tab:suprazondeconsistencia">18</a> resume el cómputo de
+tabla <a href="#tab:suprazondeconsistencia">9</a> resume el cómputo de
 esta métrica.
 
 ``` r
@@ -7369,7 +6294,7 @@ data.frame(`Persona consultada` = seq_along(cr), CR = cr, check.names = F) %>%
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 18: Razones de consistencia (consistency ratio) por persona
+Table 9: Razones de consistencia (consistency ratio) por persona
 consultada
 </caption>
 <thead>
@@ -7469,7 +6394,7 @@ la elección se considera inconsistente (Thomas L. Saaty 1977). **En
 nuestro caso, elegimos el umbral de 0.1 para** $CR$, por lo que
 obtuvimos un total de 4 valoraciones consistentes (personas consultadas
 números 1, 2, 4, 9) y 5 inconsistentes (personas números 3, 5, 6, 7, 8)
-(comparar con tabla <a href="#tab:suprazondeconsistencia">18</a>).
+(comparar con tabla <a href="#tab:suprazondeconsistencia">9</a>).
 
 ``` r
 table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() %>% 
@@ -7482,7 +6407,7 @@ table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() 
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 19: Número de cuestionarios según consistencia
+Table 10: Número de cuestionarios según consistencia
 </caption>
 <thead>
 <tr>
@@ -7597,13 +6522,15 @@ matriz_ahp[cr_indicador[,1]==1] %>%
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/supatributopesocrboxplotsolocons-1.png" alt="Preferencias individuales por atributo y ratio de consistencia, sólo respuestas consistentes" width="100%" />
 
-### Flujo de procesamiento completo AHP sin diagnósticos intermedios
+### Matriz de pesos
 
-El flujo de procesamiento completo retorna la matriz de pesos de acuerdo
-con el umbral de consistencia elegido, que en nuestro caso es 0.1. De
-esta manera, generamos una matriz de pesos sólo con las respuestas
-consistentes. Verificamos igualmente que la suma de los pesos sea igual
-a 1.
+Para la aplicación de los criterios, primero obtuvimos la matriz de
+preferencias individuales y agregadas, conteniendo los pesos otorgados a
+cada criterio. Mediante el método de procesamiento abreviado mostrado a
+continuación, obtuvimos la matriz de pesos de acuerdo con el umbral de
+consistencia elegido, que en nuestro caso es 0.1. De esta manera,
+generamos una matriz de pesos sólo con las respuestas consistentes.
+Verificamos igualmente que la suma de los pesos sea igual a 1.
 
 ``` r
 flujo_completo_ahp <- ahp(df = tabla_col_renom[, col_ord], 
@@ -7623,45 +6550,2251 @@ flujo_completo_ahp <- ahp(df = tabla_col_renom[, col_ord],
 # sum(flujo_completo_ahp$aggpref[,1]) == 1
 ```
 
-### Obtención, reducción y reclasificación de fuentes cartográficas
+Las tablas <a href="#tab:prefind">11</a> y <a href="#tab:prefagg">12</a>
+muestran las preferencias individuales y agregadas, respectivamente, de
+las personas entrevistadas cuyas respuestas fueron consistentes. Las
+matriz agregada constituye el resultado principal del AHP, el cual
+aplicaremos a los criterios reclasificados. En las secciones siguientes,
+explicamos en detalle el procedimiento seguido para la reclasificación
+de criterios y la aplicación de los pesos obtenidos por el método AHP.
 
-Utilizamos múltiples fuentes cartográficas ráster como variables de
-territorio para modelizar la idoneidad de sitios candidatos para la
-instalación de estaciones meteoclimáticas. Originalmente, disponíamos de
-más de 100 fuentes ráster para realizar nuestros análisis, pero elegimos
-sólo ocho de ellas por considerarlas relevantes siguiendo
-recomendaciones de estudios previos (Rojas Briceño et al. 2021). Estas
-ocho variables fueron ponderadas por el personal experto mediante el
-proceso descrito anteriormente.
+``` r
+kable_prefind <- flujo_completo_ahp$indpref %>% 
+  mutate(`Persona consultada` = cr_indicador[cr_indicador[,1]==1, 'Persona consultada']) %>% 
+  relocate(`Persona consultada`) %>% 
+  estilo_kable(titulo = 'Preferencias individuales',
+               cubre_anchura = F) %>% 
+  kable_styling(position = 'left') %>% 
+  column_spec(column = 1:2, width = "10em")
+kable_prefind
+```
 
-Las fuentes ráster son servidas bajo distintas resoluciones y sistemas
-de referencia, por lo que fue necesario aplicar algoritmos de reducción
-y consolidar resultados en una geometría común. Para ello, redujimos
-todas las fuentes ráster al índice geoespacial de hexágonos H3 (*hex
-bins*) (Martínez-Batlle 2022). Probamos distintas resoluciones de dicho
-índice, y tras algunas pruebas, elegimos la resolución “7”. Con esta
-resolución, cubrimos el territorio dominicano más un área de influencia
-con aproximadamente 13,000 hexágonos de ca. 4$km^2$ cada uno. Dentro de
-cada hexágono, por medio de estadística zonal, obtuvimos la media de
-cada variable, la cual utilizamos como estadístico de referencia en la
+<table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
+<caption>
+Table 11: Preferencias individuales
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+Persona consultada
+</th>
+<th style="text-align:right;">
+acce
+</th>
+<th style="text-align:right;">
+temp
+</th>
+<th style="text-align:right;">
+pluv
+</th>
+<th style="text-align:right;">
+habi
+</th>
+<th style="text-align:right;">
+agua
+</th>
+<th style="text-align:right;">
+pend
+</th>
+<th style="text-align:right;">
+inso
+</th>
+<th style="text-align:right;">
+elev
+</th>
+<th style="text-align:right;">
+CR
+</th>
+<th style="text-align:left;">
+top1
+</th>
+<th style="text-align:left;">
+top2
+</th>
+<th style="text-align:left;">
+top3
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;width: 10em; ">
+1
+</td>
+<td style="text-align:right;width: 10em; ">
+0.04
+</td>
+<td style="text-align:right;">
+0.22
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+<td style="text-align:right;">
+0.16
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:left;">
+acce_pend
+</td>
+<td style="text-align:left;">
+pluv_elev
+</td>
+<td style="text-align:left;">
+pend_inso
+</td>
+</tr>
+<tr>
+<td style="text-align:right;width: 10em; ">
+2
+</td>
+<td style="text-align:right;width: 10em; ">
+0.09
+</td>
+<td style="text-align:right;">
+0.23
+</td>
+<td style="text-align:right;">
+0.25
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+0.16
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+<td style="text-align:left;">
+habi_agua
+</td>
+<td style="text-align:left;">
+habi_inso
+</td>
+<td style="text-align:left;">
+pluv_agua
+</td>
+</tr>
+<tr>
+<td style="text-align:right;width: 10em; ">
+4
+</td>
+<td style="text-align:right;width: 10em; ">
+0.06
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+0.28
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+0.06
+</td>
+<td style="text-align:right;">
+0.06
+</td>
+<td style="text-align:right;">
+0.31
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+<td style="text-align:left;">
+temp_inso
+</td>
+<td style="text-align:left;">
+habi_inso
+</td>
+<td style="text-align:left;">
+temp_pend
+</td>
+</tr>
+<tr>
+<td style="text-align:right;width: 10em; ">
+9
+</td>
+<td style="text-align:right;width: 10em; ">
+0.10
+</td>
+<td style="text-align:right;">
+0.19
+</td>
+<td style="text-align:right;">
+0.25
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.22
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.06
+</td>
+<td style="text-align:left;">
+habi_agua
+</td>
+<td style="text-align:left;">
+agua_elev
+</td>
+<td style="text-align:left;">
+acce_elev
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+prefagg <- flujo_completo_ahp$aggpref %>%
+  as.data.frame() %>% 
+  rownames_to_column('Variable') %>% 
+  mutate(Variable = factor(Variable, labels = variables[sort(names(variables))])) %>% 
+  arrange(desc(AggPref))
+kable_prefagg <- prefagg %>% 
+  estilo_kable(titulo = 'Preferencias agregadas',
+               cubre_anchura = F) %>% 
+  kable_styling(position = 'left') %>% 
+  column_spec(column = 1:2, width = "10em")
+kable_prefagg
+```
+
+<table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
+<caption>
+Table 12: Preferencias agregadas
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Variable
+</th>
+<th style="text-align:right;">
+AggPref
+</th>
+<th style="text-align:right;">
+SD.AggPref
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;width: 10em; ">
+estacionalidad pluviométrica
+</td>
+<td style="text-align:right;width: 10em; ">
+0.27
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10em; ">
+horas de insolación
+</td>
+<td style="text-align:right;width: 10em; ">
+0.18
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10em; ">
+estacionalidad térmica
+</td>
+<td style="text-align:right;width: 10em; ">
+0.17
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10em; ">
+elevación
+</td>
+<td style="text-align:right;width: 10em; ">
+0.12
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10em; ">
+heterogeneidad de hábitat
+</td>
+<td style="text-align:right;width: 10em; ">
+0.09
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10em; ">
+distancia a accesos
+</td>
+<td style="text-align:right;width: 10em; ">
+0.07
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10em; ">
+distancia a cuerpos de agua
+</td>
+<td style="text-align:right;width: 10em; ">
+0.06
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10em; ">
+pendiente
+</td>
+<td style="text-align:right;width: 10em; ">
+0.04
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+</tr>
+</tbody>
+</table>
+
+## Reclasificación de fuentes cartográficas: valores originales, intervalos, representación de la reclasificación
+
+Utilizamos múltiples fuentes cartográficas como variables de territorio
+para modelizar la idoneidad de sitios candidatos para la instalación de
+estaciones meteoclimáticas. Originalmente, disponíamos de más de 100
+fuentes para realizar nuestros análisis, pero elegimos sólo ocho de
+ellas en la ponderación realizada por expertos para el método AHP, por
+considerarlas relevantes siguiendo recomendaciones de estudios previos
+(Rojas Briceño et al. 2021).
+
+Las fuentes disponibles eran capas ráster servidas bajo distintas
+resoluciones y sistemas de referencia, por lo que fue necesario aplicar
+algoritmos de estadística zonal (reducción) y consolidar resultados en
+una geometría vectorial común. Para ello, redujimos todas las fuentes
+ráster al índice geoespacial de hexágonos H3 (*hex bins*)
+(Martínez-Batlle 2022). Probamos distintas resoluciones de dicho índice,
+y tras algunas pruebas, elegimos la resolución “7”. Con esta resolución,
+cubrimos el territorio dominicano (más un área de influencia) con
+aproximadamente 13,000 hexágonos de ca. 4$km^2$ cada uno. Dentro de cada
+hexágono, por medio de estadística zonal, obtuvimos la media de cada
+variable, la cual utilizamos como estadístico de referencia en la
 reclasificación descrita a continuación.
 
 Reclasificamos los valores promedio de las ocho variables seleccionadas,
-aplicando criterios sugeridos por otros autores, así como adaptando
-umbrales convencionales a la realidad insular (FAO, n.d.; Rojas Briceño
-et al. 2021). Para facilitar esta tarea, y garantizar reproducibilidad y
-consistencia, creamos funciones que realizaron la reclasificación de
-forma semitautomática.
+aplicando criterios definidos por el equipo de investigación para cada
+criterio, para lo cual utilizamos conocimiento experto y referencias
+bibliográficas especializadas en redes de monitoreo meteoclimático, y
+adaptando las escalas a la realidad insular (Food and Agriculture
+Organization of the United Nations (FAO) 1976; Rojas Briceño et al.
+2021). A cada criterio, y para cada hexágono, asignamos un entero en una
+escala ordinal del 1 al 4 (de “no idóneo” a “altamente idóneo”). Para
+facilitar esta tarea, y garantizar reproducibilidad y consistencia,
+creamos funciones que realizaron la reclasificación de forma
+semitautomática. Representamos a continuación, para cada criterio, los
+valores originales mediante gráfico de violín, mostramos los intervalos
+usados en la reclasificación, y la representamos cartográficamente.
 
-### Modelización de la idoneidad según pesos
+``` r
+source('R/funciones.R')
+library(sf)
+library(kableExtra)
+res_h3 <- 7 #Escribir un valor entre 4 y 7, ambos extremos inclusive
+ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
+# ez_ver <- 'da5b4ed7c6b126fce15f8980b7a0b389937f7f35/'
+ez_ver <- 'd7f79365168e688f0d78f521e53fbf2da19244ef/'
+ind_esp_url <- paste0(ruta_ez_gh, ez_ver, 'out/all_sources_all_variables_res_', res_h3, '.gpkg')
+ind_esp_url
+```
 
-### Evaluación de autocorrelación y proximidad
+    ## [1] "https://raw.githubusercontent.com/geofis/zonal-statistics/d7f79365168e688f0d78f521e53fbf2da19244ef/out/all_sources_all_variables_res_7.gpkg"
 
-TODO
+``` r
+if(!any(grepl('^ind_esp$', ls()))){
+  ind_esp <- st_read(ind_esp_url, optional = T, quiet = T)
+  st_geometry(ind_esp) <- "geometry"
+  ind_esp <- st_transform(ind_esp, 32619)
+}
+if(!any(grepl('^pais_url$', ls()))){
+  pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
+  pais <- invisible(st_read(pais_url, optional = T, layer = 'pais', quiet = T))
+  st_geometry(pais) <- "geometry"
+  pais <- st_transform(pais, 32619)
+}
+if(!any(grepl('^ind_esp_inters$', ls()))){
+  ind_esp_inters <- st_intersection(pais, ind_esp)
+  colnames(ind_esp_inters) <- colnames(ind_esp)
+  ind_esp_inters$area_sq_m <- units::drop_units(st_area(ind_esp_inters))
+  ind_esp_inters$area_sq_km <- units::drop_units(st_area(ind_esp_inters))/1000000
+}
+if(!any(grepl('^ind_esp_inters$', ls())) && interactive()){
+  print(ind_esp_inters)
+}
+```
+
+Creación de objeto contenedor para la reclasificación de criterios.
+
+``` r
+# Objeto que acogerá nombres de objetos
+objetos <- character()
+```
+
+### Criterio 1. Distancia a accesos.
+
+``` r
+objeto <- 'osm_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'OSM-DIST mean',
+    umbrales = c(50, 200, 500, 5000),
+    nombre = variables[[1]],
+    ord_cat = 'nin_rev')
+)
+```
+
+    ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
+    ##    12.76   289.04   534.24  1243.20  1412.68 32795.66        2
+
+``` r
+get(objeto)[c('violin', 'mapa_con_pais')]
+```
+
+    ## $violin
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/osmdist-1.png" width="100%" />
+
+    ## 
+    ## $mapa_con_pais
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/osmdist-2.png" width="100%" />
+
+``` r
+get(objeto)[['area_proporcional_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 13: Áreas proporcionales de distancia a accesos
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+distancia a accesos etiquetas
+</th>
+<th style="text-align:right;">
+proporción
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+5.84
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+11.54
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+33.77
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+48.85
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 13: Intervalos de distancia a accesos
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+distancia a accesos intervalos
+</th>
+<th style="text-align:left;">
+distancia a accesos etiquetas
+</th>
+<th style="text-align:right;">
+distancia a accesos puntuación
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+\[12.8,50\]
+</td>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(50,200\]
+</td>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(200,500\]
+</td>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(500,5e+03\]
+</td>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(5e+03,3.28e+04\]
+</td>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 2. Estacionalidad térmica.
+
+``` r
+objeto <- 'tseasonizzo_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'TSEASON-IZZO mean',
+    umbrales = c(1.1, 1.3, 1.5),
+    nombre = variables[[2]],
+    ord_cat = 'ni')
+)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##   0.573   1.195   1.301   1.326   1.477   1.866     105
+
+``` r
+get(objeto)[c('violin', 'mapa_con_pais')]
+```
+
+    ## $violin
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadtermica-1.png" width="100%" />
+
+    ## 
+    ## $mapa_con_pais
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadtermica-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 14: Intervalos de estacionalidad térmica
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+estacionalidad térmica intervalos
+</th>
+<th style="text-align:left;">
+estacionalidad térmica etiquetas
+</th>
+<th style="text-align:right;">
+estacionalidad térmica puntuación
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+\[0.573,1.1\]
+</td>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(1.1,1.3\]
+</td>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(1.3,1.5\]
+</td>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(1.5,1.87\]
+</td>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+get(objeto)[['area_proporcional_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 14: Áreas proporcionales de estacionalidad térmica
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+estacionalidad térmica etiquetas
+</th>
+<th style="text-align:right;">
+proporción
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+11.33
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+38.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+28.11
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+22.17
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 3. Estacionalidad pluviométrica.
+
+``` r
+objeto <- 'pseasonizzo_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'PSEASON-IZZO mean',
+    umbrales = c(30, 40, 50),
+    nombre = variables[[3]],
+    ord_cat = 'ni')
+)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##   19.51   31.14   43.51   42.76   52.55   89.60     105
+
+``` r
+get(objeto)[c('violin', 'mapa_con_pais')]
+```
+
+    ## $violin
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadpluvio-1.png" width="100%" />
+
+    ## 
+    ## $mapa_con_pais
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/estacionalidadpluvio-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 15: Intervalos de estacionalidad pluviométrica
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+estacionalidad pluviométrica intervalos
+</th>
+<th style="text-align:left;">
+estacionalidad pluviométrica etiquetas
+</th>
+<th style="text-align:right;">
+estacionalidad pluviométrica puntuación
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+\[19.5,30\]
+</td>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(30,40\]
+</td>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(40,50\]
+</td>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(50,89.6\]
+</td>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+get(objeto)[['area_proporcional_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 15: Áreas proporcionales de estacionalidad pluviométrica
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+estacionalidad pluviométrica etiquetas
+</th>
+<th style="text-align:right;">
+proporción
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+21.47
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+21.67
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+22.95
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+33.90
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 4. Heterogeneidad de hábitat.
+
+``` r
+objeto <- 'hethab_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'GHH coefficient_of_variation_1km',
+    umbrales = c(300, 450, 600),
+    nombre = variables[[4]],
+    ord_cat = 'in')
+)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##     0.0   317.6   399.6   481.4   529.5  3563.4
+
+``` r
+get(objeto)[c('violin', 'mapa_con_pais')]
+```
+
+    ## $violin
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/heterogeneidadhabitat-1.png" width="100%" />
+
+    ## 
+    ## $mapa_con_pais
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/heterogeneidadhabitat-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 16: Intervalos de heterogeneidad de hábitat
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+heterogeneidad de hábitat intervalos
+</th>
+<th style="text-align:left;">
+heterogeneidad de hábitat etiquetas
+</th>
+<th style="text-align:right;">
+heterogeneidad de hábitat puntuación
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+\[0,300\]
+</td>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(300,450\]
+</td>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(450,600\]
+</td>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(600,3.56e+03\]
+</td>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+get(objeto)[['area_proporcional_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 16: Áreas proporcionales de heterogeneidad de hábitat
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+heterogeneidad de hábitat etiquetas
+</th>
+<th style="text-align:right;">
+proporción
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+19.88
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+43.74
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+20.16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+16.22
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 5. Distancia a cuerpos de agua y humedales.
+
+``` r
+objeto <- 'wbwdist_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'WBW-DIST mean',
+    umbrales = c(1000, 2000, 3000),
+    nombre = variables[[5]],
+    ord_cat = 'ni')
+)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##       0    2698    6069    7134   10545   26424
+
+``` r
+get(objeto)[c('violin', 'mapa_con_pais')]
+```
+
+    ## $violin
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/cuerposaguadist-1.png" width="100%" />
+
+    ## 
+    ## $mapa_con_pais
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/cuerposaguadist-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 17: Intervalos de distancia a cuerpos de agua
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+distancia a cuerpos de agua intervalos
+</th>
+<th style="text-align:left;">
+distancia a cuerpos de agua etiquetas
+</th>
+<th style="text-align:right;">
+distancia a cuerpos de agua puntuación
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+\[0,1e+03\]
+</td>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(1e+03,2e+03\]
+</td>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(2e+03,3e+03\]
+</td>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(3e+03,2.64e+04\]
+</td>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+get(objeto)[['area_proporcional_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 17: Áreas proporcionales de distancia a cuerpos de agua
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+distancia a cuerpos de agua etiquetas
+</th>
+<th style="text-align:right;">
+proporción
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+8.20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+8.72
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+8.04
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+75.04
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 6. Pendiente.
+
+``` r
+objeto <- 'slope_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'G90 Slope',
+    umbrales = c(3, 9, 15),
+    nombre = variables[[6]],
+    ord_cat = 'in')
+)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##   0.000   1.370   4.489   6.773  10.840  32.705
+
+``` r
+get(objeto)[c('violin', 'mapa_con_pais')]
+```
+
+    ## $violin
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/pendiente-1.png" width="100%" />
+
+    ## 
+    ## $mapa_con_pais
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/pendiente-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 18: Intervalos de pendiente
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+pendiente intervalos
+</th>
+<th style="text-align:left;">
+pendiente etiquetas
+</th>
+<th style="text-align:right;">
+pendiente puntuación
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+\[0,3\]
+</td>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(3,9\]
+</td>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(9,15\]
+</td>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(15,32.7\]
+</td>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+get(objeto)[['area_proporcional_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 18: Áreas proporcionales de pendiente
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+pendiente etiquetas
+</th>
+<th style="text-align:right;">
+proporción
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+39.60
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+28.86
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+16.92
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+14.63
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 7. Horas de insolación.
+
+``` r
+objeto <- 'insol_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'YINSOLTIME mean',
+    umbrales = c(3900, 4100, 4300),
+    nombre = variables[[7]],
+    ord_cat = 'ni')
+)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##    3176    4092    4296    4232    4421    4483     104
+
+``` r
+get(objeto)[c('violin', 'mapa_con_pais')]
+```
+
+    ## $violin
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-1.png" width="100%" />
+
+    ## 
+    ## $mapa_con_pais
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 19: Intervalos de horas de insolación
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+horas de insolación intervalos
+</th>
+<th style="text-align:left;">
+horas de insolación etiquetas
+</th>
+<th style="text-align:right;">
+horas de insolación puntuación
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+\[3.18e+03,3.9e+03\]
+</td>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(3.9e+03,4.1e+03\]
+</td>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(4.1e+03,4.3e+03\]
+</td>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(4.3e+03,4.48e+03\]
+</td>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+get(objeto)[['area_proporcional_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 19: Áreas proporcionales de horas de insolación
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+horas de insolación etiquetas
+</th>
+<th style="text-align:right;">
+proporción
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+10.68
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+16.03
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+25.06
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+48.23
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Criterio 8. Elevación.
+
+``` r
+objeto <- 'ele_rcl'
+assign(
+  objeto,
+  generar_resumen_grafico_estadistico_criterios(
+    variable = 'CGIAR-ELE mean',
+    umbrales = c(200, 400, 800),
+    nombre = variables[[8]],
+    ord_cat = 'ni')
+)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##  -42.00   57.76  186.78  386.79  542.70 2791.69      35
+
+``` r
+get(objeto)[c('violin', 'mapa_con_pais')]
+```
+
+    ## $violin
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-4-1.png" width="100%" />
+
+    ## 
+    ## $mapa_con_pais
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-4-2.png" width="100%" />
+
+``` r
+get(objeto)[['intervalos_y_etiquetas_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 20: Intervalos de elevación
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+elevación intervalos
+</th>
+<th style="text-align:left;">
+elevación etiquetas
+</th>
+<th style="text-align:right;">
+elevación puntuación
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(200,400\]
+</td>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(400,800\]
+</td>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+(800,2.79e+03\]
+</td>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+\[-42,200\]
+</td>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+get(objeto)[['area_proporcional_kable']]
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 20: Áreas proporcionales de elevación
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+elevación etiquetas
+</th>
+<th style="text-align:right;">
+proporción
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+50.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+16.53
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+16.03
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+17.05
+</td>
+</tr>
+</tbody>
+</table>
+
+``` r
+# clipr::write_clip(get(objeto)$intervalos_y_etiquetas)
+if(!objeto %in% objetos) objetos <- c(objetos, objeto)
+```
+
+### Intervalos consolidados
+
+Los intervalos o umbrales elegidos para definir las puntuaciones de
+criterios, están recogidos en la tabla (ver tabla
+<a href="#tab:umbralesapuntuaciones">21</a>).
+
+``` r
+puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiquetas']] %>% 
+  pivot_longer(cols = -matches('puntuación|etiquetas'), names_to = 'criterio') %>%
+  mutate(criterio = gsub(' intervalos', '', criterio)) %>% 
+  group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
+  summarise(value = paste(value, collapse = ' y ')) %>% 
+  pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
+  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`)
+) %>% bind_rows()
+readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
+puntuaciones_umbrales_kable <- puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Puntuaciones de criterios para la selección de sitios de estaciones meteoclimáticas') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+puntuaciones_umbrales_kable
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 21: Puntuaciones de criterios para la selección de sitios de
+estaciones meteoclimáticas
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+criterio
+</th>
+<th style="text-align:left;">
+altamente idóneo
+</th>
+<th style="text-align:left;">
+moderadamente idóneo
+</th>
+<th style="text-align:left;">
+marginalmente idóneo
+</th>
+<th style="text-align:left;">
+no idóneo
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+distancia a accesos
+</td>
+<td style="text-align:left;">
+(50,200\]
+</td>
+<td style="text-align:left;">
+(200,500\]
+</td>
+<td style="text-align:left;">
+(500,5e+03\]
+</td>
+<td style="text-align:left;">
+\[12.8,50\] y (5e+03,3.28e+04\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+estacionalidad térmica
+</td>
+<td style="text-align:left;">
+(1.5,1.87\]
+</td>
+<td style="text-align:left;">
+(1.3,1.5\]
+</td>
+<td style="text-align:left;">
+(1.1,1.3\]
+</td>
+<td style="text-align:left;">
+\[0.573,1.1\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+estacionalidad pluviométrica
+</td>
+<td style="text-align:left;">
+(50,89.6\]
+</td>
+<td style="text-align:left;">
+(40,50\]
+</td>
+<td style="text-align:left;">
+(30,40\]
+</td>
+<td style="text-align:left;">
+\[19.5,30\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+heterogeneidad de hábitat
+</td>
+<td style="text-align:left;">
+\[0,300\]
+</td>
+<td style="text-align:left;">
+(300,450\]
+</td>
+<td style="text-align:left;">
+(450,600\]
+</td>
+<td style="text-align:left;">
+(600,3.56e+03\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+distancia a cuerpos de agua
+</td>
+<td style="text-align:left;">
+(3e+03,2.64e+04\]
+</td>
+<td style="text-align:left;">
+(2e+03,3e+03\]
+</td>
+<td style="text-align:left;">
+(1e+03,2e+03\]
+</td>
+<td style="text-align:left;">
+\[0,1e+03\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pendiente
+</td>
+<td style="text-align:left;">
+\[0,3\]
+</td>
+<td style="text-align:left;">
+(3,9\]
+</td>
+<td style="text-align:left;">
+(9,15\]
+</td>
+<td style="text-align:left;">
+(15,32.7\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+horas de insolación
+</td>
+<td style="text-align:left;">
+(4.3e+03,4.48e+03\]
+</td>
+<td style="text-align:left;">
+(4.1e+03,4.3e+03\]
+</td>
+<td style="text-align:left;">
+(3.9e+03,4.1e+03\]
+</td>
+<td style="text-align:left;">
+\[3.18e+03,3.9e+03\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+elevación
+</td>
+<td style="text-align:left;">
+(800,2.79e+03\]
+</td>
+<td style="text-align:left;">
+(400,800\]
+</td>
+<td style="text-align:left;">
+(200,400\]
+</td>
+<td style="text-align:left;">
+\[-42,200\]
+</td>
+</tr>
+</tbody>
+</table>
+
+### Áreas proporcionales consolidadas
+
+Las áreas proporcionales consolidadas quedan recogidas en la tabla (ver
+tabla <a href="#tab:areasproporcionales">2</a>).
+
+``` r
+areas_proporcionales <- map(objetos, function(x) get(x)[['area_proporcional']] %>% 
+  pivot_longer(cols = -matches('proporción'), names_to = 'criterio') %>%
+  mutate(criterio = gsub(' etiquetas', '', criterio)) %>% 
+  pivot_wider(names_from = value, values_from = proporción)) %>% bind_rows() %>% 
+  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`) %>% 
+  adorn_totals('col') 
+readODS::write_ods(x = areas_proporcionales,
+                   path = 'fuentes/umbrales-criterios-ahp/areas_proporcionales.ods')
+areas_proporcionales_kable <- areas_proporcionales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Áreas proporcionales por cada criterios para la selección de sitios de estaciones meteoclimáticas') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+areas_proporcionales_kable
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 22: Áreas proporcionales por cada criterios para la selección de
+sitios de estaciones meteoclimáticas
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+criterio
+</th>
+<th style="text-align:right;">
+altamente idóneo
+</th>
+<th style="text-align:right;">
+moderadamente idóneo
+</th>
+<th style="text-align:right;">
+marginalmente idóneo
+</th>
+<th style="text-align:right;">
+no idóneo
+</th>
+<th style="text-align:right;">
+Total
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+distancia a accesos
+</td>
+<td style="text-align:right;">
+11.54
+</td>
+<td style="text-align:right;">
+33.77
+</td>
+<td style="text-align:right;">
+48.85
+</td>
+<td style="text-align:right;">
+5.84
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+estacionalidad térmica
+</td>
+<td style="text-align:right;">
+22.17
+</td>
+<td style="text-align:right;">
+28.11
+</td>
+<td style="text-align:right;">
+38.39
+</td>
+<td style="text-align:right;">
+11.33
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+estacionalidad pluviométrica
+</td>
+<td style="text-align:right;">
+33.90
+</td>
+<td style="text-align:right;">
+22.95
+</td>
+<td style="text-align:right;">
+21.67
+</td>
+<td style="text-align:right;">
+21.47
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+heterogeneidad de hábitat
+</td>
+<td style="text-align:right;">
+19.88
+</td>
+<td style="text-align:right;">
+43.74
+</td>
+<td style="text-align:right;">
+20.16
+</td>
+<td style="text-align:right;">
+16.22
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+distancia a cuerpos de agua
+</td>
+<td style="text-align:right;">
+75.04
+</td>
+<td style="text-align:right;">
+8.04
+</td>
+<td style="text-align:right;">
+8.72
+</td>
+<td style="text-align:right;">
+8.20
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pendiente
+</td>
+<td style="text-align:right;">
+39.60
+</td>
+<td style="text-align:right;">
+28.86
+</td>
+<td style="text-align:right;">
+16.92
+</td>
+<td style="text-align:right;">
+14.63
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+horas de insolación
+</td>
+<td style="text-align:right;">
+48.23
+</td>
+<td style="text-align:right;">
+25.06
+</td>
+<td style="text-align:right;">
+16.03
+</td>
+<td style="text-align:right;">
+10.68
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+elevación
+</td>
+<td style="text-align:right;">
+17.05
+</td>
+<td style="text-align:right;">
+16.03
+</td>
+<td style="text-align:right;">
+16.53
+</td>
+<td style="text-align:right;">
+50.39
+</td>
+<td style="text-align:right;">
+100
+</td>
+</tr>
+</tbody>
+</table>
+
+### Representación consolidada de las reclasificaciones y puntuaciones agregadas
+
+Unir los vectoriales de cada criterio y representar mapa.
+
+``` r
+all_criteria <- map(objetos[2:length(objetos)], ~ get(.x)[['vectorial']] %>% st_drop_geometry) %>% 
+  prepend(list(get(objetos[1])[['vectorial']])) %>% 
+  reduce(left_join, by = "hex_id")
+all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg' using driver `GPKG'
+    ## Writing layer `intervalos_etiquetas_puntuaciones_AHP_criterios_separados' to data source 
+    ##   `out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg' using driver `GPKG'
+    ## Writing 13152 features with 25 fields and geometry type Unknown (any).
+
+Mapas puntuaciones reclasificadas de cada criterio.
+
+``` r
+paleta <- c("altamente idóneo" = "#018571", "moderadamente idóneo" = "#80cdc1",
+               "marginalmente idóneo" = "#dfd2b3", "no idóneo" = "#a6611a")
+all_criteria_mapa <- all_criteria %>%
+  select(all_of(contains('etiquetas'))) %>% 
+  rename_with(~ stringr::str_replace(.x, 
+                                       pattern = ' etiquetas', 
+                                       replacement = ''), 
+                matches('etiquetas')) %>% 
+  pivot_longer(cols = -geometry) %>% 
+  ggplot +
+  aes(fill = value) +
+  geom_sf(lwd=0) + 
+  scale_fill_manual(values = paleta) +
+  labs(title = paste('Reclasificación de valores de criterios')) +
+  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
+  facet_wrap(~ name, ncol = 2) +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.key.size = unit(0.5, 'cm'), #change legend key size
+    legend.key.height = unit(0.5, 'cm'), #change legend key height
+    legend.key.width = unit(0.5, 'cm'), #change legend key width
+    legend.title = element_blank(), #change legend title font size
+    legend.text = element_text(size=2) #change legend text font size
+    )
+if(interactive()) dev.new()
+all_criteria_mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-7-1.png" width="100%" />
+
+Generar mapa de puntuación agregada.
+
+``` r
+nombres_ahp_obj_sf <- data.frame(
+  `Nombre objeto sf` = paste(variables, 'puntuación'),
+  Etiqueta = variables, check.names = F) %>%
+  rownames_to_column('Nombre AHP')
+pesos <- flujo_completo_ahp$aggpref %>% as.data.frame %>%
+  rownames_to_column('Nombre AHP') %>% 
+  inner_join(nombres_ahp_obj_sf)
+all_criteria_scores <- all_criteria %>%
+  st_drop_geometry() %>% 
+  select(all_of(c('hex_id', grep(' puntuación', colnames(all_criteria), value = T)))) %>%
+  pivot_longer(-hex_id, names_to = 'Nombre objeto sf', values_to = 'Puntuación') %>% 
+  inner_join(pesos %>% select(`Nombre objeto sf`, Etiqueta, peso=AggPref)) %>% 
+  mutate(`Puntuación ponderada` = peso * `Puntuación`) %>% 
+  group_by(hex_id) %>%
+  summarise(`Puntuación agregada` = sum(`Puntuación ponderada`, na.rm = T)) %>%
+  inner_join(all_criteria) %>% 
+  st_sf(sf_column_name = 'geometry')
+summary(all_criteria_scores$`Puntuación agregada`)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##  0.3652  2.4258  2.7279  2.6899  2.9677  3.7734
+
+``` r
+all_criteria_scores %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg' using driver `GPKG'
+    ## Writing layer `intervalos_etiquetas_puntuaciones_AHP_criterios_agregados' to data source 
+    ##   `out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg' using driver `GPKG'
+    ## Writing 13152 features with 26 fields and geometry type Unknown (any).
+
+``` r
+if(interactive()) dev.new()
+all_criteria_scores %>% 
+  mutate(`Puntuación agregada` = scale(`Puntuación agregada`)) %>% 
+  ggplot +
+  aes(fill = `Puntuación agregada`) +
+  geom_sf(lwd=0) + 
+  scale_fill_fermenter(palette = 'BrBG', direction = 1, breaks = c(-1, 0, 1)) +
+  labs(title = paste('Puntuación agregada')) +
+  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.key.size = unit(0.5, 'cm'), #change legend key size
+    legend.key.height = unit(0.5, 'cm'), #change legend key height
+    legend.key.width = unit(0.5, 'cm'), #change legend key width
+    legend.title = element_blank(), #change legend title font size
+    legend.text = element_text(size=3) #change legend text font size
+    )
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-8-1.png" width="100%" />
+
+## Exclusión por factores limitantes
+
+## Análisis de proximidad respecto de estaciones existentes
 
 ## Referencias
 
 <div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-ali2018" class="csl-entry">
+
+Ali, Mohd Zaharifudin Muhamad, and Faridah Othman. 2018. “Raingauge
+Network Optimization in a Tropical Urban Area by Coupling
+Cross-Validation with the Geostatistical Technique.” *Hydrological
+Sciences Journal* 63 (3): 474–91.
+<https://doi.org/10.1080/02626667.2018.1437271>.
+
+</div>
+
+<div id="ref-bertini2021" class="csl-entry">
+
+Bertini, Claudia, Elena Ridolfi, Luiz Henrique Resende de Padua, Fabio
+Russo, Francesco Napolitano, and Leonardo Alfonso. 2021. “An
+Entropy-Based Approach for the Optimization of Rain Gauge Network Using
+Satellite and Ground-Based Data.” *Hydrology Research* 52 (3): 620–35.
+<https://doi.org/10.2166/nh.2021.113>.
+
+</div>
 
 <div id="ref-breaz2017" class="csl-entry">
 
@@ -7672,10 +8805,25 @@ Breaz, Radu Eugen, Octavian Bologa, and Sever Gabriel Racz. 2017.
 
 </div>
 
+<div id="ref-chakhar2008spatial" class="csl-entry">
+
+Chakhar, Salem, and Vincent Mousseau. 2008. “Spatial Multicriteria
+Decision Making.” *Encyclopedia of GIS* 10: 978–70.
+
+</div>
+
 <div id="ref-cho2019ahpsurvey" class="csl-entry">
 
 Cho, Frankie. 2019. *Ahpsurvey: Analytic Hierarchy Process for Survey
 Data*. <https://CRAN.R-project.org/package=ahpsurvey>.
+
+</div>
+
+<div id="ref-Chung2018SpatialAO" class="csl-entry">
+
+Chung, Whoi-bin, Mohamed A. Abdel-Aty, and Jaeyoung Lee. 2018. “Spatial
+Analysis of the Effective Coverage of Land-Based Weather Stations for
+Traffic Crashes.” *Applied Geography* 90: 17–27.
 
 </div>
 
@@ -7689,10 +8837,97 @@ Application of Analytic Hierarchy Process (AHP) in Construction.”
 
 </div>
 
-<div id="ref-fao32agriculture" class="csl-entry">
+<div id="ref-eastman1998multi" class="csl-entry">
 
-FAO, Food. n.d. “Agriculture Organization of the United Nations, 1976. A
-Framework for Land Evaluation.” *Soils Bulletin* 32.
+Eastman, J Ronald, Hong Jiang, and James Toledano. 1998. “Multi-Criteria
+and Multi-Objective Decision Making for Land Allocation Using GIS.”
+*Multicriteria Analysis for Land-Use Management*, 227–51.
+
+</div>
+
+<div id="ref-fao1976framework" class="csl-entry">
+
+Food and Agriculture Organization of the United Nations (FAO). 1976. *A
+Framework for Land Evaluation. Soil Resources Development and
+Conservation Service Land and Water Development Division. FAO Soils
+Bulletin 32*. Food and Agriculture Organization of the United Nations
+(FAO).
+
+</div>
+
+<div id="ref-frei2003designing" class="csl-entry">
+
+Frei, Thomas. 2003. “Designing Meteorological Networks for Switzerland
+According to User Requirements.” *Meteorological Applications* 10 (4):
+313–17.
+
+</div>
+
+<div id="ref-Izzo2010ANC" class="csl-entry">
+
+Izzo, Michela, Carmen Maria Rosskopf, Pietro P. C. Aucelli, Antonio
+Maratea, R. Espinosa Méndez, Caridad Pérez, and Hugo Segura. 2010. “A
+New Climatic Map of the Dominican Republic Based on the Thornthwaite
+Classification.” *Physical Geography* 31: 455–72.
+
+</div>
+
+<div id="ref-koksalan2011multiple" class="csl-entry">
+
+Köksalan, M. M., J. Wallenius, and S. Zionts. 2011. *Multiple Criteria
+Decision Making: From Early History to the 21st Century*. World
+Scientific.
+[https://books.google.com.do/books?id=LqAw1539l\\\_cC](https://books.google.com.do/books?id=LqAw1539l\_cC).
+
+</div>
+
+<div id="ref-Le2019ClimateCA" class="csl-entry">
+
+Le, Tu Dam Ngoc. 2019. “Climate Change Adaptation in Coastal Cities of
+Developing Countries: Characterizing Types of Vulnerability and
+Adaptation Options.” *Mitigation and Adaptation Strategies for Global
+Change* 25: 739–61.
+
+</div>
+
+<div id="ref-LincolnLenderking2020ClimateCA" class="csl-entry">
+
+Lenderking, Hania Lincoln, Stacy‐ann Robinson, and Gail R. Carlson.
+2020. “Climate Change and Food Security in Caribbean Small Island
+Developing States: Challenges and Strategies.” *International Journal of
+Sustainable Development & World Ecology* 28: 238–45.
+
+</div>
+
+<div id="ref-Lohmann2016ComparingVA" class="csl-entry">
+
+Lohmann, Hilary. 2016. “Comparing Vulnerability and Adaptive Capacity to
+Climate Change in Individuals of Coastal Dominican Republic.” *Ocean &
+Coastal Management* 132: 111–19.
+
+</div>
+
+<div id="ref-Mackay2017TheFO" class="csl-entry">
+
+Mackay, Elizabeth Alecia, and Andrew J. Spencer. 2017. “The Future of
+Caribbean Tourism: Competition and Climate Change Implications.”
+*Worldwide Hospitality and Tourism Themes* 9: 44–59.
+
+</div>
+
+<div id="ref-malczewski2004gis" class="csl-entry">
+
+Malczewski, Jacek. 2004. “GIS-Based Land-Use Suitability Analysis: A
+Critical Overview.” *Progress in Planning* 62 (1): 3–65.
+
+</div>
+
+<div id="ref-Marchi2019EvaluatingWV" class="csl-entry">
+
+Marchi, Maurizio, Iztok Sinjur, Michele Bozzano, and Marjana Westergren.
+2019. “Evaluating WorldClim Version 1 (1961–1990) as the Baseline for
+Sustainable Use of Forest and Environmental Resources in a Changing
+Climate.” *Sustainability*.
 
 </div>
 
@@ -7713,6 +8948,17 @@ Business Economics and Management* 10 (2): 181–89.
 
 </div>
 
+<div id="ref-proyecto2019pma" class="csl-entry">
+
+Programa Mundial de Alimentos (PMA). 2019. “Proyecto Resiliencia a La
+Sequía. Fortalecimiento de Capacidades Para Mejorar La Seguridad
+Alimentaria y La Resiliencia Ante Sequía En Haití y La República
+Dominicana. Proyecto de Preparación Ante Emergencias Basado En
+Pronósticos de Riesgos Climáticos En República Dominicana (FBF).”
+Programa Mundial de Alimentos (PMA).
+
+</div>
+
 <div id="ref-rcoreteam2021r" class="csl-entry">
 
 R Core Team. 2021. *R: A Language and Environment for Statistical
@@ -7729,6 +8975,13 @@ Daniel Iliquín Trigoso, Miguel Barrena Gurbillón, and Elgar Barboza.
 2021. “Site Selection for a Network of Weather Stations Using AHP and
 Near Analysis in a GIS Environment in Amazonas, NW Peru.” *Climate* 9
 (12): 169. <https://doi.org/10.3390/cli9120169>.
+
+</div>
+
+<div id="ref-Roson2013AMF" class="csl-entry">
+
+Roson, Roberto. 2013. “A Modeling Framework to Assess the Economic
+Impact of Climate Change in the Caribbean.” *Cepal Review* 111: 23–36.
 
 </div>
 
@@ -7766,6 +9019,16 @@ Fuzzifying Numerical Judgments in the Analytic Hierarchy Process.”
 
 </div>
 
+<div id="ref-safavi2021" class="csl-entry">
+
+Safavi, Maryam, Abbas Khashei Siuki, and Seyed Reza Hashemi. 2021. “New
+Optimization Methods for Designing Rain Stations Network Using New
+Neural Network, Election, and Whale Optimization Algorithms by Combining
+the Kriging Method.” *Environmental Monitoring and Assessment* 193 (1):
+4. <https://doi.org/10.1007/s10661-020-08726-z>.
+
+</div>
+
 <div id="ref-subramanian2012" class="csl-entry">
 
 Subramanian, Nachiappan, and Ramakrishnan Ramanathan. 2012. “A Review of
@@ -7775,12 +9038,105 @@ Applications of Analytic Hierarchy Process in Operations Management.”
 
 </div>
 
+<div id="ref-encyclopedia3010006" class="csl-entry">
+
+Taherdoost, Hamed, and Mitra Madanchian. 2023. “Multi-Criteria Decision
+Making (MCDM) Methods and Concepts.” *Encyclopedia* 3 (1): 77–87.
+<https://doi.org/10.3390/encyclopedia3010006>.
+
+</div>
+
+<div id="ref-tekleyohannes2021" class="csl-entry">
+
+Tekleyohannes, Mulugeta, Berhane Grum, Niguse Abebe, and Bizuneh Asfaw
+Abebe. 2021. “Optimization of Rain Gauge Network Using Multi-Criteria
+Decision Analysis and Entropy Approaches: Case of Tekeze River Basin,
+Northwestern Ethiopia.” *Theoretical and Applied Climatology* 145 (1-2):
+159–74. <https://doi.org/10.1007/s00704-021-03604-1>.
+
+</div>
+
+<div id="ref-theochari2021hydrometeorological" class="csl-entry">
+
+Theochari, Aimilia-Panagiota, Elissavet Feloni, Apollon Bournas, and
+Evangelos Baltas. 2021. “Hydrometeorological-Hydrometric Station Network
+Design Using Multicriteria Decision Analysis and GIS Techniques.”
+*Environmental Processes* 8: 1099–119.
+
+</div>
+
+<div id="ref-thiriez1975multiple" class="csl-entry">
+
+Thiriez, Hervé, and Stanley Zionts. 1975. *Multiple Criteria Decision
+Making: Proceedings of a Conference Jouy-En-Josas, France May 21–23,
+1975*. Vol. 130. Springer Science & Business Media.
+
+</div>
+
+<div id="ref-valipour2019" class="csl-entry">
+
+Valipour, Elmira, Mohammad Ali Ghorbani, and Esmaeal Asadi. 2019.
+“Evaluation and Optimization of Rain Gauge Network Based on the
+Geostatistic Methods and Firefly Algorithm. (Case Study: Eastern Basin
+of Urmia Lake).” *Irrigation Sciences and Engineering* 42 (4): 153–66.
+<https://doi.org/10.22055/jise.2018.20549.1477>.
+
+</div>
+
 <div id="ref-whicham2019welcome" class="csl-entry">
 
 Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy
 D’Agostino McGowan, Romain François, Garrett Grolemund, et al. 2019.
 “Welcome to the <span class="nocase">tidyverse</span>.” *Journal of Open
 Source Software* 4 (43): 1686. <https://doi.org/10.21105/joss.01686>.
+
+</div>
+
+<div id="ref-vanWilgen2016RisingTA" class="csl-entry">
+
+Wilgen, Nicola J. van, Victoria L. Goodall, Stephen D. Holness, Steven
+L. Chown, and Melodie A. McGeoch. 2016. “Rising Temperatures and
+Changing Rainfall Patterns in South Africa’s National Parks.”
+*International Journal of Climatology* 36.
+
+</div>
+
+<div id="ref-world1996guia" class="csl-entry">
+
+World Meteorological Organization (WMO). 1996. *Guı́a de Instrumentos y
+métodos de Observación Meteorológicos*. Secretarı́a de la Organización
+Meteorológica Mundial.
+
+</div>
+
+<div id="ref-wmo2017guia" class="csl-entry">
+
+———. 2017a. *Guía de Instrumentos y Métodos de Observación
+Meteorológicos*. World Meteorological Organization Geneva, Switzerland.
+
+</div>
+
+<div id="ref-wmo2017guide" class="csl-entry">
+
+———. 2017b. *Guide to the WMO Integrated Global Observing System.
+WMO-No. 1165*. World Meteorological Organization, Geneva, Switzerland.
+
+</div>
+
+<div id="ref-wmo2020guide" class="csl-entry">
+
+———. 2020. *Guide to Hydrological Practices. Volume i: Hydrology—from
+Measurement to Hydrological Information. WMO Report No. 168*. World
+Meteorological Organization, Geneva, Switzerland.
+
+</div>
+
+<div id="ref-design1976hydrological" class="csl-entry">
+
+World Meteorological Organization (WMO) and The International
+Association of Hydrological Sciences. 1976. *Hydrological Network Design
+and Information Transfer*. Secretariat of the World Meteorological
+Organization.
 
 </div>
 
