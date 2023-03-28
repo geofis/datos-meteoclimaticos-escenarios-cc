@@ -24,7 +24,8 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,
   out.width = '100%',
-  res = 200)
+  res = 200,
+  dev = 'jpeg')
 # options(digits = 3)
 options(knitr.duplicate.label = "allow")
 ```
