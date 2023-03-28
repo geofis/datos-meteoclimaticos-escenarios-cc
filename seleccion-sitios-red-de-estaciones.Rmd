@@ -65,13 +65,13 @@ En este estudio, aplicamos AHP para seleccionar sitios idóneos donde instalar e
 
 ## Materiales y método
 
-Aplicamos una secuencia de tres técnicas interdependientes para formular distintas alternativas de redes de observación meteoclimática, centrándonos en la selección de sitios idóneos para EMC. En primer lugar, aplicamos un **proceso analítico jerárquico (AHP)**, que se utiliza para seleccionar la mejor opción entre diferentes alternativas, utilizando criterios de selección ponderados por personas con conocimiento del problema [@saaty2013]. Las repuestas originales normalmente deben organizarse y recodificarse y, posteriormente, se debe evaluar su consistencia. A continuación, se seleccionan las respuestas consistentes, o se ajustan las inconsistentes, y se establece la ponderación de criterios. Finalmente, la ponderación definida, se aplica a las fuentes de información disponible para obtener una lista de alternativas, de entre las cuales, se selecciona la más idónea de acuerdo con los criterios definidos.
+Aplicamos una secuencia de tres técnicas interdependientes para formular distintas alternativas de redes de observación meteoclimática, centrándonos en la selección multicriterio de sitios idóneos. En primer lugar, aplicamos un **proceso analítico jerárquico (AHP)** para seleccionar la mejor opción entre diferentes alternativas, utilizando criterios de selección ponderados por personas consultadas con conocimiento del problema [@saaty2013]. Las consultas fueron solicitadas de forma explícita, quienes respondieron a las preguntas mediante formularios electrónicos. Tras las consultas, organizamos y recodificamos las respuestas obtenidas y, posteriormente, evaluamos su consistencia. Posteriormente, seleccionamos las respuestas consistentes para establecer la ponderación de criterios. Finalmente, la ponderación definida, la aplicamos a las fuentes de información geográfica disponibles, que en nuestro caso eran ca. 13,000 hexágonos conteniendo la correspondiente información multicriterio, y repartidos sobre el territorio dominicano. De esta ponderación, asignamos una categoría agregada a cada hexágono que podía ser una de las siguientes cuatro: no idóneo, marginalmente idóneo, moderadamente idóneo y altamente idóneo.
 
-Tanto el diseño de los formularios, como el procesamiento de respuestas y la ponderación de criterios, los realizamos empleando lenguajes de programación. Para diseñar los formularios, empleamos paquetes y funciones de Python, mientras que para los análisis nos auxiliamos del paquete `ahpsurvey` y otros del entorno de programación estadística R, diseñado para tales fines [@cho2019ahpsurvey; @rcoreteam2021r; @whicham2019welcome]. Describimos estos pasos detalladamente en la sección [Información suplementaria](#infosupl).
+Tanto el diseño de los formularios, como el procesamiento de respuestas y la ponderación de criterios, los realizamos empleando lenguajes de programación. Para diseñar los formularios, empleamos paquetes y funciones de Python, mientras que para los análisis nos auxiliamos del paquete `ahpsurvey` y otros del entorno de programación estadística R, diseñado para tales fines [@cho2019ahpsurvey; @rcoreteam2021r; @whicham2019welcome]. Describimos el procedimiento seguido detalladamente en la sección [Información suplementaria](#infosupl).
 
-Los resultados de la aplicación del método AHP fueron usados como entrada para realizar una simple **exclusión por factores limitantes**, específicamente la eliminación de hexágonos por su localización respecto de accesos y cuerpos de agua. Esto consistió en, simplemente, eliminar aquellos hexágonos que se encontraran dentro en la categoría "no idóneo" para los criterios "distancia a accesos" y "distancia a cuerpos de agua".
+Posteriormente, usamos los resultados obtenidos del AHP como entrada de un procesamiento posterior, en el que realizamos una simple **exclusión por factores limitantes**. Específicamente, eliminamos los hexágonos que, por su localización respecto de accesos y cuerpos de agua, constituían áreas no idóneas para el establecimiento de EMC.
 
-Finalmente, al resultado del procedimiento anterior, le aplicamos un **análisis de proximidad respecto de estaciones existentes** con el objetivo de garantizar homogeneidad espacial y evitar redundancia. Para este fin, utilizamos umbrales de separación propuestos por la Organización Meteorológica Mundial [@design1976hydrological; @wmo2020guide] (más detalles en la sección [Información suplementaria](#infosupl)).
+Finalmente, al resultado del procedimiento anterior, le aplicamos un **análisis de vecindad entre estaciones (existentes y propuestas)**, con el objetivo de garantizar homogeneidad espacial y evitar redundancia. Para este fin, utilizamos umbrales de separación propuestos por la Organización Meteorológica Mundial [@design1976hydrological; @wmo2020guide] (más detalles en la sección [Información suplementaria](#infosupl)).
 
 ## Resultados
 
@@ -103,18 +103,34 @@ En términos de distribución espacial, el patrón más común fue el de tipo co
 all_criteria_mapa
 ```
 
+Tras sumar los criterios ponderados, obtuvimos la distribución de las categorías agregadas. En cuanto a superficie representada, predominaron los intermedios, "marginalmente idóneo" y "moderadamente idóneo" con un 70% de toda la superficie estudiada, mientras que las categorías extremas "no idóneo" y "altamente idóneo" se repartieron el restante 30% (ver table \@ref(tab:areasproporcionalesall)).
 
+```{r areasproporcionalesall}
+areas_proporcionales_all_criteria %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Áreas proporcionales de categorías agregadas para la selección de sitios de estaciones meteoclimáticas') %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+Las categorías agregadas se mostraron bien repartidas espacialmente en el territorio dominicano (ver figura \@ref(fig:mapacriteriospuntuacionesall)). En particular, la representación espacial sugiere que el método AHP priorizó aquellas áreas que, por sus atributos, nos interesaba impulsar en primera instancia. Las áreas con gran estacionalidad, especialmente las montañas y el borde oriental del país, que al mismo tiempo mostraron buen rendimiento en cuanto a horas de insolación, resultaron ser las más idóneas para el establecimiento de nuevas EMC. Por otra parte, los sectores situados a menor elevación, que al mismo tiempo contaban con pocas horas de insolación, fuertes pendientes y bajas estacionalidades térmica y pluviométrica, fueron clasificados como no idóneos.
+
+```{r mapacriteriospuntuacionesall, fig.cap='Mapa de categorías agregadas'}
+all_criteria_scores_mapa
+```
 
 ### Exclusión por factores limitantes
 
+Un total de `r hexagonos_imputados` hexágonos fueron imputados como no idóneos por su proximidad a cuerpos de agua, o por encontrarse dentro de áreas pobladas o muy distantes en términos de accesibilidad. La mayoría se localizó en los lagos y lagunas interiores y costeras, en áreas próximas a la costa, en ríos anchos y embalses, y en áreas montañosas inaccesibles. El mapa de la figura \@ref(fig:mapacriteriospuntuacionesallexcluded) muestra la nueva distribución de las categorías agregadas (compárese con el mapa de la figura \@ref(fig:mapacriteriospuntuacionesall)).
 
-
-```{r}
-
+```{r mapacriteriospuntuacionesallexcluded, fig.cap='Mapa de categorías agregadas (exclusión por factores limitantes)'}
+all_criteria_scores_excluded_mapa
 ```
 
+### Análisis de vecindad entre estaciones (existentes y propuestas)
 
-### Análisis de proximidad respecto de estaciones existentes
+
+## Discusión
+
 
 
 ## Información suplementaria {#infosupl}

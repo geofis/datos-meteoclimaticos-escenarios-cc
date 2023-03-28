@@ -303,3 +303,11 @@ generar_resumen_grafico_estadistico_criterios <- function(
     intervalos_y_etiquetas_kable = intervalos_y_etiquetas_kable
   ))
 }
+
+generar_indice <- function(geom = NULL, res = NULL){
+  library(h3jsr)
+  foo <- st_union(geom) %>% st_transform(crs = 4326)
+  bar <- polygon_to_cells(geom = foo, res = res, simple = TRUE)
+  result <- cell_to_polygon(as.character(unlist(bar)), simple = FALSE) %>% st_transform(crs = st_crs(geom))
+  return(result)
+}

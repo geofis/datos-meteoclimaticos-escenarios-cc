@@ -254,9 +254,10 @@ kable_prefind
 ## ----prefagg------------------------------------------------------------------
 prefagg <- flujo_completo_ahp$aggpref %>%
   as.data.frame() %>% 
+  rename(`Preferencias agregadas` = AggPref, `Desviación estándar` = SD.AggPref) %>% 
   rownames_to_column('Variable') %>% 
   mutate(Variable = factor(Variable, labels = variables[sort(names(variables))])) %>% 
-  arrange(desc(AggPref))
+  arrange(desc(`Preferencias agregadas`))
 kable_prefagg <- prefagg %>% 
   estilo_kable(titulo = 'Preferencias agregadas',
                cubre_anchura = F) %>% 
@@ -500,7 +501,7 @@ all_criteria_mapa <- all_criteria %>%
     legend.key.height = unit(0.5, 'cm'), #change legend key height
     legend.key.width = unit(0.5, 'cm'), #change legend key width
     legend.title = element_blank(), #change legend title font size
-    legend.text = element_text(size=2) #change legend text font size
+    legend.text = element_text(size=5) #change legend text font size
     )
 if(interactive()) dev.new()
 all_criteria_mapa
@@ -523,17 +524,47 @@ all_criteria_scores <- all_criteria %>%
   group_by(hex_id) %>%
   summarise(`Puntuación agregada` = sum(`Puntuación ponderada`, na.rm = T)) %>%
   inner_join(all_criteria) %>% 
-  st_sf(sf_column_name = 'geometry')
-summary(all_criteria_scores$`Puntuación agregada`)
+  st_sf(sf_column_name = 'geometry') %>% 
+  mutate(`Puntuación agregada escalada` = scale(`Puntuación agregada`)[,1]) %>% 
+  mutate(`Categoría agregada` = cut(`Puntuación agregada escalada`,
+                                    breaks = c(min(`Puntuación agregada escalada`, na.rm = T),
+                                               -1, 0, 1,
+                                               max(`Puntuación agregada escalada`, na.rm = T)),
+                                    labels = rev(names(paleta)),
+                                    include.lowest = T)
+  ) %>% 
+  relocate(c(`Puntuación agregada escalada`, `Categoría agregada`), .after = `Puntuación agregada`)
+if(interactive()) summary(all_criteria_scores$`Puntuación agregada`)
+if(interactive()) table(all_criteria_scores$`Categoría agregada`)
 all_criteria_scores %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg', delete_dsn = T)
+
+
+## -----------------------------------------------------------------------------
+areas_proporcionales_all_criteria <- all_criteria_scores %>% select(`Categoría agregada`) %>% 
+  mutate(
+    área = units::drop_units(st_area(geometry)),
+    `área total` = sum(units::drop_units(st_area(geometry)))) %>%
+  st_drop_geometry %>%
+  group_by(`Categoría agregada`) %>%
+  summarise(proporción = sum(área, na.rm = T)/first(`área total`)*100) %>%
+  na.omit() %>%
+  mutate(proporción = as.numeric(scale(proporción, center = FALSE,
+                            scale = sum(proporción, na.rm = TRUE)/100)))
+areas_proporcionales_all_criteria %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Áreas proporcionales de categorías agregadas para la selección de sitios de estaciones meteoclimáticas') %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+
+
+## -----------------------------------------------------------------------------
 if(interactive()) dev.new()
-all_criteria_scores %>% 
-  mutate(`Puntuación agregada` = scale(`Puntuación agregada`)) %>% 
+all_criteria_scores_mapa <- all_criteria_scores %>% 
   ggplot +
-  aes(fill = `Puntuación agregada`) +
+  aes(fill = `Categoría agregada`) +
   geom_sf(lwd=0) + 
-  scale_fill_fermenter(palette = 'BrBG', direction = 1, breaks = c(-1, 0, 1)) +
-  labs(title = paste('Puntuación agregada')) +
+  scale_fill_manual(values = paleta) +
+  # scale_fill_fermenter(palette = 'BrBG', direction = 1, breaks = c(-1, 0, 1)) +
+  labs(title = paste('Categorías agregadas')) +
   geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
   theme_bw() +
   theme(
@@ -542,6 +573,49 @@ all_criteria_scores %>%
     legend.key.height = unit(0.5, 'cm'), #change legend key height
     legend.key.width = unit(0.5, 'cm'), #change legend key width
     legend.title = element_blank(), #change legend title font size
-    legend.text = element_text(size=3) #change legend text font size
+    legend.text = element_text(size=5) #change legend text font size
     )
+all_criteria_scores_mapa
+
+
+## -----------------------------------------------------------------------------
+all_criteria_scores_excluded <- all_criteria_scores %>% 
+  mutate(
+    `Puntuación agregada` = ifelse(
+      `distancia a accesos etiquetas` == 'no idóneo' | `distancia a cuerpos de agua etiquetas` == 'no idóneo',
+      min(`Puntuación agregada`, na.rm = T), `Puntuación agregada`),
+    `Puntuación agregada escalada` = ifelse(
+      `distancia a accesos etiquetas` == 'no idóneo' | `distancia a cuerpos de agua etiquetas` == 'no idóneo',
+      min(`Puntuación agregada escalada`, na.rm = T), `Puntuación agregada escalada`),
+    `Categoría agregada` = cut(`Puntuación agregada escalada`,
+                                    breaks = c(min(`Puntuación agregada escalada`, na.rm = T),
+                                               -1, 0, 1,
+                                               max(`Puntuación agregada escalada`, na.rm = T)),
+                                    labels = rev(names(paleta)),
+                                    include.lowest = T))
+all_criteria_scores_excluded %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados_excluded.gpkg', delete_dsn = T)
+hexagonos_imputados <- sum(!(all_criteria_scores %>% pull(`Categoría agregada`) ==
+                               all_criteria_scores_excluded %>% pull(`Categoría agregada`)))
+
+
+## -----------------------------------------------------------------------------
+if(interactive()) dev.new()
+all_criteria_scores_excluded_mapa <- all_criteria_scores_excluded %>% 
+  ggplot +
+  aes(fill = `Categoría agregada`) +
+  geom_sf(lwd=0) + 
+  scale_fill_manual(values = paleta) +
+  # scale_fill_fermenter(palette = 'BrBG', direction = 1, breaks = c(-1, 0, 1)) +
+  labs(title = paste('Categorías agregadas (exclusión por factores limitantes)')) +
+  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.key.size = unit(0.5, 'cm'), #change legend key size
+    legend.key.height = unit(0.5, 'cm'), #change legend key height
+    legend.key.width = unit(0.5, 'cm'), #change legend key width
+    legend.title = element_blank(), #change legend title font size
+    legend.text = element_text(size=5) #change legend text font size
+    )
+all_criteria_scores_excluded_mapa
 
