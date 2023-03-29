@@ -72,7 +72,7 @@ Tanto el diseño de los formularios, como el procesamiento de respuestas y la po
 
 Posteriormente, usamos los resultados obtenidos del AHP como entrada de un procesamiento posterior, en el que realizamos una simple **exclusión por factores limitantes**. Específicamente, eliminamos los hexágonos que, por su localización respecto de accesos y cuerpos de agua, constituían áreas no idóneas para el establecimiento de EMC.
 
-Finalmente, al resultado del procedimiento anterior, le aplicamos un **análisis de vecindad entre estaciones (existentes y propuestas)**, con el objetivo de garantizar homogeneidad espacial y evitar redundancia. Para este fin, utilizamos umbrales de separación propuestos por la Organización Meteorológica Mundial [@design1976hydrological; @wmo2020guide] (más detalles en la sección [Información suplementaria](#infosupl)).
+Finalmente, al resultado del procedimiento anterior, le aplicamos un **análisis de vecindad entre estaciones (existentes y propuestas)**, con el objetivo de garantizar homogeneidad espacial y evitar redundancia. Primero lanzamos nubes puntos sobre distintas categorías de idoneidad (e.g. "altamente idóneo") usando funciones programadas en R, con lo cual garantizamos el cumplimiento de criterios de densidad de estaciones sugeridos por la Organización Meteorológica Mundial [@design1976hydrological; @wmo2020guide]. Finalmente, usando superficies continuas de distancia (e.g. rásters), eliminamos estaciones propuestas que estuviesen muy próximas a estaciones ya establecidas, evitando así proponer nuevas localidades que, de no eliminarse, serían redundantes para la red. Los detalles metodológicos pueden consultarse en la sección [Información suplementaria](#infosupl)).
 
 ## Resultados
 
@@ -127,12 +127,23 @@ Un total de `r hexagonos_imputados` hexágonos fueron imputados como no idóneos
 all_criteria_scores_excluded_mapa
 ```
 
+
+
+
+
+
+
+
+
+
 ### Análisis de vecindad entre estaciones (existentes y propuestas)
 
+La función de creación de puntos basados en vecindad
 
 ```{r}
 estacion_cada_250_ai_mi <- generar_centroides_distantes(
-  geom = all_criteria_scores_excluded %>% filter(`Categoría agregada` %in% c('altamente idóneo', 'moderadamente idóneo')),
+  geom = all_criteria_scores_excluded %>%
+    filter(`Categoría agregada` %in% c('altamente idóneo', 'moderadamente idóneo')),
   km2_por_puntos = 250)
 estacion_cada_250_ai_mi %>% 
   ggplot + geom_sf(alpha = 0.8) +
