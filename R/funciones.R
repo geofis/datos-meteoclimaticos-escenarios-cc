@@ -304,10 +304,143 @@ generar_resumen_grafico_estadistico_criterios <- function(
   ))
 }
 
-generar_indice <- function(geom = NULL, res = NULL){
+generar_indice <- function(geom = NULL, res = NULL, buffer_size = NULL){
   library(h3jsr)
-  foo <- st_union(geom) %>% st_transform(crs = 4326)
+  foo <- st_union(geom) %>% st_buffer(dist = buffer_size) %>% st_transform(crs = 4326)
   bar <- polygon_to_cells(geom = foo, res = res, simple = TRUE)
   result <- cell_to_polygon(as.character(unlist(bar)), simple = FALSE) %>% st_transform(crs = st_crs(geom))
   return(result)
 }
+
+# Inspired in: convex hull
+# https://stackoverflow.com/questions/48925086/choosing-subset-of-farthest-points-in-given-set-of-points
+generar_centroides_distantes <- function(
+    geom = NULL, numero_total_de_puntos = NULL,
+    km2_por_puntos = NULL){
+  # Paquete sf
+  library(sf)
+  
+  # Condicionales de los parámetros
+  if(is.null(numero_total_de_puntos) && is.null(km2_por_puntos))
+    stop('Debe aportarse número total de puntos o kilómetros cuadrados por estación')
+  if(is.null(numero_total_de_puntos) || !is.null(km2_por_puntos))
+    numero_total_de_puntos <- ceiling(geom %>% st_area %>% sum %>%
+      units::drop_units()/1000000/km2_por_puntos)
+  cat('El numero total de puntos es', numero_total_de_puntos, '\n')
+  
+  # Objetos internos
+  p <- numero_total_de_puntos
+  g <- geom
+  
+  # Centroides
+  points <- invisible(suppressWarnings(g %>% st_centroid %>% st_coordinates))
+  
+  # Número total de puntos
+  N <- nrow(points)
+  
+  # Encontrar la envolvente convexa 
+  hull <- chull(points)
+  
+  # Extraer los vértices que forman la envolvente convexa
+  hullpoints <- points[hull, ]
+  
+  # Distancias entre puntos de la envolvente
+  hdist <- dist(hullpoints)
+
+  # Encontrar los más distintes ("el mejor par inicial")
+  bestpair <- rownames(which(as.matrix(hdist) == max(hdist), arr.ind = T))
+  
+  # El mejor par inicial en un data.frame
+  P <- rbind(hullpoints[bestpair[1],], hullpoints[bestpair[2],])
+  
+  # Buscar los subconjuntos óptimos
+  cat("Buscando los subconjuntos óptimos...\n")
+  while (nrow(P) < p) {# Bucle while: evalúa si el subconjunto alcanzó el número deseado
+    cat(sprintf("Tamaño del subconjunto = %d\n", nrow(P)))
+    # Distancia de los puntos originales al subconjunto
+    distance_to_P <- as.matrix(proxy::dist(points, P))
+    # Mínima distancia del subconjunto
+    minimum_to_each_of_P <- apply(distance_to_P, 1, min)
+    # Índice del mejor punto nuevo (distancia maximizada)
+    best_new_point_idx <- which.max(minimum_to_each_of_P)
+    # Mejor punto nuevo (distancia maximizada)
+    best_new_point <- points[best_new_point_idx,]
+    # Actualizar el subconjunto P para el bucle
+    P <- rbind(P, best_new_point)
+  }
+  # Generar resultado como objeto sf usando el CRS del provisto
+  result <- P %>% as.data.frame %>% st_as_sf(coords = c('X','Y'), crs = st_crs(g))
+  return(result)
+}
+
+# Inspired in: "drops the point that has the largest row sum in the distance matrix"
+# https://stackoverflow.com/questions/22152482/choose-n-most-distant-points-in-r
+# seleccionar_por_puntuacion_distancia <- function(geom = NULL,
+#                                                  campo_categorias = NULL,
+#                                                  categorias = c('altamente idóneo'),
+#                                                  distancia = NULL, n = NULL){
+#   library(sf)
+#   g <- geom
+#   g <- g[g[, campo_categorias, drop = T] %in% categorias, ]
+#   distancias <- st_distance(geom)
+#   distancias <- units::drop_units(distancias)
+#   while (nrow(g) > n) {
+#     distancias_p_filas <- rowSums(distancias)
+#     # distancias_p_filas <- matrixStats::rowMins(distancias)
+#     mas_cercano_i <- which(distancias_p_filas == min(distancias_p_filas))[1]
+#     g <- g[-mas_cercano_i, ]
+#     distancias <- distancias[-mas_cercano_i, -mas_cercano_i]
+#   }
+#   return(g)
+# }
+
+# Inspired in: Factor-2 Approximation
+# https://stackoverflow.com/questions/48925086/choosing-subset-of-farthest-points-in-given-set-of-points
+# seleccionar_por_puntuacion_distancia <- function(geom = NULL,
+#                                                  campo_categorias = NULL,
+#                                                  categorias = c('altamente idóneo'),
+#                                                  distancia = NULL, n = NULL){
+#   library(sf)
+#   g <- geom
+#   g <- g[g[, campo_categorias, drop = T] %in% categorias, ]
+#   # return(g)
+#   d <- st_distance(geom)
+#   d <- units::drop_units(distancias)
+#   N <- nrow(g)
+#   p <- n
+#   
+#   cat("Finding initial edge...\n")
+#   maxdist <- 0
+#   bestpair <- c(0,0)
+#   for(i in 1:(N-1)){
+#     for(j in (i+1):N){
+#       if(d[i,j] > maxdist){
+#         maxdist <- d[i,j]
+#         bestpair <- c(i,j)
+#       }
+#     }
+#   }
+#   
+#   P <- c(bestpair[1], bestpair[2])
+#   cat("Finding optimal set...\n")
+#   while(length(P) < p){
+#     cat(sprintf("P size = %d\n", length(P)))
+#     maxdist <- 0
+#     vbest <- NULL
+#     for(v in 1:N){
+#       if(v %in% P){
+#         next
+#       }
+#       for(vprime in P){
+#         if(d[v,vprime] > maxdist){
+#           maxdist <- d[v,vprime]
+#           vbest <- v
+#         }
+#       }
+#     }
+#     P <- c(P, vbest)
+#   }
+#   
+#   print(P)
+#   return(g[P, ])
+# }

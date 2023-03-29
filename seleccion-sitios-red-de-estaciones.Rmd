@@ -130,6 +130,20 @@ all_criteria_scores_excluded_mapa
 ### Análisis de vecindad entre estaciones (existentes y propuestas)
 
 
+```{r}
+estacion_cada_250_ai_mi <- generar_centroides_distantes(
+  geom = all_criteria_scores_excluded %>% filter(`Categoría agregada` %in% c('altamente idóneo', 'moderadamente idóneo')),
+  km2_por_puntos = 250)
+estacion_cada_250_ai_mi %>% 
+  ggplot + geom_sf(alpha = 0.8) +
+  geom_sf(data = all_criteria_scores_excluded,
+          aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+  scale_fill_manual(values = paleta) +
+  theme_bw()
+
+```
+
+
 ## Discusión
 
 
