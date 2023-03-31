@@ -42,6 +42,8 @@ Aplicamos una secuencia de tres técnicas interdependientes para formular distin
 ### Paquetes y funciones
 
 ```{r suppaquetes}
+library(raster)
+library(psych)
 library(kableExtra)
 library(tidyverse)
 library(ahpsurvey)
@@ -389,6 +391,7 @@ Reclasificamos los valores promedio de las ocho variables seleccionadas, aplican
 ```{r funcionesfuentescartograficas}
 source('R/funciones.R')
 library(sf)
+library(spdep)
 library(kableExtra)
 res_h3 <- 7 #Escribir un valor entre 4 y 7, ambos extremos inclusive
 ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
@@ -786,10 +789,123 @@ all_criteria_scores_excluded_mapa
 
 ## Análisis de vecindad entre estaciones (existentes y propuestas)
 
-Aunque no existe un criterio estricto de separación entre EMC
+Las EMC suelen colocarse a una distancia "óptima" entre sí, a efectos de garantizar mediciones precisas y representativas de las condiciones climáticas locales. La distancia entre EMC depende de varios factores, como el tamaño del área de estudio, el tipo de clima en la región y las variables climáticas específicas que se estén midiendo. En general, se intenta garantizar precisión y representatividad, evitando al mismo tiempo redundancia [@design1976hydrological].
 
-Las EMC suelen colocarse a una distancia "óptima" entre sí, a efectos de garantizar mediciones precisas y representativas de las condiciones climáticas locales. La distancia entre las estaciones meteorológicas depende de varios factores, como el tamaño del área de estudio, el tipo de clima en la región y las variables climáticas específicas que se están midiendo. En general, lo que se intenta garantizar es la precisión y la representatividad, evitando al mismo tiempo la redundancia [@design1976hydrological].
+A tal efecto, para implementar estos criterios, escribimos una función en R a la que denominamos `generar_centroides_distantes` que posteriormente aplicamos para obtener distintas alternativas de redes de EMC. Utilizando principalmente análisis de vecindad, la función necesita, como entrada, una geometría de puntos, o de polígonos individuales regulares (en nuestro caso, hexágonos del índice espacial H3), la cual se convierte en el área a cubrir sobre la cual se propondrá la nube de puntos. Adicionalmente, se debe especificar el número de puntos esperado. El algoritmo se encarga de distribuirlos lo más homogéneamente posible usando el mecanismo de la envolvente convexa. Alternativamente, se pueden especificar densidades o distancias de separación como argumentos, en lugar de fijar rígidamente un número específico de puntos de salida. La distribución espacial usada maximiza los criterios de precisión y representatividad, y se apega a los estándares sugeridos por la OMM [@design1976hydrological].
 
-A tal efecto, para implementar estos criterios, escribimos varias funciones para proponer alternativas óptimas de redes de EMC. Utilizando principalmente análisis de vecindad, dichas funciones toman en cuenta tanto las localizaciones de las estaciones existentes como las de las propuestas, seleccionan una red con separación óptima entre estaciones, maximizan los criterios precisión y representatividad, y se apegan a los estándares sugeridos por la OMM [@design1976hydrological].
+Aplicamos la función definiendo dos escenarios posibles, en los que cada estación cubre 100 y 250 kilómetros cuadrados, respectivamente.
 
+```{r}
+# Categorías agregadas
+categorias_elegidas <- c('altamente idóneo', 'moderadamente idóneo')
+names(categorias_elegidas) <- rep('categorías de idoneidad', length(categorias_elegidas))
+# Criterio de separación (en este caso, kilómetros cuadrados por estación) 
+escenarios <- c(100, 250) #Cada estación debe cubrir un área de 100 y 250 km cuadrados
+names(escenarios) <- paste('Escenario:', escenarios, 'km2 por estación')
+# Primero realizamos los cálculos
+resumen_calculos_escenarios <- map(escenarios, 
+    ~ generar_centroides_distantes(
+      geom = all_criteria_scores_excluded %>%
+        filter(`Categoría agregada` %in% categorias_elegidas),
+      km2_por_puntos = .x, solo_calculos = T))
+# Finalmente, creamos los objetos que exportaremos para visualización en SIG
+escenarios_100_250_ai_mi <- map(
+  escenarios,
+  ~ generar_centroides_distantes(
+    geom = all_criteria_scores_excluded %>%
+      filter(`Categoría agregada` %in% categorias_elegidas),
+    km2_por_puntos = .x))
+# Mapas
+escenarios_100_250_ai_mi_mapas <- map(names(escenarios_100_250_ai_mi),
+    function(x) {
+      escenarios_100_250_ai_mi[[x]] %>% ggplot + geom_sf(alpha = 0.8) +
+        geom_sf(data = all_criteria_scores_excluded,
+                aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+        scale_fill_manual(values = paleta) +
+        labs(title = x) +
+        theme_bw()
+    })
+escenarios_100_250_ai_mi_mapas
+# Exportar
+map(names(escenarios_100_250_ai_mi),
+    function(x) {
+      sin_especiales <- iconv(names(escenarios_100_250_ai_mi[x]),
+                              from = 'utf-8', to = 'ASCII//TRANSLIT')
+      nombre_archivo <- tolower(paste0(gsub(' |: ', '_', sin_especiales), '.gpkg'))
+      escenarios_100_250_ai_mi[[x]] %>% st_write(paste0('out/', nombre_archivo), delete_dsn = T)
+    })
+```
 
+Comprobamos mediante distancias entre vecinos más próximos (en lo adelante, "el primer orden de vecindad") que se ha conseguido la separación idónea. La comprobación debe llevarnos al radio de un círculo promedio cuya área se aproxime a la densidad fijada en primera instancia. Probemos con el escenario de 100 kilómetros cuadrados por cada estación.
+
+```{r}
+map(escenarios_100_250_ai_mi, estadisticos_distancias_orden_1)
+# Los valores de separación inicialmente esperados se obtuvieron
+```
+
+Si comparamos con la red de estaciones activas de ONAMET, obtenemos que la distancia de separación entre estaciones activas para el primer orden de vecindad, es superior a la propuesta en cualquiera de los dos escenarios. Además, hay al menos dos estaciones de la red de ONAMET que se encuentran separadas hasta a 48 km.
+
+```{r}
+onamet_para_vecindad <- st_read('out/con_indicacion_estatus_onamet.gpkg') %>% 
+  filter(estado == 'activa')
+estadisticos_distancias_orden_1(onamet_para_vecindad)
+```
+
+Eliminamos las propuestas de sitios del escenario a 100 $km^2$ por estación, situadas a 11 km o menos de estaciones preexistentes de ONAMET e INDRHI.
+
+```{r}
+dist_onamet_indrhi <- raster('out/onamet_indrhi_prueba_dist_500x500_distancia.tif')
+esc_100_dist_onamet_indrhi <- raster::extract(dist_onamet_indrhi, escenarios_100_250_ai_mi[[1]])
+escenarios_100_exlusion_union <- escenarios_100_250_ai_mi[[1]] %>%
+  mutate(dist_onamet_indrhi = esc_100_dist_onamet_indrhi) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[1]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+escenarios_100_exlusion_union %>%
+  st_write('out/escenario_100_km2_por_estacion_exclusion_redundancia.gpkg', delete_dsn = T)
+escenarios_100_exlusion_union_mapa <- escenarios_100_exlusion_union %>%
+  ggplot + geom_sf(alpha = 0.8) +
+  geom_sf(data = all_criteria_scores_excluded,
+          aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+  scale_fill_manual(values = paleta) +
+  labs(title = paste0(trimws(names(escenarios)[1]), ', eliminación de redundancia')) +
+  theme_bw()
+escenarios_100_exlusion_union_mapa
+```
+
+Y finalmente obtenemos una tabla-resumen conteniendo los valores
+
+```{r}
+escenarios_100_df_resumen <- escenarios_100_exlusion_union %>% st_drop_geometry %>% dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+  mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'moderadamente idóneo', n*7000, n*35000)) %>% 
+  adorn_totals()
+escenarios_100_df_resumen
+```
+
+Repetimos los mismos pasos para el escenario de una estación por cada 250 $km^2$.
+
+```{r}
+esc_250_dist_onamet_indrhi <- raster::extract(dist_onamet_indrhi, escenarios_100_250_ai_mi[[2]])
+escenarios_250_exlusion_union <- escenarios_100_250_ai_mi[[2]] %>%
+  mutate(dist_onamet_indrhi = esc_250_dist_onamet_indrhi) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[2]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+escenarios_250_exlusion_union %>%
+  st_write('out/escenario_250_km2_por_estacion_exclusion_redundancia.gpkg', delete_dsn = T)
+escenarios_250_exlusion_union_mapa <- escenarios_250_exlusion_union %>%
+  ggplot + geom_sf(alpha = 0.8) +
+  geom_sf(data = all_criteria_scores_excluded,
+          aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+  scale_fill_manual(values = paleta) +
+  labs(title = paste0(trimws(names(escenarios)[2]), ', eliminación de redundancia')) +
+  theme_bw()
+escenarios_250_exlusion_union_mapa
+```
+
+Incluimos igualmente la tabla resumen.
+
+```{r}
+escenarios_250_df_resumen <- escenarios_250_exlusion_union %>% st_drop_geometry %>% dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+  mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'moderadamente idóneo', n*7000, n*35000)) %>% 
+  adorn_totals()
+escenarios_250_df_resumen
+```

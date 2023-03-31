@@ -316,17 +316,48 @@ generar_indice <- function(geom = NULL, res = NULL, buffer_size = NULL){
 # https://stackoverflow.com/questions/48925086/choosing-subset-of-farthest-points-in-given-set-of-points
 generar_centroides_distantes <- function(
     geom = NULL, numero_total_de_puntos = NULL,
-    km2_por_puntos = NULL){
+    km2_por_puntos = NULL, km_de_separacion = NULL,
+    circular = T, solo_calculos = F){
   # Paquete sf
   library(sf)
   
+  # Área total
+  area_total <- geom %>% st_area %>% sum %>% units::drop_units()/1000000
+  cat('El área total (en kilómetros cuadrados) es', area_total, '\n')
+  
   # Condicionales de los parámetros
-  if(is.null(numero_total_de_puntos) && is.null(km2_por_puntos))
-    stop('Debe aportarse número total de puntos o kilómetros cuadrados por estación')
-  if(is.null(numero_total_de_puntos) || !is.null(km2_por_puntos))
-    numero_total_de_puntos <- ceiling(geom %>% st_area %>% sum %>%
-      units::drop_units()/1000000/km2_por_puntos)
-  cat('El numero total de puntos es', numero_total_de_puntos, '\n')
+  if(!is.null(numero_total_de_puntos)){
+    km2_por_puntos <- NULL
+    km_de_separacion <- NULL
+    numero_total_de_puntos <- ceiling(numero_total_de_puntos)
+    cat('Se usarán', numero_total_de_puntos, 'puntos en total\n')
+  } else if(is.null(km2_por_puntos) && is.null(km_de_separacion)){
+    stop('Debe aportarse número total de puntos; alternativamente, se puede aportar o kilómetros cuadrados por estación, o kilómetros de separación')
+  } else if(!is.null(km2_por_puntos) && !is.null(km_de_separacion)){
+    stop('Debe aportarse sólo uno de estos parámetros: kilómetros cuadrados por estación o kilómetros de separación')
+  } else if(!is.null(km2_por_puntos) && is.null(km_de_separacion)) {
+    numero_total_de_puntos <- ceiling(area_total/km2_por_puntos)
+    cat('Se aportó kilómetros cuadrados por estación. El numero total de puntos a colocar es', numero_total_de_puntos, '\n')
+  } else if(is.null(km2_por_puntos) && !is.null(km_de_separacion)) {
+    if(circular){
+      area_por_punto <- pi*(km_de_separacion/2)^2
+      numero_total_de_puntos <- ceiling(area_total/area_por_punto)
+      cat('Se aportó kilómetros de separación por círculos, cada punto cubre', area_por_punto, 'km cuad. a la redonda. El numero total de puntos a colocar es', numero_total_de_puntos, '\n')
+    } else {
+      area_por_punto <-  3*((km_de_separacion/2)^2)*sqrt(3)/2
+      numero_total_de_puntos <- ceiling(area_total/area_por_punto)
+      cat('Se aportó kilómetros de separación por hexágonos regulares, cada punto cubre', area_por_punto, 'km cuad. El numero total de puntos a colocar es', numero_total_de_puntos, '\n')
+    }
+  }
+  
+  # Salida a destiempo
+  if(solo_calculos) {
+    result <- data.frame(`Área total` = area_total,
+                   `Número total de puntos` = numero_total_de_puntos,
+                   `Distancia esperada entre vecinos` = 2*sqrt((area_total/numero_total_de_puntos)/pi),
+                   check.names = F)
+    return(invisible(result))
+  }
   
   # Objetos internos
   p <- numero_total_de_puntos
@@ -444,3 +475,15 @@ generar_centroides_distantes <- function(
 #   print(P)
 #   return(g[P, ])
 # }
+
+estadisticos_distancias_orden_1 <- function(geom){
+  library(sf)
+  library(spdep)
+  library(psych)
+  geom <- geom %>% st_transform(crs = 32619)
+  k_cercanos_1 <- knearneigh(geom)
+  vecindad <- knn2nb(k_cercanos_1)
+  distancias_1 <- unlist(nbdists(vecindad, coords = k_cercanos_1$x))/1000 #Distancias en km
+  estadisticos_distancias <- describe(distancias_1) #Estadísticos de distancias
+  return(estadisticos_distancias)
+}

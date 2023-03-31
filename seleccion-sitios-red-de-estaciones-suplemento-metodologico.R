@@ -10,6 +10,8 @@ knitr::opts_chunk$set(
 
 
 ## ----suppaquetes--------------------------------------------------------------
+library(raster)
+library(psych)
 library(kableExtra)
 library(tidyverse)
 library(ahpsurvey)
@@ -269,6 +271,7 @@ kable_prefagg
 ## ----funcionesfuentescartograficas--------------------------------------------
 source('R/funciones.R')
 library(sf)
+library(spdep)
 library(kableExtra)
 res_h3 <- 7 #Escribir un valor entre 4 y 7, ambos extremos inclusive
 ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
@@ -618,4 +621,107 @@ all_criteria_scores_excluded_mapa <- all_criteria_scores_excluded %>%
     legend.text = element_text(size=5) #change legend text font size
     )
 all_criteria_scores_excluded_mapa
+
+
+## -----------------------------------------------------------------------------
+# Categorías agregadas
+categorias_elegidas <- c('altamente idóneo', 'moderadamente idóneo')
+names(categorias_elegidas) <- rep('categorías de idoneidad', length(categorias_elegidas))
+# Criterio de separación (en este caso, kilómetros cuadrados por estación) 
+escenarios <- c(100, 250) #Cada estación debe cubrir un área de 100 y 250 km cuadrados
+names(escenarios) <- paste('Escenario:', escenarios, 'km2 por estación')
+# Primero realizamos los cálculos
+resumen_calculos_escenarios <- map(escenarios, 
+    ~ generar_centroides_distantes(
+      geom = all_criteria_scores_excluded %>%
+        filter(`Categoría agregada` %in% categorias_elegidas),
+      km2_por_puntos = .x, solo_calculos = T))
+# Finalmente, creamos los objetos que exportaremos para visualización en SIG
+escenarios_100_250_ai_mi <- map(
+  escenarios,
+  ~ generar_centroides_distantes(
+    geom = all_criteria_scores_excluded %>%
+      filter(`Categoría agregada` %in% categorias_elegidas),
+    km2_por_puntos = .x))
+# Mapas
+escenarios_100_250_ai_mi_mapas <- map(names(escenarios_100_250_ai_mi),
+    function(x) {
+      escenarios_100_250_ai_mi[[x]] %>% ggplot + geom_sf(alpha = 0.8) +
+        geom_sf(data = all_criteria_scores_excluded,
+                aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+        scale_fill_manual(values = paleta) +
+        labs(title = x) +
+        theme_bw()
+    })
+escenarios_100_250_ai_mi_mapas
+# Exportar
+map(names(escenarios_100_250_ai_mi),
+    function(x) {
+      sin_especiales <- iconv(names(escenarios_100_250_ai_mi[x]),
+                              from = 'utf-8', to = 'ASCII//TRANSLIT')
+      nombre_archivo <- tolower(paste0(gsub(' |: ', '_', sin_especiales), '.gpkg'))
+      escenarios_100_250_ai_mi[[x]] %>% st_write(paste0('out/', nombre_archivo), delete_dsn = T)
+    })
+
+
+## -----------------------------------------------------------------------------
+map(escenarios_100_250_ai_mi, estadisticos_distancias_orden_1)
+# Los valores de separación inicialmente esperados se obtuvieron
+
+
+## -----------------------------------------------------------------------------
+onamet_para_vecindad <- st_read('out/con_indicacion_estatus_onamet.gpkg') %>% 
+  filter(estado == 'activa')
+estadisticos_distancias_orden_1(onamet_para_vecindad)
+
+
+## -----------------------------------------------------------------------------
+dist_onamet_indrhi <- raster('out/onamet_indrhi_prueba_dist_500x500_distancia.tif')
+esc_100_dist_onamet_indrhi <- raster::extract(dist_onamet_indrhi, escenarios_100_250_ai_mi[[1]])
+escenarios_100_exlusion_union <- escenarios_100_250_ai_mi[[1]] %>%
+  mutate(dist_onamet_indrhi = esc_100_dist_onamet_indrhi) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[1]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+escenarios_100_exlusion_union %>%
+  st_write('out/escenario_100_km2_por_estacion_exclusion_redundancia.gpkg', delete_dsn = T)
+escenarios_100_exlusion_union_mapa <- escenarios_100_exlusion_union %>%
+  ggplot + geom_sf(alpha = 0.8) +
+  geom_sf(data = all_criteria_scores_excluded,
+          aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+  scale_fill_manual(values = paleta) +
+  labs(title = paste0(trimws(names(escenarios)[1]), ', eliminación de redundancia')) +
+  theme_bw()
+escenarios_100_exlusion_union_mapa
+
+
+## -----------------------------------------------------------------------------
+escenarios_100_df_resumen <- escenarios_100_exlusion_union %>% st_drop_geometry %>% dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+  mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'moderadamente idóneo', n*7000, n*35000)) %>% 
+  adorn_totals()
+escenarios_100_df_resumen
+
+
+## -----------------------------------------------------------------------------
+esc_250_dist_onamet_indrhi <- raster::extract(dist_onamet_indrhi, escenarios_100_250_ai_mi[[2]])
+escenarios_250_exlusion_union <- escenarios_100_250_ai_mi[[2]] %>%
+  mutate(dist_onamet_indrhi = esc_250_dist_onamet_indrhi) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[2]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+escenarios_250_exlusion_union %>%
+  st_write('out/escenario_250_km2_por_estacion_exclusion_redundancia.gpkg', delete_dsn = T)
+escenarios_250_exlusion_union_mapa <- escenarios_250_exlusion_union %>%
+  ggplot + geom_sf(alpha = 0.8) +
+  geom_sf(data = all_criteria_scores_excluded,
+          aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+  scale_fill_manual(values = paleta) +
+  labs(title = paste0(trimws(names(escenarios)[2]), ', eliminación de redundancia')) +
+  theme_bw()
+escenarios_250_exlusion_union_mapa
+
+
+## -----------------------------------------------------------------------------
+escenarios_250_df_resumen <- escenarios_250_exlusion_union %>% st_drop_geometry %>% dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+  mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'moderadamente idóneo', n*7000, n*35000)) %>% 
+  adorn_totals()
+escenarios_250_df_resumen
 

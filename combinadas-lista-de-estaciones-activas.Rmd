@@ -426,3 +426,44 @@ indrhi_climaticas_depurado_ll %>%
 ```
 
 > NOTA. Se han generado archivos GeoPackage (`r ruta_gpkg_est_climaticas_indrhi`) y CSV (`r ruta_csv_est_climaticas_indrhi`), de la lista de estaciones climáticas de INDRHI, depuradas según el procedimiento explicado en el texto.
+
+### Guakía Ambiente
+
+Sin cambios respecto de la primera evaluación realizada en noviembre de 2022 (ver cuaderno [consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
+
+
+
+### REDDOM
+
+Sin cambios respecto de la primera evaluación realizada en noviembre de 2022 (ver cuaderno [consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
+
+```{r}
+reddom_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+  filter(grepl('reddom', fuente, ignore.case = T)) %>% 
+  select(Nombre = idOK) %>% mutate(Estado = 'activa') %>% 
+  mutate(Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+reddom_sf %>% st_write('con_indicacion_estatus_reddom_climatica.gpkg')
+```
+
+
+
+### INTEC
+
+
+
+### PUCMM
+
+
+
+### CAEI
+
+
+
+### Universidad ISA
+
+
+### Servicio Geológico Nacional (SGN)
+
+
+## Generar consolidado
+
