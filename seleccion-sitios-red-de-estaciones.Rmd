@@ -104,7 +104,7 @@ En términos de distribución espacial, el patrón más común fue el de tipo co
 all_criteria_mapa
 ```
 
-Tras sumar los criterios ponderados, obtuvimos la distribución de las categorías agregadas. En cuanto a superficie representada, predominaron los intermedios, "marginalmente idóneo" y "moderadamente idóneo" con un 70% de toda la superficie estudiada, mientras que las categorías extremas "no idóneo" y "altamente idóneo" se repartieron el restante 30% (ver table \@ref(tab:areasproporcionalesall)).
+Tras sumar los criterios ponderados, obtuvimos la distribución de las categorías agregadas. En cuanto a superficie representada, predominaron los intermedios, "marginalmente idóneo" y "moderadamente idóneo" con un 70% de toda la superficie estudiada, mientras que las categorías extremas "no idóneo" y "altamente idóneo" se repartieron el restante 30% (ver tabla \@ref(tab:areasproporcionalesall)).
 
 ```{r areasproporcionalesall}
 areas_proporcionales_all_criteria %>% 
@@ -121,10 +121,17 @@ all_criteria_scores_mapa
 
 ### Exclusión por factores limitantes
 
-Un total de `r hexagonos_imputados` hexágonos fueron imputados como no idóneos por su proximidad a cuerpos de agua, o por encontrarse dentro de áreas pobladas o muy distantes en términos de accesibilidad. La mayoría se localizó en los lagos y lagunas interiores y costeras, en áreas próximas a la costa, en ríos anchos y embalses, y en áreas montañosas inaccesibles. El mapa de la figura \@ref(fig:mapacriteriospuntuacionesallexcluded) muestra la nueva distribución de las categorías agregadas (compárese con el mapa de la figura \@ref(fig:mapacriteriospuntuacionesall)).
+Un total de `r hexagonos_imputados` hexágonos fueron imputados como no idóneos por su proximidad a cuerpos de agua, o por encontrarse dentro de áreas pobladas o muy distantes en términos de accesibilidad. La mayoría se localizó en los lagos y lagunas interiores y costeras, en áreas próximas a la costa, en ríos anchos y embalses, y en áreas montañosas inaccesibles. El mapa de la figura \@ref(fig:mapacriteriospuntuacionesallexcluded) muestra la nueva distribución de las categorías agregadas (compárese con el mapa de la figura \@ref(fig:mapacriteriospuntuacionesall)). Asimismo, la tabla \@ref(tab:areasproporcionalesallexcluded)) muestra la nueva distribución de las áreas proporcionales.
 
 ```{r mapacriteriospuntuacionesallexcluded, fig.cap='Mapa de categorías agregadas (exclusión por factores limitantes)'}
 all_criteria_scores_excluded_mapa
+```
+
+```{r areasproporcionalesallexcluded}
+areas_proporcionales_all_criteria_excluded %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Áreas proporcionales de categorías agregadas para la selección de sitios de estaciones meteoclimáticas con exclusión por factores limitantes') %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
 ### Análisis de vecindad entre estaciones (existentes y propuestas)
@@ -171,6 +178,7 @@ escenarios_250_df_resumen %>%
 escenarios_250_exlusion_union_mapa
 ```
 
+!!!!!!!!!!!!!!!AÑADIR ESCENARIO INTERMEDIO!!!!!!!!!!!!!!
 
 ## Discusión
 

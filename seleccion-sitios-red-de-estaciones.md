@@ -541,7 +541,7 @@ categorías agregadas. En cuanto a superficie representada, predominaron
 los intermedios, “marginalmente idóneo” y “moderadamente idóneo” con un
 70% de toda la superficie estudiada, mientras que las categorías
 extremas “no idóneo” y “altamente idóneo” se repartieron el restante 30%
-(ver table <a href="#tab:areasproporcionalesall">3</a>).
+(ver tabla <a href="#tab:areasproporcionalesall">3</a>).
 
 ``` r
 areas_proporcionales_all_criteria %>% 
@@ -632,12 +632,73 @@ de la figura
 muestra la nueva distribución de las categorías agregadas (compárese con
 el mapa de la figura
 <a href="#fig:mapacriteriospuntuacionesall"><strong>??</strong></a>).
+Asimismo, la tabla <a href="#tab:areasproporcionalesallexcluded">4</a>)
+muestra la nueva distribución de las áreas proporcionales.
 
 ``` r
 all_criteria_scores_excluded_mapa
 ```
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/mapacriteriospuntuacionesallexcluded-1.jpeg" alt="Mapa de categorías agregadas (exclusión por factores limitantes)" width="100%" />
+
+``` r
+areas_proporcionales_all_criteria_excluded %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Áreas proporcionales de categorías agregadas para la selección de sitios de estaciones meteoclimáticas con exclusión por factores limitantes') %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 4: Áreas proporcionales de categorías agregadas para la selección
+de sitios de estaciones meteoclimáticas con exclusión por factores
+limitantes
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Categoría agregada
+</th>
+<th style="text-align:right;">
+proporción
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+24.08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+26.95
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+34.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+14.59
+</td>
+</tr>
+</tbody>
+</table>
 
 ### Análisis de vecindad entre estaciones (existentes y propuestas)
 
@@ -698,7 +759,7 @@ escenarios_100_df_resumen %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 4: Inversión sugeridad para el escenario 1, 100 kilómetros
+Table 5: Inversión sugeridad para el escenario 1, 100 kilómetros
 cuadrados por estación
 </caption>
 <thead>
@@ -783,7 +844,7 @@ escenarios_250_df_resumen %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 5: Inversión sugeridad para el escenario 2, 250 kilómetros
+Table 6: Inversión sugeridad para el escenario 2, 250 kilómetros
 cuadrados por estación
 </caption>
 <thead>
@@ -993,7 +1054,7 @@ data.frame(
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 6: Tabla de recodificación de puntaciones de formulario a escala
+Table 7: Tabla de recodificación de puntaciones de formulario a escala
 AHP original
 </caption>
 <thead>
@@ -1086,7 +1147,7 @@ as.data.frame(variables) %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 7: Tabla de equivalencias de nombres de las variables evaluadas
+Table 8: Tabla de equivalencias de nombres de las variables evaluadas
 </caption>
 <thead>
 <tr>
@@ -1188,7 +1249,7 @@ tabla_en_bruto %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 8: Tabla de resultados en bruto (anonimizada) obtenida a partir
+Table 9: Tabla de resultados en bruto (anonimizada) obtenida a partir
 del rellenado del “Formulario de comparación pareada de criterios de
 identificación de sitios idóneos para una red de observación climática”
 </caption>
@@ -2129,7 +2190,7 @@ tabla_recodificada %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 9: Tabla de puntaciones recodificadas
+Table 10: Tabla de puntaciones recodificadas
 </caption>
 <thead>
 <tr>
@@ -3028,7 +3089,7 @@ En segundo lugar, aplicamos la recodificación de nombres de columnas de
 la tabla de respuestas, que originalmente eran transcripciones de las
 preguntas del formulario de Google. Este paso nos ayudó a representar
 nombres más cortos en la tabla que posteriormente usamos como insumo
-(ver tabla <a href="#tab:suptablaresultadosparamatrizpareada">10</a>)
+(ver tabla <a href="#tab:suptablaresultadosparamatrizpareada">11</a>)
 para crear la matriz de comparación por parejas del método AHP.
 
 ``` r
@@ -3054,7 +3115,7 @@ tabla_col_renom %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 10: Tabla de columnas renombradas (adaptada para la generación de
+Table 11: Tabla de columnas renombradas (adaptada para la generación de
 la matriz de comparación en parejas)
 </caption>
 <thead>
@@ -3924,7 +3985,7 @@ acce_temp
 </table>
 
 El conjunto de datos de la tabla
-<a href="#tab:suptablaresultadosparamatrizpareada">10</a> recoge las
+<a href="#tab:suptablaresultadosparamatrizpareada">11</a> recoge las
 respuestas dadas por las 9 personas consultada, cada una compuesta por
 28 comparaciones en parejas de criterios (8 criterios). Analicemos
 algunos ejemplos para ilustrar el flujo seguido en la recodificación y
@@ -3934,16 +3995,16 @@ La primera fila contiene las valoraciones realizadas por la persona
 consultada número 1. En la primera pregunta, “*Valora la importancia
 relativa de las variables horas de insolación y elevación*”, el
 consultado respondió “*33: Importancia moderada para elevación*” (ver
-tabla <a href="#tab:suptablaresultadosenbruto">8</a>). Dicha valoración
+tabla <a href="#tab:suptablaresultadosenbruto">9</a>). Dicha valoración
 fue recodificada a puntuaciones AHP con el valor 3 (ver tabla
-<a href="#tab:suptablaresultadosrecodificados">9</a>); nótese que el
+<a href="#tab:suptablaresultadosrecodificados">10</a>); nótese que el
 valor recodificado es positivo, dado que el criterio que recibió la
 mayor importancia fue el que ocupaba la segunda posición en la pregunta.
 
 Finalmente, tras realizar el renombrado, la columna en cuestión paso de
 nombrarse “*Valora la importancia relativa de las variables horas de
 insolación y elevación*” a `inso_elev` (ver tabla
-<a href="#tab:suptablaresultadosparamatrizpareada">10</a>). Esta cambio
+<a href="#tab:suptablaresultadosparamatrizpareada">11</a>). Esta cambio
 nos permitirá manejar atributos cortos en la matriz de comparación por
 parejas.
 
@@ -6445,7 +6506,7 @@ que puede ser provisto por el usuario a partir de simulaciones, que con
 el paquete `ahpsurvey` se puede generar mediante la función `ahp.ri`. El
 conjunto de $RI$ a continuación se generó a partir de `ahp.ri` con
 500000 simulaciones (ver tabla
-<a href="#tab:suprisimuladospaqahpsurvey">11</a>), y están contenidas en
+<a href="#tab:suprisimuladospaqahpsurvey">12</a>), y están contenidas en
 la viñeta principal de la documentación del paquete `ahpsurvey` (Cho
 2019):
 
@@ -6460,7 +6521,7 @@ ri_sim %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 11: Índices aleatorios generados por la función ahp.ri con 500000
+Table 12: Índices aleatorios generados por la función ahp.ri con 500000
 simulaciones para 1 a 15 atributos
 </caption>
 <thead>
@@ -6582,7 +6643,7 @@ tiempo_10k <- system.time(probandoRI <- ahp.ri(nsims = 10000, dim = 8, seed = 99
 El tiempo de cómputo fue relativamente pequeño (\~ 2 segundos) y el
 resultado para $RI$ es 1.399982, el cual se aproxima bastante al
 generado por Cho (2019) (tabla
-<a href="#tab:suprisimuladospaqahpsurvey">11</a>). Si generásemos un
+<a href="#tab:suprisimuladospaqahpsurvey">12</a>). Si generásemos un
 $RI$ con 500000 simulaciones, nos tomaría al menos un minuto y medio en
 una PC de altas prestaciones (o varios minutos en una PC común), y el
 resultado sería bastante parecido al mostrado por Cho (2019), por lo que
@@ -6595,7 +6656,7 @@ RI <- ri_sim[8]
 Con este índice aleatorio, calculamos la razón de consistencia `CR` de
 las respuestas aportadas por cada persona consultada, mediante la
 función `ahp.cr` aplicada a la matriz de comparación en parejas. La
-tabla <a href="#tab:suprazondeconsistencia">12</a> resume el cómputo de
+tabla <a href="#tab:suprazondeconsistencia">13</a> resume el cómputo de
 esta métrica.
 
 ``` r
@@ -6609,7 +6670,7 @@ data.frame(`Persona consultada` = seq_along(cr), CR = cr, check.names = F) %>%
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 12: Razones de consistencia (consistency ratio) por persona
+Table 13: Razones de consistencia (consistency ratio) por persona
 consultada
 </caption>
 <thead>
@@ -6709,7 +6770,7 @@ la elección se considera inconsistente (Thomas L. Saaty 1977). **En
 nuestro caso, elegimos el umbral de 0.1 para** $CR$, por lo que
 obtuvimos un total de 4 valoraciones consistentes (personas consultadas
 números 1, 2, 4, 9) y 5 inconsistentes (personas números 3, 5, 6, 7, 8)
-(comparar con tabla <a href="#tab:suprazondeconsistencia">12</a>).
+(comparar con tabla <a href="#tab:suprazondeconsistencia">13</a>).
 
 ``` r
 table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() %>% 
@@ -6722,7 +6783,7 @@ table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() 
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 13: Número de cuestionarios según consistencia
+Table 14: Número de cuestionarios según consistencia
 </caption>
 <thead>
 <tr>
@@ -6865,7 +6926,7 @@ flujo_completo_ahp <- ahp(df = tabla_col_renom[, col_ord],
 # sum(flujo_completo_ahp$aggpref[,1]) == 1
 ```
 
-Las tablas <a href="#tab:prefind">14</a> y <a href="#tab:prefagg">15</a>
+Las tablas <a href="#tab:prefind">15</a> y <a href="#tab:prefagg">16</a>
 muestran las preferencias individuales y agregadas, respectivamente, de
 las personas entrevistadas cuyas respuestas fueron consistentes. Las
 matriz agregada constituye el resultado principal del AHP, el cual
@@ -6886,7 +6947,7 @@ kable_prefind
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 14: Preferencias individuales
+Table 15: Preferencias individuales
 </caption>
 <thead>
 <tr>
@@ -7116,7 +7177,7 @@ kable_prefagg
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 15: Preferencias agregadas
+Table 16: Preferencias agregadas
 </caption>
 <thead>
 <tr>
@@ -7341,7 +7402,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 16: Áreas proporcionales de distancia a accesos
+Table 17: Áreas proporcionales de distancia a accesos
 </caption>
 <thead>
 <tr>
@@ -7395,7 +7456,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 16: Intervalos de distancia a accesos
+Table 17: Intervalos de distancia a accesos
 </caption>
 <thead>
 <tr>
@@ -7510,7 +7571,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 17: Intervalos de estacionalidad térmica
+Table 18: Intervalos de estacionalidad térmica
 </caption>
 <thead>
 <tr>
@@ -7579,7 +7640,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 17: Áreas proporcionales de estacionalidad térmica
+Table 18: Áreas proporcionales de estacionalidad térmica
 </caption>
 <thead>
 <tr>
@@ -7668,7 +7729,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 18: Intervalos de estacionalidad pluviométrica
+Table 19: Intervalos de estacionalidad pluviométrica
 </caption>
 <thead>
 <tr>
@@ -7737,7 +7798,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 18: Áreas proporcionales de estacionalidad pluviométrica
+Table 19: Áreas proporcionales de estacionalidad pluviométrica
 </caption>
 <thead>
 <tr>
@@ -7826,7 +7887,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 19: Intervalos de heterogeneidad de hábitat
+Table 20: Intervalos de heterogeneidad de hábitat
 </caption>
 <thead>
 <tr>
@@ -7895,7 +7956,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 19: Áreas proporcionales de heterogeneidad de hábitat
+Table 20: Áreas proporcionales de heterogeneidad de hábitat
 </caption>
 <thead>
 <tr>
@@ -7984,7 +8045,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 20: Intervalos de distancia a cuerpos de agua
+Table 21: Intervalos de distancia a cuerpos de agua
 </caption>
 <thead>
 <tr>
@@ -8053,7 +8114,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 20: Áreas proporcionales de distancia a cuerpos de agua
+Table 21: Áreas proporcionales de distancia a cuerpos de agua
 </caption>
 <thead>
 <tr>
@@ -8142,7 +8203,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 21: Intervalos de pendiente
+Table 22: Intervalos de pendiente
 </caption>
 <thead>
 <tr>
@@ -8211,7 +8272,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 21: Áreas proporcionales de pendiente
+Table 22: Áreas proporcionales de pendiente
 </caption>
 <thead>
 <tr>
@@ -8300,7 +8361,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 22: Intervalos de horas de insolación
+Table 23: Intervalos de horas de insolación
 </caption>
 <thead>
 <tr>
@@ -8369,7 +8430,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 22: Áreas proporcionales de horas de insolación
+Table 23: Áreas proporcionales de horas de insolación
 </caption>
 <thead>
 <tr>
@@ -8458,7 +8519,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 23: Intervalos de elevación
+Table 24: Intervalos de elevación
 </caption>
 <thead>
 <tr>
@@ -8527,7 +8588,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 23: Áreas proporcionales de elevación
+Table 24: Áreas proporcionales de elevación
 </caption>
 <thead>
 <tr>
@@ -8584,7 +8645,7 @@ if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 
 Los intervalos o umbrales elegidos para definir las puntuaciones de
 criterios, están recogidos en la tabla (ver tabla
-<a href="#tab:umbralesapuntuaciones">24</a>).
+<a href="#tab:umbralesapuntuaciones">25</a>).
 
 ``` r
 puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiquetas']] %>% 
@@ -8604,7 +8665,7 @@ puntuaciones_umbrales_kable
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 24: Puntuaciones de criterios para la selección de sitios de
+Table 25: Puntuaciones de criterios para la selección de sitios de
 estaciones meteoclimáticas
 </caption>
 <thead>
@@ -8788,7 +8849,7 @@ areas_proporcionales_kable
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 25: Áreas proporcionales por cada criterios para la selección de
+Table 26: Áreas proporcionales por cada criterios para la selección de
 sitios de estaciones meteoclimáticas
 </caption>
 <thead>
@@ -9092,7 +9153,7 @@ areas_proporcionales_all_criteria %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 26: Áreas proporcionales de categorías agregadas para la selección
+Table 27: Áreas proporcionales de categorías agregadas para la selección
 de sitios de estaciones meteoclimáticas
 </caption>
 <thead>
@@ -9230,6 +9291,79 @@ all_criteria_scores_excluded_mapa
 ```
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-14-1.jpeg" width="100%" />
+
+Y mostramos la distribución porcentual por categrías agregadas luego de
+la exclusión por factores limitantes.
+
+``` r
+areas_proporcionales_all_criteria_excluded <- all_criteria_scores_excluded %>%
+  select(`Categoría agregada`) %>% 
+  mutate(
+    área = units::drop_units(st_area(geometry)),
+    `área total` = sum(units::drop_units(st_area(geometry)))) %>%
+  st_drop_geometry %>%
+  group_by(`Categoría agregada`) %>%
+  summarise(proporción = sum(área, na.rm = T)/first(`área total`)*100) %>%
+  na.omit() %>%
+  mutate(proporción = as.numeric(scale(proporción, center = FALSE,
+                            scale = sum(proporción, na.rm = TRUE)/100)))
+areas_proporcionales_all_criteria_excluded %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Áreas proporcionales de categorías agregadas para la selección de sitios de estaciones meteoclimáticas con exclusión por factores limitantes') %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 28: Áreas proporcionales de categorías agregadas para la selección
+de sitios de estaciones meteoclimáticas con exclusión por factores
+limitantes
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Categoría agregada
+</th>
+<th style="text-align:right;">
+proporción
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no idóneo
+</td>
+<td style="text-align:right;">
+24.08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+marginalmente idóneo
+</td>
+<td style="text-align:right;">
+26.95
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+moderadamente idóneo
+</td>
+<td style="text-align:right;">
+34.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+14.59
+</td>
+</tr>
+</tbody>
+</table>
 
 ## Análisis de vecindad entre estaciones (existentes y propuestas)
 
@@ -9643,12 +9777,12 @@ escenarios_100_250_ai_mi_mapas
 
     ## [[1]]
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-15-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-16-1.jpeg" width="100%" />
 
     ## 
     ## [[2]]
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-15-2.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-16-2.jpeg" width="100%" />
 
 ``` r
 # Exportar
@@ -9789,7 +9923,7 @@ escenarios_100_exlusion_union_mapa <- escenarios_100_exlusion_union %>%
 escenarios_100_exlusion_union_mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-18-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-19-1.jpeg" width="100%" />
 
 Y finalmente obtenemos una tabla-resumen conteniendo los valores
 
@@ -9834,7 +9968,7 @@ escenarios_250_exlusion_union_mapa <- escenarios_250_exlusion_union %>%
 escenarios_250_exlusion_union_mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-20-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-21-1.jpeg" width="100%" />
 
 Incluimos igualmente la tabla resumen.
 

@@ -787,6 +787,26 @@ all_criteria_scores_excluded_mapa <- all_criteria_scores_excluded %>%
 all_criteria_scores_excluded_mapa
 ```
 
+Y mostramos la distribución porcentual por categrías agregadas luego de la exclusión por factores limitantes.
+
+```{r}
+areas_proporcionales_all_criteria_excluded <- all_criteria_scores_excluded %>%
+  select(`Categoría agregada`) %>% 
+  mutate(
+    área = units::drop_units(st_area(geometry)),
+    `área total` = sum(units::drop_units(st_area(geometry)))) %>%
+  st_drop_geometry %>%
+  group_by(`Categoría agregada`) %>%
+  summarise(proporción = sum(área, na.rm = T)/first(`área total`)*100) %>%
+  na.omit() %>%
+  mutate(proporción = as.numeric(scale(proporción, center = FALSE,
+                            scale = sum(proporción, na.rm = TRUE)/100)))
+areas_proporcionales_all_criteria_excluded %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Áreas proporcionales de categorías agregadas para la selección de sitios de estaciones meteoclimáticas con exclusión por factores limitantes') %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
 ## Análisis de vecindad entre estaciones (existentes y propuestas)
 
 Las EMC suelen colocarse a una distancia "óptima" entre sí, a efectos de garantizar mediciones precisas y representativas de las condiciones climáticas locales. La distancia entre EMC depende de varios factores, como el tamaño del área de estudio, el tipo de clima en la región y las variables climáticas específicas que se estén midiendo. En general, se intenta garantizar precisión y representatividad, evitando al mismo tiempo redundancia [@design1976hydrological].

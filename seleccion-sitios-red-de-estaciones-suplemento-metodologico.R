@@ -624,6 +624,24 @@ all_criteria_scores_excluded_mapa
 
 
 ## -----------------------------------------------------------------------------
+areas_proporcionales_all_criteria_excluded <- all_criteria_scores_excluded %>%
+  select(`Categoría agregada`) %>% 
+  mutate(
+    área = units::drop_units(st_area(geometry)),
+    `área total` = sum(units::drop_units(st_area(geometry)))) %>%
+  st_drop_geometry %>%
+  group_by(`Categoría agregada`) %>%
+  summarise(proporción = sum(área, na.rm = T)/first(`área total`)*100) %>%
+  na.omit() %>%
+  mutate(proporción = as.numeric(scale(proporción, center = FALSE,
+                            scale = sum(proporción, na.rm = TRUE)/100)))
+areas_proporcionales_all_criteria_excluded %>% 
+    kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Áreas proporcionales de categorías agregadas para la selección de sitios de estaciones meteoclimáticas con exclusión por factores limitantes') %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+
+
+## -----------------------------------------------------------------------------
 # Categorías agregadas
 categorias_elegidas <- c('altamente idóneo', 'moderadamente idóneo')
 names(categorias_elegidas) <- rep('categorías de idoneidad', length(categorias_elegidas))
