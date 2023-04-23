@@ -44,3 +44,6 @@ fuentes/umbrales-criterios-ahp/puntuacion.odt
 
 # INDRHI stations revision by name: different methods of text similarity for joining tables
 fuentes/indrhi/revision_estaciones_climaticas/para_revision_unidas_por_nombre_*
+
+# ALOS mosaic
+alos-palsar-dem-rd

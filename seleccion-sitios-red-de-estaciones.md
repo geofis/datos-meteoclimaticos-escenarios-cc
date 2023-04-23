@@ -75,29 +75,35 @@ público meta también espacializados en el territorio, empleando para
 ello sistemas de información geográfica (SIG) (Rojas Briceño et al.
 2021; Theochari et al. 2021; Tekleyohannes et al. 2021; Chakhar and
 Mousseau 2008; Malczewski 2004; Eastman, Jiang, and Toledano 1998).
-Aunque, varias investigaciones han mostrado el buen rendimiento que
-aportan determinadas técnicas geoestadísticas tradicionales (Ali and
-Othman 2018; Valipour, Ghorbani, and Asadi 2019), así como algoritmos
+Varias investigaciones han mostrado el buen rendimiento que aportan
+determinadas técnicas geoestadísticas tradicionales (Ali and Othman
+2018; Valipour, Ghorbani, and Asadi 2019), así como algoritmos
 contemporáneos de *deep learning* en combinación con técnicas
 tradicionales (Safavi, Siuki, and Hashemi 2021), o incluso la entropía
-(Bertini et al. 2021), los métodos MCA son preferidos por su facilidad
-de uso y porque ayudan a comprender mejor los atributos de terreno.
+(Bertini et al. 2021). No obstante, las técnicas que combinan datos
+geoespaciales (e.g. de SIG y teledetección) con análisis multicriterio
+(MCA), en donde se ponderan de manera relativa los criterios
+geográficos, son herramientas fundamentales en la toma de decisiones,
+pues realizan de forma eficiente el análisis de variables muy diversas
+(Rojas Briceño et al. 2021).
 
 El denominado “proceso analítico jerárquico”, mejor conocido como AHP
 (*analytic hierarchy process*), es un método de selección de
 alternativas multicriterio que se fundamenta en la teoría general de los
-MCA, así como en la base de conocimientos de la jerarquía analítica. Fue
-desarrollado por Thomas Saaty en la década de 1970 (Thomas L. Saaty
-1977), con varias revisiones posteriores (Thomas L. Saaty 2001; Thomas
-L. Saaty and Tran 2007), y se utiliza para tomar decisiones cuando se
-deben considerar múltiples criterios y alternativas. Tradicionalmente,
-el método AHP se ha utilizado en investigaciones del ámbito de las
-ingenierías, ciencias sociales, económicas y empresariales, e igualmente
-en la toma de decisiones donde intervienen datos geoespaciales (Thomas
-L. Saaty 2013; Darko et al. 2019; Podvezko 2009; Subramanian and
-Ramanathan 2012; Breaz, Bologa, and Racz 2017). Recientemente, fue usado
-de forma eficiente en la selección de sitios idóneos para la instalación
-de estaciones meteoclimáticas en Perú (Rojas Briceño et al. 2021).
+MCA, así como en la base de conocimientos de la jerarquía analítica. Es
+bien conocido por su facilidad de uso, y porque ayuda a comprender mejor
+los atributos analizados (Rojas Briceño et al. 2021). Fue desarrollado
+por Thomas Saaty en la década de 1970 (Thomas L. Saaty 1977), con varias
+revisiones posteriores (Thomas L. Saaty 2001; Thomas L. Saaty and Tran
+2007), y se utiliza para tomar decisiones cuando se deben considerar
+múltiples criterios y alternativas. Tradicionalmente, el método AHP se
+ha utilizado en investigaciones del ámbito de las ingenierías, ciencias
+sociales, económicas y empresariales, e igualmente en la toma de
+decisiones donde intervienen datos geoespaciales (Thomas L. Saaty 2013;
+Darko et al. 2019; Podvezko 2009; Subramanian and Ramanathan 2012;
+Breaz, Bologa, and Racz 2017). Recientemente, fue usado de forma
+eficiente en la selección de sitios idóneos para la instalación de
+estaciones meteoclimáticas en Perú (Rojas Briceño et al. 2021).
 
 El método AHP consiste en descomponer un problema complejo en una
 estructura jerárquica de criterios y subcriterios, para luego comparar
@@ -134,16 +140,27 @@ centrándonos en la selección multicriterio de sitios idóneos. En primer
 lugar, aplicamos un **proceso analítico jerárquico (AHP)** para
 seleccionar la mejor opción entre diferentes alternativas, utilizando
 criterios de selección ponderados por personas consultadas con
-conocimiento del problema (Thomas L. Saaty 2013). Las consultas fueron
-solicitadas de forma explícita, quienes respondieron a las preguntas
-mediante formularios electrónicos. Tras las consultas, organizamos y
-recodificamos las respuestas obtenidas y, posteriormente, evaluamos su
-consistencia. Posteriormente, seleccionamos las respuestas consistentes
-para establecer la ponderación de criterios. Finalmente, la ponderación
-definida, la aplicamos a las fuentes de información geográfica
-disponibles, que en nuestro caso eran ca. 13,000 hexágonos conteniendo
-la correspondiente información multicriterio, y repartidos sobre el
-territorio dominicano. De esta ponderación, asignamos una categoría
+conocimiento del problema (Thomas L. Saaty 2013). Los criterios
+seleccionados fueron *distancia a accesos, estacionalidad térmica,
+estacionalidad pluviométrica, heterogeneidad de hábitat, distancia a
+cuerpos de agua, pendiente, horas de insolación, elevación*. Elegimos
+estos ocho criterios por considerarlos relevantes según nuestro propio
+conocimiento de la problemática, así como apoyándonos en estudios
+previos y recomendaciones de la Organización Meteorológica Mundial
+(Rojas Briceño et al. 2021; World Meteorological Organization (WMO) and
+The International Association of Hydrological Sciences 1976).
+
+Las consultas fueron solicitadas de forma explícita, quienes
+respondieron a las preguntas mediante formularios electrónicos. Tras las
+consultas, organizamos y recodificamos las respuestas obtenidas y,
+posteriormente, evaluamos su consistencia. Posteriormente, seleccionamos
+las respuestas consistentes para establecer la ponderación de criterios.
+Finalmente, aplicamos la ponderación obtenida a las fuentes de
+información geográfica disponibles, que en nuestro caso fueron ca.
+[13,000 hexágonos conteniendo la correspondiente información
+multicriterio, y repartidos sobre el territorio
+dominicano](https://geofis.github.io/zonal-statistics/README.html)
+(Martínez-Batlle 2022). De esta ponderación, asignamos una categoría
 agregada a cada hexágono que podía ser una de las siguientes cuatro: no
 idóneo, marginalmente idóneo, moderadamente idóneo y altamente idóneo.
 
@@ -153,7 +170,7 @@ programación. Para diseñar los formularios, empleamos paquetes y
 funciones de Python, mientras que para los análisis nos auxiliamos del
 paquete `ahpsurvey` y otros del entorno de programación estadística R,
 diseñado para tales fines (Cho 2019; R Core Team 2021; Wickham et al.
-2019). Describimos el procedimiento seguido detalladamente en la sección
+2019). Describimos el procedimiento detalladamente en la sección
 [Información suplementaria](#infosupl).
 
 Posteriormente, usamos los resultados obtenidos del AHP como entrada de
@@ -314,12 +331,11 @@ pluviométrica y térmica presentaron proporciones relativamente
 equilibradas del territorio según las cuatro clases de idoneidad. Por
 otra parte, el criterio horas de insolación, mostró una importante
 acumulación de áreas idóneas (altamente idóneas y moderadamente idóneas)
-para el establecimiento de estaciones. Por el contrario, el criterio
-elevación resultó predominantemente no idóneo y marginalmente idóneo.
-Esto se debió a que los sistemas montañosos dominicanos presentan las
-menores densidades de estaciones meteoclimáticas, por lo que se prefirió
-impulsar la idoneidad de la topografía elevada para el establecimiento
-de EMC.
+para el establecimiento de estaciones. Igualmente, el criterio elevación
+resultó predominantemente idóneo y altamente idóneo. Esto se debió a que
+los sistemas montañosos dominicanos presentan las menores densidades de
+estaciones meteoclimáticas, por lo que se prefirió impulsar la idoneidad
+de la topografía elevada para el establecimiento de EMC.
 
 ``` r
 areas_proporcionales %>%
@@ -741,8 +757,8 @@ existente de estaciones de ONAMET e INDRHI. Su principal desventaja
 radica en el costo, pues adquirir, instalar y mantener nuevas
 estaciones, requiere de compromisos presupuestarios muy exigentes. Una
 primera aproximación de esta propuesta, sugiere que la inversión mínima
-necesaria para acometerlo, rondaría los **US\$ 2.38^{6}**, sin
-considerar gastos corrientes asociados.
+necesaria para acometerlo, rondaría los **US\$2380000**, sin considerar
+gastos corrientes asociados.
 
 ``` r
 escenarios_100_250_ai_mi_mapas[[1]]
@@ -826,8 +842,8 @@ escenario, al ser menos denso, tiene como ventaja principal que su costo
 es reducido, y permite alcanzar, moderadamente, estándares sugeridos por
 la OMM. Su principal desventaja radica en que, aunque se aumentaría la
 densidad de la red, la proporción de aumento no sería realmente
-significativa. La inversión inicial estimada rondaría los **US\$
-5.25^{5}**, sin considerar gastos corrientes asociados.
+significativa. La inversión inicial estimada rondaría los
+**US\$525000**, sin considerar gastos corrientes asociados.
 
 ``` r
 escenarios_100_250_ai_mi_mapas[[2]]
@@ -903,12 +919,14 @@ escenarios_250_exlusion_union_mapa
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-7-1.jpeg" width="100%" />
 
+<!-- !!!!!!!!!!!!!!!AÑADIR ESCENARIO INTERMEDIO!!!!!!!!!!!!!! -->
+
 ## Discusión
 
 ## Información suplementaria
 
 Versión HTML (más legible e interactiva),
-[aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/ponderacion-variables-ahp.html)
+[aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/seleccion-sitios-red-de-estaciones-suplemento-metodologico.html)
 
 ## Procedimiento
 
@@ -959,22 +977,31 @@ col_ord <- as.vector(sapply(as.data.frame(combn(names(variables), 2)), paste0, c
 El método AHP consiste en descomponer un problema complejo en una
 estructura jerárquica de criterios y subcriterios, que consisten en
 variables o atributos del terreno en nuestro caso, y luego comparar las
-alternativas en función de cada uno de estos criterios. Los variables se
-comparan en parejas (o pares, comparación pareada), en la que se asigna
-un valor numérico a la importancia relativa de cada criterio en relación
-con los demás. La evaluación pareada se realiza para cada par único de
+alternativas en función de cada uno de estos criterios. Los criterios se
+comparan en parejas (o pares, comparación pareada), asignando un valor
+numérico a la importancia relativa de cada criterio en relación con los
+demás. La evaluación pareada se realiza para cada par único de
 variables; así, el número de comparaciones posibles es
 $\frac{N(N-1)}{2}$
 
-En nuestro caso, dado que comparamos 8 atributos (variables) en parejas,
-realizamos un total de $(8\times7)/2=28$ comparaciones. Los atributos
-seleccionados fueron *distancia a accesos, estacionalidad térmica,
-estacionalidad pluviométrica, heterogeneidad de hábitat, distancia a
-cuerpos de agua, pendiente, horas de insolación, elevación*. Para evitar
-errores de redundancia y garantizar un diseño sistemático y eficiente,
-empleamos Formularios de Google al cual titulamos como [“Formulario de
-comparación pareada de criterios de identificación de sitios idóneos
-para una red de observación
+Originalmente, disponíamos de más de 100 variables espacializadas en el
+territorio dominicano para realizar nuestros análisis (Martínez-Batlle
+2022), pero elegimos sólo ocho de ellas para ser ponderadas como
+criterios de selección por expertos, atendiendo al protocolo establecido
+en el método AHP. Los criterios seleccionados fueron *distancia a
+accesos, estacionalidad térmica, estacionalidad pluviométrica,
+heterogeneidad de hábitat, distancia a cuerpos de agua, pendiente, horas
+de insolación, elevación*. Elegimos estos ocho criterios por
+considerarlos relevantes según nuestro propio conocimiento de la
+problemática, y apoyándonos en estudios previos y recomendaciones de la
+Organización Meteorológica Mundial (Rojas Briceño et al. 2021). Dado que
+comparamos ocho criterios en parejas, cada experto y experta realizó un
+total de $(8\times7)/2=28$ comparaciones.
+
+Para evitar errores de redundancia y garantizar un diseño sistemático y
+eficiente, empleamos Formularios de Google al cual titulamos como
+[“Formulario de comparación pareada de criterios de identificación de
+sitios idóneos para una red de observación
 climática”](https://docs.google.com/forms/d/e/1FAIpQLScOx1bxW47LLEPQ_A6lHmSnpOQkUyHEoLJsRIKBNlbfQby5Dw/viewform?usp=sf_link).
 Programamos en Python las posibles comparaciones por pares y,
 seguidamente, a través de la API del Google Workspace, enviamos el
@@ -7288,24 +7315,18 @@ pendiente
 
 Utilizamos múltiples fuentes cartográficas como variables de territorio
 para modelizar la idoneidad de sitios candidatos para la instalación de
-estaciones meteoclimáticas. Originalmente, disponíamos de más de 100
-fuentes para realizar nuestros análisis, pero elegimos sólo ocho de
-ellas en la ponderación realizada por expertos para el método AHP, por
-considerarlas relevantes siguiendo recomendaciones de estudios previos
-(Rojas Briceño et al. 2021).
-
-Las fuentes disponibles eran capas ráster servidas bajo distintas
-resoluciones y sistemas de referencia, por lo que fue necesario aplicar
-algoritmos de estadística zonal (reducción) y consolidar resultados en
-una geometría vectorial común. Para ello, redujimos todas las fuentes
-ráster al índice geoespacial de hexágonos H3 (*hex bins*)
-(Martínez-Batlle 2022). Probamos distintas resoluciones de dicho índice,
-y tras algunas pruebas, elegimos la resolución “7”. Con esta resolución,
-cubrimos el territorio dominicano (más un área de influencia) con
-aproximadamente 13,000 hexágonos de ca. 4$km^2$ cada uno. Dentro de cada
-hexágono, por medio de estadística zonal, obtuvimos la media de cada
-variable, la cual utilizamos como estadístico de referencia en la
-reclasificación descrita a continuación.
+estaciones meteoclimáticas. Las fuentes disponibles eran capas ráster
+servidas bajo distintas resoluciones y sistemas de referencia, por lo
+que fue necesario aplicar algoritmos de estadística zonal (reducción) y
+consolidar resultados en una geometría vectorial común. Para ello,
+redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3
+(*hex bins*) (Martínez-Batlle 2022). Probamos distintas resoluciones de
+dicho índice, y tras algunas pruebas, elegimos la resolución “7”. Con
+esta resolución, cubrimos el territorio dominicano (más un área de
+influencia) con aproximadamente 13,000 hexágonos de ca. 4$km^2$ cada
+uno. Dentro de cada hexágono, por medio de estadística zonal, obtuvimos
+la media de cada variable, la cual utilizamos como estadístico de
+referencia en la reclasificación descrita a continuación.
 
 Reclasificamos los valores promedio de las ocho variables seleccionadas,
 aplicando criterios definidos por el equipo de investigación para cada
@@ -10145,10 +10166,10 @@ Climate.” *Sustainability*.
 
 <div id="ref-jose_ramon_martinez_batlle_2022_7367180" class="csl-entry">
 
-Martínez-Batlle, José Ramón. 2022. *<span
-class="nocase">geofis/zonal-statistics: Let there be environmental
-variables</span>* (version v0.0.0.9000). Zenodo.
-<https://doi.org/10.5281/zenodo.7367256>.
+Martínez-Batlle, José Ramón. 2022. *<span class="nocase">Estadística
+zonal multipropósito sobre información geoespacial de República
+Dominicana, usando Google Earth Engine, Python y R</span>* (version
+v0.0.0.9000). Zenodo. <https://doi.org/10.5281/zenodo.7367256>.
 
 </div>
 
