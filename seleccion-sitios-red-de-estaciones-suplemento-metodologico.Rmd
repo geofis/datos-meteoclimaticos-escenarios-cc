@@ -383,7 +383,7 @@ kable_prefagg
 
 ## Reclasificación de fuentes cartográficas: valores originales, intervalos, representación de la reclasificación
 
-Utilizamos múltiples fuentes cartográficas como variables de territorio para modelizar la idoneidad de sitios candidatos para la instalación de estaciones meteoclimáticas. Las fuentes disponibles eran capas ráster servidas bajo distintas resoluciones y sistemas de referencia, por lo que fue necesario aplicar algoritmos de estadística zonal (reducción) y consolidar resultados en una geometría vectorial común. Para ello, redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3 (*hex bins*) [@jose_ramon_martinez_batlle_2022_7367180]. Probamos distintas resoluciones de dicho índice, y tras algunas pruebas, elegimos la resolución "7". Con esta resolución, cubrimos el territorio dominicano (más un área de influencia) con aproximadamente 13,000 hexágonos de ca. 4$km^2$ cada uno. Dentro de cada hexágono, por medio de estadística zonal, obtuvimos la media de cada variable, la cual utilizamos como estadístico de referencia en la reclasificación descrita a continuación.
+Utilizamos múltiples fuentes cartográficas como variables de territorio para modelizar la idoneidad de sitios candidatos para la instalación de estaciones meteoclimáticas. Las fuentes disponibles eran capas ráster servidas bajo distintas resoluciones y sistemas de referencia, por lo que fue necesario aplicar algoritmos de estadística zonal (reducción) y consolidar resultados en una geometría vectorial común. Para ello, redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3 (*hex bins*) [@jose_ramon_martinez_batlle_2022_7367180]. Probamos distintas resoluciones de dicho índice, y tras algunas pruebas, elegimos la resolución "7". Con esta resolución, cubrimos el territorio dominicano (más un área de influencia) con aproximadamente 13,000 hexágonos de ca. 4 km<sup>2</sup> cada uno. Dentro de cada hexágono, por medio de estadística zonal, obtuvimos la media de cada variable, la cual utilizamos como estadístico de referencia en la reclasificación descrita a continuación.
 
 Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios definidos por el equipo de investigación para cada criterio, para lo cual utilizamos conocimiento experto y referencias bibliográficas especializadas en redes de monitoreo meteoclimático, y adaptando las escalas a la realidad insular [@fao1976framework; @rojasbriceno2021]. A cada criterio, y para cada hexágono, asignamos un entero en una escala ordinal del 1 al 4 (de "marginalmente idóneo" a "altamente idóneo"). Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática. Representamos a continuación, para cada criterio, los valores originales mediante gráfico de violín, mostramos los intervalos usados en la reclasificación, y la representamos cartográficamente.
 
@@ -893,7 +893,7 @@ indrhi_para_vecindad_br <- st_read('out/con_indicacion_estatus_climaticas_indrhi
 estadisticos_distancias_orden_1(indrhi_para_vecindad_br)
 ```
 
-Las estaciones de la red de ONAMET fueron caracterizadas recientemente en dos estados "activa" e "inactiva o no reportada". En nuestro análisis de vecindad para eliminar redundancia, consideramos únicamente las activas. Por otra parte, la red del INDRHI cuenta con estaciones que, en 2019 se encontraban en estado "Bueno", "Regular" y "Malo". Decidimos considerar tanto las estaciones en estado "Bueno" como las que se encontraban en estado "Regular". Así, para cada uno de nuestros escenarios de densidad (100, 150 y 250 $km^2$), eliminamos redundancia usando dos redes combinadas distintas: 1) ONAMET activas + INDRHI buenas, y 2) ONAMET activas + INDRHI buenas y regulares. De esta manera, como producto final, obtuvimos 6 escenarios distintos.
+Las estaciones de la red de ONAMET fueron caracterizadas recientemente en dos estados "activa" e "inactiva o no reportada". En nuestro análisis de vecindad para eliminar redundancia, consideramos únicamente las activas. Por otra parte, la red del INDRHI cuenta con estaciones que, en 2019 se encontraban en estado "Bueno", "Regular" y "Malo". Decidimos considerar tanto las estaciones en estado "Bueno" como las que se encontraban en estado "Regular". Así, para cada uno de nuestros escenarios de densidad (100, 150 y 250 km<sup>2</sup>), eliminamos redundancia usando dos redes combinadas distintas: 1) ONAMET activas + INDRHI buenas, y 2) ONAMET activas + INDRHI buenas y regulares. De esta manera, como producto final, obtuvimos 6 escenarios distintos.
 
 ```{r}
 rgdal::setCPLConfigOption("GDAL_PAM_ENABLED", "FALSE")
@@ -918,9 +918,9 @@ actbuereg_d %>% writeRaster('out/onamet_indrhi_actbuereg_dist_500x500_distancia.
                             overwrite = T, setStatistics = F)
 ```
 
-En el caso del escenario "100 $km^2$ por estación", la distancia de corte entre estaciones es de 11 km. Por lo tanto, eliminaremos las estaciones propuestas por nosotros que queden dentro de ese rango respecto de estaciones de ONAMET y/o INDRHI existentes.
+En el caso del escenario "100 km<sup>2</sup> por estación", la distancia de corte entre estaciones es de 11 km. Por lo tanto, eliminaremos las estaciones propuestas por nosotros que queden dentro de ese rango respecto de estaciones de ONAMET y/o INDRHI existentes.
 
-### Escenario 100 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+### Escenario 100 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
 
 - Mapa
 
@@ -969,7 +969,7 @@ assign(obj,
 get(obj) #Tabla
 ```
 
-### Escenario 100 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+### Escenario 100 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
 
 - Mapa
 
@@ -1015,7 +1015,7 @@ assign(obj,
 get(obj) #Tabla
 ```
 
-### Escenario 150 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+### Escenario 150 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
 
 - Mapa
 
@@ -1064,7 +1064,7 @@ assign(obj,
 get(obj) #Tabla
 ```
 
-### Escenario 150 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+### Escenario 150 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
 
 - Mapa
 
@@ -1110,7 +1110,7 @@ assign(obj,
 get(obj) #Tabla
 ```
 
-### Escenario 250 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+### Escenario 250 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
 
 - Mapa
 
@@ -1159,7 +1159,7 @@ assign(obj,
 get(obj) #Tabla
 ```
 
-### Escenario 250 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+### Escenario 250 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
 
 - Mapa
 

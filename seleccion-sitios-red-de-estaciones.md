@@ -721,12 +721,12 @@ altamente idóneo
 
 Con la función de selección de sitios en vecindad, generamos nubes de
 puntos para construir tres escenarios de densidad de estaciones de 100,
-150 y 250 $km^2$ por estación, todos enmarcados en los lineamientos
-sugeridos por la OMM (World Meteorological Organization (WMO) and The
-International Association of Hydrological Sciences 1976; World
-Meteorological Organization (WMO) 2020). En los tres casos utilizamos,
-como área a cubrir, la compuesta por los hexágonos que cumplieran con
-los criterios de “altamente idóneo” o “idóneo”.
+150 y 250 km<sup>2</sup> por estación, todos enmarcados en los
+lineamientos sugeridos por la OMM (World Meteorological Organization
+(WMO) and The International Association of Hydrological Sciences 1976;
+World Meteorological Organization (WMO) 2020). En los tres casos
+utilizamos, como área a cubrir, la compuesta por los hexágonos que
+cumplieran con los criterios de “altamente idóneo” o “idóneo”.
 
 A partir de los escenarios generados por la función de selección de
 sitios en vecindad, obtuvimos escenarios ideales sin considerar las
@@ -743,11 +743,11 @@ ponerlas en operación nuevamente (red de estaciones
 escenarios de densidad, se eliminó redundancia respecto de dos redes
 existentes, lo cual produjo, a su vez, 6 escenarios posibles.
 
-En el primer escenario, cada estación cubre 100 $km^2$. Al eliminar
-redundancia respecto de la red existente, obtuvimos dos subescenarios
-diferenciados para esta densidad. En el primero—evita redundancia
-respecto de estaciones activas de ONAMET y buenas de INDRHI— se
-recomienda instalar 170 estaciones.
+En el primer escenario, cada estación cubre 100 km<sup>2</sup>. Al
+eliminar redundancia respecto de la red existente, obtuvimos dos
+subescenarios diferenciados para esta densidad. En el primero—evita
+redundancia respecto de estaciones activas de ONAMET y buenas de INDRHI—
+se recomienda instalar 170 estaciones.
 
 ``` r
 esc_100_activas_buenas_mapa
@@ -905,9 +905,9 @@ Dominicana. Estas tienen la ventaja añadida de que pueden combinarse con
 proyectos educativos en centros escolares.
 
 A continuación mostramos los subescenarios correspondientes a la
-densidad 150 $km^2$ por estación. Al igual que en el caso anterior,
-evitaremos redundancia utilizando las redes existentes con y sin las
-estaciones de estado regular de INDRHI.
+densidad 150 km<sup>2</sup> por estación. Al igual que en el caso
+anterior, evitaremos redundancia utilizando las redes existentes con y
+sin las estaciones de estado regular de INDRHI.
 
 Si sólo consideramos las estaciones en estado activas (ONAMET) y bueno
 (INDRHI), recomendamos instalar 89 estaciones.
@@ -1054,7 +1054,7 @@ Total
 </table>
 
 Finalmente, resumimos a continuación los subescenarios donde cada
-estación cubre 250 $km^2$. Si consideramos la existencia de las
+estación cubre 250 km<sup>2</sup>. Si consideramos la existencia de las
 estaciones activas y buenas de INDHRI, recomendamos instalar 39
 estaciones.
 
@@ -7601,10 +7601,10 @@ redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3
 (*hex bins*) (Martínez-Batlle 2022). Probamos distintas resoluciones de
 dicho índice, y tras algunas pruebas, elegimos la resolución “7”. Con
 esta resolución, cubrimos el territorio dominicano (más un área de
-influencia) con aproximadamente 13,000 hexágonos de ca. 4$km^2$ cada
-uno. Dentro de cada hexágono, por medio de estadística zonal, obtuvimos
-la media de cada variable, la cual utilizamos como estadístico de
-referencia en la reclasificación descrita a continuación.
+influencia) con aproximadamente 13,000 hexágonos de ca. 4 km<sup>2</sup>
+cada uno. Dentro de cada hexágono, por medio de estadística zonal,
+obtuvimos la media de cada variable, la cual utilizamos como estadístico
+de referencia en la reclasificación descrita a continuación.
 
 Reclasificamos los valores promedio de las ocho variables seleccionadas,
 aplicando criterios definidos por el equipo de investigación para cada
@@ -9968,10 +9968,10 @@ activas. Por otra parte, la red del INDRHI cuenta con estaciones que, en
 2019 se encontraban en estado “Bueno”, “Regular” y “Malo”. Decidimos
 considerar tanto las estaciones en estado “Bueno” como las que se
 encontraban en estado “Regular”. Así, para cada uno de nuestros
-escenarios de densidad (100, 150 y 250 $km^2$), eliminamos redundancia
-usando dos redes combinadas distintas: 1) ONAMET activas + INDRHI
-buenas, y 2) ONAMET activas + INDRHI buenas y regulares. De esta manera,
-como producto final, obtuvimos 6 escenarios distintos.
+escenarios de densidad (100, 150 y 250 km<sup>2</sup>), eliminamos
+redundancia usando dos redes combinadas distintas: 1) ONAMET activas +
+INDRHI buenas, y 2) ONAMET activas + INDRHI buenas y regulares. De esta
+manera, como producto final, obtuvimos 6 escenarios distintos.
 
 ``` r
 rgdal::setCPLConfigOption("GDAL_PAM_ENABLED", "FALSE")
@@ -10001,12 +10001,12 @@ actbuereg_d %>% writeRaster('out/onamet_indrhi_actbuereg_dist_500x500_distancia.
                             overwrite = T, setStatistics = F)
 ```
 
-En el caso del escenario “100 $km^2$ por estación”, la distancia de
-corte entre estaciones es de 11 km. Por lo tanto, eliminaremos las
+En el caso del escenario “100 km<sup>2</sup> por estación”, la distancia
+de corte entre estaciones es de 11 km. Por lo tanto, eliminaremos las
 estaciones propuestas por nosotros que queden dentro de ese rango
 respecto de estaciones de ONAMET y/o INDRHI existentes.
 
-### Escenario 100 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+### Escenario 100 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
 
 - Mapa
 
@@ -10036,7 +10036,7 @@ assign(obj,
                    mutate(id='estaciones existentes')) %>%
          ggplot +
          geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
-         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
          scale_fill_manual(values = c('grey70', 'black')) +
          scale_shape_manual(values = c(25, 21)) +
          # geom_sf(data = all_criteria_scores_excluded,
@@ -10070,7 +10070,7 @@ get(obj) #Tabla
     ##    altamente idóneo  43     1505000
     ##               Total 170     2394000
 
-### Escenario 100 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+### Escenario 100 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
 
 - Mapa
 
@@ -10100,7 +10100,7 @@ assign(obj,
                    mutate(id='estaciones existentes')) %>%
          ggplot +
          geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
-         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
          scale_fill_manual(values = c('grey70', 'black')) +
          scale_shape_manual(values = c(25, 21)) +
          labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
@@ -10131,7 +10131,7 @@ get(obj) #Tabla
     ##    altamente idóneo  43     1505000
     ##               Total 168     2380000
 
-### Escenario 150 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+### Escenario 150 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
 
 - Mapa
 
@@ -10161,7 +10161,7 @@ assign(obj,
                    mutate(id='estaciones existentes')) %>%
          ggplot +
          geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
-         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
          scale_fill_manual(values = c('grey70', 'black')) +
          scale_shape_manual(values = c(25, 21)) +
          # geom_sf(data = all_criteria_scores_excluded,
@@ -10195,7 +10195,7 @@ get(obj) #Tabla
     ##    altamente idóneo 23      805000
     ##               Total 89     1267000
 
-### Escenario 150 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+### Escenario 150 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
 
 - Mapa
 
@@ -10225,7 +10225,7 @@ assign(obj,
                    mutate(id='estaciones existentes')) %>%
          ggplot +
          geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
-         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
          scale_fill_manual(values = c('grey70', 'black')) +
          scale_shape_manual(values = c(25, 21)) +
          labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
@@ -10256,7 +10256,7 @@ get(obj) #Tabla
     ##    altamente idóneo 23      805000
     ##               Total 86     1246000
 
-### Escenario 250 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+### Escenario 250 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
 
 - Mapa
 
@@ -10286,7 +10286,7 @@ assign(obj,
                    mutate(id='estaciones existentes')) %>%
          ggplot +
          geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
-         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
          scale_fill_manual(values = c('grey70', 'black')) +
          scale_shape_manual(values = c(25, 21)) +
          # geom_sf(data = all_criteria_scores_excluded,
@@ -10320,7 +10320,7 @@ get(obj) #Tabla
     ##    altamente idóneo  9      315000
     ##               Total 39      525000
 
-### Escenario 250 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+### Escenario 250 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
 
 - Mapa
 
@@ -10350,7 +10350,7 @@ assign(obj,
                    mutate(id='estaciones existentes')) %>%
          ggplot +
          geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
-         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
          scale_fill_manual(values = c('grey70', 'black')) +
          scale_shape_manual(values = c(25, 21)) +
          labs(title = paste0(trimws(names(escenarios)[indice]),'\n',

@@ -4797,7 +4797,7 @@ lista_con_periodo_2022_coord_todas_sf %>%
   st_write(ruta_gpkg_est_climaticas_onamet, delete_dsn = T)
 ```
 
-    ## Deleting source `out/con_indicacion_estatus_onamet.gpkg' failed
+    ## Deleting source `out/con_indicacion_estatus_onamet.gpkg' using driver `GPKG'
     ## Writing layer `con_indicacion_estatus_onamet' to data source 
     ##   `out/con_indicacion_estatus_onamet.gpkg' using driver `GPKG'
     ## Writing 87 features with 18 fields and geometry type Point.
@@ -12207,7 +12207,7 @@ indrhi_hidrometricas_final_sf %>%
   st_write(ruta_gpkg_est_hidrometricas_indrhi, delete_dsn = TRUE)
 ```
 
-    ## Deleting source `out/con_indicacion_estatus_hidrometricas_indrhi.gpkg' failed
+    ## Deleting source `out/con_indicacion_estatus_hidrometricas_indrhi.gpkg' using driver `GPKG'
     ## Writing layer `con_indicacion_estatus_hidrometricas_indrhi' to data source 
     ##   `out/con_indicacion_estatus_hidrometricas_indrhi.gpkg' using driver `GPKG'
     ## Writing 166 features with 11 fields and geometry type Point.
@@ -14778,7 +14778,7 @@ indrhi_climaticas_depurado_ll_sf %>%
   st_write(ruta_gpkg_est_climaticas_indrhi, delete_dsn = T)
 ```
 
-    ## Deleting source `out/con_indicacion_estatus_climaticas_indrhi.gpkg' failed
+    ## Deleting source `out/con_indicacion_estatus_climaticas_indrhi.gpkg' using driver `GPKG'
     ## Writing layer `con_indicacion_estatus_climaticas_indrhi' to data source 
     ##   `out/con_indicacion_estatus_climaticas_indrhi.gpkg' using driver `GPKG'
     ## Writing 54 features with 13 fields and geometry type Point.
@@ -14796,3 +14796,10699 @@ indrhi_climaticas_depurado_ll %>%
 > (out/con_indicacion_estatus_climaticas_indrhi.csv), de la lista de
 > estaciones climáticas de INDRHI, depuradas según el procedimiento
 > explicado en el texto.
+
+### Guakía Ambiente
+
+Sin cambios respecto de la primera evaluación realizada en noviembre de
+2022 (ver cuaderno
+[consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
+
+``` r
+guakia_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+  st_set_geometry('geom') %>% 
+  filter(grepl('guakia', fuente, ignore.case = T)) %>% 
+  select(Nombre = idOK) %>%
+  mutate(Estado = 'activa o bueno', entidad = 'Guakía Ambiente',
+         tipo = 'meteoclimática', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+```
+
+    ## Reading layer `consolidado_estaciones_sf' from data source 
+    ##   `/home/jose/Documentos/git/datos-meteoclimaticos-escenarios-cc/out/consolidado_estaciones_sf.gpkg' 
+    ##   using driver `GPKG'
+    ## Simple feature collection with 237 features and 2 fields
+    ## Geometry type: POINT
+    ## Dimension:     XY
+    ## Bounding box:  xmin: -71.67778 ymin: 18.025 xmax: -68.79723 ymax: 19.86363
+    ## Geodetic CRS:  WGS 84
+
+``` r
+guakia_sf %>% st_write('out/con_indicacion_estatus_guakia_climaticas.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/con_indicacion_estatus_guakia_climaticas.gpkg' using driver `GPKG'
+    ## Writing layer `con_indicacion_estatus_guakia_climaticas' to data source 
+    ##   `out/con_indicacion_estatus_guakia_climaticas.gpkg' using driver `GPKG'
+    ## Writing 1 features with 7 fields and geometry type Point.
+
+### REDDOM
+
+Sin cambios respecto de la primera evaluación realizada en noviembre de
+2022 (ver cuaderno
+[consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
+
+``` r
+reddom_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+  st_set_geometry('geom') %>% 
+  filter(grepl('reddom', fuente, ignore.case = T)) %>% 
+  select(Nombre = idOK) %>%
+  mutate(Estado = 'activa o bueno', entidad = 'Fundación REDDOM',
+         tipo = 'meteoclimática', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+```
+
+    ## Reading layer `consolidado_estaciones_sf' from data source 
+    ##   `/home/jose/Documentos/git/datos-meteoclimaticos-escenarios-cc/out/consolidado_estaciones_sf.gpkg' 
+    ##   using driver `GPKG'
+    ## Simple feature collection with 237 features and 2 fields
+    ## Geometry type: POINT
+    ## Dimension:     XY
+    ## Bounding box:  xmin: -71.67778 ymin: 18.025 xmax: -68.79723 ymax: 19.86363
+    ## Geodetic CRS:  WGS 84
+
+``` r
+reddom_sf %>% st_write('out/con_indicacion_estatus_reddom_climaticas.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/con_indicacion_estatus_reddom_climaticas.gpkg' using driver `GPKG'
+    ## Writing layer `con_indicacion_estatus_reddom_climaticas' to data source 
+    ##   `out/con_indicacion_estatus_reddom_climaticas.gpkg' using driver `GPKG'
+    ## Writing 32 features with 7 fields and geometry type Point.
+
+### INTEC
+
+Sin cambios respecto de la primera evaluación realizada en noviembre de
+2022 (ver cuaderno
+[consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
+
+``` r
+intec_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+  st_set_geometry('geom') %>% 
+  filter(grepl('intec', fuente, ignore.case = T)) %>% 
+  select(Nombre = idOK) %>%
+  mutate(Estado = 'activa o bueno', entidad = 'INTEC',
+         tipo = 'meteoclimática', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+```
+
+    ## Reading layer `consolidado_estaciones_sf' from data source 
+    ##   `/home/jose/Documentos/git/datos-meteoclimaticos-escenarios-cc/out/consolidado_estaciones_sf.gpkg' 
+    ##   using driver `GPKG'
+    ## Simple feature collection with 237 features and 2 fields
+    ## Geometry type: POINT
+    ## Dimension:     XY
+    ## Bounding box:  xmin: -71.67778 ymin: 18.025 xmax: -68.79723 ymax: 19.86363
+    ## Geodetic CRS:  WGS 84
+
+``` r
+intec_sf %>% st_write('out/con_indicacion_estatus_intec_climaticas.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/con_indicacion_estatus_intec_climaticas.gpkg' using driver `GPKG'
+    ## Writing layer `con_indicacion_estatus_intec_climaticas' to data source 
+    ##   `out/con_indicacion_estatus_intec_climaticas.gpkg' using driver `GPKG'
+    ## Writing 5 features with 7 fields and geometry type Point.
+
+### PUCMM
+
+Obtuvimos coordenadas por medio de correo electrónico, fechado 19 de
+diciembre de 2022.
+
+``` r
+pucmm_df <- data.frame(lon = -70.682416, lat = 19.4409224)
+pucmm_sf <- st_as_sf(pucmm_df, coords = c("lon","lat"), crs = 4326) %>% 
+  st_set_geometry('geom') %>% 
+  mutate(Nombre = 'Campus PUCCM', Estado = 'activa o bueno', entidad = 'INTEC',
+         tipo = 'meteoclimática', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+pucmm_sf %>% st_write('out/con_indicacion_estatus_pucmm_climaticas.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/con_indicacion_estatus_pucmm_climaticas.gpkg' using driver `GPKG'
+    ## Writing layer `con_indicacion_estatus_pucmm_climaticas' to data source 
+    ##   `out/con_indicacion_estatus_pucmm_climaticas.gpkg' using driver `GPKG'
+    ## Writing 1 features with 7 fields and geometry type Point.
+
+### CAEI
+
+Obtuvimos coordenadas de una estación meteoclimática durante reunión
+virtual en diciembre de 2022 y, posteriormente, coordenadas de una red
+de pluviómetros por correo electrónico.
+
+``` r
+caei_pluv_sf <- st_read('fuentes/caei/PluviometrosCAEI/PluviometrosCAEI.gpkg') %>%
+  st_geometry() %>% st_geometry() %>% st_as_sf() %>% st_set_geometry('geom') %>% 
+  mutate(tipo = 'pluviométrica') %>% st_zm()
+```
+
+    ## Reading layer `PluviometrosCAEI' from data source 
+    ##   `/home/jose/Documentos/git/datos-meteoclimaticos-escenarios-cc/fuentes/caei/PluviometrosCAEI/PluviometrosCAEI.gpkg' 
+    ##   using driver `GPKG'
+    ## Simple feature collection with 95 features and 11 fields
+    ## Geometry type: POINT
+    ## Dimension:     XYZ
+    ## Bounding box:  xmin: -70.24698 ymin: 18.24269 xmax: -69.1708 ymax: 18.74102
+    ## z_range:       zmin: 0 zmax: 0
+    ## Geodetic CRS:  WGS 84
+
+``` r
+caei_clim_df <- data.frame(lon = -(69+31/60+29.59/3600), lat = 18+35/60+37.83/3600)
+caei_clim_sf <- st_as_sf(caei_clim_df, coords = c("lon","lat"), crs = 4326) %>%
+  st_geometry() %>% st_as_sf() %>% st_set_geometry('geom') %>% 
+  mutate(tipo = 'meteoclimática')
+caei_sf <-  bind_rows(caei_pluv_sf, caei_clim_sf) %>% 
+  mutate(Estado = 'activa o bueno', entidad = 'CAEI', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+caei_sf %>% st_write('out/con_indicacion_estatus_caei_climaticas_pluviometricas.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/con_indicacion_estatus_caei_climaticas_pluviometricas.gpkg' using driver `GPKG'
+    ## Writing layer `con_indicacion_estatus_caei_climaticas_pluviometricas' to data source 
+    ##   `out/con_indicacion_estatus_caei_climaticas_pluviometricas.gpkg' using driver `GPKG'
+    ## Writing 96 features with 6 fields and geometry type Point.
+
+### Universidad ISA
+
+``` r
+isa_df <- data.frame(lon = -70.7482792, lat = 19.4431974)
+isa_sf <- st_as_sf(isa_df, coords = c("lon","lat"), crs = 4326) %>% 
+  st_set_geometry('geom') %>% 
+  mutate(Nombre = 'Estación Japonesa', Estado = 'activa o bueno', entidad = 'Universidad ISA',
+         tipo = 'meteoclimática', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+isa_sf %>% st_write('out/con_indicacion_estatus_isa_climaticas.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/con_indicacion_estatus_isa_climaticas.gpkg' using driver `GPKG'
+    ## Writing layer `con_indicacion_estatus_isa_climaticas' to data source 
+    ##   `out/con_indicacion_estatus_isa_climaticas.gpkg' using driver `GPKG'
+    ## Writing 1 features with 7 fields and geometry type Point.
+
+### Servicio Geológico Nacional (SGN)
+
+``` r
+sgn_df <- data.frame(x = c(417006, 392375), y = c(2053599, 2042564))
+sgn_sf <- st_as_sf(sgn_df, coords = c("x","y"), crs = 32619) %>% 
+  st_transform(4326) %>% st_set_geometry('geom') %>% 
+  mutate(Nombre = c('Río Ozama en barrera de salinidad', 'Río Haina en Manoguayabo'),
+         Estado = 'activa o bueno', entidad = 'SGN',
+         tipo = 'hidrométrica', propiedad = 'pública',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+sgn_sf %>% st_write('out/con_indicacion_estatus_sgn_hidrometricas.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/con_indicacion_estatus_sgn_hidrometricas.gpkg' using driver `GPKG'
+    ## Writing layer `con_indicacion_estatus_sgn_hidrometricas' to data source 
+    ##   `out/con_indicacion_estatus_sgn_hidrometricas.gpkg' using driver `GPKG'
+    ## Writing 2 features with 7 fields and geometry type Point.
+
+### EGEHAINA
+
+Aunque se recibió documentación de las estaciones, no se recibieron
+coordenadas.
+
+### JAD
+
+Aunque se recibió documentación de las estaciones, no se recibieron
+coordenadas.
+
+## Consolidado
+
+``` r
+indrhi_p_consolidado_sf <- bind_rows(
+  indrhi_climaticas_depurado_ll_sf %>%
+    st_set_geometry('geom') %>% 
+    select(Nombre = ESTACION, Estado) %>%
+    mutate(tipo = 'meteoclimática'),
+  indrhi_hidrometricas_final_sf %>%
+    st_set_geometry('geom') %>% 
+    select(Nombre = `Nombre de la estación`, Estado) %>% 
+    mutate(tipo = 'hidrométrica')) %>% 
+  mutate(entidad = 'INDRHI', propiedad = 'pública', Estado = as.character(Estado),
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2]) %>% 
+  mutate(Estado = case_when(
+      Estado == 'Bueno' ~ 'activa o bueno',
+      Estado == 'Regular' ~ 'regular',
+      Estado == 'Malo' ~ 'inactiva o no reportada',
+      TRUE ~ Estado))
+onamet_p_consolidado_sf <- lista_con_periodo_2022_coord_todas_sf %>% 
+  st_set_geometry('geom') %>% st_as_sf() %>% 
+  select(Nombre = nombre_onamet, Estado = estado) %>% 
+  mutate(tipo = 'meteoclimática', entidad = 'ONAMET', propiedad = 'pública', Estado = as.character(Estado),
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2]) %>% 
+  mutate(Estado = case_when(
+      Estado == 'activa' ~ 'activa o bueno',
+      TRUE ~ Estado))
+consolidado_sf <- bind_rows(
+  guakia_sf, intec_sf, pucmm_sf, reddom_sf, caei_sf, isa_sf, sgn_sf,
+  indrhi_p_consolidado_sf, onamet_p_consolidado_sf) %>% 
+  mutate(Estado = factor(Estado, levels = c('activa o bueno','regular', 'inactiva o no reportada')))
+consolidado_sf %>%
+  st_write('out/con_indicacion_estatus_consolidado.gpkg', delete_dsn = T)
+```
+
+    ## Deleting source `out/con_indicacion_estatus_consolidado.gpkg' using driver `GPKG'
+    ## Writing layer `con_indicacion_estatus_consolidado' to data source 
+    ##   `out/con_indicacion_estatus_consolidado.gpkg' using driver `GPKG'
+    ## Writing 445 features with 7 fields and geometry type Point.
+
+``` r
+consolidado_sf %>% st_drop_geometry %>% write_csv('out/con_indicacion_estatus_consolidado.csv')
+```
+
+Mapa de estaciones climáticas según estado
+
+``` r
+fpal_estado <- colorFactor(
+  palette = c("#E41A1C", "#FFFF33","#4DAF4A"),
+  domain = unique(consolidado_sf$Estado), reverse = T)
+leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_estado(Estado),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_estado, values = ~ Estado, opacity = 1,
+            title = "Estaciones<br>Climáticas<br>Estado") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ Estado, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+
+Mapa de estaciones hidrométricas según estado
+
+``` r
+leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_estado(Estado),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_estado, values = ~ Estado, opacity = 1,
+            title = "Estaciones<br>Hidrométricas<br>Estado") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ Estado, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+
+Mapa de estaciones climáticas según propiedad
+
+``` r
+fpal_propiedad <- colorFactor(
+  palette = c("#f1a340", "#998ec3"),
+  domain = unique(consolidado_sf$propiedad))
+leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_propiedad(propiedad),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_propiedad, values = ~ propiedad, opacity = 1,
+            title = "Estaciones<br>Climáticas<br>Propiedad") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ propiedad, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
+
+Mapa de estaciones hidrométricas según propiedad (Yaque vendría aquí)
+
+``` r
+leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_propiedad(propiedad),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_propiedad, values = ~ propiedad, opacity = 1,
+            title = "Estaciones<br>Climáticas<br>Propiedad") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ propiedad, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+
+Mapa de estaciones climáticas según entidad
+
+``` r
+fpal_entidad <- colorFactor(
+  palette = RColorBrewer::brewer.pal(length(unique(consolidado_sf$entidad)), 'Set1'),
+  domain = unique(consolidado_sf$entidad))
+leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_entidad(entidad),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_entidad, values = ~ entidad, opacity = 1,
+            title = "Estaciones<br>Climáticas<br>Entidad") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ entidad, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+
+Mapa de estaciones hidrométricas según entidad
+
+``` r
+leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_entidad(entidad),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_entidad, values = ~ entidad, opacity = 1,
+            title = "Estaciones<br>Hidrométricas<br>Entidad") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ entidad, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+
+Mapas de estaciones climáticas según entidad
+
+``` r
+ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
+ez_ver <- 'd7f79365168e688f0d78f521e53fbf2da19244ef/'
+pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
+pais <- invisible(st_read(pais_url, optional = T, layer = 'pais', quiet = T))
+st_geometry(pais) <- "geometry"
+map(unique(consolidado_sf %>% filter(tipo == 'meteoclimática') %>% pull(entidad)),
+    function(x) {
+      consolidado_sf %>% filter(entidad == x & tipo == 'meteoclimática') %>% 
+      ggplot +
+        geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+        geom_sf(alpha = 0.8, aes(fill = Estado), shape = 21, size = 1.5) +
+        scale_fill_manual(values = c('activa o bueno'='green', 'regular' = 'yellow', 'inactiva o no reportada' = 'red')) +
+        labs(title = paste0('Estaciones climáticas de ', x)) +
+       theme_bw() + 
+       ggspatial::annotation_scale(style = 'ticks') +
+       theme(legend.title = element_blank()) 
+    })
+```
+
+    ## [[1]]
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+
+    ## 
+    ## [[2]]
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-29-2.png)<!-- -->
+
+    ## 
+    ## [[3]]
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-29-3.png)<!-- -->
+
+    ## 
+    ## [[4]]
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-29-4.png)<!-- -->
+
+    ## 
+    ## [[5]]
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-29-5.png)<!-- -->
+
+    ## 
+    ## [[6]]
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-29-6.png)<!-- -->
+
+    ## 
+    ## [[7]]
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-29-7.png)<!-- -->
+
+Mapa de pluviométricas según entidad
+
+``` r
+map(unique(consolidado_sf %>% filter(tipo == 'pluviométrica') %>% pull(entidad)),
+    function(x) {
+      consolidado_sf %>% filter(entidad == x & tipo == 'pluviométrica') %>% 
+      ggplot +
+        geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+        geom_sf(alpha = 0.8, aes(fill = Estado), shape = 21, size = 1.5) +
+        scale_fill_manual(values = c('activa o bueno'='green', 'regular' = 'yellow', 'inactiva o no reportada' = 'red')) +
+        labs(title = paste0('Estaciones pluviométricas de ', x)) +
+       theme_bw() + 
+       ggspatial::annotation_scale(style = 'ticks') +
+       theme(legend.title = element_blank()) 
+    })
+```
+
+    ## [[1]]
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
+
+Mapas de estaciones hidrométricas según entidad
+
+``` r
+map(unique(consolidado_sf %>% filter(tipo == 'hidrométrica') %>% pull(entidad)),
+    function(x) {
+      consolidado_sf %>% filter(entidad == x & tipo == 'hidrométrica') %>% 
+      ggplot +
+        geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+        geom_sf(alpha = 0.8, aes(fill = Estado), shape = 21, size = 1.5) +
+        scale_fill_manual(values = c('activa o bueno'='green', 'regular' = 'yellow', 'inactiva o no reportada' = 'red')) +
+        labs(title = paste0('Estaciones hidrométricas de ', x)) +
+       theme_bw() + 
+       ggspatial::annotation_scale(style = 'ticks') +
+       theme(legend.title = element_blank()) 
+    })
+```
+
+    ## [[1]]
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+
+    ## 
+    ## [[2]]
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-31-2.png)<!-- -->
+
+Impresión de tabla exhaustiva
+
+``` r
+consolidado_sf %>% st_drop_geometry %>%
+  arrange(entidad) %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Nombre
+</th>
+<th style="text-align:left;">
+Estado
+</th>
+<th style="text-align:left;">
+entidad
+</th>
+<th style="text-align:left;">
+tipo
+</th>
+<th style="text-align:left;">
+propiedad
+</th>
+<th style="text-align:right;">
+Longtiud
+</th>
+<th style="text-align:right;">
+Latitud
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.21889
+</td>
+<td style="text-align:right;">
+18.55294
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.18947
+</td>
+<td style="text-align:right;">
+18.55230
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.19707
+</td>
+<td style="text-align:right;">
+18.57829
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.17892
+</td>
+<td style="text-align:right;">
+18.59604
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.17080
+</td>
+<td style="text-align:right;">
+18.58076
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.32054
+</td>
+<td style="text-align:right;">
+18.52682
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.32006
+</td>
+<td style="text-align:right;">
+18.50352
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.53086
+</td>
+<td style="text-align:right;">
+18.68998
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.59511
+</td>
+<td style="text-align:right;">
+18.69934
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.45967
+</td>
+<td style="text-align:right;">
+18.49031
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.58603
+</td>
+<td style="text-align:right;">
+18.69027
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.57901
+</td>
+<td style="text-align:right;">
+18.67273
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.61238
+</td>
+<td style="text-align:right;">
+18.62924
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.54196
+</td>
+<td style="text-align:right;">
+18.65939
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.55103
+</td>
+<td style="text-align:right;">
+18.63020
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.50963
+</td>
+<td style="text-align:right;">
+18.58394
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.48853
+</td>
+<td style="text-align:right;">
+18.49636
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.33381
+</td>
+<td style="text-align:right;">
+18.46710
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.33716
+</td>
+<td style="text-align:right;">
+18.46023
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.36816
+</td>
+<td style="text-align:right;">
+18.48667
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.23283
+</td>
+<td style="text-align:right;">
+18.51922
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.55671
+</td>
+<td style="text-align:right;">
+18.60408
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.48490
+</td>
+<td style="text-align:right;">
+18.57442
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.49747
+</td>
+<td style="text-align:right;">
+18.50183
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.23041
+</td>
+<td style="text-align:right;">
+18.53580
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.22398
+</td>
+<td style="text-align:right;">
+18.65683
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.62645
+</td>
+<td style="text-align:right;">
+18.68470
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.59897
+</td>
+<td style="text-align:right;">
+18.67025
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.18396
+</td>
+<td style="text-align:right;">
+18.60210
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.32054
+</td>
+<td style="text-align:right;">
+18.52682
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.56018
+</td>
+<td style="text-align:right;">
+18.69046
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.27009
+</td>
+<td style="text-align:right;">
+18.59312
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.46264
+</td>
+<td style="text-align:right;">
+18.51042
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.43877
+</td>
+<td style="text-align:right;">
+18.51227
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.39803
+</td>
+<td style="text-align:right;">
+18.51268
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.53803
+</td>
+<td style="text-align:right;">
+18.59163
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.52501
+</td>
+<td style="text-align:right;">
+18.59315
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.22686
+</td>
+<td style="text-align:right;">
+18.53883
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.53132
+</td>
+<td style="text-align:right;">
+18.66737
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.51958
+</td>
+<td style="text-align:right;">
+18.63589
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.52051
+</td>
+<td style="text-align:right;">
+18.59256
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.27129
+</td>
+<td style="text-align:right;">
+18.52132
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.55889
+</td>
+<td style="text-align:right;">
+18.62121
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.56821
+</td>
+<td style="text-align:right;">
+18.66182
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.60786
+</td>
+<td style="text-align:right;">
+18.58096
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.23799
+</td>
+<td style="text-align:right;">
+18.54002
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.17930
+</td>
+<td style="text-align:right;">
+18.32100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.20280
+</td>
+<td style="text-align:right;">
+18.30830
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.19860
+</td>
+<td style="text-align:right;">
+18.33960
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.22170
+</td>
+<td style="text-align:right;">
+18.32930
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.22770
+</td>
+<td style="text-align:right;">
+18.27830
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.24450
+</td>
+<td style="text-align:right;">
+18.25720
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.24698
+</td>
+<td style="text-align:right;">
+18.24269
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.18782
+</td>
+<td style="text-align:right;">
+18.35632
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.16364
+</td>
+<td style="text-align:right;">
+18.33952
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.62263
+</td>
+<td style="text-align:right;">
+18.64301
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.41818
+</td>
+<td style="text-align:right;">
+18.54273
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.48588
+</td>
+<td style="text-align:right;">
+18.55482
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.42933
+</td>
+<td style="text-align:right;">
+18.55270
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.42797
+</td>
+<td style="text-align:right;">
+18.57315
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.40927
+</td>
+<td style="text-align:right;">
+18.57943
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.43684
+</td>
+<td style="text-align:right;">
+18.64077
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.43904
+</td>
+<td style="text-align:right;">
+18.67101
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.42010
+</td>
+<td style="text-align:right;">
+18.61537
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.44632
+</td>
+<td style="text-align:right;">
+18.59368
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.45662
+</td>
+<td style="text-align:right;">
+18.69537
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.44525
+</td>
+<td style="text-align:right;">
+18.73182
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.43675
+</td>
+<td style="text-align:right;">
+18.70216
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.41941
+</td>
+<td style="text-align:right;">
+18.68300
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.39473
+</td>
+<td style="text-align:right;">
+18.69982
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.40992
+</td>
+<td style="text-align:right;">
+18.71576
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.42773
+</td>
+<td style="text-align:right;">
+18.74102
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.39123
+</td>
+<td style="text-align:right;">
+18.66266
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.36895
+</td>
+<td style="text-align:right;">
+18.62069
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.37292
+</td>
+<td style="text-align:right;">
+18.68376
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.33940
+</td>
+<td style="text-align:right;">
+18.57404
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.31271
+</td>
+<td style="text-align:right;">
+18.58698
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.31144
+</td>
+<td style="text-align:right;">
+18.54462
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.31994
+</td>
+<td style="text-align:right;">
+18.61152
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.31324
+</td>
+<td style="text-align:right;">
+18.63391
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.32827
+</td>
+<td style="text-align:right;">
+18.59361
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.32952
+</td>
+<td style="text-align:right;">
+18.64137
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.21798
+</td>
+<td style="text-align:right;">
+18.57663
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.18480
+</td>
+<td style="text-align:right;">
+18.67372
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.20693
+</td>
+<td style="text-align:right;">
+18.51756
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.24272
+</td>
+<td style="text-align:right;">
+18.51155
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.40861
+</td>
+<td style="text-align:right;">
+18.55778
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.50196
+</td>
+<td style="text-align:right;">
+18.50637
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.51059
+</td>
+<td style="text-align:right;">
+18.48191
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.46276
+</td>
+<td style="text-align:right;">
+18.45942
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.42882
+</td>
+<td style="text-align:right;">
+18.59325
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.38022
+</td>
+<td style="text-align:right;">
+18.46860
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.40572
+</td>
+<td style="text-align:right;">
+18.52338
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.38824
+</td>
+<td style="text-align:right;">
+18.51864
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+pluviométrica
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.52489
+</td>
+<td style="text-align:right;">
+18.59384
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.52489
+</td>
+<td style="text-align:right;">
+18.59384
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los_Tocones_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.34635
+</td>
+<td style="text-align:right;">
+19.50247
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Chacuey_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.56480
+</td>
+<td style="text-align:right;">
+19.50264
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Agua_de_Luis_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.21466
+</td>
+<td style="text-align:right;">
+19.75922
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Juliana_Jaramillo_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.61470
+</td>
+<td style="text-align:right;">
+19.78727
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Banamiel_Oficina_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.19435
+</td>
+<td style="text-align:right;">
+19.66831
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Esnamarena_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.60576
+</td>
+<td style="text-align:right;">
+19.12550
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Unisa_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.74848
+</td>
+<td style="text-align:right;">
+19.44292
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Agrofrontera_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.38353
+</td>
+<td style="text-align:right;">
+19.60421
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los_Montones_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.92510
+</td>
+<td style="text-align:right;">
+19.28876
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La_Guama_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.50160
+</td>
+<td style="text-align:right;">
+18.71723
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Plan_Yaque_Manabao_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.79701
+</td>
+<td style="text-align:right;">
+19.07087
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ekoban1_Amina_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.98673
+</td>
+<td style="text-align:right;">
+19.53784
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Banelino_Mao
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.09064
+</td>
+<td style="text-align:right;">
+19.55873
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Montecristi_Oficina_Banelino
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.64626
+</td>
+<td style="text-align:right;">
+19.84958
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Amina_Banelino
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.96859
+</td>
+<td style="text-align:right;">
+19.54510
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Judea_Nueva_Banamiel
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.65865
+</td>
+<td style="text-align:right;">
+19.70878
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hatillo_Palma_Banelino
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.21455
+</td>
+<td style="text-align:right;">
+19.66124
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hato_al_Medio_Banelino
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.31737
+</td>
+<td style="text-align:right;">
+19.67714
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bananera_los_Rios
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.19988
+</td>
+<td style="text-align:right;">
+19.63595
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Novillero_Clay_REDDOM
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.11765
+</td>
+<td style="text-align:right;">
+19.86363
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Guananico_REDDOM
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.93845
+</td>
+<td style="text-align:right;">
+19.73703
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Puerto Plata_REDDOM
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.64679
+</td>
+<td style="text-align:right;">
+19.70652
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jumunuco_REDDOM
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.74990
+</td>
+<td style="text-align:right;">
+19.09705
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La_Pita_REDDOM
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.63360
+</td>
+<td style="text-align:right;">
+19.00903
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ucateci_LaVega_REDDOM
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.51910
+</td>
+<td style="text-align:right;">
+19.23312
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Las_Matas_de_Farfan_REDDOM
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-71.54292
+</td>
+<td style="text-align:right;">
+18.87926
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La_Cumbre_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.62268
+</td>
+<td style="text-align:right;">
+19.54729
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Santiago_Apedi_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.70682
+</td>
+<td style="text-align:right;">
+19.47227
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cevicos_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.97047
+</td>
+<td style="text-align:right;">
+19.00639
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cimpa_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.84041
+</td>
+<td style="text-align:right;">
+19.52976
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Conacado_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.25831
+</td>
+<td style="text-align:right;">
+19.04199
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sur_Futuro_Reddom
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.94145
+</td>
+<td style="text-align:right;">
+18.73675
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vuelta Larga
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Guakía Ambiente
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.99350
+</td>
+<td style="text-align:right;">
+19.29050
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Catanamatias
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.40899
+</td>
+<td style="text-align:right;">
+19.04968
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Matayaya
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.58844
+</td>
+<td style="text-align:right;">
+18.88357
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Naranjito
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.49733
+</td>
+<td style="text-align:right;">
+19.28413
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sabana Mula
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.55650
+</td>
+<td style="text-align:right;">
+19.03412
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Higuerito
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.62430
+</td>
+<td style="text-align:right;">
+18.99017
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Isabela
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.06397
+</td>
+<td style="text-align:right;">
+19.83025
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bayahibe
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-68.84189
+</td>
+<td style="text-align:right;">
+18.40092
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Angostura
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.39485
+</td>
+<td style="text-align:right;">
+18.26713
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lago Enriquillo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.69811
+</td>
+<td style="text-align:right;">
+18.55929
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Puerto Escondido
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.57233
+</td>
+<td style="text-align:right;">
+18.32106
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Peñita
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.27561
+</td>
+<td style="text-align:right;">
+18.45551
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sabana de la Mar
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.38908
+</td>
+<td style="text-align:right;">
+19.04605
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Medina
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.14450
+</td>
+<td style="text-align:right;">
+18.53523
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cítricos Dominicanos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.24028
+</td>
+<td style="text-align:right;">
+18.73897
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Engombe
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.00194
+</td>
+<td style="text-align:right;">
+18.44941
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hato Mayor
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.25001
+</td>
+<td style="text-align:right;">
+18.75023
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Guama
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-68.66119
+</td>
+<td style="text-align:right;">
+18.80965
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Palo de Caja
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.40006
+</td>
+<td style="text-align:right;">
+18.53078
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Presa Jiguez
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.38255
+</td>
+<td style="text-align:right;">
+18.53328
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Valdesia
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.28061
+</td>
+<td style="text-align:right;">
+18.40856
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Comate
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.61664
+</td>
+<td style="text-align:right;">
+18.74568
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pueblo Nuevo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.17477
+</td>
+<td style="text-align:right;">
+18.43995
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Triple Ozama
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.94047
+</td>
+<td style="text-align:right;">
+18.81030
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Santana
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.21687
+</td>
+<td style="text-align:right;">
+18.27898
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Jengibres
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.04727
+</td>
+<td style="text-align:right;">
+19.43913
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Higuey
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-68.69901
+</td>
+<td style="text-align:right;">
+18.61992
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Memiso
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.57159
+</td>
+<td style="text-align:right;">
+18.51421
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Arroyos
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.52916
+</td>
+<td style="text-align:right;">
+18.64196
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Naranjal
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.47712
+</td>
+<td style="text-align:right;">
+18.54298
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Trepada Alta
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.45930
+</td>
+<td style="text-align:right;">
+18.97636
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Seibo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.04444
+</td>
+<td style="text-align:right;">
+18.76550
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jarabacoa
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.63896
+</td>
+<td style="text-align:right;">
+19.13080
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Antona
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.40288
+</td>
+<td style="text-align:right;">
+19.63358
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Matagrande
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.98758
+</td>
+<td style="text-align:right;">
+19.20857
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Boca de Mao
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.05147
+</td>
+<td style="text-align:right;">
+19.58830
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Arroyaso
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.53229
+</td>
+<td style="text-align:right;">
+19.04496
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Naranjito
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.34351
+</td>
+<td style="text-align:right;">
+19.47442
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Isa
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.74591
+</td>
+<td style="text-align:right;">
+19.44608
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Quinigua
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.77368
+</td>
+<td style="text-align:right;">
+19.52663
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tavera
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.71813
+</td>
+<td style="text-align:right;">
+19.28357
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Constanza
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.71674
+</td>
+<td style="text-align:right;">
+18.91134
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vallejuelo
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.33949
+</td>
+<td style="text-align:right;">
+18.65774
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Km 11 Carretera Sánchez
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.15053
+</td>
+<td style="text-align:right;">
+18.75813
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Peñón Barahona
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.18722
+</td>
+<td style="text-align:right;">
+18.29662
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Angelina
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.22229
+</td>
+<td style="text-align:right;">
+19.13080
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Juma-Bonao
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.38618
+</td>
+<td style="text-align:right;">
+18.90023
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Barraquito
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.78891
+</td>
+<td style="text-align:right;">
+19.12899
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Aguacate
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.75949
+</td>
+<td style="text-align:right;">
+19.17220
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Botados
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.57674
+</td>
+<td style="text-align:right;">
+18.87078
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Blanco (Presa)
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.55812
+</td>
+<td style="text-align:right;">
+18.88745
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cenovi en Santa Ana
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.34796
+</td>
+<td style="text-align:right;">
+19.29467
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Limón
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.81945
+</td>
+<td style="text-align:right;">
+19.15301
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+José Contreras
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.45006
+</td>
+<td style="text-align:right;">
+19.46691
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Presa Hatillo
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.25283
+</td>
+<td style="text-align:right;">
+18.94745
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Batey Excabacion
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.40147
+</td>
+<td style="text-align:right;">
+18.63061
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Puerto Escondido
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.58066
+</td>
+<td style="text-align:right;">
+18.32454
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Millo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.34922
+</td>
+<td style="text-align:right;">
+18.54715
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Anamuya
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-68.64482
+</td>
+<td style="text-align:right;">
+18.69947
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rinconcito
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.76762
+</td>
+<td style="text-align:right;">
+18.95801
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sonador
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.57687
+</td>
+<td style="text-align:right;">
+18.70537
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Puertecito
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.50987
+</td>
+<td style="text-align:right;">
+18.80093
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cajuilito
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.59966
+</td>
+<td style="text-align:right;">
+19.08263
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ranchitos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.61729
+</td>
+<td style="text-align:right;">
+18.93246
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pozo Hondo
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.48591
+</td>
+<td style="text-align:right;">
+19.01005
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pedro Santana
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.69024
+</td>
+<td style="text-align:right;">
+19.10257
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Estrecho
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.94147
+</td>
+<td style="text-align:right;">
+19.80553
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Imbert
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.82714
+</td>
+<td style="text-align:right;">
+19.29927
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Recodo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.33945
+</td>
+<td style="text-align:right;">
+18.37361
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Jengibres
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.04242
+</td>
+<td style="text-align:right;">
+19.44386
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Pinta
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.55150
+</td>
+<td style="text-align:right;">
+19.64413
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Manabao
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.78760
+</td>
+<td style="text-align:right;">
+19.07700
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Espensa
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.55428
+</td>
+<td style="text-align:right;">
+19.57802
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Santa Lucía
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-68.93690
+</td>
+<td style="text-align:right;">
+18.68206
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Mamey
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-68.75111
+</td>
+<td style="text-align:right;">
+18.66878
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Corozos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.12344
+</td>
+<td style="text-align:right;">
+18.52466
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Don Miguel
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.68351
+</td>
+<td style="text-align:right;">
+19.49365
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Carbonera
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.69400
+</td>
+<td style="text-align:right;">
+19.59052
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Aduana
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.71141
+</td>
+<td style="text-align:right;">
+19.54847
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cinta Negra
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.96343
+</td>
+<td style="text-align:right;">
+19.28035
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Villa Nizao
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.18576
+</td>
+<td style="text-align:right;">
+18.01662
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bocaina
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.47316
+</td>
+<td style="text-align:right;">
+18.67280
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jiguey
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.37745
+</td>
+<td style="text-align:right;">
+18.54599
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Aguacate
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.32149
+</td>
+<td style="text-align:right;">
+18.49588
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Salto
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.60801
+</td>
+<td style="text-align:right;">
+18.83988
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Higuero
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.99933
+</td>
+<td style="text-align:right;">
+18.61658
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Don Juan
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.95100
+</td>
+<td style="text-align:right;">
+18.81812
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Hidalgos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.66440
+</td>
+<td style="text-align:right;">
+18.87713
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Cacique
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.86123
+</td>
+<td style="text-align:right;">
+18.81733
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Valle de Samaná
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.33747
+</td>
+<td style="text-align:right;">
+19.26323
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+San Rafael I
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.13787
+</td>
+<td style="text-align:right;">
+18.02911
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+San Rafael II
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.14120
+</td>
+<td style="text-align:right;">
+18.03241
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+San Rafael
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.14116
+</td>
+<td style="text-align:right;">
+18.03042
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Paso al Medio
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.17193
+</td>
+<td style="text-align:right;">
+18.56742
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Santa Cruz
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.52177
+</td>
+<td style="text-align:right;">
+19.62386
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Puente Guayubin
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.39816
+</td>
+<td style="text-align:right;">
+19.66163
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sabaneta
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.97864
+</td>
+<td style="text-align:right;">
+19.54565
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Fortaleza
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.83344
+</td>
+<td style="text-align:right;">
+19.04703
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Puente San Rafael
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.05942
+</td>
+<td style="text-align:right;">
+19.58971
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Peña Ranchadero
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.32977
+</td>
+<td style="text-align:right;">
+19.65942
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Inoa
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.95897
+</td>
+<td style="text-align:right;">
+19.32357
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Boma
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.66224
+</td>
+<td style="text-align:right;">
+19.16861
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jinamagao
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.98202
+</td>
+<td style="text-align:right;">
+19.54277
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jarabacoa
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.67840
+</td>
+<td style="text-align:right;">
+19.08357
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Palo verde
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.55546
+</td>
+<td style="text-align:right;">
+19.75778
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mata Grande
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.99611
+</td>
+<td style="text-align:right;">
+19.19532
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cana Chapetón
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.25967
+</td>
+<td style="text-align:right;">
+19.59789
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bejucal
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.73507
+</td>
+<td style="text-align:right;">
+19.18246
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rincón
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.38663
+</td>
+<td style="text-align:right;">
+19.52613
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Antona
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.40289
+</td>
+<td style="text-align:right;">
+19.63025
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Inaje
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.46927
+</td>
+<td style="text-align:right;">
+19.42135
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jicomé
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.94842
+</td>
+<td style="text-align:right;">
+19.62802
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Gorra
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.49482
+</td>
+<td style="text-align:right;">
+19.51830
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bulla
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.07707
+</td>
+<td style="text-align:right;">
+19.41982
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Chorrera
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.08481
+</td>
+<td style="text-align:right;">
+19.46413
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Martínez
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.07953
+</td>
+<td style="text-align:right;">
+19.47052
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mata de Jobo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.33121
+</td>
+<td style="text-align:right;">
+19.46497
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Manabao
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.78987
+</td>
+<td style="text-align:right;">
+19.06973
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Paso Bajito
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.66399
+</td>
+<td style="text-align:right;">
+19.01495
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bao
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.79702
+</td>
+<td style="text-align:right;">
+19.30579
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sabana Iglesia
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.74619
+</td>
+<td style="text-align:right;">
+19.31413
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Puente
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.76563
+</td>
+<td style="text-align:right;">
+19.45218
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Guanajuma
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.74535
+</td>
+<td style="text-align:right;">
+19.28108
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jamamú
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.93344
+</td>
+<td style="text-align:right;">
+19.19440
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jamamú
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.93344
+</td>
+<td style="text-align:right;">
+19.19440
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Casa de Máquina
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.59787
+</td>
+<td style="text-align:right;">
+19.09892
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hato Viejo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.63414
+</td>
+<td style="text-align:right;">
+19.13474
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pinalito
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.75897
+</td>
+<td style="text-align:right;">
+19.29524
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Potrero
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.96008
+</td>
+<td style="text-align:right;">
+19.46969
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Paso de la Perra
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.83966
+</td>
+<td style="text-align:right;">
+19.07752
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pinar Quemado
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.66513
+</td>
+<td style="text-align:right;">
+19.09502
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Velazquitos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.67757
+</td>
+<td style="text-align:right;">
+19.21274
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tavera
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.71535
+</td>
+<td style="text-align:right;">
+19.26135
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Baitoa
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.70896
+</td>
+<td style="text-align:right;">
+19.32774
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Baitoa
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.70896
+</td>
+<td style="text-align:right;">
+19.32774
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+López
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.71118
+</td>
+<td style="text-align:right;">
+19.33413
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+López
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.71118
+</td>
+<td style="text-align:right;">
+19.33413
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Las Charcas
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.71396
+</td>
+<td style="text-align:right;">
+19.40857
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pte. Viejo Santiago
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.71174
+</td>
+<td style="text-align:right;">
+19.43107
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pte. Viejo Santiago
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.71174
+</td>
+<td style="text-align:right;">
+19.43107
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Santiago
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.70313
+</td>
+<td style="text-align:right;">
+19.44135
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Santiago
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.70313
+</td>
+<td style="text-align:right;">
+19.44135
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hato Yaque
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.79619
+</td>
+<td style="text-align:right;">
+19.50580
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cañeo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.98314
+</td>
+<td style="text-align:right;">
+19.54247
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jicome
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.14731
+</td>
+<td style="text-align:right;">
+19.62497
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Caña
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.52538
+</td>
+<td style="text-align:right;">
+19.62247
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Dique Juan Gómez
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.41705
+</td>
+<td style="text-align:right;">
+19.68913
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Higuero
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.83769
+</td>
+<td style="text-align:right;">
+19.24795
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Redondo
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.58389
+</td>
+<td style="text-align:right;">
+19.02863
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Aguas Caliente
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.89814
+</td>
+<td style="text-align:right;">
+19.24524
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pinalito
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.75897
+</td>
+<td style="text-align:right;">
+19.29524
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Inoa
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.98300
+</td>
+<td style="text-align:right;">
+19.35222
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Paso de la Palma
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.51604
+</td>
+<td style="text-align:right;">
+19.57455
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Pilones
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.77352
+</td>
+<td style="text-align:right;">
+19.25579
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Cerrazo
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.72710
+</td>
+<td style="text-align:right;">
+19.23592
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Palomino
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.96944
+</td>
+<td style="text-align:right;">
+18.80512
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Paso de Lima
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.29826
+</td>
+<td style="text-align:right;">
+19.02472
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vallejuelo
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.31721
+</td>
+<td style="text-align:right;">
+18.65660
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hato Viejo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.25538
+</td>
+<td style="text-align:right;">
+18.79707
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Palo Alto
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.17364
+</td>
+<td style="text-align:right;">
+18.29928
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Conuquito
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.15148
+</td>
+<td style="text-align:right;">
+18.41161
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Rodeo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.26760
+</td>
+<td style="text-align:right;">
+19.00551
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Coja
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.81868
+</td>
+<td style="text-align:right;">
+18.76856
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Guama
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.81296
+</td>
+<td style="text-align:right;">
+18.72572
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Guiros
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.00095
+</td>
+<td style="text-align:right;">
+18.51058
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Cacheo
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.11519
+</td>
+<td style="text-align:right;">
+18.81385
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Paso de Lima
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.29826
+</td>
+<td style="text-align:right;">
+19.02472
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Yásica Arriba
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.59327
+</td>
+<td style="text-align:right;">
+19.63365
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Palma Herrera
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.41089
+</td>
+<td style="text-align:right;">
+19.55469
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sonador
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.53943
+</td>
+<td style="text-align:right;">
+19.59870
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jamao
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.44828
+</td>
+<td style="text-align:right;">
+19.63171
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Brazos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.43089
+</td>
+<td style="text-align:right;">
+19.66052
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Santa Ana
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.37064
+</td>
+<td style="text-align:right;">
+19.25907
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Yuna
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.25278
+</td>
+<td style="text-align:right;">
+18.94722
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Arroces
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.16638
+</td>
+<td style="text-align:right;">
+18.97866
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Blanco (Presa)
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.52139
+</td>
+<td style="text-align:right;">
+18.88278
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Torito
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.45590
+</td>
+<td style="text-align:right;">
+18.75634
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Plátanos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.31890
+</td>
+<td style="text-align:right;">
+18.78632
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Blanco
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.52146
+</td>
+<td style="text-align:right;">
+18.88300
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rodeo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.56840
+</td>
+<td style="text-align:right;">
+18.88439
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tireo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.63285
+</td>
+<td style="text-align:right;">
+18.91912
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Guázaros
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.52646
+</td>
+<td style="text-align:right;">
+18.85579
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tireo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.56840
+</td>
+<td style="text-align:right;">
+18.88439
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Pino de Yuna
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.45618
+</td>
+<td style="text-align:right;">
+18.79550
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Piedra los Veganos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.47173
+</td>
+<td style="text-align:right;">
+18.81995
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hatillo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.25283
+</td>
+<td style="text-align:right;">
+18.94745
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Arroyón Arriba
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.52827
+</td>
+<td style="text-align:right;">
+18.85972
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Arroyón Abajo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.52354
+</td>
+<td style="text-align:right;">
+18.86066
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jeremías
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.48597
+</td>
+<td style="text-align:right;">
+19.22554
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jamo
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.48885
+</td>
+<td style="text-align:right;">
+19.22868
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cañabón
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.41887
+</td>
+<td style="text-align:right;">
+19.05395
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cevicos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.98432
+</td>
+<td style="text-align:right;">
+19.00617
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sabana Grande
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.06621
+</td>
+<td style="text-align:right;">
+19.03554
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jayaco
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.43936
+</td>
+<td style="text-align:right;">
+19.00590
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Blanco
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.36810
+</td>
+<td style="text-align:right;">
+18.88717
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Naranjal
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.51450
+</td>
+<td style="text-align:right;">
+19.32830
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Maimón
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.28490
+</td>
+<td style="text-align:right;">
+18.89937
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Guázaros
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.52257
+</td>
+<td style="text-align:right;">
+18.85886
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Meche
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.53291
+</td>
+<td style="text-align:right;">
+18.84794
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rincón de Yuboa
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.36157
+</td>
+<td style="text-align:right;">
+18.78331
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Quemados
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.47314
+</td>
+<td style="text-align:right;">
+18.87916
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bonao
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.40762
+</td>
+<td style="text-align:right;">
+18.95916
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Corosos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.20089
+</td>
+<td style="text-align:right;">
+19.05496
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Jagua
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.70796
+</td>
+<td style="text-align:right;">
+19.14882
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Bija
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.12723
+</td>
+<td style="text-align:right;">
+19.14948
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bayacanes
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.58153
+</td>
+<td style="text-align:right;">
+19.23565
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cenoví, Los Limones
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.34906
+</td>
+<td style="text-align:right;">
+19.31966
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El pino de Yuna
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.29723
+</td>
+<td style="text-align:right;">
+18.89472
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Abadesa
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.92643
+</td>
+<td style="text-align:right;">
+19.01863
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Plátanos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.11228
+</td>
+<td style="text-align:right;">
+19.12214
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ranchito
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.38872
+</td>
+<td style="text-align:right;">
+19.17508
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Los Tres Pasos
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.07879
+</td>
+<td style="text-align:right;">
+18.97640
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Cabirma
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.11522
+</td>
+<td style="text-align:right;">
+18.97470
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pinalito
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.28923
+</td>
+<td style="text-align:right;">
+18.89662
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+La Boca
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.30209
+</td>
+<td style="text-align:right;">
+19.24578
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jaya
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.30250
+</td>
+<td style="text-align:right;">
+19.24556
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rincón
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.40695
+</td>
+<td style="text-align:right;">
+19.10509
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Villa Riva
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.90444
+</td>
+<td style="text-align:right;">
+19.17440
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+El Limón
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.81921
+</td>
+<td style="text-align:right;">
+19.15301
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BAIGUAQUEPILONES LOS
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.87945
+</td>
+<td style="text-align:right;">
+19.34889
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BAIGUAQUEPILONES LOS
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.87945
+</td>
+<td style="text-align:right;">
+19.34889
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jardín Botánico de Santo Domingo
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INTEC
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.95306
+</td>
+<td style="text-align:right;">
+18.49500
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+San Pedro de Macorís
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INTEC
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.28655
+</td>
+<td style="text-align:right;">
+18.47433
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Las Terrenas
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INTEC
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.55257
+</td>
+<td style="text-align:right;">
+19.03248
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jardín Botánico de Santiago
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INTEC
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.69772
+</td>
+<td style="text-align:right;">
+19.49751
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Colegio Quisqueya, Santo Domingo
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INTEC
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.95045
+</td>
+<td style="text-align:right;">
+18.45637
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Campus PUCCM
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+INTEC
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.68242
+</td>
+<td style="text-align:right;">
+19.44092
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ARPT. ARROYO BARRIL
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.43144
+</td>
+<td style="text-align:right;">
+19.20050
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ARPT. GREGORIO LUPERÓN
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.56316
+</td>
+<td style="text-align:right;">
+19.75416
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ARPT. MARÍA MONTEZ
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.12288
+</td>
+<td style="text-align:right;">
+18.24861
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BAYAGUANA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.63083
+</td>
+<td style="text-align:right;">
+18.74216
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CABO ENGAÑO
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-68.32550
+</td>
+<td style="text-align:right;">
+18.61678
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CABRERA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.90633
+</td>
+<td style="text-align:right;">
+19.64436
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CONSTANZA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.71619
+</td>
+<td style="text-align:right;">
+18.91173
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HONDO VALLE
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.69364
+</td>
+<td style="text-align:right;">
+18.71213
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+JARABACOA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.60572
+</td>
+<td style="text-align:right;">
+19.12551
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+JIMANÍ
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.85301
+</td>
+<td style="text-align:right;">
+18.49278
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ARPT. DE LA ROMANA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-68.90925
+</td>
+<td style="text-align:right;">
+18.44853
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LA VEGA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.53108
+</td>
+<td style="text-align:right;">
+19.22275
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LA VICTORIA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.83956
+</td>
+<td style="text-align:right;">
+18.59779
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ARPT. DE LAS AMÉRICAS
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.67959
+</td>
+<td style="text-align:right;">
+18.43306
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LOS LLANOS
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.49096
+</td>
+<td style="text-align:right;">
+18.62499
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LOYOLA (SCR )
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.11273
+</td>
+<td style="text-align:right;">
+18.41193
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MOCA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.53213
+</td>
+<td style="text-align:right;">
+19.38811
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MONCIÓN
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.16163
+</td>
+<td style="text-align:right;">
+19.40988
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MONTE CRISTI
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.65350
+</td>
+<td style="text-align:right;">
+19.84988
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+OVIEDO
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.40403
+</td>
+<td style="text-align:right;">
+17.80205
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PADRE LAS CASAS
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.94115
+</td>
+<td style="text-align:right;">
+18.73026
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PERALTA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.75596
+</td>
+<td style="text-align:right;">
+18.57806
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+POLO
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.27231
+</td>
+<td style="text-align:right;">
+18.08746
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RANCHO ARRIBA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.44973
+</td>
+<td style="text-align:right;">
+18.69438
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RÍO SAN JUAN
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.07475
+</td>
+<td style="text-align:right;">
+19.63251
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SABANA DE LA MAR
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.38883
+</td>
+<td style="text-align:right;">
+19.05267
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SALCEDO
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.41498
+</td>
+<td style="text-align:right;">
+19.37531
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SAMANÁ
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.33286
+</td>
+<td style="text-align:right;">
+19.20438
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SAN JOSÉ DE OCOA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.50950
+</td>
+<td style="text-align:right;">
+18.54200
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SAN RAFAEL DEL YUMA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-68.67416
+</td>
+<td style="text-align:right;">
+18.42610
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SÁNCHEZ
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.61311
+</td>
+<td style="text-align:right;">
+19.23314
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SANTIAGO
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.69806
+</td>
+<td style="text-align:right;">
+19.50054
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SANTO DOMINGO ESTE
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.87053
+</td>
+<td style="text-align:right;">
+18.47339
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+VILLA RIVA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.91483
+</td>
+<td style="text-align:right;">
+19.17993
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+VILLA VÁSQUEZ
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.45730
+</td>
+<td style="text-align:right;">
+19.74207
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+VILLA ALTAGRACIA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.17060
+</td>
+<td style="text-align:right;">
+18.67582
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ALTAMIRA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.83400
+</td>
+<td style="text-align:right;">
+19.67516
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ANGELINA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.21977
+</td>
+<td style="text-align:right;">
+19.13138
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ARPT. DE PUNTA CANA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-68.35941
+</td>
+<td style="text-align:right;">
+18.56400
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ARPT. DEL CIBAO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.59781
+</td>
+<td style="text-align:right;">
+19.40305
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ARPT. EL CATEY
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.73366
+</td>
+<td style="text-align:right;">
+19.26700
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ARPT. LA ISABELA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.98158
+</td>
+<td style="text-align:right;">
+18.57696
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ARROYO LORO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.27818
+</td>
+<td style="text-align:right;">
+18.81403
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BANÍ
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.31014
+</td>
+<td style="text-align:right;">
+18.27867
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BÁNICA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.69836
+</td>
+<td style="text-align:right;">
+19.08156
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BASE AÉREA DE SAN ISIDRO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.76989
+</td>
+<td style="text-align:right;">
+18.49944
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BOHECHÍO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.99150
+</td>
+<td style="text-align:right;">
+18.77747
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BONAO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.40500
+</td>
+<td style="text-align:right;">
+18.93317
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CABRAL
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.21920
+</td>
+<td style="text-align:right;">
+18.24784
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COTUÍ
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.15273
+</td>
+<td style="text-align:right;">
+19.04825
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DAJABÓN
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.70436
+</td>
+<td style="text-align:right;">
+19.54325
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DUVERGÉ
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.51814
+</td>
+<td style="text-align:right;">
+18.37666
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+EL CERCADO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.51884
+</td>
+<td style="text-align:right;">
+18.72556
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+EL SEIBO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.03995
+</td>
+<td style="text-align:right;">
+18.77438
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ELÍAS PIÑA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.70133
+</td>
+<td style="text-align:right;">
+18.87600
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ENRIQUILLO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.24173
+</td>
+<td style="text-align:right;">
+17.89165
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+GASPAR HERNÁNDEZ
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.27311
+</td>
+<td style="text-align:right;">
+19.62383
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+GURABO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.66713
+</td>
+<td style="text-align:right;">
+19.49794
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HATO MAYOR
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.25557
+</td>
+<td style="text-align:right;">
+18.77005
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HIGÜEY
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-68.70098
+</td>
+<td style="text-align:right;">
+18.62045
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMBERT
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.83042
+</td>
+<td style="text-align:right;">
+19.75626
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+JARDÍN BOTÁNICO NACIONAL
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.95293
+</td>
+<td style="text-align:right;">
+18.49489
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+JUMA BONAO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.38549
+</td>
+<td style="text-align:right;">
+18.90047
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LA VEGA - IATESA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.55246
+</td>
+<td style="text-align:right;">
+19.25230
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LA VEGA - M. A.
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.49850
+</td>
+<td style="text-align:right;">
+19.19920
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LAS MATAS DE FARFÁN
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.52819
+</td>
+<td style="text-align:right;">
+18.87478
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LAS MATAS DE SANTA CRUZ
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.50686
+</td>
+<td style="text-align:right;">
+19.65356
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LIMÓN DEL YUNA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.78488
+</td>
+<td style="text-align:right;">
+19.11985
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LOMA DE CABRERA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.61228
+</td>
+<td style="text-align:right;">
+19.41925
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LUPERÓN
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.96424
+</td>
+<td style="text-align:right;">
+19.88717
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MAO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.04966
+</td>
+<td style="text-align:right;">
+19.58833
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MICHES
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.04221
+</td>
+<td style="text-align:right;">
+18.98099
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MONTE PLATA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.78160
+</td>
+<td style="text-align:right;">
+18.80243
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NAVARRETE
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.86739
+</td>
+<td style="text-align:right;">
+19.56062
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEIBA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.41889
+</td>
+<td style="text-align:right;">
+18.48347
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PARQUE MIRADOR NORTE
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.93112
+</td>
+<td style="text-align:right;">
+18.52763
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PARQUE MIRADOR SUR
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.93416
+</td>
+<td style="text-align:right;">
+18.45298
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RADIOSONDA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.87016
+</td>
+<td style="text-align:right;">
+18.47416
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RESTAURACIÓN
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.68913
+</td>
+<td style="text-align:right;">
+19.31497
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SABANA GRANDE DE BOYÁ
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.80099
+</td>
+<td style="text-align:right;">
+18.94384
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SAN CRISTÓBAL
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.09011
+</td>
+<td style="text-align:right;">
+18.40710
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SANTIAGO RODRÍGUEZ
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.33899
+</td>
+<td style="text-align:right;">
+19.47712
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TÁBARA ABAJO
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.86903
+</td>
+<td style="text-align:right;">
+18.46438
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TAMBORIL
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.61141
+</td>
+<td style="text-align:right;">
+19.48342
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+VILLA ISABELA
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.05694
+</td>
+<td style="text-align:right;">
+19.82111
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+VILLA LOS ALMÁCIGOS
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-71.44328
+</td>
+<td style="text-align:right;">
+19.41080
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+YAMASÁ
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.02175
+</td>
+<td style="text-align:right;">
+18.77271
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Río Ozama en barrera de salinidad
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+SGN
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-69.78653
+</td>
+<td style="text-align:right;">
+18.57151
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Río Haina en Manoguayabo
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+SGN
+</td>
+<td style="text-align:left;">
+hidrométrica
+</td>
+<td style="text-align:left;">
+pública
+</td>
+<td style="text-align:right;">
+-70.01934
+</td>
+<td style="text-align:right;">
+18.47068
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Estación Japonesa
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+Universidad ISA
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.74828
+</td>
+<td style="text-align:right;">
+19.44320
+</td>
+</tr>
+</tbody>
+</table>

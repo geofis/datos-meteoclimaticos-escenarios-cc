@@ -431,7 +431,16 @@ indrhi_climaticas_depurado_ll %>%
 
 Sin cambios respecto de la primera evaluación realizada en noviembre de 2022 (ver cuaderno [consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
 
-
+```{r}
+guakia_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+  st_set_geometry('geom') %>% 
+  filter(grepl('guakia', fuente, ignore.case = T)) %>% 
+  select(Nombre = idOK) %>%
+  mutate(Estado = 'activa o bueno', entidad = 'Guakía Ambiente',
+         tipo = 'meteoclimática', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+guakia_sf %>% st_write('out/con_indicacion_estatus_guakia_climaticas.gpkg', delete_dsn = T)
+```
 
 ### REDDOM
 
@@ -439,31 +448,349 @@ Sin cambios respecto de la primera evaluación realizada en noviembre de 2022 (v
 
 ```{r}
 reddom_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+  st_set_geometry('geom') %>% 
   filter(grepl('reddom', fuente, ignore.case = T)) %>% 
-  select(Nombre = idOK) %>% mutate(Estado = 'activa') %>% 
-  mutate(Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-reddom_sf %>% st_write('con_indicacion_estatus_reddom_climatica.gpkg')
+  select(Nombre = idOK) %>%
+  mutate(Estado = 'activa o bueno', entidad = 'Fundación REDDOM',
+         tipo = 'meteoclimática', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+reddom_sf %>% st_write('out/con_indicacion_estatus_reddom_climaticas.gpkg', delete_dsn = T)
 ```
-
-
 
 ### INTEC
 
+Sin cambios respecto de la primera evaluación realizada en noviembre de 2022 (ver cuaderno [consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
 
+```{r}
+intec_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+  st_set_geometry('geom') %>% 
+  filter(grepl('intec', fuente, ignore.case = T)) %>% 
+  select(Nombre = idOK) %>%
+  mutate(Estado = 'activa o bueno', entidad = 'INTEC',
+         tipo = 'meteoclimática', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+intec_sf %>% st_write('out/con_indicacion_estatus_intec_climaticas.gpkg', delete_dsn = T)
+```
 
 ### PUCMM
 
+Obtuvimos coordenadas por medio de correo electrónico, fechado 19 de diciembre de 2022.
 
+```{r}
+pucmm_df <- data.frame(lon = -70.682416, lat = 19.4409224)
+pucmm_sf <- st_as_sf(pucmm_df, coords = c("lon","lat"), crs = 4326) %>% 
+  st_set_geometry('geom') %>% 
+  mutate(Nombre = 'Campus PUCCM', Estado = 'activa o bueno', entidad = 'INTEC',
+         tipo = 'meteoclimática', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+pucmm_sf %>% st_write('out/con_indicacion_estatus_pucmm_climaticas.gpkg', delete_dsn = T)
+```
 
 ### CAEI
 
+Obtuvimos coordenadas de una estación meteoclimática durante reunión virtual en diciembre de 2022 y, posteriormente, coordenadas de una red de pluviómetros por correo electrónico.
 
+```{r}
+caei_pluv_sf <- st_read('fuentes/caei/PluviometrosCAEI/PluviometrosCAEI.gpkg') %>%
+  st_geometry() %>% st_geometry() %>% st_as_sf() %>% st_set_geometry('geom') %>% 
+  mutate(tipo = 'pluviométrica') %>% st_zm()
+caei_clim_df <- data.frame(lon = -(69+31/60+29.59/3600), lat = 18+35/60+37.83/3600)
+caei_clim_sf <- st_as_sf(caei_clim_df, coords = c("lon","lat"), crs = 4326) %>%
+  st_geometry() %>% st_as_sf() %>% st_set_geometry('geom') %>% 
+  mutate(tipo = 'meteoclimática')
+caei_sf <-  bind_rows(caei_pluv_sf, caei_clim_sf) %>% 
+  mutate(Estado = 'activa o bueno', entidad = 'CAEI', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+caei_sf %>% st_write('out/con_indicacion_estatus_caei_climaticas_pluviometricas.gpkg', delete_dsn = T)
+```
 
 ### Universidad ISA
 
+```{r}
+isa_df <- data.frame(lon = -70.7482792, lat = 19.4431974)
+isa_sf <- st_as_sf(isa_df, coords = c("lon","lat"), crs = 4326) %>% 
+  st_set_geometry('geom') %>% 
+  mutate(Nombre = 'Estación Japonesa', Estado = 'activa o bueno', entidad = 'Universidad ISA',
+         tipo = 'meteoclimática', propiedad = 'privada',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+isa_sf %>% st_write('out/con_indicacion_estatus_isa_climaticas.gpkg', delete_dsn = T)
+```
 
 ### Servicio Geológico Nacional (SGN)
 
+```{r}
+sgn_df <- data.frame(x = c(417006, 392375), y = c(2053599, 2042564))
+sgn_sf <- st_as_sf(sgn_df, coords = c("x","y"), crs = 32619) %>% 
+  st_transform(4326) %>% st_set_geometry('geom') %>% 
+  mutate(Nombre = c('Río Ozama en barrera de salinidad', 'Río Haina en Manoguayabo'),
+         Estado = 'activa o bueno', entidad = 'SGN',
+         tipo = 'hidrométrica', propiedad = 'pública',
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+sgn_sf %>% st_write('out/con_indicacion_estatus_sgn_hidrometricas.gpkg', delete_dsn = T)
+```
 
-## Generar consolidado
+### EGEHAINA
+
+Aunque se recibió documentación de las estaciones, no se recibieron coordenadas.
+
+### JAD
+
+Aunque se recibió documentación de las estaciones, no se recibieron coordenadas.
+
+## Consolidado
+
+```{r}
+indrhi_p_consolidado_sf <- bind_rows(
+  indrhi_climaticas_depurado_ll_sf %>%
+    st_set_geometry('geom') %>% 
+    select(Nombre = ESTACION, Estado) %>%
+    mutate(tipo = 'meteoclimática'),
+  indrhi_hidrometricas_final_sf %>%
+    st_set_geometry('geom') %>% 
+    select(Nombre = `Nombre de la estación`, Estado) %>% 
+    mutate(tipo = 'hidrométrica')) %>% 
+  mutate(entidad = 'INDRHI', propiedad = 'pública', Estado = as.character(Estado),
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2]) %>% 
+  mutate(Estado = case_when(
+      Estado == 'Bueno' ~ 'activa o bueno',
+      Estado == 'Regular' ~ 'regular',
+      Estado == 'Malo' ~ 'inactiva o no reportada',
+      TRUE ~ Estado))
+onamet_p_consolidado_sf <- lista_con_periodo_2022_coord_todas_sf %>% 
+  st_set_geometry('geom') %>% st_as_sf() %>% 
+  select(Nombre = nombre_onamet, Estado = estado) %>% 
+  mutate(tipo = 'meteoclimática', entidad = 'ONAMET', propiedad = 'pública', Estado = as.character(Estado),
+         Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2]) %>% 
+  mutate(Estado = case_when(
+      Estado == 'activa' ~ 'activa o bueno',
+      TRUE ~ Estado))
+consolidado_sf <- bind_rows(
+  guakia_sf, intec_sf, pucmm_sf, reddom_sf, caei_sf, isa_sf, sgn_sf,
+  indrhi_p_consolidado_sf, onamet_p_consolidado_sf) %>% 
+  mutate(Estado = factor(Estado, levels = c('activa o bueno','regular', 'inactiva o no reportada')))
+consolidado_sf %>%
+  st_write('out/con_indicacion_estatus_consolidado.gpkg', delete_dsn = T)
+consolidado_sf %>% st_drop_geometry %>% write_csv('out/con_indicacion_estatus_consolidado.csv')
+```
+
+Mapa de estaciones climáticas según estado
+
+```{r}
+fpal_estado <- colorFactor(
+  palette = c("#E41A1C", "#FFFF33","#4DAF4A"),
+  domain = unique(consolidado_sf$Estado), reverse = T)
+leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_estado(Estado),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_estado, values = ~ Estado, opacity = 1,
+            title = "Estaciones<br>Climáticas<br>Estado") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ Estado, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+Mapa de estaciones hidrométricas según estado
+
+```{r}
+leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_estado(Estado),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_estado, values = ~ Estado, opacity = 1,
+            title = "Estaciones<br>Hidrométricas<br>Estado") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ Estado, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+Mapa de estaciones climáticas según propiedad
+
+```{r}
+fpal_propiedad <- colorFactor(
+  palette = c("#f1a340", "#998ec3"),
+  domain = unique(consolidado_sf$propiedad))
+leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_propiedad(propiedad),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_propiedad, values = ~ propiedad, opacity = 1,
+            title = "Estaciones<br>Climáticas<br>Propiedad") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ propiedad, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+Mapa de estaciones hidrométricas según propiedad (Yaque vendría aquí)
+
+```{r}
+leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_propiedad(propiedad),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_propiedad, values = ~ propiedad, opacity = 1,
+            title = "Estaciones<br>Climáticas<br>Propiedad") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ propiedad, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+Mapa de estaciones climáticas según entidad
+
+```{r}
+fpal_entidad <- colorFactor(
+  palette = RColorBrewer::brewer.pal(length(unique(consolidado_sf$entidad)), 'Set1'),
+  domain = unique(consolidado_sf$entidad))
+leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_entidad(entidad),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_entidad, values = ~ entidad, opacity = 1,
+            title = "Estaciones<br>Climáticas<br>Entidad") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ entidad, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+Mapa de estaciones hidrométricas según entidad
+
+```{r}
+leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ entidad,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_entidad(entidad),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_entidad, values = ~ entidad, opacity = 1,
+            title = "Estaciones<br>Hidrométricas<br>Entidad") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ entidad, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
+Mapas de estaciones climáticas según entidad
+
+```{r}
+ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
+ez_ver <- 'd7f79365168e688f0d78f521e53fbf2da19244ef/'
+pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
+pais <- invisible(st_read(pais_url, optional = T, layer = 'pais', quiet = T))
+st_geometry(pais) <- "geometry"
+map(unique(consolidado_sf %>% filter(tipo == 'meteoclimática') %>% pull(entidad)),
+    function(x) {
+      consolidado_sf %>% filter(entidad == x & tipo == 'meteoclimática') %>% 
+      ggplot +
+        geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+        geom_sf(alpha = 0.8, aes(fill = Estado), shape = 21, size = 1.5) +
+        scale_fill_manual(values = c('activa o bueno'='green', 'regular' = 'yellow', 'inactiva o no reportada' = 'red')) +
+        labs(title = paste0('Estaciones climáticas de ', x)) +
+       theme_bw() + 
+       ggspatial::annotation_scale(style = 'ticks') +
+       theme(legend.title = element_blank()) 
+    })
+```
+
+Mapa de pluviométricas según entidad
+
+```{r}
+map(unique(consolidado_sf %>% filter(tipo == 'pluviométrica') %>% pull(entidad)),
+    function(x) {
+      consolidado_sf %>% filter(entidad == x & tipo == 'pluviométrica') %>% 
+      ggplot +
+        geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+        geom_sf(alpha = 0.8, aes(fill = Estado), shape = 21, size = 1.5) +
+        scale_fill_manual(values = c('activa o bueno'='green', 'regular' = 'yellow', 'inactiva o no reportada' = 'red')) +
+        labs(title = paste0('Estaciones pluviométricas de ', x)) +
+       theme_bw() + 
+       ggspatial::annotation_scale(style = 'ticks') +
+       theme(legend.title = element_blank()) 
+    })
+```
+
+
+Mapas de estaciones hidrométricas según entidad
+
+```{r}
+map(unique(consolidado_sf %>% filter(tipo == 'hidrométrica') %>% pull(entidad)),
+    function(x) {
+      consolidado_sf %>% filter(entidad == x & tipo == 'hidrométrica') %>% 
+      ggplot +
+        geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+        geom_sf(alpha = 0.8, aes(fill = Estado), shape = 21, size = 1.5) +
+        scale_fill_manual(values = c('activa o bueno'='green', 'regular' = 'yellow', 'inactiva o no reportada' = 'red')) +
+        labs(title = paste0('Estaciones hidrométricas de ', x)) +
+       theme_bw() + 
+       ggspatial::annotation_scale(style = 'ticks') +
+       theme(legend.title = element_blank()) 
+    })
+
+```
+
+Impresión de tabla exhaustiva
+
+```{r}
+consolidado_sf %>% st_drop_geometry %>%
+  arrange(entidad) %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+```
 

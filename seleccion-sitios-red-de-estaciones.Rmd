@@ -138,11 +138,11 @@ areas_proporcionales_all_criteria_excluded %>%
 
 ### Análisis de vecindad entre estaciones (existentes y propuestas)
 
-Con la función de selección de sitios en vecindad, generamos nubes de puntos para construir tres escenarios de densidad de estaciones de 100, 150 y 250 $km^2$ por estación, todos enmarcados en los lineamientos sugeridos por la OMM [@design1976hydrological; @wmo2020guide]. En los tres casos utilizamos, como área a cubrir, la compuesta por los hexágonos que cumplieran con los criterios de "altamente idóneo" o "idóneo".
+Con la función de selección de sitios en vecindad, generamos nubes de puntos para construir tres escenarios de densidad de estaciones de 100, 150 y 250 km<sup>2</sup> por estación, todos enmarcados en los lineamientos sugeridos por la OMM [@design1976hydrological; @wmo2020guide]. En los tres casos utilizamos, como área a cubrir, la compuesta por los hexágonos que cumplieran con los criterios de "altamente idóneo" o "idóneo".
 
 A partir de los escenarios generados por la función de selección de sitios en vecindad, obtuvimos escenarios ideales sin considerar las estaciones existentes. Para evitar redundancia, eliminamos sitios sugeridos de nuestra propuesta inicial que ya se encontraran representados por estaciones de la red existente de INDRHI y/o ONAMET. Consideramos dos redes existentes distintas: 1) Red compuesta por las estaciones **activas de ONAMET** y las catalogadas como de **"buenas" del INDRHI** (red de estaciones "activas+buenas"); 2) Red **similar a la anterior**, pero incluyendo además las estaciones de **estado "Regular" del INDRHI**, las cuales sólo requieren de una mínima inversión para ponerlas en operación nuevamente (red de estaciones "activas+buenas+regulares"). Por lo tanto, para cada uno de los tres escenarios de densidad, se eliminó redundancia respecto de dos redes existentes, lo cual produjo, a su vez, 6 escenarios posibles.
 
-En el primer escenario, cada estación cubre 100 $km^2$. Al eliminar redundancia respecto de la red existente, obtuvimos dos subescenarios diferenciados para esta densidad. En el primero---evita redundancia respecto de estaciones activas de ONAMET y buenas de INDRHI--- se recomienda instalar `r last(esc_100_activas_buenas_df_resumen$n)` estaciones.
+En el primer escenario, cada estación cubre 100 km<sup>2</sup>. Al eliminar redundancia respecto de la red existente, obtuvimos dos subescenarios diferenciados para esta densidad. En el primero---evita redundancia respecto de estaciones activas de ONAMET y buenas de INDRHI--- se recomienda instalar `r last(esc_100_activas_buenas_df_resumen$n)` estaciones.
 
 ```{r}
 esc_100_activas_buenas_mapa
@@ -164,7 +164,7 @@ esc_100_activas_buenas_regulares_df_resumen %>%
 
 Se recomienda notar que la tabla resumen diferencia los sitios idóneos y los altamente idóneos. Esto permite a las entidades responsables, decidir un esquema de intervención según presupuesto disponible, prioridades y esquema de gobernanza. Así, las entidades dispondrán de la información de inversión sugerida para cada tipo de área. En particular, proponemos desplegar estaciones de altas prestaciones en primera instancia, y especialmente en lugares altamente idóneos; una vez establecidas éstas, colocar las restantes estaciones (e.g. de prestaciones normales) en sitios de categoría idónea. En este sentido, también proponemos que las entidades consideren adquirir opciones de bajo costo, algunas de las cuales ya son accesibles desde República Dominicana. Estas tienen la ventaja añadida de que pueden combinarse con proyectos educativos en centros escolares.
 
-A continuación mostramos los subescenarios correspondientes a la densidad 150 $km^2$ por estación. Al igual que en el caso anterior, evitaremos redundancia utilizando las redes existentes con y sin las estaciones de estado regular de INDRHI.
+A continuación mostramos los subescenarios correspondientes a la densidad 150 km<sup>2</sup> por estación. Al igual que en el caso anterior, evitaremos redundancia utilizando las redes existentes con y sin las estaciones de estado regular de INDRHI.
 
 Si sólo consideramos las estaciones en estado activas (ONAMET) y bueno (INDRHI), recomendamos instalar `r last(esc_150_activas_buenas_df_resumen$n)` estaciones.
 
@@ -186,7 +186,7 @@ esc_150_activas_buenas_regulares_df_resumen %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
-Finalmente, resumimos a continuación los subescenarios donde cada estación cubre 250 $km^2$. Si consideramos la existencia de las estaciones activas y buenas de INDHRI, recomendamos instalar `r last(esc_250_activas_buenas_df_resumen$n)` estaciones.
+Finalmente, resumimos a continuación los subescenarios donde cada estación cubre 250 km<sup>2</sup>. Si consideramos la existencia de las estaciones activas y buenas de INDHRI, recomendamos instalar `r last(esc_250_activas_buenas_df_resumen$n)` estaciones.
 
 ```{r}
 esc_250_activas_buenas_mapa
