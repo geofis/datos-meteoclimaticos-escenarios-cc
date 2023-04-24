@@ -106,19 +106,17 @@ reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
   if(is.null(nombre)) nombre <- campo
   
   # Función para construir categorías
-  fuente <- c('no', 'marginalmente', 'moderadamente', 'altamente', 'idóneo')
+  fuente <- c('marginalmente idóneo', 'moderadamente idóneo', 'idóneo', 'altamente idóneo')
   construir_categorias <- function(ordenacion = ord_cat){
     categorias <- switch(ordenacion,
-           'nin' = c(
-             paste(fuente[1:4], fuente[5]),
-             paste(fuente[1], fuente[5])
+           'mim' = c(#Antiguo 'nin'
+             fuente, fuente[1]
              ),
-           'nin_rev' = c(
-             paste(fuente[1], fuente[5]),
-             paste(fuente[4:1], fuente[5])
+           'mim_rev' = c(#Antiguo 'nin_rev'
+             fuente[1], rev(fuente)
            ),
-           'in' = c(paste(fuente[4:1], fuente[5])),
-           'ni' = c(paste(fuente[1:4], fuente[5]))
+           'im' = rev(fuente), #Antiguo 'in'
+           'mi' = fuente #Antiguo 'ni'
     )
     return(categorias)
   }
@@ -143,13 +141,13 @@ reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
   # vectorial[[paste(campo, 'enteros_ordenados', sep = '_')]] <- as.integer(
   vectorial[[paste(campo, 'puntuación')]] <- as.integer(
     factor(vectorial[[campo_salida_etiq]],
-           levels = c(paste(fuente[1:4], fuente[5]))))
+           levels = fuente))
   # vectorial <- vectorial[c(campo_indice, campo_salida_interv, campo_salida_etiq, paste(campo, 'enteros_ordenados', sep = '_'))]
   vectorial <- vectorial[c(campo_indice, campo_salida_interv, campo_salida_etiq, paste(campo, 'puntuación'))]
   
   # Crear mapa
-  val_col <- c("altamente idóneo" = "#018571", "moderadamente idóneo" = "#80cdc1",
-               "marginalmente idóneo" = "#dfd2b3", "no idóneo" = "#a6611a")
+  val_col <- c("altamente idóneo" = "#018571", "idóneo" = "#80cdc1",
+               "moderadamente idóneo" = "#dfd2b3", "marginalmente idóneo" = "#a6611a")
   val_col_cat <- val_col[match(categorias, names(val_col))]
   mapa <- vectorial %>% ggplot +
     aes(fill = .data[[campo_salida_etiq]]) +
@@ -317,7 +315,7 @@ generar_indice <- function(geom = NULL, res = NULL, buffer_size = NULL){
 generar_centroides_distantes <- function(
     geom = NULL, numero_total_de_puntos = NULL,
     km2_por_puntos = NULL, km_de_separacion = NULL,
-    circular = T, solo_calculos = F){
+    circular = T, solo_calculos = F, silencioso = T){
   # Paquete sf
   library(sf)
   
@@ -337,7 +335,7 @@ generar_centroides_distantes <- function(
     stop('Debe aportarse sólo uno de estos parámetros: kilómetros cuadrados por estación o kilómetros de separación')
   } else if(!is.null(km2_por_puntos) && is.null(km_de_separacion)) {
     numero_total_de_puntos <- ceiling(area_total/km2_por_puntos)
-    cat('Se aportó kilómetros cuadrados por estación. El numero total de puntos a colocar es', numero_total_de_puntos, '\n')
+    cat('Calculando para', km2_por_puntos, 'kilómetros cuadrados por estación. El numero total de puntos a colocar es', numero_total_de_puntos, '\n')
   } else if(is.null(km2_por_puntos) && !is.null(km_de_separacion)) {
     if(circular){
       area_por_punto <- pi*(km_de_separacion/2)^2
@@ -385,9 +383,9 @@ generar_centroides_distantes <- function(
   P <- rbind(hullpoints[bestpair[1],], hullpoints[bestpair[2],])
   
   # Buscar los subconjuntos óptimos
-  cat("Buscando los subconjuntos óptimos...\n")
+  if(!silencioso) cat("Buscando los subconjuntos óptimos...\n")
   while (nrow(P) < p) {# Bucle while: evalúa si el subconjunto alcanzó el número deseado
-    cat(sprintf("Tamaño del subconjunto = %d\n", nrow(P)))
+    if(!silencioso) cat(sprintf("Tamaño del subconjunto = %d\n", nrow(P)))
     # Distancia de los puntos originales al subconjunto
     distance_to_P <- as.matrix(proxy::dist(points, P))
     # Mínima distancia del subconjunto

@@ -161,8 +161,8 @@ información geográfica disponibles, que en nuestro caso fueron ca.
 multicriterio, y repartidos sobre el territorio
 dominicano](https://geofis.github.io/zonal-statistics/README.html)
 (Martínez-Batlle 2022). De esta ponderación, asignamos una categoría
-agregada a cada hexágono que podía ser una de las siguientes cuatro: no
-idóneo, marginalmente idóneo, moderadamente idóneo y altamente idóneo.
+agregada a cada hexágono que podía ser una de las siguientes cuatro:
+marginalmente idóneo, moderadamente idóneo, idóneo y altamente idóneo.
 
 Tanto el diseño de los formularios, como el procesamiento de respuestas
 y la ponderación de criterios, los realizamos empleando lenguajes de
@@ -330,12 +330,13 @@ con un alto peso dentro de la valoración AHP, las estacionalidades
 pluviométrica y térmica presentaron proporciones relativamente
 equilibradas del territorio según las cuatro clases de idoneidad. Por
 otra parte, el criterio horas de insolación, mostró una importante
-acumulación de áreas idóneas (altamente idóneas y moderadamente idóneas)
-para el establecimiento de estaciones. Igualmente, el criterio elevación
-resultó predominantemente idóneo y altamente idóneo. Esto se debió a que
-los sistemas montañosos dominicanos presentan las menores densidades de
-estaciones meteoclimáticas, por lo que se prefirió impulsar la idoneidad
-de la topografía elevada para el establecimiento de EMC.
+acumulación de áreas idóneas (incluye “idóneas” propiamente y “altamente
+idóneas”) para el establecimiento de estaciones. Igualmente, el criterio
+elevación resultó predominantemente idóneo y altamente idóneo. Esto se
+debió a que los sistemas montañosos dominicanos presentan las menores
+densidades de estaciones meteoclimáticas, por lo que se prefirió
+impulsar la idoneidad de la topografía elevada para el establecimiento
+de EMC.
 
 ``` r
 areas_proporcionales %>%
@@ -358,13 +359,13 @@ criterio
 altamente idóneo
 </th>
 <th style="text-align:right;">
+idóneo
+</th>
+<th style="text-align:right;">
 moderadamente idóneo
 </th>
 <th style="text-align:right;">
 marginalmente idóneo
-</th>
-<th style="text-align:right;">
-no idóneo
 </th>
 <th style="text-align:right;">
 Total
@@ -541,10 +542,10 @@ concentrado (ver figura
 los criterios presentaron autocorrelación espacial positiva, lo que
 significa que los hexágonos se aglomeran en cúmulos de valores grandes
 (“grumos” de hexágonos idóneos, formando *hotspots*) y/o pequeños
-(cúmulos de hexágonos no idóneos, formando *coldspots*). Destaca, aunque
-era esperable, la particular la distribución espacial de la distancia a
-cuerpos de agua, con un patrón muy homogéneo y monótono de hexágonos de
-alta idoneidad.
+(cúmulos de hexágonos marginalmente idóneos, formando *coldspots*).
+Destaca, aunque era esperable, la particular la distribución espacial de
+la distancia a cuerpos de agua, con un patrón muy homogéneo y monótono
+de hexágonos de alta idoneidad.
 
 ``` r
 all_criteria_mapa
@@ -554,10 +555,10 @@ all_criteria_mapa
 
 Tras sumar los criterios ponderados, obtuvimos la distribución de las
 categorías agregadas. En cuanto a superficie representada, predominaron
-los intermedios, “marginalmente idóneo” y “moderadamente idóneo” con un
-70% de toda la superficie estudiada, mientras que las categorías
-extremas “no idóneo” y “altamente idóneo” se repartieron el restante 30%
-(ver tabla <a href="#tab:areasproporcionalesall">3</a>).
+los intermedios, “moderadamente idóneo” e “idóneo” con un 70% de toda la
+superficie estudiada, mientras que las categorías extremas
+“marginalmente idóneo” y “altamente idóneo” se repartieron el restante
+30% (ver tabla <a href="#tab:areasproporcionalesall">3</a>).
 
 ``` r
 areas_proporcionales_all_criteria %>% 
@@ -584,7 +585,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 13.79
@@ -592,7 +593,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 30.81
@@ -600,7 +601,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 39.62
@@ -628,7 +629,7 @@ buen rendimiento en cuanto a horas de insolación, resultaron ser las más
 idóneas para el establecimiento de nuevas EMC. Por otra parte, los
 sectores situados a menor elevación, que al mismo tiempo contaban con
 pocas horas de insolación, fuertes pendientes y bajas estacionalidades
-térmica y pluviométrica, fueron clasificados como no idóneos.
+térmica y pluviométrica, fueron clasificados como marginalmente idóneos.
 
 ``` r
 all_criteria_scores_mapa
@@ -638,12 +639,12 @@ all_criteria_scores_mapa
 
 ### Exclusión por factores limitantes
 
-Un total de 1508 hexágonos fueron imputados como no idóneos por su
-proximidad a cuerpos de agua, o por encontrarse dentro de áreas pobladas
-o muy distantes en términos de accesibilidad. La mayoría se localizó en
-los lagos y lagunas interiores y costeras, en áreas próximas a la costa,
-en ríos anchos y embalses, y en áreas montañosas inaccesibles. El mapa
-de la figura
+Un total de 1508 hexágonos fueron imputados como marginalmente idóneos
+por su proximidad a cuerpos de agua, o por encontrarse dentro de áreas
+pobladas o muy distantes en términos de accesibilidad. La mayoría se
+localizó en los lagos y lagunas interiores y costeras, en áreas próximas
+a la costa, en ríos anchos y embalses, y en áreas montañosas
+inaccesibles. El mapa de la figura
 <a href="#fig:mapacriteriospuntuacionesallexcluded"><strong>??</strong></a>
 muestra la nueva distribución de las categorías agregadas (compárese con
 el mapa de la figura
@@ -683,7 +684,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 24.08
@@ -691,7 +692,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 26.95
@@ -699,7 +700,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 34.39
@@ -719,64 +720,53 @@ altamente idóneo
 ### Análisis de vecindad entre estaciones (existentes y propuestas)
 
 Con la función de selección de sitios en vecindad, generamos nubes de
-puntos para dos escenarios distintos de “densidad”, ambos enmarcados en
-los lineamientos sugeridos por la OMM (World Meteorological Organization
-(WMO) and The International Association of Hydrological Sciences 1976;
-World Meteorological Organization (WMO) 2020). En ambos casos,
-utilizamos como área de despliegue de los sitios candidatos, aquellos
-hexágonos que cumplieran con los criterios de “altamente idóneo” o
-“moderadamente idóneo”.
+puntos para construir tres escenarios de densidad de estaciones de 100,
+150 y 250 $km^2$ por estación, todos enmarcados en los lineamientos
+sugeridos por la OMM (World Meteorological Organization (WMO) and The
+International Association of Hydrological Sciences 1976; World
+Meteorological Organization (WMO) 2020). En los tres casos utilizamos,
+como área a cubrir, la compuesta por los hexágonos que cumplieran con
+los criterios de “altamente idóneo” o “idóneo”.
 
-Formulamos cada escenario bajo dos modalidades de despliegue
-posibles: 1) Adquirir equipamiento y establecerlo según prioridades
-locales definidas por los actores responsables, siguiendo su esquema de
-gobernanza; 2) En caso de disponer de suficiente presupuesto, se prooner
-desplegar estaciones de altas prestaciones en primera instancia, y sólo
-en lugares altamente idóneos; una vez establecidas éstas, colocar las
-restantes estaciones (e.g. de prestaciones normales) en sitios
-moderadamente idóneos. En este contexto, se propone también evaluar
-opciones de bajo costo, muchas de las cuales ya son accesibles desde
-República Dominicana. Estas últimas tienen la ventaja añadida de que
-pueden combinarse con proyectos educativos en centros escolares.
+A partir de los escenarios generados por la función de selección de
+sitios en vecindad, obtuvimos escenarios ideales sin considerar las
+estaciones existentes. Para evitar redundancia, eliminamos sitios
+sugeridos de nuestra propuesta inicial que ya se encontraran
+representados por estaciones de la red existente de INDRHI y/o ONAMET.
+Consideramos dos redes existentes distintas: 1) Red compuesta por las
+estaciones **activas de ONAMET** y las catalogadas como de **“buenas”
+del INDRHI** (red de estaciones “activas+buenas”); 2) Red **similar a la
+anterior**, pero incluyendo además las estaciones de **estado “Regular”
+del INDRHI**, las cuales sólo requieren de una mínima inversión para
+ponerlas en operación nuevamente (red de estaciones
+“activas+buenas+regulares”). Por lo tanto, para cada uno de los tres
+escenarios de densidad, se eliminó redundancia respecto de dos redes
+existentes, lo cual produjo, a su vez, 6 escenarios posibles.
 
-Finalmente, algunos de los sitios propuestos en cada escenario, se
-solapaban con estaciones de las redes públicas ya establecidas de ONAMET
-e INDRHI, lo cual se convertía en una potencial fuente de redundancia.
-Por tal razón, utilizando un criterio de distancia respecto, eliminamos
-los sitios propuestos que se solapaban con estaciones ya establecidas.
-
-El primer escenario lo diseñamos de manera que cada estación cubriese
-100 $km^2$. Dado que el área clasificada como altamente idónea y
-moderadamente idónea es de aproximadamente 23,000 $km^2$, obtuvimos una
-red de 237 sitios propuestos, de los cuales eliminamos 69, y conservamos
-sólo **168 sitios**, a fin de evitar redundancia por solapamiento con la
-red pública existente. Este escenario tiene como ventaja que, por su
-fina textura, garantiza el cumplimiento de los estándares más ambiciosos
-sugeridos por la OMM y, a su vez, complementa de forma óptima la red
-existente de estaciones de ONAMET e INDRHI. Su principal desventaja
-radica en el costo, pues adquirir, instalar y mantener nuevas
-estaciones, requiere de compromisos presupuestarios muy exigentes. Una
-primera aproximación de esta propuesta, sugiere que la inversión mínima
-necesaria para acometerlo, rondaría los **US\$2380000**, sin considerar
-gastos corrientes asociados.
+En el primer escenario, cada estación cubre 100 $km^2$. Al eliminar
+redundancia respecto de la red existente, obtuvimos dos subescenarios
+diferenciados para esta densidad. En el primero—evita redundancia
+respecto de estaciones activas de ONAMET y buenas de INDRHI— se
+recomienda instalar 170 estaciones.
 
 ``` r
-escenarios_100_250_ai_mi_mapas[[1]]
+esc_100_activas_buenas_mapa
 ```
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-2-1.jpeg" width="100%" />
 
 ``` r
-escenarios_100_df_resumen %>% 
+esc_100_activas_buenas_df_resumen %>% 
   kable(format = 'html', escape = F, booktabs = T, digits = 2,
-        caption = 'Inversión sugeridad para el escenario 1, 100 kilómetros cuadrados por estación') %>%
+        caption = 'Inversión sugerida para el escenario de densidad 100 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET y buenas de INDRHI') %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 5: Inversión sugeridad para el escenario 1, 100 kilómetros
-cuadrados por estación
+Table 5: Inversión sugerida para el escenario de densidad 100 kilómetros
+cuadrados por estación, evitando redundancia respecto de estaciones
+activas de ONAMET y buenas de INDRHI
 </caption>
 <thead>
 <tr>
@@ -794,7 +784,79 @@ Monto (US\$)
 <tbody>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
+</td>
+<td style="text-align:right;">
+127
+</td>
+<td style="text-align:right;">
+889000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+43
+</td>
+<td style="text-align:right;">
+1505000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Total
+</td>
+<td style="text-align:right;">
+170
+</td>
+<td style="text-align:right;">
+2394000
+</td>
+</tr>
+</tbody>
+</table>
+
+En el segundo subescenario, en el cual consideramos la existencia de las
+estaciones de estado regular del INDRHI, se recomienda instalar 168.
+
+``` r
+esc_100_activas_buenas_regulares_mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-1.jpeg" width="100%" />
+
+``` r
+esc_100_activas_buenas_regulares_df_resumen %>% 
+  kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Inversión sugerida para el escenario de densidad 100 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET, y buenas y regulares de INDRHI') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 6: Inversión sugerida para el escenario de densidad 100 kilómetros
+cuadrados por estación, evitando redundancia respecto de estaciones
+activas de ONAMET, y buenas y regulares de INDRHI
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Categoría agregada
+</th>
+<th style="text-align:right;">
+n
+</th>
+<th style="text-align:right;">
+Monto (US\$)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+idóneo
 </td>
 <td style="text-align:right;">
 125
@@ -828,40 +890,46 @@ Total
 </tbody>
 </table>
 
+Se recomienda notar que la tabla resumen diferencia los sitios idóneos y
+los altamente idóneos. Esto permite a las entidades responsables,
+decidir un esquema de intervención según presupuesto disponible,
+prioridades y esquema de gobernanza. Así, las entidades dispondrán de la
+información de inversión sugerida para cada tipo de área. En particular,
+proponemos desplegar estaciones de altas prestaciones en primera
+instancia, y especialmente en lugares altamente idóneos; una vez
+establecidas éstas, colocar las restantes estaciones (e.g. de
+prestaciones normales) en sitios de categoría idónea. En este sentido,
+también proponemos que las entidades consideren adquirir opciones de
+bajo costo, algunas de las cuales ya son accesibles desde República
+Dominicana. Estas tienen la ventaja añadida de que pueden combinarse con
+proyectos educativos en centros escolares.
+
+A continuación mostramos los subescenarios correspondientes a la
+densidad 150 $km^2$ por estación. Al igual que en el caso anterior,
+evitaremos redundancia utilizando las redes existentes con y sin las
+estaciones de estado regular de INDRHI.
+
+Si sólo consideramos las estaciones en estado activas (ONAMET) y bueno
+(INDRHI), recomendamos instalar 89 estaciones.
+
 ``` r
-escenarios_100_exlusion_union_mapa
+esc_150_activas_buenas_mapa
 ```
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-4-1.jpeg" width="100%" />
 
-Como segundo escenario, propusimos una red modesta, con una estación por
-cada 250 $km^2$. Obtuvimos una red inicial de 95 sitios propuestos, de
-los cuales eliminamos 56, y conservamos sólo **39 sitios**, a fin de
-evitar redundancia por solapamiento con la red pública existente. Este
-escenario, al ser menos denso, tiene como ventaja principal que su costo
-es reducido, y permite alcanzar, moderadamente, estándares sugeridos por
-la OMM. Su principal desventaja radica en que, aunque se aumentaría la
-densidad de la red, la proporción de aumento no sería realmente
-significativa. La inversión inicial estimada rondaría los
-**US\$525000**, sin considerar gastos corrientes asociados.
-
 ``` r
-escenarios_100_250_ai_mi_mapas[[2]]
-```
-
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-5-1.jpeg" width="100%" />
-
-``` r
-escenarios_250_df_resumen %>% 
+esc_150_activas_buenas_df_resumen %>% 
   kable(format = 'html', escape = F, booktabs = T, digits = 2,
-        caption = 'Inversión sugeridad para el escenario 2, 250 kilómetros cuadrados por estación') %>%
+        caption = 'Inversión sugerida para el escenario de densidad 150 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET y buenas de INDRHI') %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 6: Inversión sugeridad para el escenario 2, 250 kilómetros
-cuadrados por estación
+Table 7: Inversión sugerida para el escenario de densidad 150 kilómetros
+cuadrados por estación, evitando redundancia respecto de estaciones
+activas de ONAMET y buenas de INDRHI
 </caption>
 <thead>
 <tr>
@@ -879,7 +947,153 @@ Monto (US\$)
 <tbody>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
+</td>
+<td style="text-align:right;">
+66
+</td>
+<td style="text-align:right;">
+462000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:right;">
+805000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Total
+</td>
+<td style="text-align:right;">
+89
+</td>
+<td style="text-align:right;">
+1267000
+</td>
+</tr>
+</tbody>
+</table>
+
+Si consideramos las estaciones regulares de INDRHI, entonces sería
+necesario adquirir e instalar 86 estaciones.
+
+``` r
+esc_150_activas_buenas_regulares_mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-5-1.jpeg" width="100%" />
+
+``` r
+esc_150_activas_buenas_regulares_df_resumen %>% 
+  kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Inversión sugerida para el escenario de densidad 150 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET, y buenas y regulares de INDRHI') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 8: Inversión sugerida para el escenario de densidad 150 kilómetros
+cuadrados por estación, evitando redundancia respecto de estaciones
+activas de ONAMET, y buenas y regulares de INDRHI
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Categoría agregada
+</th>
+<th style="text-align:right;">
+n
+</th>
+<th style="text-align:right;">
+Monto (US\$)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+idóneo
+</td>
+<td style="text-align:right;">
+63
+</td>
+<td style="text-align:right;">
+441000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:right;">
+805000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Total
+</td>
+<td style="text-align:right;">
+86
+</td>
+<td style="text-align:right;">
+1246000
+</td>
+</tr>
+</tbody>
+</table>
+
+Finalmente, resumimos a continuación los subescenarios donde cada
+estación cubre 250 $km^2$. Si consideramos la existencia de las
+estaciones activas y buenas de INDHRI, recomendamos instalar 39
+estaciones.
+
+``` r
+esc_250_activas_buenas_mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-6-1.jpeg" width="100%" />
+
+``` r
+esc_250_activas_buenas_df_resumen %>% 
+  kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Inversión sugerida para el escenario de densidad 250 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET y buenas de INDRHI') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 9: Inversión sugerida para el escenario de densidad 250 kilómetros
+cuadrados por estación, evitando redundancia respecto de estaciones
+activas de ONAMET y buenas de INDRHI
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Categoría agregada
+</th>
+<th style="text-align:right;">
+n
+</th>
+<th style="text-align:right;">
+Monto (US\$)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+idóneo
 </td>
 <td style="text-align:right;">
 30
@@ -913,13 +1127,77 @@ Total
 </tbody>
 </table>
 
+Si consideramos las estaciones regulares de INDRHI, entonces sería
+necesario adquirir e instalar 38 estaciones.
+
 ``` r
-escenarios_250_exlusion_union_mapa
+esc_250_activas_buenas_regulares_mapa
 ```
 
 <img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-7-1.jpeg" width="100%" />
 
-<!-- !!!!!!!!!!!!!!!AÑADIR ESCENARIO INTERMEDIO!!!!!!!!!!!!!! -->
+``` r
+esc_250_activas_buenas_regulares_df_resumen %>% 
+  kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Inversión sugerida para el escenario de densidad 250 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET, y buenas y regulares de INDRHI') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 10: Inversión sugerida para el escenario de densidad 250
+kilómetros cuadrados por estación, evitando redundancia respecto de
+estaciones activas de ONAMET, y buenas y regulares de INDRHI
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Categoría agregada
+</th>
+<th style="text-align:right;">
+n
+</th>
+<th style="text-align:right;">
+Monto (US\$)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+idóneo
+</td>
+<td style="text-align:right;">
+29
+</td>
+<td style="text-align:right;">
+203000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+altamente idóneo
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+315000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Total
+</td>
+<td style="text-align:right;">
+38
+</td>
+<td style="text-align:right;">
+518000
+</td>
+</tr>
+</tbody>
+</table>
 
 ## Discusión
 
@@ -1081,7 +1359,7 @@ data.frame(
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 7: Tabla de recodificación de puntaciones de formulario a escala
+Table 11: Tabla de recodificación de puntaciones de formulario a escala
 AHP original
 </caption>
 <thead>
@@ -1174,7 +1452,7 @@ as.data.frame(variables) %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 8: Tabla de equivalencias de nombres de las variables evaluadas
+Table 12: Tabla de equivalencias de nombres de las variables evaluadas
 </caption>
 <thead>
 <tr>
@@ -1276,7 +1554,7 @@ tabla_en_bruto %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 9: Tabla de resultados en bruto (anonimizada) obtenida a partir
+Table 13: Tabla de resultados en bruto (anonimizada) obtenida a partir
 del rellenado del “Formulario de comparación pareada de criterios de
 identificación de sitios idóneos para una red de observación climática”
 </caption>
@@ -2217,7 +2495,7 @@ tabla_recodificada %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 10: Tabla de puntaciones recodificadas
+Table 14: Tabla de puntaciones recodificadas
 </caption>
 <thead>
 <tr>
@@ -3116,7 +3394,7 @@ En segundo lugar, aplicamos la recodificación de nombres de columnas de
 la tabla de respuestas, que originalmente eran transcripciones de las
 preguntas del formulario de Google. Este paso nos ayudó a representar
 nombres más cortos en la tabla que posteriormente usamos como insumo
-(ver tabla <a href="#tab:suptablaresultadosparamatrizpareada">11</a>)
+(ver tabla <a href="#tab:suptablaresultadosparamatrizpareada">15</a>)
 para crear la matriz de comparación por parejas del método AHP.
 
 ``` r
@@ -3142,7 +3420,7 @@ tabla_col_renom %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 11: Tabla de columnas renombradas (adaptada para la generación de
+Table 15: Tabla de columnas renombradas (adaptada para la generación de
 la matriz de comparación en parejas)
 </caption>
 <thead>
@@ -4012,7 +4290,7 @@ acce_temp
 </table>
 
 El conjunto de datos de la tabla
-<a href="#tab:suptablaresultadosparamatrizpareada">11</a> recoge las
+<a href="#tab:suptablaresultadosparamatrizpareada">15</a> recoge las
 respuestas dadas por las 9 personas consultada, cada una compuesta por
 28 comparaciones en parejas de criterios (8 criterios). Analicemos
 algunos ejemplos para ilustrar el flujo seguido en la recodificación y
@@ -4022,16 +4300,16 @@ La primera fila contiene las valoraciones realizadas por la persona
 consultada número 1. En la primera pregunta, “*Valora la importancia
 relativa de las variables horas de insolación y elevación*”, el
 consultado respondió “*33: Importancia moderada para elevación*” (ver
-tabla <a href="#tab:suptablaresultadosenbruto">9</a>). Dicha valoración
+tabla <a href="#tab:suptablaresultadosenbruto">13</a>). Dicha valoración
 fue recodificada a puntuaciones AHP con el valor 3 (ver tabla
-<a href="#tab:suptablaresultadosrecodificados">10</a>); nótese que el
+<a href="#tab:suptablaresultadosrecodificados">14</a>); nótese que el
 valor recodificado es positivo, dado que el criterio que recibió la
 mayor importancia fue el que ocupaba la segunda posición en la pregunta.
 
 Finalmente, tras realizar el renombrado, la columna en cuestión paso de
 nombrarse “*Valora la importancia relativa de las variables horas de
 insolación y elevación*” a `inso_elev` (ver tabla
-<a href="#tab:suptablaresultadosparamatrizpareada">11</a>). Esta cambio
+<a href="#tab:suptablaresultadosparamatrizpareada">15</a>). Esta cambio
 nos permitirá manejar atributos cortos en la matriz de comparación por
 parejas.
 
@@ -6533,7 +6811,7 @@ que puede ser provisto por el usuario a partir de simulaciones, que con
 el paquete `ahpsurvey` se puede generar mediante la función `ahp.ri`. El
 conjunto de $RI$ a continuación se generó a partir de `ahp.ri` con
 500000 simulaciones (ver tabla
-<a href="#tab:suprisimuladospaqahpsurvey">12</a>), y están contenidas en
+<a href="#tab:suprisimuladospaqahpsurvey">16</a>), y están contenidas en
 la viñeta principal de la documentación del paquete `ahpsurvey` (Cho
 2019):
 
@@ -6548,7 +6826,7 @@ ri_sim %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 12: Índices aleatorios generados por la función ahp.ri con 500000
+Table 16: Índices aleatorios generados por la función ahp.ri con 500000
 simulaciones para 1 a 15 atributos
 </caption>
 <thead>
@@ -6670,7 +6948,7 @@ tiempo_10k <- system.time(probandoRI <- ahp.ri(nsims = 10000, dim = 8, seed = 99
 El tiempo de cómputo fue relativamente pequeño (\~ 2 segundos) y el
 resultado para $RI$ es 1.399982, el cual se aproxima bastante al
 generado por Cho (2019) (tabla
-<a href="#tab:suprisimuladospaqahpsurvey">12</a>). Si generásemos un
+<a href="#tab:suprisimuladospaqahpsurvey">16</a>). Si generásemos un
 $RI$ con 500000 simulaciones, nos tomaría al menos un minuto y medio en
 una PC de altas prestaciones (o varios minutos en una PC común), y el
 resultado sería bastante parecido al mostrado por Cho (2019), por lo que
@@ -6683,7 +6961,7 @@ RI <- ri_sim[8]
 Con este índice aleatorio, calculamos la razón de consistencia `CR` de
 las respuestas aportadas por cada persona consultada, mediante la
 función `ahp.cr` aplicada a la matriz de comparación en parejas. La
-tabla <a href="#tab:suprazondeconsistencia">13</a> resume el cómputo de
+tabla <a href="#tab:suprazondeconsistencia">17</a> resume el cómputo de
 esta métrica.
 
 ``` r
@@ -6697,7 +6975,7 @@ data.frame(`Persona consultada` = seq_along(cr), CR = cr, check.names = F) %>%
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 13: Razones de consistencia (consistency ratio) por persona
+Table 17: Razones de consistencia (consistency ratio) por persona
 consultada
 </caption>
 <thead>
@@ -6797,7 +7075,7 @@ la elección se considera inconsistente (Thomas L. Saaty 1977). **En
 nuestro caso, elegimos el umbral de 0.1 para** $CR$, por lo que
 obtuvimos un total de 4 valoraciones consistentes (personas consultadas
 números 1, 2, 4, 9) y 5 inconsistentes (personas números 3, 5, 6, 7, 8)
-(comparar con tabla <a href="#tab:suprazondeconsistencia">13</a>).
+(comparar con tabla <a href="#tab:suprazondeconsistencia">17</a>).
 
 ``` r
 table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() %>% 
@@ -6810,7 +7088,7 @@ table(ifelse(cr <= umbral, 'Consistente', 'Inconsistente')) %>% as.data.frame() 
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 14: Número de cuestionarios según consistencia
+Table 18: Número de cuestionarios según consistencia
 </caption>
 <thead>
 <tr>
@@ -6953,7 +7231,7 @@ flujo_completo_ahp <- ahp(df = tabla_col_renom[, col_ord],
 # sum(flujo_completo_ahp$aggpref[,1]) == 1
 ```
 
-Las tablas <a href="#tab:prefind">15</a> y <a href="#tab:prefagg">16</a>
+Las tablas <a href="#tab:prefind">19</a> y <a href="#tab:prefagg">20</a>
 muestran las preferencias individuales y agregadas, respectivamente, de
 las personas entrevistadas cuyas respuestas fueron consistentes. Las
 matriz agregada constituye el resultado principal del AHP, el cual
@@ -6974,7 +7252,7 @@ kable_prefind
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 15: Preferencias individuales
+Table 19: Preferencias individuales
 </caption>
 <thead>
 <tr>
@@ -7204,7 +7482,7 @@ kable_prefagg
 
 <table class="table table-hover table-condensed table" style="width: auto !important; margin-left: auto; margin-right: auto; ">
 <caption>
-Table 16: Preferencias agregadas
+Table 20: Preferencias agregadas
 </caption>
 <thead>
 <tr>
@@ -7335,12 +7613,13 @@ bibliográficas especializadas en redes de monitoreo meteoclimático, y
 adaptando las escalas a la realidad insular (Food and Agriculture
 Organization of the United Nations (FAO) 1976; Rojas Briceño et al.
 2021). A cada criterio, y para cada hexágono, asignamos un entero en una
-escala ordinal del 1 al 4 (de “no idóneo” a “altamente idóneo”). Para
-facilitar esta tarea, y garantizar reproducibilidad y consistencia,
-creamos funciones que realizaron la reclasificación de forma
-semitautomática. Representamos a continuación, para cada criterio, los
-valores originales mediante gráfico de violín, mostramos los intervalos
-usados en la reclasificación, y la representamos cartográficamente.
+escala ordinal del 1 al 4 (de “marginalmente idóneo” a “altamente
+idóneo”). Para facilitar esta tarea, y garantizar reproducibilidad y
+consistencia, creamos funciones que realizaron la reclasificación de
+forma semitautomática. Representamos a continuación, para cada criterio,
+los valores originales mediante gráfico de violín, mostramos los
+intervalos usados en la reclasificación, y la representamos
+cartográficamente.
 
 ``` r
 source('R/funciones.R')
@@ -7397,7 +7676,7 @@ assign(
     variable = 'OSM-DIST mean',
     umbrales = c(50, 200, 500, 5000),
     nombre = variables[[1]],
-    ord_cat = 'nin_rev')
+    ord_cat = 'mim_rev')
 )
 ```
 
@@ -7423,7 +7702,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 17: Áreas proporcionales de distancia a accesos
+Table 21: Áreas proporcionales de distancia a accesos
 </caption>
 <thead>
 <tr>
@@ -7438,7 +7717,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 5.84
@@ -7454,7 +7733,7 @@ altamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 33.77
@@ -7462,7 +7741,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 48.85
@@ -7477,7 +7756,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 17: Intervalos de distancia a accesos
+Table 21: Intervalos de distancia a accesos
 </caption>
 <thead>
 <tr>
@@ -7498,7 +7777,7 @@ distancia a accesos puntuación
 \[12.8,50\]
 </td>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 1
@@ -7520,7 +7799,7 @@ altamente idóneo
 (200,500\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 3
@@ -7531,7 +7810,7 @@ moderadamente idóneo
 (500,5e+03\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 2
@@ -7542,7 +7821,7 @@ marginalmente idóneo
 (5e+03,3.28e+04\]
 </td>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 1
@@ -7566,7 +7845,7 @@ assign(
     variable = 'TSEASON-IZZO mean',
     umbrales = c(1.1, 1.3, 1.5),
     nombre = variables[[2]],
-    ord_cat = 'ni')
+    ord_cat = 'mi')
 )
 ```
 
@@ -7592,7 +7871,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 18: Intervalos de estacionalidad térmica
+Table 22: Intervalos de estacionalidad térmica
 </caption>
 <thead>
 <tr>
@@ -7613,7 +7892,7 @@ estacionalidad térmica puntuación
 \[0.573,1.1\]
 </td>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 1
@@ -7624,7 +7903,7 @@ no idóneo
 (1.1,1.3\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 2
@@ -7635,7 +7914,7 @@ marginalmente idóneo
 (1.3,1.5\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 3
@@ -7661,7 +7940,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 18: Áreas proporcionales de estacionalidad térmica
+Table 22: Áreas proporcionales de estacionalidad térmica
 </caption>
 <thead>
 <tr>
@@ -7676,7 +7955,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 11.33
@@ -7684,7 +7963,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 38.39
@@ -7692,7 +7971,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 28.11
@@ -7724,7 +8003,7 @@ assign(
     variable = 'PSEASON-IZZO mean',
     umbrales = c(30, 40, 50),
     nombre = variables[[3]],
-    ord_cat = 'ni')
+    ord_cat = 'mi')
 )
 ```
 
@@ -7750,7 +8029,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 19: Intervalos de estacionalidad pluviométrica
+Table 23: Intervalos de estacionalidad pluviométrica
 </caption>
 <thead>
 <tr>
@@ -7771,7 +8050,7 @@ estacionalidad pluviométrica puntuación
 \[19.5,30\]
 </td>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 1
@@ -7782,7 +8061,7 @@ no idóneo
 (30,40\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 2
@@ -7793,7 +8072,7 @@ marginalmente idóneo
 (40,50\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 3
@@ -7819,7 +8098,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 19: Áreas proporcionales de estacionalidad pluviométrica
+Table 23: Áreas proporcionales de estacionalidad pluviométrica
 </caption>
 <thead>
 <tr>
@@ -7834,7 +8113,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 21.47
@@ -7842,7 +8121,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 21.67
@@ -7850,7 +8129,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 22.95
@@ -7882,7 +8161,7 @@ assign(
     variable = 'GHH coefficient_of_variation_1km',
     umbrales = c(300, 450, 600),
     nombre = variables[[4]],
-    ord_cat = 'in')
+    ord_cat = 'im')
 )
 ```
 
@@ -7908,7 +8187,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 20: Intervalos de heterogeneidad de hábitat
+Table 24: Intervalos de heterogeneidad de hábitat
 </caption>
 <thead>
 <tr>
@@ -7940,7 +8219,7 @@ altamente idóneo
 (300,450\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 3
@@ -7951,7 +8230,7 @@ moderadamente idóneo
 (450,600\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 2
@@ -7962,7 +8241,7 @@ marginalmente idóneo
 (600,3.56e+03\]
 </td>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 1
@@ -7977,7 +8256,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 20: Áreas proporcionales de heterogeneidad de hábitat
+Table 24: Áreas proporcionales de heterogeneidad de hábitat
 </caption>
 <thead>
 <tr>
@@ -8000,7 +8279,7 @@ altamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 43.74
@@ -8008,7 +8287,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 20.16
@@ -8016,7 +8295,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 16.22
@@ -8040,7 +8319,7 @@ assign(
     variable = 'WBW-DIST mean',
     umbrales = c(1000, 2000, 3000),
     nombre = variables[[5]],
-    ord_cat = 'ni')
+    ord_cat = 'mi')
 )
 ```
 
@@ -8066,7 +8345,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 21: Intervalos de distancia a cuerpos de agua
+Table 25: Intervalos de distancia a cuerpos de agua
 </caption>
 <thead>
 <tr>
@@ -8087,7 +8366,7 @@ distancia a cuerpos de agua puntuación
 \[0,1e+03\]
 </td>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 1
@@ -8098,7 +8377,7 @@ no idóneo
 (1e+03,2e+03\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 2
@@ -8109,7 +8388,7 @@ marginalmente idóneo
 (2e+03,3e+03\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 3
@@ -8135,7 +8414,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 21: Áreas proporcionales de distancia a cuerpos de agua
+Table 25: Áreas proporcionales de distancia a cuerpos de agua
 </caption>
 <thead>
 <tr>
@@ -8150,7 +8429,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 8.20
@@ -8158,7 +8437,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 8.72
@@ -8166,7 +8445,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 8.04
@@ -8198,7 +8477,7 @@ assign(
     variable = 'G90 Slope',
     umbrales = c(3, 9, 15),
     nombre = variables[[6]],
-    ord_cat = 'in')
+    ord_cat = 'im')
 )
 ```
 
@@ -8224,7 +8503,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 22: Intervalos de pendiente
+Table 26: Intervalos de pendiente
 </caption>
 <thead>
 <tr>
@@ -8256,7 +8535,7 @@ altamente idóneo
 (3,9\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 3
@@ -8267,7 +8546,7 @@ moderadamente idóneo
 (9,15\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 2
@@ -8278,7 +8557,7 @@ marginalmente idóneo
 (15,32.7\]
 </td>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 1
@@ -8293,7 +8572,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 22: Áreas proporcionales de pendiente
+Table 26: Áreas proporcionales de pendiente
 </caption>
 <thead>
 <tr>
@@ -8316,7 +8595,7 @@ altamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 28.86
@@ -8324,7 +8603,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 16.92
@@ -8332,7 +8611,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 14.63
@@ -8356,7 +8635,7 @@ assign(
     variable = 'YINSOLTIME mean',
     umbrales = c(3900, 4100, 4300),
     nombre = variables[[7]],
-    ord_cat = 'ni')
+    ord_cat = 'mi')
 )
 ```
 
@@ -8382,7 +8661,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 23: Intervalos de horas de insolación
+Table 27: Intervalos de horas de insolación
 </caption>
 <thead>
 <tr>
@@ -8403,7 +8682,7 @@ horas de insolación puntuación
 \[3.18e+03,3.9e+03\]
 </td>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 1
@@ -8414,7 +8693,7 @@ no idóneo
 (3.9e+03,4.1e+03\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 2
@@ -8425,7 +8704,7 @@ marginalmente idóneo
 (4.1e+03,4.3e+03\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 3
@@ -8451,7 +8730,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 23: Áreas proporcionales de horas de insolación
+Table 27: Áreas proporcionales de horas de insolación
 </caption>
 <thead>
 <tr>
@@ -8466,7 +8745,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 10.68
@@ -8474,7 +8753,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 16.03
@@ -8482,7 +8761,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 25.06
@@ -8514,7 +8793,7 @@ assign(
     variable = 'CGIAR-ELE mean',
     umbrales = c(200, 400, 800),
     nombre = variables[[8]],
-    ord_cat = 'ni')
+    ord_cat = 'mi')
 )
 ```
 
@@ -8540,7 +8819,7 @@ get(objeto)[['intervalos_y_etiquetas_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 24: Intervalos de elevación
+Table 28: Intervalos de elevación
 </caption>
 <thead>
 <tr>
@@ -8561,7 +8840,7 @@ elevación puntuación
 (200,400\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 2
@@ -8572,7 +8851,7 @@ marginalmente idóneo
 (400,800\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 3
@@ -8594,7 +8873,7 @@ altamente idóneo
 \[-42,200\]
 </td>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 1
@@ -8609,7 +8888,7 @@ get(objeto)[['area_proporcional_kable']]
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 24: Áreas proporcionales de elevación
+Table 28: Áreas proporcionales de elevación
 </caption>
 <thead>
 <tr>
@@ -8624,7 +8903,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 50.39
@@ -8632,7 +8911,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 16.53
@@ -8640,7 +8919,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 16.03
@@ -8666,7 +8945,7 @@ if(!objeto %in% objetos) objetos <- c(objetos, objeto)
 
 Los intervalos o umbrales elegidos para definir las puntuaciones de
 criterios, están recogidos en la tabla (ver tabla
-<a href="#tab:umbralesapuntuaciones">25</a>).
+<a href="#tab:umbralesapuntuaciones">29</a>).
 
 ``` r
 puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiquetas']] %>% 
@@ -8675,7 +8954,7 @@ puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiqueta
   group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
   summarise(value = paste(value, collapse = ' y ')) %>% 
   pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
-  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`)
+  select(criterio, `altamente idóneo`, `idóneo`, `moderadamente idóneo`, `marginalmente idóneo`)
 ) %>% bind_rows()
 readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
 puntuaciones_umbrales_kable <- puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
@@ -8686,7 +8965,7 @@ puntuaciones_umbrales_kable
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 25: Puntuaciones de criterios para la selección de sitios de
+Table 29: Puntuaciones de criterios para la selección de sitios de
 estaciones meteoclimáticas
 </caption>
 <thead>
@@ -8698,13 +8977,13 @@ criterio
 altamente idóneo
 </th>
 <th style="text-align:left;">
+idóneo
+</th>
+<th style="text-align:left;">
 moderadamente idóneo
 </th>
 <th style="text-align:left;">
 marginalmente idóneo
-</th>
-<th style="text-align:left;">
-no idóneo
 </th>
 </tr>
 </thead>
@@ -8858,7 +9137,7 @@ areas_proporcionales <- map(objetos, function(x) get(x)[['area_proporcional']] %
   pivot_longer(cols = -matches('proporción'), names_to = 'criterio') %>%
   mutate(criterio = gsub(' etiquetas', '', criterio)) %>% 
   pivot_wider(names_from = value, values_from = proporción)) %>% bind_rows() %>% 
-  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`) %>% 
+  select(criterio, `altamente idóneo`, `idóneo`, `moderadamente idóneo`, `marginalmente idóneo`) %>% 
   adorn_totals('col') 
 readODS::write_ods(x = areas_proporcionales,
                    path = 'fuentes/umbrales-criterios-ahp/areas_proporcionales.ods')
@@ -8870,7 +9149,7 @@ areas_proporcionales_kable
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 26: Áreas proporcionales por cada criterios para la selección de
+Table 30: Áreas proporcionales por cada criterios para la selección de
 sitios de estaciones meteoclimáticas
 </caption>
 <thead>
@@ -8882,13 +9161,13 @@ criterio
 altamente idóneo
 </th>
 <th style="text-align:right;">
+idóneo
+</th>
+<th style="text-align:right;">
 moderadamente idóneo
 </th>
 <th style="text-align:right;">
 marginalmente idóneo
-</th>
-<th style="text-align:right;">
-no idóneo
 </th>
 <th style="text-align:right;">
 Total
@@ -9078,8 +9357,8 @@ all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_s
 Mapas puntuaciones reclasificadas de cada criterio.
 
 ``` r
-paleta <- c("altamente idóneo" = "#018571", "moderadamente idóneo" = "#80cdc1",
-               "marginalmente idóneo" = "#dfd2b3", "no idóneo" = "#a6611a")
+paleta <- c("altamente idóneo" = "#018571", "idóneo" = "#80cdc1",
+               "moderadamente idóneo" = "#dfd2b3", "marginalmente idóneo" = "#a6611a")
 all_criteria_mapa <- all_criteria %>%
   select(all_of(contains('etiquetas'))) %>% 
   rename_with(~ stringr::str_replace(.x, 
@@ -9113,8 +9392,8 @@ Calculamos las puntuaciones agregadas multiplicando las puntuaciones
 parciales de cada criterio por sus correspondientes pesos de
 preferencias agregadas, con lo cual generamos las puntuaciones
 agregadas. Estas puntuaciones las reclasificamos en las cuatro
-categorías habituales (no idóneo…altamente idóneo) siguiendo un criterio
-de número de desviaciones estándar.
+categorías habituales (marginalmente idóneo…altamente idóneo) siguiendo
+un criterio de número de desviaciones estándar.
 
 ``` r
 nombres_ahp_obj_sf <- data.frame(
@@ -9174,7 +9453,7 @@ areas_proporcionales_all_criteria %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 27: Áreas proporcionales de categorías agregadas para la selección
+Table 31: Áreas proporcionales de categorías agregadas para la selección
 de sitios de estaciones meteoclimáticas
 </caption>
 <thead>
@@ -9190,7 +9469,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 13.79
@@ -9198,7 +9477,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 30.81
@@ -9206,7 +9485,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 39.62
@@ -9253,20 +9532,20 @@ all_criteria_scores_mapa
 ## Exclusión por factores limitantes
 
 Imputamos valores mínimos en las columnas `Puntuación agregada` y
-`Puntuación agregada escalada` a los hexágonos categorizados como “no
-idóneos” en el criterio de distancia a accesos o en el criterio de
-distancia a cuerpos de agua. Posteriormente, recalculamos la columna
-`Categorías agregadas` para que los hexágonos a los que se les imputaron
-valores, se reclasifiquen como “no idóneos”.
+`Puntuación agregada escalada` a los hexágonos categorizados como
+“marginalmente idóneos” en el criterio de distancia a accesos o en el
+criterio de distancia a cuerpos de agua. Posteriormente, recalculamos la
+columna `Categorías agregadas` para que los hexágonos a los que se les
+imputaron valores, se reclasifiquen como “marginalmente idóneos”.
 
 ``` r
 all_criteria_scores_excluded <- all_criteria_scores %>% 
   mutate(
     `Puntuación agregada` = ifelse(
-      `distancia a accesos etiquetas` == 'no idóneo' | `distancia a cuerpos de agua etiquetas` == 'no idóneo',
+      `distancia a accesos etiquetas` == 'marginalmente idóneo' | `distancia a cuerpos de agua etiquetas` == 'marginalmente idóneo',
       min(`Puntuación agregada`, na.rm = T), `Puntuación agregada`),
     `Puntuación agregada escalada` = ifelse(
-      `distancia a accesos etiquetas` == 'no idóneo' | `distancia a cuerpos de agua etiquetas` == 'no idóneo',
+      `distancia a accesos etiquetas` == 'marginalmente idóneo' | `distancia a cuerpos de agua etiquetas` == 'marginalmente idóneo',
       min(`Puntuación agregada escalada`, na.rm = T), `Puntuación agregada escalada`),
     `Categoría agregada` = cut(`Puntuación agregada escalada`,
                                     breaks = c(min(`Puntuación agregada escalada`, na.rm = T),
@@ -9336,7 +9615,7 @@ areas_proporcionales_all_criteria_excluded %>%
 
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 28: Áreas proporcionales de categorías agregadas para la selección
+Table 32: Áreas proporcionales de categorías agregadas para la selección
 de sitios de estaciones meteoclimáticas con exclusión por factores
 limitantes
 </caption>
@@ -9353,7 +9632,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-no idóneo
+marginalmente idóneo
 </td>
 <td style="text-align:right;">
 24.08
@@ -9361,7 +9640,7 @@ no idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+moderadamente idóneo
 </td>
 <td style="text-align:right;">
 26.95
@@ -9369,7 +9648,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+idóneo
 </td>
 <td style="text-align:right;">
 34.39
@@ -9386,7 +9665,11 @@ altamente idóneo
 </tbody>
 </table>
 
-## Análisis de vecindad entre estaciones (existentes y propuestas)
+## Escenarios
+
+Para obtener los escenarios definitivos aplicamos un análisis de
+vecindad entre estaciones (existentes y propuestas), con el objetivo de
+evitar redundancia en la red.
 
 Las EMC suelen colocarse a una distancia “óptima” entre sí, a efectos de
 garantizar mediciones precisas y representativas de las condiciones
@@ -9414,15 +9697,20 @@ los criterios de precisión y representatividad, y se apega a los
 estándares sugeridos por la OMM (World Meteorological Organization (WMO)
 and The International Association of Hydrological Sciences 1976).
 
-Aplicamos la función definiendo dos escenarios posibles, en los que cada
-estación cubre 100 y 250 kilómetros cuadrados, respectivamente.
+``` r
+escenarios <- c(100, 150, 250) #Cada estación debe cubrir dichas áreas en km2
+n_esc <- length(escenarios)
+```
+
+Aplicamos la función definiendo 3dos escenarios posibles, en los que
+cada estación cubre 100, 150 y 250 kilómetros cuadrados,
+respectivamente.
 
 ``` r
 # Categorías agregadas
-categorias_elegidas <- c('altamente idóneo', 'moderadamente idóneo')
+categorias_elegidas <- c('altamente idóneo', 'idóneo')
 names(categorias_elegidas) <- rep('categorías de idoneidad', length(categorias_elegidas))
 # Criterio de separación (en este caso, kilómetros cuadrados por estación) 
-escenarios <- c(100, 250) #Cada estación debe cubrir un área de 100 y 250 km cuadrados
 names(escenarios) <- paste('Escenario:', escenarios, 'km2 por estación')
 # Primero realizamos los cálculos
 resumen_calculos_escenarios <- map(escenarios, 
@@ -9433,13 +9721,15 @@ resumen_calculos_escenarios <- map(escenarios,
 ```
 
     ## El área total (en kilómetros cuadrados) es 23655.42 
-    ## Se aportó kilómetros cuadrados por estación. El numero total de puntos a colocar es 237 
+    ## Calculando para 100 kilómetros cuadrados por estación. El numero total de puntos a colocar es 237 
     ## El área total (en kilómetros cuadrados) es 23655.42 
-    ## Se aportó kilómetros cuadrados por estación. El numero total de puntos a colocar es 95
+    ## Calculando para 150 kilómetros cuadrados por estación. El numero total de puntos a colocar es 158 
+    ## El área total (en kilómetros cuadrados) es 23655.42 
+    ## Calculando para 250 kilómetros cuadrados por estación. El numero total de puntos a colocar es 95
 
 ``` r
 # Finalmente, creamos los objetos que exportaremos para visualización en SIG
-escenarios_100_250_ai_mi <- map(
+escenarios_ai_mi <- map(
   escenarios,
   ~ generar_centroides_distantes(
     geom = all_criteria_scores_excluded %>%
@@ -9448,371 +9738,48 @@ escenarios_100_250_ai_mi <- map(
 ```
 
     ## El área total (en kilómetros cuadrados) es 23655.42 
-    ## Se aportó kilómetros cuadrados por estación. El numero total de puntos a colocar es 237 
-    ## Buscando los subconjuntos óptimos...
-    ## Tamaño del subconjunto = 2
-    ## Tamaño del subconjunto = 3
-    ## Tamaño del subconjunto = 4
-    ## Tamaño del subconjunto = 5
-    ## Tamaño del subconjunto = 6
-    ## Tamaño del subconjunto = 7
-    ## Tamaño del subconjunto = 8
-    ## Tamaño del subconjunto = 9
-    ## Tamaño del subconjunto = 10
-    ## Tamaño del subconjunto = 11
-    ## Tamaño del subconjunto = 12
-    ## Tamaño del subconjunto = 13
-    ## Tamaño del subconjunto = 14
-    ## Tamaño del subconjunto = 15
-    ## Tamaño del subconjunto = 16
-    ## Tamaño del subconjunto = 17
-    ## Tamaño del subconjunto = 18
-    ## Tamaño del subconjunto = 19
-    ## Tamaño del subconjunto = 20
-    ## Tamaño del subconjunto = 21
-    ## Tamaño del subconjunto = 22
-    ## Tamaño del subconjunto = 23
-    ## Tamaño del subconjunto = 24
-    ## Tamaño del subconjunto = 25
-    ## Tamaño del subconjunto = 26
-    ## Tamaño del subconjunto = 27
-    ## Tamaño del subconjunto = 28
-    ## Tamaño del subconjunto = 29
-    ## Tamaño del subconjunto = 30
-    ## Tamaño del subconjunto = 31
-    ## Tamaño del subconjunto = 32
-    ## Tamaño del subconjunto = 33
-    ## Tamaño del subconjunto = 34
-    ## Tamaño del subconjunto = 35
-    ## Tamaño del subconjunto = 36
-    ## Tamaño del subconjunto = 37
-    ## Tamaño del subconjunto = 38
-    ## Tamaño del subconjunto = 39
-    ## Tamaño del subconjunto = 40
-    ## Tamaño del subconjunto = 41
-    ## Tamaño del subconjunto = 42
-    ## Tamaño del subconjunto = 43
-    ## Tamaño del subconjunto = 44
-    ## Tamaño del subconjunto = 45
-    ## Tamaño del subconjunto = 46
-    ## Tamaño del subconjunto = 47
-    ## Tamaño del subconjunto = 48
-    ## Tamaño del subconjunto = 49
-    ## Tamaño del subconjunto = 50
-    ## Tamaño del subconjunto = 51
-    ## Tamaño del subconjunto = 52
-    ## Tamaño del subconjunto = 53
-    ## Tamaño del subconjunto = 54
-    ## Tamaño del subconjunto = 55
-    ## Tamaño del subconjunto = 56
-    ## Tamaño del subconjunto = 57
-    ## Tamaño del subconjunto = 58
-    ## Tamaño del subconjunto = 59
-    ## Tamaño del subconjunto = 60
-    ## Tamaño del subconjunto = 61
-    ## Tamaño del subconjunto = 62
-    ## Tamaño del subconjunto = 63
-    ## Tamaño del subconjunto = 64
-    ## Tamaño del subconjunto = 65
-    ## Tamaño del subconjunto = 66
-    ## Tamaño del subconjunto = 67
-    ## Tamaño del subconjunto = 68
-    ## Tamaño del subconjunto = 69
-    ## Tamaño del subconjunto = 70
-    ## Tamaño del subconjunto = 71
-    ## Tamaño del subconjunto = 72
-    ## Tamaño del subconjunto = 73
-    ## Tamaño del subconjunto = 74
-    ## Tamaño del subconjunto = 75
-    ## Tamaño del subconjunto = 76
-    ## Tamaño del subconjunto = 77
-    ## Tamaño del subconjunto = 78
-    ## Tamaño del subconjunto = 79
-    ## Tamaño del subconjunto = 80
-    ## Tamaño del subconjunto = 81
-    ## Tamaño del subconjunto = 82
-    ## Tamaño del subconjunto = 83
-    ## Tamaño del subconjunto = 84
-    ## Tamaño del subconjunto = 85
-    ## Tamaño del subconjunto = 86
-    ## Tamaño del subconjunto = 87
-    ## Tamaño del subconjunto = 88
-    ## Tamaño del subconjunto = 89
-    ## Tamaño del subconjunto = 90
-    ## Tamaño del subconjunto = 91
-    ## Tamaño del subconjunto = 92
-    ## Tamaño del subconjunto = 93
-    ## Tamaño del subconjunto = 94
-    ## Tamaño del subconjunto = 95
-    ## Tamaño del subconjunto = 96
-    ## Tamaño del subconjunto = 97
-    ## Tamaño del subconjunto = 98
-    ## Tamaño del subconjunto = 99
-    ## Tamaño del subconjunto = 100
-    ## Tamaño del subconjunto = 101
-    ## Tamaño del subconjunto = 102
-    ## Tamaño del subconjunto = 103
-    ## Tamaño del subconjunto = 104
-    ## Tamaño del subconjunto = 105
-    ## Tamaño del subconjunto = 106
-    ## Tamaño del subconjunto = 107
-    ## Tamaño del subconjunto = 108
-    ## Tamaño del subconjunto = 109
-    ## Tamaño del subconjunto = 110
-    ## Tamaño del subconjunto = 111
-    ## Tamaño del subconjunto = 112
-    ## Tamaño del subconjunto = 113
-    ## Tamaño del subconjunto = 114
-    ## Tamaño del subconjunto = 115
-    ## Tamaño del subconjunto = 116
-    ## Tamaño del subconjunto = 117
-    ## Tamaño del subconjunto = 118
-    ## Tamaño del subconjunto = 119
-    ## Tamaño del subconjunto = 120
-    ## Tamaño del subconjunto = 121
-    ## Tamaño del subconjunto = 122
-    ## Tamaño del subconjunto = 123
-    ## Tamaño del subconjunto = 124
-    ## Tamaño del subconjunto = 125
-    ## Tamaño del subconjunto = 126
-    ## Tamaño del subconjunto = 127
-    ## Tamaño del subconjunto = 128
-    ## Tamaño del subconjunto = 129
-    ## Tamaño del subconjunto = 130
-    ## Tamaño del subconjunto = 131
-    ## Tamaño del subconjunto = 132
-    ## Tamaño del subconjunto = 133
-    ## Tamaño del subconjunto = 134
-    ## Tamaño del subconjunto = 135
-    ## Tamaño del subconjunto = 136
-    ## Tamaño del subconjunto = 137
-    ## Tamaño del subconjunto = 138
-    ## Tamaño del subconjunto = 139
-    ## Tamaño del subconjunto = 140
-    ## Tamaño del subconjunto = 141
-    ## Tamaño del subconjunto = 142
-    ## Tamaño del subconjunto = 143
-    ## Tamaño del subconjunto = 144
-    ## Tamaño del subconjunto = 145
-    ## Tamaño del subconjunto = 146
-    ## Tamaño del subconjunto = 147
-    ## Tamaño del subconjunto = 148
-    ## Tamaño del subconjunto = 149
-    ## Tamaño del subconjunto = 150
-    ## Tamaño del subconjunto = 151
-    ## Tamaño del subconjunto = 152
-    ## Tamaño del subconjunto = 153
-    ## Tamaño del subconjunto = 154
-    ## Tamaño del subconjunto = 155
-    ## Tamaño del subconjunto = 156
-    ## Tamaño del subconjunto = 157
-    ## Tamaño del subconjunto = 158
-    ## Tamaño del subconjunto = 159
-    ## Tamaño del subconjunto = 160
-    ## Tamaño del subconjunto = 161
-    ## Tamaño del subconjunto = 162
-    ## Tamaño del subconjunto = 163
-    ## Tamaño del subconjunto = 164
-    ## Tamaño del subconjunto = 165
-    ## Tamaño del subconjunto = 166
-    ## Tamaño del subconjunto = 167
-    ## Tamaño del subconjunto = 168
-    ## Tamaño del subconjunto = 169
-    ## Tamaño del subconjunto = 170
-    ## Tamaño del subconjunto = 171
-    ## Tamaño del subconjunto = 172
-    ## Tamaño del subconjunto = 173
-    ## Tamaño del subconjunto = 174
-    ## Tamaño del subconjunto = 175
-    ## Tamaño del subconjunto = 176
-    ## Tamaño del subconjunto = 177
-    ## Tamaño del subconjunto = 178
-    ## Tamaño del subconjunto = 179
-    ## Tamaño del subconjunto = 180
-    ## Tamaño del subconjunto = 181
-    ## Tamaño del subconjunto = 182
-    ## Tamaño del subconjunto = 183
-    ## Tamaño del subconjunto = 184
-    ## Tamaño del subconjunto = 185
-    ## Tamaño del subconjunto = 186
-    ## Tamaño del subconjunto = 187
-    ## Tamaño del subconjunto = 188
-    ## Tamaño del subconjunto = 189
-    ## Tamaño del subconjunto = 190
-    ## Tamaño del subconjunto = 191
-    ## Tamaño del subconjunto = 192
-    ## Tamaño del subconjunto = 193
-    ## Tamaño del subconjunto = 194
-    ## Tamaño del subconjunto = 195
-    ## Tamaño del subconjunto = 196
-    ## Tamaño del subconjunto = 197
-    ## Tamaño del subconjunto = 198
-    ## Tamaño del subconjunto = 199
-    ## Tamaño del subconjunto = 200
-    ## Tamaño del subconjunto = 201
-    ## Tamaño del subconjunto = 202
-    ## Tamaño del subconjunto = 203
-    ## Tamaño del subconjunto = 204
-    ## Tamaño del subconjunto = 205
-    ## Tamaño del subconjunto = 206
-    ## Tamaño del subconjunto = 207
-    ## Tamaño del subconjunto = 208
-    ## Tamaño del subconjunto = 209
-    ## Tamaño del subconjunto = 210
-    ## Tamaño del subconjunto = 211
-    ## Tamaño del subconjunto = 212
-    ## Tamaño del subconjunto = 213
-    ## Tamaño del subconjunto = 214
-    ## Tamaño del subconjunto = 215
-    ## Tamaño del subconjunto = 216
-    ## Tamaño del subconjunto = 217
-    ## Tamaño del subconjunto = 218
-    ## Tamaño del subconjunto = 219
-    ## Tamaño del subconjunto = 220
-    ## Tamaño del subconjunto = 221
-    ## Tamaño del subconjunto = 222
-    ## Tamaño del subconjunto = 223
-    ## Tamaño del subconjunto = 224
-    ## Tamaño del subconjunto = 225
-    ## Tamaño del subconjunto = 226
-    ## Tamaño del subconjunto = 227
-    ## Tamaño del subconjunto = 228
-    ## Tamaño del subconjunto = 229
-    ## Tamaño del subconjunto = 230
-    ## Tamaño del subconjunto = 231
-    ## Tamaño del subconjunto = 232
-    ## Tamaño del subconjunto = 233
-    ## Tamaño del subconjunto = 234
-    ## Tamaño del subconjunto = 235
-    ## Tamaño del subconjunto = 236
+    ## Calculando para 100 kilómetros cuadrados por estación. El numero total de puntos a colocar es 237 
     ## El área total (en kilómetros cuadrados) es 23655.42 
-    ## Se aportó kilómetros cuadrados por estación. El numero total de puntos a colocar es 95 
-    ## Buscando los subconjuntos óptimos...
-    ## Tamaño del subconjunto = 2
-    ## Tamaño del subconjunto = 3
-    ## Tamaño del subconjunto = 4
-    ## Tamaño del subconjunto = 5
-    ## Tamaño del subconjunto = 6
-    ## Tamaño del subconjunto = 7
-    ## Tamaño del subconjunto = 8
-    ## Tamaño del subconjunto = 9
-    ## Tamaño del subconjunto = 10
-    ## Tamaño del subconjunto = 11
-    ## Tamaño del subconjunto = 12
-    ## Tamaño del subconjunto = 13
-    ## Tamaño del subconjunto = 14
-    ## Tamaño del subconjunto = 15
-    ## Tamaño del subconjunto = 16
-    ## Tamaño del subconjunto = 17
-    ## Tamaño del subconjunto = 18
-    ## Tamaño del subconjunto = 19
-    ## Tamaño del subconjunto = 20
-    ## Tamaño del subconjunto = 21
-    ## Tamaño del subconjunto = 22
-    ## Tamaño del subconjunto = 23
-    ## Tamaño del subconjunto = 24
-    ## Tamaño del subconjunto = 25
-    ## Tamaño del subconjunto = 26
-    ## Tamaño del subconjunto = 27
-    ## Tamaño del subconjunto = 28
-    ## Tamaño del subconjunto = 29
-    ## Tamaño del subconjunto = 30
-    ## Tamaño del subconjunto = 31
-    ## Tamaño del subconjunto = 32
-    ## Tamaño del subconjunto = 33
-    ## Tamaño del subconjunto = 34
-    ## Tamaño del subconjunto = 35
-    ## Tamaño del subconjunto = 36
-    ## Tamaño del subconjunto = 37
-    ## Tamaño del subconjunto = 38
-    ## Tamaño del subconjunto = 39
-    ## Tamaño del subconjunto = 40
-    ## Tamaño del subconjunto = 41
-    ## Tamaño del subconjunto = 42
-    ## Tamaño del subconjunto = 43
-    ## Tamaño del subconjunto = 44
-    ## Tamaño del subconjunto = 45
-    ## Tamaño del subconjunto = 46
-    ## Tamaño del subconjunto = 47
-    ## Tamaño del subconjunto = 48
-    ## Tamaño del subconjunto = 49
-    ## Tamaño del subconjunto = 50
-    ## Tamaño del subconjunto = 51
-    ## Tamaño del subconjunto = 52
-    ## Tamaño del subconjunto = 53
-    ## Tamaño del subconjunto = 54
-    ## Tamaño del subconjunto = 55
-    ## Tamaño del subconjunto = 56
-    ## Tamaño del subconjunto = 57
-    ## Tamaño del subconjunto = 58
-    ## Tamaño del subconjunto = 59
-    ## Tamaño del subconjunto = 60
-    ## Tamaño del subconjunto = 61
-    ## Tamaño del subconjunto = 62
-    ## Tamaño del subconjunto = 63
-    ## Tamaño del subconjunto = 64
-    ## Tamaño del subconjunto = 65
-    ## Tamaño del subconjunto = 66
-    ## Tamaño del subconjunto = 67
-    ## Tamaño del subconjunto = 68
-    ## Tamaño del subconjunto = 69
-    ## Tamaño del subconjunto = 70
-    ## Tamaño del subconjunto = 71
-    ## Tamaño del subconjunto = 72
-    ## Tamaño del subconjunto = 73
-    ## Tamaño del subconjunto = 74
-    ## Tamaño del subconjunto = 75
-    ## Tamaño del subconjunto = 76
-    ## Tamaño del subconjunto = 77
-    ## Tamaño del subconjunto = 78
-    ## Tamaño del subconjunto = 79
-    ## Tamaño del subconjunto = 80
-    ## Tamaño del subconjunto = 81
-    ## Tamaño del subconjunto = 82
-    ## Tamaño del subconjunto = 83
-    ## Tamaño del subconjunto = 84
-    ## Tamaño del subconjunto = 85
-    ## Tamaño del subconjunto = 86
-    ## Tamaño del subconjunto = 87
-    ## Tamaño del subconjunto = 88
-    ## Tamaño del subconjunto = 89
-    ## Tamaño del subconjunto = 90
-    ## Tamaño del subconjunto = 91
-    ## Tamaño del subconjunto = 92
-    ## Tamaño del subconjunto = 93
-    ## Tamaño del subconjunto = 94
+    ## Calculando para 150 kilómetros cuadrados por estación. El numero total de puntos a colocar es 158 
+    ## El área total (en kilómetros cuadrados) es 23655.42 
+    ## Calculando para 250 kilómetros cuadrados por estación. El numero total de puntos a colocar es 95
 
 ``` r
 # Mapas
-escenarios_100_250_ai_mi_mapas <- map(names(escenarios_100_250_ai_mi),
+escenarios_ai_mi_mapas <- map(names(escenarios_ai_mi),
     function(x) {
-      escenarios_100_250_ai_mi[[x]] %>% ggplot + geom_sf(alpha = 0.8) +
+      escenarios_ai_mi[[x]] %>% ggplot + geom_sf(alpha = 0.8) +
         geom_sf(data = all_criteria_scores_excluded,
                 aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
         scale_fill_manual(values = paleta) +
         labs(title = x) +
         theme_bw()
     })
-escenarios_100_250_ai_mi_mapas
+escenarios_ai_mi_mapas
 ```
 
     ## [[1]]
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-16-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-17-1.jpeg" width="100%" />
 
     ## 
     ## [[2]]
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-16-2.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-17-2.jpeg" width="100%" />
+
+    ## 
+    ## [[3]]
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-17-3.jpeg" width="100%" />
 
 ``` r
 # Exportar
-map(names(escenarios_100_250_ai_mi),
+map(names(escenarios_ai_mi),
     function(x) {
-      sin_especiales <- iconv(names(escenarios_100_250_ai_mi[x]),
+      sin_especiales <- iconv(names(escenarios_ai_mi[x]),
                               from = 'utf-8', to = 'ASCII//TRANSLIT')
       nombre_archivo <- tolower(paste0(gsub(' |: ', '_', sin_especiales), '.gpkg'))
-      escenarios_100_250_ai_mi[[x]] %>% st_write(paste0('out/', nombre_archivo), delete_dsn = T)
+      escenarios_ai_mi[[x]] %>% st_write(paste0('out/', nombre_archivo), delete_dsn = T)
     })
 ```
 
@@ -9820,6 +9787,10 @@ map(names(escenarios_100_250_ai_mi),
     ## Writing layer `escenario_100_km2_por_estacion' to data source 
     ##   `out/escenario_100_km2_por_estacion.gpkg' using driver `GPKG'
     ## Writing 237 features with 0 fields and geometry type Point.
+    ## Deleting source `out/escenario_150_km2_por_estacion.gpkg' using driver `GPKG'
+    ## Writing layer `escenario_150_km2_por_estacion' to data source 
+    ##   `out/escenario_150_km2_por_estacion.gpkg' using driver `GPKG'
+    ## Writing 158 features with 0 fields and geometry type Point.
     ## Deleting source `out/escenario_250_km2_por_estacion.gpkg' using driver `GPKG'
     ## Writing layer `escenario_250_km2_por_estacion' to data source 
     ##   `out/escenario_250_km2_por_estacion.gpkg' using driver `GPKG'
@@ -9845,6 +9816,25 @@ map(names(escenarios_100_250_ai_mi),
     ## 10 POINT (306698.8 2199667)
     ## 
     ## [[2]]
+    ## Simple feature collection with 158 features and 0 fields
+    ## Geometry type: POINT
+    ## Dimension:     XY
+    ## Bounding box:  xmin: 184802 ymin: 1963483 xmax: 559932.5 ymax: 2203313
+    ## Projected CRS: WGS 84 / UTM zone 19N
+    ## First 10 features:
+    ##                    geometry
+    ## 1    POINT (184802 2062210)
+    ## 2  POINT (559932.5 2043207)
+    ## 3  POINT (375396.8 2167910)
+    ## 4  POINT (341904.7 2014877)
+    ## 5  POINT (232741.7 2200044)
+    ## 6  POINT (446620.6 2074433)
+    ## 7  POINT (240060.1 1963483)
+    ## 8  POINT (285883.8 2106684)
+    ## 9  POINT (266898.6 2033879)
+    ## 10 POINT (306698.8 2199667)
+    ## 
+    ## [[3]]
     ## Simple feature collection with 95 features and 0 fields
     ## Geometry type: POINT
     ## Dimension:     XY
@@ -9871,12 +9861,16 @@ instancia. Probemos con el escenario de 100 kilómetros cuadrados por
 cada estación.
 
 ``` r
-map(escenarios_100_250_ai_mi, estadisticos_distancias_orden_1)
+map(escenarios_ai_mi, estadisticos_distancias_orden_1)
 ```
 
     ## $`Escenario: 100 km2 por estación`
     ##    vars   n  mean   sd median trimmed  mad min   max range skew kurtosis   se
     ## X1    1 237 11.91 2.17  11.38   11.55 1.26  10 31.34 21.34 4.08    27.95 0.14
+    ## 
+    ## $`Escenario: 150 km2 por estación`
+    ##    vars   n  mean   sd median trimmed  mad   min   max range skew kurtosis   se
+    ## X1    1 158 15.32 2.43  14.81   14.99 1.69 12.74 31.34 18.59 2.53    11.39 0.19
     ## 
     ## $`Escenario: 250 km2 por estación`
     ##    vars  n  mean   sd median trimmed  mad   min   max range skew kurtosis   se
@@ -9886,11 +9880,13 @@ map(escenarios_100_250_ai_mi, estadisticos_distancias_orden_1)
 # Los valores de separación inicialmente esperados se obtuvieron
 ```
 
-Si comparamos con la red de estaciones activas de ONAMET, obtenemos que
-la distancia de separación entre estaciones activas para el primer orden
-de vecindad, es superior a la propuesta en cualquiera de los dos
-escenarios. Además, hay al menos dos estaciones de la red de ONAMET que
-se encuentran separadas hasta a 48 km.
+Comparando con la red existente, tomemos por ejemplo el caso de la de
+ONAMET. En el caso de dicha red, la distancia de separación entre
+estaciones activas para el primer orden de vecindad es superior a la
+distancia de separación entre sitios de nuestra propuesta, para
+cualquiera de los escenarios considerados. Además, hay al menos dos
+estaciones de la red de ONAMET que se encuentran separadas hasta a 48
+km.
 
 ``` r
 onamet_para_vecindad <- st_read('out/con_indicacion_estatus_onamet.gpkg') %>% 
@@ -9913,97 +9909,477 @@ estadisticos_distancias_orden_1(onamet_para_vecindad)
     ##    vars  n  mean   sd median trimmed  mad   min   max range skew kurtosis   se
     ## X1    1 36 22.68 8.53   22.6   21.95 7.25 10.37 48.13 37.75 0.85     0.73 1.42
 
-Eliminamos las propuestas de sitios del escenario a 100 $km^2$ por
-estación, situadas a 11 km o menos de estaciones preexistentes de ONAMET
-e INDRHI.
+Si comparamos con la red de estaciones en estado “Bueno” del INDRHI,
+notaremos también un patrón similar: las estaciones se encuentran muy
+separadas entre sí.
 
 ``` r
-dist_onamet_indrhi <- raster('out/onamet_indrhi_prueba_dist_500x500_distancia.tif')
-esc_100_dist_onamet_indrhi <- raster::extract(dist_onamet_indrhi, escenarios_100_250_ai_mi[[1]])
-escenarios_100_exlusion_union <- escenarios_100_250_ai_mi[[1]] %>%
-  mutate(dist_onamet_indrhi = esc_100_dist_onamet_indrhi) %>% 
-  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[1]]$`Distancia esperada entre vecinos`*1000) %>%
-  st_join(all_criteria_scores_excluded, left = T)
-escenarios_100_exlusion_union %>%
-  st_write('out/escenario_100_km2_por_estacion_exclusion_redundancia.gpkg', delete_dsn = T)
+indrhi_para_vecindad_b <- st_read('out/con_indicacion_estatus_climaticas_indrhi.gpkg') %>% 
+  filter(Estado == 'Bueno')
 ```
 
-    ## Deleting source `out/escenario_100_km2_por_estacion_exclusion_redundancia.gpkg' using driver `GPKG'
-    ## Writing layer `escenario_100_km2_por_estacion_exclusion_redundancia' to data source 
-    ##   `out/escenario_100_km2_por_estacion_exclusion_redundancia.gpkg' using driver `GPKG'
+    ## Reading layer `con_indicacion_estatus_climaticas_indrhi' from data source 
+    ##   `/home/jose/Documentos/git/datos-meteoclimaticos-escenarios-cc/out/con_indicacion_estatus_climaticas_indrhi.gpkg' 
+    ##   using driver `GPKG'
+    ## Simple feature collection with 54 features and 13 fields
+    ## Geometry type: POINT
+    ## Dimension:     XY
+    ## Bounding box:  xmin: -71.69811 ymin: 18.26713 xmax: -68.66119 ymax: 19.83025
+    ## Geodetic CRS:  WGS 84
+
+``` r
+estadisticos_distancias_orden_1(indrhi_para_vecindad_b)
+```
+
+    ##    vars  n  mean    sd median trimmed   mad   min   max range  skew kurtosis
+    ## X1    1 16 28.74 10.75  29.19   28.67 17.01 14.83 43.64 28.81 -0.05    -1.64
+    ##      se
+    ## X1 2.69
+
+Igualmente, si comparamos con la misma red, pero incluyendo también las
+estaciones en estado “Regular”, notaremos que igualmente las distancias
+de separación entre estaciones siguen siendo grandes.
+
+``` r
+indrhi_para_vecindad_br <- st_read('out/con_indicacion_estatus_climaticas_indrhi.gpkg') %>% 
+  filter(Estado == 'Bueno' | Estado == 'Regular')
+```
+
+    ## Reading layer `con_indicacion_estatus_climaticas_indrhi' from data source 
+    ##   `/home/jose/Documentos/git/datos-meteoclimaticos-escenarios-cc/out/con_indicacion_estatus_climaticas_indrhi.gpkg' 
+    ##   using driver `GPKG'
+    ## Simple feature collection with 54 features and 13 fields
+    ## Geometry type: POINT
+    ## Dimension:     XY
+    ## Bounding box:  xmin: -71.69811 ymin: 18.26713 xmax: -68.66119 ymax: 19.83025
+    ## Geodetic CRS:  WGS 84
+
+``` r
+estadisticos_distancias_orden_1(indrhi_para_vecindad_br)
+```
+
+    ##    vars  n  mean    sd median trimmed  mad  min   max range skew kurtosis   se
+    ## X1    1 26 23.25 12.47   17.8    23.2 5.22 1.87 46.79 44.92 0.41    -0.88 2.45
+
+Las estaciones de la red de ONAMET fueron caracterizadas recientemente
+en dos estados “activa” e “inactiva o no reportada”. En nuestro análisis
+de vecindad para eliminar redundancia, consideramos únicamente las
+activas. Por otra parte, la red del INDRHI cuenta con estaciones que, en
+2019 se encontraban en estado “Bueno”, “Regular” y “Malo”. Decidimos
+considerar tanto las estaciones en estado “Bueno” como las que se
+encontraban en estado “Regular”. Así, para cada uno de nuestros
+escenarios de densidad (100, 150 y 250 $km^2$), eliminamos redundancia
+usando dos redes combinadas distintas: 1) ONAMET activas + INDRHI
+buenas, y 2) ONAMET activas + INDRHI buenas y regulares. De esta manera,
+como producto final, obtuvimos 6 escenarios distintos.
+
+``` r
+rgdal::setCPLConfigOption("GDAL_PAM_ENABLED", "FALSE")
+```
+
+    ## [1] "FALSE"
+
+``` r
+actbue <- c(indrhi_para_vecindad_b %>% st_geometry(),
+                onamet_para_vecindad %>% st_geometry()) %>% st_transform(32619)
+actbue_r <- rasterize(x = as(actbue, 'Spatial'),
+                                      y = raster(extent(ind_esp),
+                                                 resolution = 500, crs = 'EPSG:32619'),
+                                      field = 1)
+actbue_d <- distance(actbue_r)
+actbue_d %>% writeRaster('out/onamet_indrhi_actbue_dist_500x500_distancia.tif',
+                         overwrite = T, setStatistics = F)
+
+actbuereg <- c(indrhi_para_vecindad_br %>% st_geometry(),
+                onamet_para_vecindad %>% st_geometry()) %>% st_transform(32619)
+actbuereg_r <- rasterize(x = as(actbuereg, 'Spatial'),
+                                      y = raster(extent(ind_esp),
+                                                 resolution = 500, crs = 'EPSG:32619'),
+                                      field = 1)
+actbuereg_d <- distance(actbuereg_r)
+actbuereg_d %>% writeRaster('out/onamet_indrhi_actbuereg_dist_500x500_distancia.tif',
+                            overwrite = T, setStatistics = F)
+```
+
+En el caso del escenario “100 $km^2$ por estación”, la distancia de
+corte entre estaciones es de 11 km. Por lo tanto, eliminaremos las
+estaciones propuestas por nosotros que queden dentro de ese rango
+respecto de estaciones de ONAMET y/o INDRHI existentes.
+
+### Escenario 100 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+
+- Mapa
+
+``` r
+indice <- 1; escenario <- '100'
+redundancia <- 'activas_buenas'; estaciones <- actbue; distancia <- actbue_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+```
+
+    ## Deleting source `out/escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
+    ## Writing layer `escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas' to data source 
+    ##   `out/escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
+    ## Writing 170 features with 29 fields and geometry type Point.
+
+``` r
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         # geom_sf(data = all_criteria_scores_excluded,
+         #         aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+         # scale_fill_manual(values = paleta) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-23-1.jpeg" width="100%" />
+
+- Tabla-resumen conteniendo los valores
+
+``` r
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
+```
+
+    ##  Categoría agregada   n Monto (US$)
+    ##              idóneo 127      889000
+    ##    altamente idóneo  43     1505000
+    ##               Total 170     2394000
+
+### Escenario 100 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+
+- Mapa
+
+``` r
+indice <- 1; escenario <- '100'
+redundancia <- 'activas_buenas_regulares'; estaciones <- actbuereg; distancia <- actbuereg_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+```
+
+    ## Deleting source `out/escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
+    ## Writing layer `escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares' to data source 
+    ##   `out/escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
     ## Writing 168 features with 29 fields and geometry type Point.
 
 ``` r
-escenarios_100_exlusion_union_mapa <- escenarios_100_exlusion_union %>%
-  ggplot + geom_sf(alpha = 0.8) +
-  geom_sf(data = all_criteria_scores_excluded,
-          aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
-  scale_fill_manual(values = paleta) +
-  labs(title = paste0(trimws(names(escenarios)[1]), ', eliminación de redundancia')) +
-  theme_bw()
-escenarios_100_exlusion_union_mapa
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-19-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-25-1.jpeg" width="100%" />
 
-Y finalmente obtenemos una tabla-resumen conteniendo los valores
+- Tabla-resumen conteniendo los valores
 
 ``` r
-escenarios_100_df_resumen <- escenarios_100_exlusion_union %>% st_drop_geometry %>% dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-  mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'moderadamente idóneo', n*7000, n*35000)) %>% 
-  adorn_totals()
-escenarios_100_df_resumen
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
 ```
 
-    ##    Categoría agregada   n Monto (US$)
-    ##  moderadamente idóneo 125      875000
-    ##      altamente idóneo  43     1505000
-    ##                 Total 168     2380000
+    ##  Categoría agregada   n Monto (US$)
+    ##              idóneo 125      875000
+    ##    altamente idóneo  43     1505000
+    ##               Total 168     2380000
 
-Repetimos los mismos pasos para el escenario de una estación por cada
-250 $km^2$.
+### Escenario 150 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+
+- Mapa
 
 ``` r
-esc_250_dist_onamet_indrhi <- raster::extract(dist_onamet_indrhi, escenarios_100_250_ai_mi[[2]])
-escenarios_250_exlusion_union <- escenarios_100_250_ai_mi[[2]] %>%
-  mutate(dist_onamet_indrhi = esc_250_dist_onamet_indrhi) %>% 
-  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[2]]$`Distancia esperada entre vecinos`*1000) %>%
+indice <- 2; escenario <- '150'
+redundancia <- 'activas_buenas'; estaciones <- actbue; distancia <- actbue_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
-escenarios_250_exlusion_union %>%
-  st_write('out/escenario_250_km2_por_estacion_exclusion_redundancia.gpkg', delete_dsn = T)
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
 ```
 
-    ## Deleting source `out/escenario_250_km2_por_estacion_exclusion_redundancia.gpkg' using driver `GPKG'
-    ## Writing layer `escenario_250_km2_por_estacion_exclusion_redundancia' to data source 
-    ##   `out/escenario_250_km2_por_estacion_exclusion_redundancia.gpkg' using driver `GPKG'
+    ## Deleting source `out/escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
+    ## Writing layer `escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas' to data source 
+    ##   `out/escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
+    ## Writing 89 features with 29 fields and geometry type Point.
+
+``` r
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         # geom_sf(data = all_criteria_scores_excluded,
+         #         aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+         # scale_fill_manual(values = paleta) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-27-1.jpeg" width="100%" />
+
+- Tabla-resumen conteniendo los valores
+
+``` r
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
+```
+
+    ##  Categoría agregada  n Monto (US$)
+    ##              idóneo 66      462000
+    ##    altamente idóneo 23      805000
+    ##               Total 89     1267000
+
+### Escenario 150 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+
+- Mapa
+
+``` r
+indice <- 2; escenario <- '150'
+redundancia <- 'activas_buenas_regulares'; estaciones <- actbuereg; distancia <- actbuereg_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+```
+
+    ## Deleting source `out/escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
+    ## Writing layer `escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares' to data source 
+    ##   `out/escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
+    ## Writing 86 features with 29 fields and geometry type Point.
+
+``` r
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-29-1.jpeg" width="100%" />
+
+- Tabla-resumen conteniendo los valores
+
+``` r
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
+```
+
+    ##  Categoría agregada  n Monto (US$)
+    ##              idóneo 63      441000
+    ##    altamente idóneo 23      805000
+    ##               Total 86     1246000
+
+### Escenario 250 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+
+- Mapa
+
+``` r
+indice <- 3; escenario <- '250'
+redundancia <- 'activas_buenas'; estaciones <- actbue; distancia <- actbue_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+```
+
+    ## Deleting source `out/escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
+    ## Writing layer `escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas' to data source 
+    ##   `out/escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
     ## Writing 39 features with 29 fields and geometry type Point.
 
 ``` r
-escenarios_250_exlusion_union_mapa <- escenarios_250_exlusion_union %>%
-  ggplot + geom_sf(alpha = 0.8) +
-  geom_sf(data = all_criteria_scores_excluded,
-          aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
-  scale_fill_manual(values = paleta) +
-  labs(title = paste0(trimws(names(escenarios)[2]), ', eliminación de redundancia')) +
-  theme_bw()
-escenarios_250_exlusion_union_mapa
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         # geom_sf(data = all_criteria_scores_excluded,
+         #         aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+         # scale_fill_manual(values = paleta) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-21-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-31-1.jpeg" width="100%" />
 
-Incluimos igualmente la tabla resumen.
+- Tabla-resumen conteniendo los valores
 
 ``` r
-escenarios_250_df_resumen <- escenarios_250_exlusion_union %>% st_drop_geometry %>% dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-  mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'moderadamente idóneo', n*7000, n*35000)) %>% 
-  adorn_totals()
-escenarios_250_df_resumen
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
 ```
 
-    ##    Categoría agregada  n Monto (US$)
-    ##  moderadamente idóneo 30      210000
-    ##      altamente idóneo  9      315000
-    ##                 Total 39      525000
+    ##  Categoría agregada  n Monto (US$)
+    ##              idóneo 30      210000
+    ##    altamente idóneo  9      315000
+    ##               Total 39      525000
+
+### Escenario 250 km por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+
+- Mapa
+
+``` r
+indice <- 3; escenario <- '250'
+redundancia <- 'activas_buenas_regulares'; estaciones <- actbuereg; distancia <- actbuereg_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+```
+
+    ## Deleting source `out/escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
+    ## Writing layer `escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares' to data source 
+    ##   `out/escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
+    ## Writing 38 features with 29 fields and geometry type Point.
+
+``` r
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-33-1.jpeg" width="100%" />
+
+- Tabla-resumen conteniendo los valores
+
+``` r
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
+```
+
+    ##  Categoría agregada  n Monto (US$)
+    ##              idóneo 29      203000
+    ##    altamente idóneo  9      315000
+    ##               Total 38      518000
 
 ## Referencias
 

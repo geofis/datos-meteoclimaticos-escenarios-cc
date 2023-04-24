@@ -19,7 +19,7 @@ bibliography: ref/biblio.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  cache = F, 
+  cache = FALSE, 
   echo = TRUE,
   warning = FALSE,
   message = FALSE,
@@ -68,7 +68,7 @@ En este estudio, aplicamos AHP para seleccionar sitios idóneos donde instalar e
 
 Aplicamos una secuencia de tres técnicas interdependientes para formular distintas alternativas de redes de observación meteoclimática, centrándonos en la selección multicriterio de sitios idóneos. En primer lugar, aplicamos un **proceso analítico jerárquico (AHP)** para seleccionar la mejor opción entre diferentes alternativas, utilizando criterios de selección ponderados por personas consultadas con conocimiento del problema [@saaty2013]. Los criterios seleccionados fueron *`r paste(as.vector(variables), collapse = ', ')`*. Elegimos estos ocho criterios por considerarlos relevantes según nuestro propio conocimiento de la problemática, así como apoyándonos en estudios previos y recomendaciones de la Organización Meteorológica Mundial [@rojasbriceno2021; @design1976hydrological].
 
-Las consultas fueron solicitadas de forma explícita, quienes respondieron a las preguntas mediante formularios electrónicos. Tras las consultas, organizamos y recodificamos las respuestas obtenidas y, posteriormente, evaluamos su consistencia. Posteriormente, seleccionamos las respuestas consistentes para establecer la ponderación de criterios. Finalmente, aplicamos la ponderación obtenida a las fuentes de información geográfica disponibles, que en nuestro caso fueron ca. [13,000 hexágonos conteniendo la correspondiente información multicriterio, y repartidos sobre el territorio dominicano](https://geofis.github.io/zonal-statistics/README.html) [@jose_ramon_martinez_batlle_2022_7367180]. De esta ponderación, asignamos una categoría agregada a cada hexágono que podía ser una de las siguientes cuatro: no idóneo, marginalmente idóneo, moderadamente idóneo y altamente idóneo.
+Las consultas fueron solicitadas de forma explícita, quienes respondieron a las preguntas mediante formularios electrónicos. Tras las consultas, organizamos y recodificamos las respuestas obtenidas y, posteriormente, evaluamos su consistencia. Posteriormente, seleccionamos las respuestas consistentes para establecer la ponderación de criterios. Finalmente, aplicamos la ponderación obtenida a las fuentes de información geográfica disponibles, que en nuestro caso fueron ca. [13,000 hexágonos conteniendo la correspondiente información multicriterio, y repartidos sobre el territorio dominicano](https://geofis.github.io/zonal-statistics/README.html) [@jose_ramon_martinez_batlle_2022_7367180]. De esta ponderación, asignamos una categoría agregada a cada hexágono que podía ser una de las siguientes cuatro: marginalmente idóneo, moderadamente idóneo, idóneo y altamente idóneo.
 
 Tanto el diseño de los formularios, como el procesamiento de respuestas y la ponderación de criterios, los realizamos empleando lenguajes de programación. Para diseñar los formularios, empleamos paquetes y funciones de Python, mientras que para los análisis nos auxiliamos del paquete `ahpsurvey` y otros del entorno de programación estadística R, diseñado para tales fines [@cho2019ahpsurvey; @rcoreteam2021r; @whicham2019welcome]. Describimos el procedimiento detalladamente en la sección [Información suplementaria](#infosupl).
 
@@ -91,7 +91,7 @@ prefagg %>%
   column_spec(column = 1:2, width = "10em")
 ```
 
-Las puntuaciones reclasificadas de cada criterio mostraron una amplia variabilidad de la superficie ocupada por cada categoría (ver tabla \@ref(tab:areasproporcionales)). De los criterios ponderados con un alto peso dentro de la valoración AHP, las estacionalidades pluviométrica y térmica presentaron proporciones relativamente equilibradas del territorio según las cuatro clases de idoneidad. Por otra parte, el criterio horas de insolación, mostró una importante acumulación de áreas idóneas (altamente idóneas y moderadamente idóneas) para el establecimiento de estaciones. Igualmente, el criterio elevación resultó predominantemente idóneo y altamente idóneo. Esto se debió a que los sistemas montañosos dominicanos presentan las menores densidades de estaciones meteoclimáticas, por lo que se prefirió impulsar la idoneidad de la topografía elevada para el establecimiento de EMC.
+Las puntuaciones reclasificadas de cada criterio mostraron una amplia variabilidad de la superficie ocupada por cada categoría (ver tabla \@ref(tab:areasproporcionales)). De los criterios ponderados con un alto peso dentro de la valoración AHP, las estacionalidades pluviométrica y térmica presentaron proporciones relativamente equilibradas del territorio según las cuatro clases de idoneidad. Por otra parte, el criterio horas de insolación, mostró una importante acumulación de áreas idóneas (incluye "idóneas" propiamente y "altamente idóneas") para el establecimiento de estaciones. Igualmente, el criterio elevación resultó predominantemente idóneo y altamente idóneo. Esto se debió a que los sistemas montañosos dominicanos presentan las menores densidades de estaciones meteoclimáticas, por lo que se prefirió impulsar la idoneidad de la topografía elevada para el establecimiento de EMC.
 
 ```{r areasproporcionales}
 areas_proporcionales %>%
@@ -100,13 +100,13 @@ areas_proporcionales %>%
       kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
-En términos de distribución espacial, el patrón más común fue el de tipo concentrado (ver figura \@ref(fig:mapacriteriospuntuaciones)). Todos los criterios presentaron autocorrelación espacial positiva, lo que significa que los hexágonos se aglomeran en cúmulos de valores grandes ("grumos" de hexágonos idóneos, formando *hotspots*) y/o pequeños (cúmulos de hexágonos no idóneos, formando *coldspots*). Destaca, aunque era esperable, la particular la distribución espacial de la distancia a cuerpos de agua, con un patrón muy homogéneo y monótono de hexágonos de alta idoneidad.
+En términos de distribución espacial, el patrón más común fue el de tipo concentrado (ver figura \@ref(fig:mapacriteriospuntuaciones)). Todos los criterios presentaron autocorrelación espacial positiva, lo que significa que los hexágonos se aglomeran en cúmulos de valores grandes ("grumos" de hexágonos idóneos, formando *hotspots*) y/o pequeños (cúmulos de hexágonos marginalmente idóneos, formando *coldspots*). Destaca, aunque era esperable, la particular la distribución espacial de la distancia a cuerpos de agua, con un patrón muy homogéneo y monótono de hexágonos de alta idoneidad.
 
 ```{r mapacriteriospuntuaciones, fig.width=8, fig.height=12, fig.cap='Mapas puntuaciones reclasificadas de cada criterio'}
 all_criteria_mapa
 ```
 
-Tras sumar los criterios ponderados, obtuvimos la distribución de las categorías agregadas. En cuanto a superficie representada, predominaron los intermedios, "marginalmente idóneo" y "moderadamente idóneo" con un 70% de toda la superficie estudiada, mientras que las categorías extremas "no idóneo" y "altamente idóneo" se repartieron el restante 30% (ver tabla \@ref(tab:areasproporcionalesall)).
+Tras sumar los criterios ponderados, obtuvimos la distribución de las categorías agregadas. En cuanto a superficie representada, predominaron los intermedios, "moderadamente idóneo" e "idóneo" con un 70% de toda la superficie estudiada, mientras que las categorías extremas "marginalmente idóneo" y "altamente idóneo" se repartieron el restante 30% (ver tabla \@ref(tab:areasproporcionalesall)).
 
 ```{r areasproporcionalesall}
 areas_proporcionales_all_criteria %>% 
@@ -115,7 +115,7 @@ areas_proporcionales_all_criteria %>%
       kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
-Las categorías agregadas se mostraron bien repartidas espacialmente en el territorio dominicano (ver figura \@ref(fig:mapacriteriospuntuacionesall)). En particular, la representación espacial sugiere que el método AHP priorizó aquellas áreas que, por sus atributos, nos interesaba impulsar en primera instancia. Las áreas con gran estacionalidad, especialmente las montañas y el borde oriental del país, que al mismo tiempo mostraron buen rendimiento en cuanto a horas de insolación, resultaron ser las más idóneas para el establecimiento de nuevas EMC. Por otra parte, los sectores situados a menor elevación, que al mismo tiempo contaban con pocas horas de insolación, fuertes pendientes y bajas estacionalidades térmica y pluviométrica, fueron clasificados como no idóneos.
+Las categorías agregadas se mostraron bien repartidas espacialmente en el territorio dominicano (ver figura \@ref(fig:mapacriteriospuntuacionesall)). En particular, la representación espacial sugiere que el método AHP priorizó aquellas áreas que, por sus atributos, nos interesaba impulsar en primera instancia. Las áreas con gran estacionalidad, especialmente las montañas y el borde oriental del país, que al mismo tiempo mostraron buen rendimiento en cuanto a horas de insolación, resultaron ser las más idóneas para el establecimiento de nuevas EMC. Por otra parte, los sectores situados a menor elevación, que al mismo tiempo contaban con pocas horas de insolación, fuertes pendientes y bajas estacionalidades térmica y pluviométrica, fueron clasificados como marginalmente idóneos.
 
 ```{r mapacriteriospuntuacionesall, fig.cap='Mapa de categorías agregadas'}
 all_criteria_scores_mapa
@@ -123,7 +123,7 @@ all_criteria_scores_mapa
 
 ### Exclusión por factores limitantes
 
-Un total de `r hexagonos_imputados` hexágonos fueron imputados como no idóneos por su proximidad a cuerpos de agua, o por encontrarse dentro de áreas pobladas o muy distantes en términos de accesibilidad. La mayoría se localizó en los lagos y lagunas interiores y costeras, en áreas próximas a la costa, en ríos anchos y embalses, y en áreas montañosas inaccesibles. El mapa de la figura \@ref(fig:mapacriteriospuntuacionesallexcluded) muestra la nueva distribución de las categorías agregadas (compárese con el mapa de la figura \@ref(fig:mapacriteriospuntuacionesall)). Asimismo, la tabla \@ref(tab:areasproporcionalesallexcluded)) muestra la nueva distribución de las áreas proporcionales.
+Un total de `r hexagonos_imputados` hexágonos fueron imputados como marginalmente idóneos por su proximidad a cuerpos de agua, o por encontrarse dentro de áreas pobladas o muy distantes en términos de accesibilidad. La mayoría se localizó en los lagos y lagunas interiores y costeras, en áreas próximas a la costa, en ríos anchos y embalses, y en áreas montañosas inaccesibles. El mapa de la figura \@ref(fig:mapacriteriospuntuacionesallexcluded) muestra la nueva distribución de las categorías agregadas (compárese con el mapa de la figura \@ref(fig:mapacriteriospuntuacionesall)). Asimismo, la tabla \@ref(tab:areasproporcionalesallexcluded)) muestra la nueva distribución de las áreas proporcionales.
 
 ```{r mapacriteriospuntuacionesallexcluded, fig.cap='Mapa de categorías agregadas (exclusión por factores limitantes)'}
 all_criteria_scores_excluded_mapa
@@ -138,49 +138,73 @@ areas_proporcionales_all_criteria_excluded %>%
 
 ### Análisis de vecindad entre estaciones (existentes y propuestas)
 
-Con la función de selección de sitios en vecindad, generamos nubes de puntos para dos escenarios distintos de "densidad", ambos enmarcados en los lineamientos sugeridos por la OMM [@design1976hydrological; @wmo2020guide]. En ambos casos, utilizamos como área de despliegue de los sitios candidatos, aquellos hexágonos que cumplieran con los criterios de "altamente idóneo" o "moderadamente idóneo".
+Con la función de selección de sitios en vecindad, generamos nubes de puntos para construir tres escenarios de densidad de estaciones de 100, 150 y 250 $km^2$ por estación, todos enmarcados en los lineamientos sugeridos por la OMM [@design1976hydrological; @wmo2020guide]. En los tres casos utilizamos, como área a cubrir, la compuesta por los hexágonos que cumplieran con los criterios de "altamente idóneo" o "idóneo".
 
-Formulamos cada escenario bajo dos modalidades de despliegue posibles: 1) Adquirir equipamiento y establecerlo según prioridades locales definidas por los actores responsables, siguiendo su esquema de gobernanza; 2) En caso de disponer de suficiente presupuesto, se prooner desplegar estaciones de altas prestaciones en primera instancia, y sólo en lugares altamente idóneos; una vez establecidas éstas, colocar las restantes estaciones (e.g. de prestaciones normales) en sitios moderadamente idóneos. En este contexto, se propone también evaluar opciones de bajo costo, muchas de las cuales ya son accesibles desde República Dominicana. Estas últimas tienen la ventaja añadida de que pueden combinarse con proyectos educativos en centros escolares.
+A partir de los escenarios generados por la función de selección de sitios en vecindad, obtuvimos escenarios ideales sin considerar las estaciones existentes. Para evitar redundancia, eliminamos sitios sugeridos de nuestra propuesta inicial que ya se encontraran representados por estaciones de la red existente de INDRHI y/o ONAMET. Consideramos dos redes existentes distintas: 1) Red compuesta por las estaciones **activas de ONAMET** y las catalogadas como de **"buenas" del INDRHI** (red de estaciones "activas+buenas"); 2) Red **similar a la anterior**, pero incluyendo además las estaciones de **estado "Regular" del INDRHI**, las cuales sólo requieren de una mínima inversión para ponerlas en operación nuevamente (red de estaciones "activas+buenas+regulares"). Por lo tanto, para cada uno de los tres escenarios de densidad, se eliminó redundancia respecto de dos redes existentes, lo cual produjo, a su vez, 6 escenarios posibles.
 
-Finalmente, algunos de los sitios propuestos en cada escenario, se solapaban con estaciones de las redes públicas ya establecidas de ONAMET e INDRHI, lo cual se convertía en una potencial fuente de redundancia. Por tal razón, utilizando un criterio de distancia respecto, eliminamos los sitios propuestos que se solapaban con estaciones ya establecidas.
-
-El primer escenario lo diseñamos de manera que cada estación cubriese 100 $km^2$. Dado que el área clasificada como altamente idónea y moderadamente idónea es de aproximadamente 23,000 $km^2$, obtuvimos una red de `r nrow(escenarios_100_250_ai_mi[[1]])` sitios propuestos, de los cuales eliminamos `r nrow(escenarios_100_250_ai_mi[[1]])-last(escenarios_100_df_resumen$n)`, y conservamos sólo **`r last(escenarios_100_df_resumen$n)` sitios**, a fin de evitar redundancia por solapamiento con la red pública existente. Este escenario tiene como ventaja que, por su fina textura, garantiza el cumplimiento de los estándares más ambiciosos sugeridos por la OMM y, a su vez, complementa de forma óptima la red existente de estaciones de ONAMET e INDRHI. Su principal desventaja radica en el costo, pues adquirir, instalar y mantener nuevas estaciones, requiere de compromisos presupuestarios muy exigentes. Una primera aproximación de esta propuesta, sugiere que la inversión mínima necesaria para acometerlo, rondaría los **US\$`r format(last(escenarios_100_df_resumen[,'Monto (US$)']), scientific=F)`**, sin considerar gastos corrientes asociados.
+En el primer escenario, cada estación cubre 100 $km^2$. Al eliminar redundancia respecto de la red existente, obtuvimos dos subescenarios diferenciados para esta densidad. En el primero---evita redundancia respecto de estaciones activas de ONAMET y buenas de INDRHI--- se recomienda instalar `r last(esc_100_activas_buenas_df_resumen$n)` estaciones.
 
 ```{r}
-escenarios_100_250_ai_mi_mapas[[1]]
-```
-
-```{r}
-escenarios_100_df_resumen %>% 
+esc_100_activas_buenas_mapa
+esc_100_activas_buenas_df_resumen %>% 
   kable(format = 'html', escape = F, booktabs = T, digits = 2,
-        caption = 'Inversión sugeridad para el escenario 1, 100 kilómetros cuadrados por estación') %>%
+        caption = 'Inversión sugerida para el escenario de densidad 100 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET y buenas de INDRHI') %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
-```{r}
-escenarios_100_exlusion_union_mapa
-```
-
-
-Como segundo escenario, propusimos una red modesta, con una estación por cada 250 $km^2$. Obtuvimos una red inicial de `r nrow(escenarios_100_250_ai_mi[[2]])` sitios propuestos, de los cuales eliminamos `r nrow(escenarios_100_250_ai_mi[[2]])-last(escenarios_250_df_resumen$n)`, y conservamos sólo **`r last(escenarios_250_df_resumen$n)` sitios**, a fin de evitar redundancia por solapamiento con la red pública existente. Este escenario, al ser menos denso, tiene como ventaja principal que su costo es reducido, y permite alcanzar, moderadamente, estándares sugeridos por la OMM. Su principal desventaja radica en que, aunque se aumentaría la densidad de la red, la proporción de aumento no sería realmente significativa. La inversión inicial estimada rondaría los **US\$`r format(last(escenarios_250_df_resumen[,'Monto (US$)']), scientific=F)`**, sin considerar gastos corrientes asociados.
+En el segundo subescenario, en el cual consideramos la existencia de las estaciones de estado regular del INDRHI, se recomienda instalar `r last(esc_100_activas_buenas_regulares_df_resumen$n)`.
 
 ```{r}
-escenarios_100_250_ai_mi_mapas[[2]]
-```
-
-```{r}
-escenarios_250_df_resumen %>% 
+esc_100_activas_buenas_regulares_mapa
+esc_100_activas_buenas_regulares_df_resumen %>% 
   kable(format = 'html', escape = F, booktabs = T, digits = 2,
-        caption = 'Inversión sugeridad para el escenario 2, 250 kilómetros cuadrados por estación') %>%
+        caption = 'Inversión sugerida para el escenario de densidad 100 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET, y buenas y regulares de INDRHI') %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
+Se recomienda notar que la tabla resumen diferencia los sitios idóneos y los altamente idóneos. Esto permite a las entidades responsables, decidir un esquema de intervención según presupuesto disponible, prioridades y esquema de gobernanza. Así, las entidades dispondrán de la información de inversión sugerida para cada tipo de área. En particular, proponemos desplegar estaciones de altas prestaciones en primera instancia, y especialmente en lugares altamente idóneos; una vez establecidas éstas, colocar las restantes estaciones (e.g. de prestaciones normales) en sitios de categoría idónea. En este sentido, también proponemos que las entidades consideren adquirir opciones de bajo costo, algunas de las cuales ya son accesibles desde República Dominicana. Estas tienen la ventaja añadida de que pueden combinarse con proyectos educativos en centros escolares.
+
+A continuación mostramos los subescenarios correspondientes a la densidad 150 $km^2$ por estación. Al igual que en el caso anterior, evitaremos redundancia utilizando las redes existentes con y sin las estaciones de estado regular de INDRHI.
+
+Si sólo consideramos las estaciones en estado activas (ONAMET) y bueno (INDRHI), recomendamos instalar `r last(esc_150_activas_buenas_df_resumen$n)` estaciones.
 
 ```{r}
-escenarios_250_exlusion_union_mapa
+esc_150_activas_buenas_mapa
+esc_150_activas_buenas_df_resumen %>% 
+  kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Inversión sugerida para el escenario de densidad 150 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET y buenas de INDRHI') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
-<!-- !!!!!!!!!!!!!!!AÑADIR ESCENARIO INTERMEDIO!!!!!!!!!!!!!! -->
+Si consideramos las estaciones regulares de INDRHI, entonces sería necesario adquirir e instalar `r last(esc_150_activas_buenas_regulares_df_resumen$n)` estaciones.
+
+```{r}
+esc_150_activas_buenas_regulares_mapa
+esc_150_activas_buenas_regulares_df_resumen %>% 
+  kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Inversión sugerida para el escenario de densidad 150 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET, y buenas y regulares de INDRHI') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+Finalmente, resumimos a continuación los subescenarios donde cada estación cubre 250 $km^2$. Si consideramos la existencia de las estaciones activas y buenas de INDHRI, recomendamos instalar `r last(esc_250_activas_buenas_df_resumen$n)` estaciones.
+
+```{r}
+esc_250_activas_buenas_mapa
+esc_250_activas_buenas_df_resumen %>% 
+  kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Inversión sugerida para el escenario de densidad 250 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET y buenas de INDRHI') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+Si consideramos las estaciones regulares de INDRHI, entonces sería necesario adquirir e instalar `r last(esc_250_activas_buenas_regulares_df_resumen$n)` estaciones.
+
+```{r}
+esc_250_activas_buenas_regulares_mapa
+esc_250_activas_buenas_regulares_df_resumen %>% 
+  kable(format = 'html', escape = F, booktabs = T, digits = 2,
+        caption = 'Inversión sugerida para el escenario de densidad 250 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET, y buenas y regulares de INDRHI') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
 
 ## Discusión
 

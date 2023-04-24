@@ -385,7 +385,7 @@ kable_prefagg
 
 Utilizamos múltiples fuentes cartográficas como variables de territorio para modelizar la idoneidad de sitios candidatos para la instalación de estaciones meteoclimáticas. Las fuentes disponibles eran capas ráster servidas bajo distintas resoluciones y sistemas de referencia, por lo que fue necesario aplicar algoritmos de estadística zonal (reducción) y consolidar resultados en una geometría vectorial común. Para ello, redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3 (*hex bins*) [@jose_ramon_martinez_batlle_2022_7367180]. Probamos distintas resoluciones de dicho índice, y tras algunas pruebas, elegimos la resolución "7". Con esta resolución, cubrimos el territorio dominicano (más un área de influencia) con aproximadamente 13,000 hexágonos de ca. 4$km^2$ cada uno. Dentro de cada hexágono, por medio de estadística zonal, obtuvimos la media de cada variable, la cual utilizamos como estadístico de referencia en la reclasificación descrita a continuación.
 
-Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios definidos por el equipo de investigación para cada criterio, para lo cual utilizamos conocimiento experto y referencias bibliográficas especializadas en redes de monitoreo meteoclimático, y adaptando las escalas a la realidad insular [@fao1976framework; @rojasbriceno2021]. A cada criterio, y para cada hexágono, asignamos un entero en una escala ordinal del 1 al 4 (de "no idóneo" a "altamente idóneo"). Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática. Representamos a continuación, para cada criterio, los valores originales mediante gráfico de violín, mostramos los intervalos usados en la reclasificación, y la representamos cartográficamente.
+Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios definidos por el equipo de investigación para cada criterio, para lo cual utilizamos conocimiento experto y referencias bibliográficas especializadas en redes de monitoreo meteoclimático, y adaptando las escalas a la realidad insular [@fao1976framework; @rojasbriceno2021]. A cada criterio, y para cada hexágono, asignamos un entero en una escala ordinal del 1 al 4 (de "marginalmente idóneo" a "altamente idóneo"). Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática. Representamos a continuación, para cada criterio, los valores originales mediante gráfico de violín, mostramos los intervalos usados en la reclasificación, y la representamos cartográficamente.
 
 
 ```{r funcionesfuentescartograficas}
@@ -438,7 +438,7 @@ assign(
     variable = 'OSM-DIST mean',
     umbrales = c(50, 200, 500, 5000),
     nombre = variables[[1]],
-    ord_cat = 'nin_rev')
+    ord_cat = 'mim_rev')
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['area_proporcional_kable']]
@@ -457,7 +457,7 @@ assign(
     variable = 'TSEASON-IZZO mean',
     umbrales = c(1.1, 1.3, 1.5),
     nombre = variables[[2]],
-    ord_cat = 'ni')
+    ord_cat = 'mi')
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
@@ -476,7 +476,7 @@ assign(
     variable = 'PSEASON-IZZO mean',
     umbrales = c(30, 40, 50),
     nombre = variables[[3]],
-    ord_cat = 'ni')
+    ord_cat = 'mi')
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
@@ -495,7 +495,7 @@ assign(
     variable = 'GHH coefficient_of_variation_1km',
     umbrales = c(300, 450, 600),
     nombre = variables[[4]],
-    ord_cat = 'in')
+    ord_cat = 'im')
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
@@ -514,7 +514,7 @@ assign(
     variable = 'WBW-DIST mean',
     umbrales = c(1000, 2000, 3000),
     nombre = variables[[5]],
-    ord_cat = 'ni')
+    ord_cat = 'mi')
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
@@ -533,7 +533,7 @@ assign(
     variable = 'G90 Slope',
     umbrales = c(3, 9, 15),
     nombre = variables[[6]],
-    ord_cat = 'in')
+    ord_cat = 'im')
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
@@ -552,7 +552,7 @@ assign(
     variable = 'YINSOLTIME mean',
     umbrales = c(3900, 4100, 4300),
     nombre = variables[[7]],
-    ord_cat = 'ni')
+    ord_cat = 'mi')
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
@@ -571,7 +571,7 @@ assign(
     variable = 'CGIAR-ELE mean',
     umbrales = c(200, 400, 800),
     nombre = variables[[8]],
-    ord_cat = 'ni')
+    ord_cat = 'mi')
 )
 get(objeto)[c('violin', 'mapa_con_pais')]
 get(objeto)[['intervalos_y_etiquetas_kable']]
@@ -591,7 +591,7 @@ puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiqueta
   group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
   summarise(value = paste(value, collapse = ' y ')) %>% 
   pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
-  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`)
+  select(criterio, `altamente idóneo`, `idóneo`, `moderadamente idóneo`, `marginalmente idóneo`)
 ) %>% bind_rows()
 readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
 puntuaciones_umbrales_kable <- puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
@@ -609,7 +609,7 @@ areas_proporcionales <- map(objetos, function(x) get(x)[['area_proporcional']] %
   pivot_longer(cols = -matches('proporción'), names_to = 'criterio') %>%
   mutate(criterio = gsub(' etiquetas', '', criterio)) %>% 
   pivot_wider(names_from = value, values_from = proporción)) %>% bind_rows() %>% 
-  select(criterio, `altamente idóneo`, `moderadamente idóneo`, `marginalmente idóneo`, `no idóneo`) %>% 
+  select(criterio, `altamente idóneo`, `idóneo`, `moderadamente idóneo`, `marginalmente idóneo`) %>% 
   adorn_totals('col') 
 readODS::write_ods(x = areas_proporcionales,
                    path = 'fuentes/umbrales-criterios-ahp/areas_proporcionales.ods')
@@ -633,8 +633,8 @@ all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_s
 Mapas puntuaciones reclasificadas de cada criterio.
 
 ```{r, fig.width=8, fig.height=12}
-paleta <- c("altamente idóneo" = "#018571", "moderadamente idóneo" = "#80cdc1",
-               "marginalmente idóneo" = "#dfd2b3", "no idóneo" = "#a6611a")
+paleta <- c("altamente idóneo" = "#018571", "idóneo" = "#80cdc1",
+               "moderadamente idóneo" = "#dfd2b3", "marginalmente idóneo" = "#a6611a")
 all_criteria_mapa <- all_criteria %>%
   select(all_of(contains('etiquetas'))) %>% 
   rename_with(~ stringr::str_replace(.x, 
@@ -662,7 +662,7 @@ if(interactive()) dev.new()
 all_criteria_mapa
 ```
 
-Calculamos las puntuaciones agregadas  multiplicando las puntuaciones parciales de cada criterio por sus correspondientes pesos de preferencias agregadas, con lo cual generamos las puntuaciones agregadas. Estas puntuaciones las reclasificamos en las cuatro categorías habituales (no idóneo...altamente idóneo) siguiendo un criterio de número de desviaciones estándar.
+Calculamos las puntuaciones agregadas  multiplicando las puntuaciones parciales de cada criterio por sus correspondientes pesos de preferencias agregadas, con lo cual generamos las puntuaciones agregadas. Estas puntuaciones las reclasificamos en las cuatro categorías habituales (marginalmente idóneo...altamente idóneo) siguiendo un criterio de número de desviaciones estándar.
 
 ```{r}
 nombres_ahp_obj_sf <- data.frame(
@@ -741,16 +741,16 @@ all_criteria_scores_mapa
 
 ## Exclusión por factores limitantes
 
-Imputamos valores mínimos en las columnas `Puntuación agregada` y `Puntuación agregada escalada` a los hexágonos categorizados como "no idóneos" en el criterio de distancia a accesos o en el criterio de distancia a cuerpos de agua. Posteriormente, recalculamos la columna `Categorías agregadas` para que los hexágonos a los que se les imputaron valores, se reclasifiquen como "no idóneos".
+Imputamos valores mínimos en las columnas `Puntuación agregada` y `Puntuación agregada escalada` a los hexágonos categorizados como "marginalmente idóneos" en el criterio de distancia a accesos o en el criterio de distancia a cuerpos de agua. Posteriormente, recalculamos la columna `Categorías agregadas` para que los hexágonos a los que se les imputaron valores, se reclasifiquen como "marginalmente idóneos".
 
 ```{r}
 all_criteria_scores_excluded <- all_criteria_scores %>% 
   mutate(
     `Puntuación agregada` = ifelse(
-      `distancia a accesos etiquetas` == 'no idóneo' | `distancia a cuerpos de agua etiquetas` == 'no idóneo',
+      `distancia a accesos etiquetas` == 'marginalmente idóneo' | `distancia a cuerpos de agua etiquetas` == 'marginalmente idóneo',
       min(`Puntuación agregada`, na.rm = T), `Puntuación agregada`),
     `Puntuación agregada escalada` = ifelse(
-      `distancia a accesos etiquetas` == 'no idóneo' | `distancia a cuerpos de agua etiquetas` == 'no idóneo',
+      `distancia a accesos etiquetas` == 'marginalmente idóneo' | `distancia a cuerpos de agua etiquetas` == 'marginalmente idóneo',
       min(`Puntuación agregada escalada`, na.rm = T), `Puntuación agregada escalada`),
     `Categoría agregada` = cut(`Puntuación agregada escalada`,
                                     breaks = c(min(`Puntuación agregada escalada`, na.rm = T),
@@ -807,20 +807,26 @@ areas_proporcionales_all_criteria_excluded %>%
       kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
-## Análisis de vecindad entre estaciones (existentes y propuestas)
+## Escenarios
+
+Para obtener los escenarios definitivos aplicamos un análisis de vecindad entre estaciones (existentes y propuestas), con el objetivo de evitar redundancia en la red.
 
 Las EMC suelen colocarse a una distancia "óptima" entre sí, a efectos de garantizar mediciones precisas y representativas de las condiciones climáticas locales. La distancia entre EMC depende de varios factores, como el tamaño del área de estudio, el tipo de clima en la región y las variables climáticas específicas que se estén midiendo. En general, se intenta garantizar precisión y representatividad, evitando al mismo tiempo redundancia [@design1976hydrological].
 
 A tal efecto, para implementar estos criterios, escribimos una función en R a la que denominamos `generar_centroides_distantes` que posteriormente aplicamos para obtener distintas alternativas de redes de EMC. Utilizando principalmente análisis de vecindad, la función necesita, como entrada, una geometría de puntos, o de polígonos individuales regulares (en nuestro caso, hexágonos del índice espacial H3), la cual se convierte en el área a cubrir sobre la cual se propondrá la nube de puntos. Adicionalmente, se debe especificar el número de puntos esperado. El algoritmo se encarga de distribuirlos lo más homogéneamente posible usando el mecanismo de la envolvente convexa. Alternativamente, se pueden especificar densidades o distancias de separación como argumentos, en lugar de fijar rígidamente un número específico de puntos de salida. La distribución espacial usada maximiza los criterios de precisión y representatividad, y se apega a los estándares sugeridos por la OMM [@design1976hydrological].
 
-Aplicamos la función definiendo dos escenarios posibles, en los que cada estación cubre 100 y 250 kilómetros cuadrados, respectivamente.
+```{r}
+escenarios <- c(100, 150, 250) #Cada estación debe cubrir dichas áreas en km2
+n_esc <- length(escenarios)
+```
+
+Aplicamos la función definiendo `r n_esc`dos escenarios posibles, en los que cada estación cubre `r paste(escenarios[1:n_esc-1], collapse = ', ')` y `r escenarios[n_esc]` kilómetros cuadrados, respectivamente.
 
 ```{r}
 # Categorías agregadas
-categorias_elegidas <- c('altamente idóneo', 'moderadamente idóneo')
+categorias_elegidas <- c('altamente idóneo', 'idóneo')
 names(categorias_elegidas) <- rep('categorías de idoneidad', length(categorias_elegidas))
 # Criterio de separación (en este caso, kilómetros cuadrados por estación) 
-escenarios <- c(100, 250) #Cada estación debe cubrir un área de 100 y 250 km cuadrados
 names(escenarios) <- paste('Escenario:', escenarios, 'km2 por estación')
 # Primero realizamos los cálculos
 resumen_calculos_escenarios <- map(escenarios, 
@@ -829,41 +835,41 @@ resumen_calculos_escenarios <- map(escenarios,
         filter(`Categoría agregada` %in% categorias_elegidas),
       km2_por_puntos = .x, solo_calculos = T))
 # Finalmente, creamos los objetos que exportaremos para visualización en SIG
-escenarios_100_250_ai_mi <- map(
+escenarios_ai_mi <- map(
   escenarios,
   ~ generar_centroides_distantes(
     geom = all_criteria_scores_excluded %>%
       filter(`Categoría agregada` %in% categorias_elegidas),
     km2_por_puntos = .x))
 # Mapas
-escenarios_100_250_ai_mi_mapas <- map(names(escenarios_100_250_ai_mi),
+escenarios_ai_mi_mapas <- map(names(escenarios_ai_mi),
     function(x) {
-      escenarios_100_250_ai_mi[[x]] %>% ggplot + geom_sf(alpha = 0.8) +
+      escenarios_ai_mi[[x]] %>% ggplot + geom_sf(alpha = 0.8) +
         geom_sf(data = all_criteria_scores_excluded,
                 aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
         scale_fill_manual(values = paleta) +
         labs(title = x) +
         theme_bw()
     })
-escenarios_100_250_ai_mi_mapas
+escenarios_ai_mi_mapas
 # Exportar
-map(names(escenarios_100_250_ai_mi),
+map(names(escenarios_ai_mi),
     function(x) {
-      sin_especiales <- iconv(names(escenarios_100_250_ai_mi[x]),
+      sin_especiales <- iconv(names(escenarios_ai_mi[x]),
                               from = 'utf-8', to = 'ASCII//TRANSLIT')
       nombre_archivo <- tolower(paste0(gsub(' |: ', '_', sin_especiales), '.gpkg'))
-      escenarios_100_250_ai_mi[[x]] %>% st_write(paste0('out/', nombre_archivo), delete_dsn = T)
+      escenarios_ai_mi[[x]] %>% st_write(paste0('out/', nombre_archivo), delete_dsn = T)
     })
 ```
 
 Comprobamos mediante distancias entre vecinos más próximos (en lo adelante, "el primer orden de vecindad") que se ha conseguido la separación idónea. La comprobación debe llevarnos al radio de un círculo promedio cuya área se aproxime a la densidad fijada en primera instancia. Probemos con el escenario de 100 kilómetros cuadrados por cada estación.
 
 ```{r}
-map(escenarios_100_250_ai_mi, estadisticos_distancias_orden_1)
+map(escenarios_ai_mi, estadisticos_distancias_orden_1)
 # Los valores de separación inicialmente esperados se obtuvieron
 ```
 
-Si comparamos con la red de estaciones activas de ONAMET, obtenemos que la distancia de separación entre estaciones activas para el primer orden de vecindad, es superior a la propuesta en cualquiera de los dos escenarios. Además, hay al menos dos estaciones de la red de ONAMET que se encuentran separadas hasta a 48 km.
+Comparando con la red existente, tomemos por ejemplo el caso de la de ONAMET. En el caso de dicha red, la distancia de separación entre estaciones activas para el primer orden de vecindad es superior a la distancia de separación entre sitios de nuestra propuesta, para cualquiera de los escenarios considerados. Además, hay al menos dos estaciones de la red de ONAMET que se encuentran separadas hasta a 48 km.
 
 ```{r}
 onamet_para_vecindad <- st_read('out/con_indicacion_estatus_onamet.gpkg') %>% 
@@ -871,61 +877,330 @@ onamet_para_vecindad <- st_read('out/con_indicacion_estatus_onamet.gpkg') %>%
 estadisticos_distancias_orden_1(onamet_para_vecindad)
 ```
 
-Eliminamos las propuestas de sitios del escenario a 100 $km^2$ por estación, situadas a 11 km o menos de estaciones preexistentes de ONAMET e INDRHI.
+Si comparamos con la red de estaciones en estado "Bueno" del INDRHI, notaremos también un patrón similar: las estaciones se encuentran muy separadas entre sí.
 
 ```{r}
-dist_onamet_indrhi <- raster('out/onamet_indrhi_prueba_dist_500x500_distancia.tif')
-esc_100_dist_onamet_indrhi <- raster::extract(dist_onamet_indrhi, escenarios_100_250_ai_mi[[1]])
-escenarios_100_exlusion_union <- escenarios_100_250_ai_mi[[1]] %>%
-  mutate(dist_onamet_indrhi = esc_100_dist_onamet_indrhi) %>% 
-  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[1]]$`Distancia esperada entre vecinos`*1000) %>%
+indrhi_para_vecindad_b <- st_read('out/con_indicacion_estatus_climaticas_indrhi.gpkg') %>% 
+  filter(Estado == 'Bueno')
+estadisticos_distancias_orden_1(indrhi_para_vecindad_b)
+```
+
+Igualmente, si comparamos con la misma red, pero incluyendo también las estaciones en estado "Regular", notaremos que igualmente las distancias de separación entre estaciones siguen siendo grandes.
+
+```{r}
+indrhi_para_vecindad_br <- st_read('out/con_indicacion_estatus_climaticas_indrhi.gpkg') %>% 
+  filter(Estado == 'Bueno' | Estado == 'Regular')
+estadisticos_distancias_orden_1(indrhi_para_vecindad_br)
+```
+
+Las estaciones de la red de ONAMET fueron caracterizadas recientemente en dos estados "activa" e "inactiva o no reportada". En nuestro análisis de vecindad para eliminar redundancia, consideramos únicamente las activas. Por otra parte, la red del INDRHI cuenta con estaciones que, en 2019 se encontraban en estado "Bueno", "Regular" y "Malo". Decidimos considerar tanto las estaciones en estado "Bueno" como las que se encontraban en estado "Regular". Así, para cada uno de nuestros escenarios de densidad (100, 150 y 250 $km^2$), eliminamos redundancia usando dos redes combinadas distintas: 1) ONAMET activas + INDRHI buenas, y 2) ONAMET activas + INDRHI buenas y regulares. De esta manera, como producto final, obtuvimos 6 escenarios distintos.
+
+```{r}
+rgdal::setCPLConfigOption("GDAL_PAM_ENABLED", "FALSE")
+actbue <- c(indrhi_para_vecindad_b %>% st_geometry(),
+                onamet_para_vecindad %>% st_geometry()) %>% st_transform(32619)
+actbue_r <- rasterize(x = as(actbue, 'Spatial'),
+                                      y = raster(extent(ind_esp),
+                                                 resolution = 500, crs = 'EPSG:32619'),
+                                      field = 1)
+actbue_d <- distance(actbue_r)
+actbue_d %>% writeRaster('out/onamet_indrhi_actbue_dist_500x500_distancia.tif',
+                         overwrite = T, setStatistics = F)
+
+actbuereg <- c(indrhi_para_vecindad_br %>% st_geometry(),
+                onamet_para_vecindad %>% st_geometry()) %>% st_transform(32619)
+actbuereg_r <- rasterize(x = as(actbuereg, 'Spatial'),
+                                      y = raster(extent(ind_esp),
+                                                 resolution = 500, crs = 'EPSG:32619'),
+                                      field = 1)
+actbuereg_d <- distance(actbuereg_r)
+actbuereg_d %>% writeRaster('out/onamet_indrhi_actbuereg_dist_500x500_distancia.tif',
+                            overwrite = T, setStatistics = F)
+```
+
+En el caso del escenario "100 $km^2$ por estación", la distancia de corte entre estaciones es de 11 km. Por lo tanto, eliminaremos las estaciones propuestas por nosotros que queden dentro de ese rango respecto de estaciones de ONAMET y/o INDRHI existentes.
+
+### Escenario 100 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+
+- Mapa
+
+```{r}
+indice <- 1; escenario <- '100'
+redundancia <- 'activas_buenas'; estaciones <- actbue; distancia <- actbue_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
-escenarios_100_exlusion_union %>%
-  st_write('out/escenario_100_km2_por_estacion_exclusion_redundancia.gpkg', delete_dsn = T)
-escenarios_100_exlusion_union_mapa <- escenarios_100_exlusion_union %>%
-  ggplot + geom_sf(alpha = 0.8) +
-  geom_sf(data = all_criteria_scores_excluded,
-          aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
-  scale_fill_manual(values = paleta) +
-  labs(title = paste0(trimws(names(escenarios)[1]), ', eliminación de redundancia')) +
-  theme_bw()
-escenarios_100_exlusion_union_mapa
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         # geom_sf(data = all_criteria_scores_excluded,
+         #         aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+         # scale_fill_manual(values = paleta) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
 ```
 
-Y finalmente obtenemos una tabla-resumen conteniendo los valores
+- Tabla-resumen conteniendo los valores
 
 ```{r}
-escenarios_100_df_resumen <- escenarios_100_exlusion_union %>% st_drop_geometry %>% dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-  mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'moderadamente idóneo', n*7000, n*35000)) %>% 
-  adorn_totals()
-escenarios_100_df_resumen
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
 ```
 
-Repetimos los mismos pasos para el escenario de una estación por cada 250 $km^2$.
+### Escenario 100 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+
+- Mapa
 
 ```{r}
-esc_250_dist_onamet_indrhi <- raster::extract(dist_onamet_indrhi, escenarios_100_250_ai_mi[[2]])
-escenarios_250_exlusion_union <- escenarios_100_250_ai_mi[[2]] %>%
-  mutate(dist_onamet_indrhi = esc_250_dist_onamet_indrhi) %>% 
-  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[2]]$`Distancia esperada entre vecinos`*1000) %>%
+indice <- 1; escenario <- '100'
+redundancia <- 'activas_buenas_regulares'; estaciones <- actbuereg; distancia <- actbuereg_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
-escenarios_250_exlusion_union %>%
-  st_write('out/escenario_250_km2_por_estacion_exclusion_redundancia.gpkg', delete_dsn = T)
-escenarios_250_exlusion_union_mapa <- escenarios_250_exlusion_union %>%
-  ggplot + geom_sf(alpha = 0.8) +
-  geom_sf(data = all_criteria_scores_excluded,
-          aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
-  scale_fill_manual(values = paleta) +
-  labs(title = paste0(trimws(names(escenarios)[2]), ', eliminación de redundancia')) +
-  theme_bw()
-escenarios_250_exlusion_union_mapa
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
 ```
 
-Incluimos igualmente la tabla resumen.
+- Tabla-resumen conteniendo los valores
 
 ```{r}
-escenarios_250_df_resumen <- escenarios_250_exlusion_union %>% st_drop_geometry %>% dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-  mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'moderadamente idóneo', n*7000, n*35000)) %>% 
-  adorn_totals()
-escenarios_250_df_resumen
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
+```
+
+### Escenario 150 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+
+- Mapa
+
+```{r}
+indice <- 2; escenario <- '150'
+redundancia <- 'activas_buenas'; estaciones <- actbue; distancia <- actbue_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         # geom_sf(data = all_criteria_scores_excluded,
+         #         aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+         # scale_fill_manual(values = paleta) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
+```
+
+- Tabla-resumen conteniendo los valores
+
+```{r}
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
+```
+
+### Escenario 150 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+
+- Mapa
+
+```{r}
+indice <- 2; escenario <- '150'
+redundancia <- 'activas_buenas_regulares'; estaciones <- actbuereg; distancia <- actbuereg_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
+```
+
+- Tabla-resumen conteniendo los valores
+
+```{r}
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
+```
+
+### Escenario 250 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
+
+- Mapa
+
+```{r}
+indice <- 3; escenario <- '250'
+redundancia <- 'activas_buenas'; estaciones <- actbue; distancia <- actbue_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         # geom_sf(data = all_criteria_scores_excluded,
+         #         aes(fill = `Categoría agregada`), lwd = 0, alpha = 0.4) +
+         # scale_fill_manual(values = paleta) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
+```
+
+- Tabla-resumen conteniendo los valores
+
+```{r}
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
+```
+
+### Escenario 250 km\textsuperscript{2} por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
+
+- Mapa
+
+```{r}
+indice <- 3; escenario <- '250'
+redundancia <- 'activas_buenas_regulares'; estaciones <- actbuereg; distancia <- actbuereg_d
+esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
+esc <- escenarios_ai_mi[[indice]] %>%
+  mutate(dist_onamet_indrhi = esc_d) %>% 
+  filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
+  st_join(all_criteria_scores_excluded, left = T)
+esc %>%
+  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
+assign(obj,
+       bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='sitios propuestos'),
+                 estaciones %>% st_geometry %>% st_as_sf() %>%
+                   mutate(id='estaciones existentes')) %>%
+         ggplot +
+         geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+         geom_sf(alpha = 0.8, aes(fill = id, shape = id), size = 1.5) +
+         scale_fill_manual(values = c('grey70', 'black')) +
+         scale_shape_manual(values = c(25, 21)) +
+         labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                             'Eliminación de redundancia respecto de estaciones ',
+                             gsub('_', '+', redundancia))) +
+         theme_bw() + 
+         ggspatial::annotation_scale(style = 'ticks') +
+         theme(legend.title = element_blank())) 
+get(obj) #Mapa
+```
+
+- Tabla-resumen conteniendo los valores
+
+```{r}
+obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
+assign(obj,
+       esc %>% st_drop_geometry %>%
+         dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         adorn_totals())
+get(obj) #Tabla
 ```
