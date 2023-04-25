@@ -774,7 +774,6 @@ map(unique(consolidado_sf %>% filter(tipo == 'pluviométrica') %>% pull(entidad)
     })
 ```
 
-
 Mapas individuales de estaciones hidrométricas por entidades según estado
 
 ```{r, fig.width=7, dpi=200}
@@ -792,6 +791,21 @@ map(unique(consolidado_sf %>% filter(tipo == 'hidrométrica') %>% pull(entidad))
     })
 
 ```
+
+![](out/salida-02-positron-caei.jpg)
+
+![](salida-02-positron-guakia.jpg)
+![](out/salida-02-positron-indrhi.jpg)
+![](out/salida-02-positron-intec.jpg)
+![](out/salida-02-positron-isa.jpg)
+
+![](out/salida-02-positron-onamet.jpg)
+
+![](out/salida-02-positron-reddom.jpg)
+
+![](out/salida-02-positron-hidrometricas.jpg)
+![](out/salida-02-positron-hidrometricas-indrhi.jpg)
+![](out/salida-02-positron-hidrometricas-sgn.jpg)
 
 Impresión de tabla resumen
 

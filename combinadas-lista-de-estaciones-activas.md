@@ -15209,6 +15209,21 @@ map(unique(consolidado_sf %>% filter(tipo == 'hidrométrica') %>% pull(entidad))
 
 ![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-31-2.png)<!-- -->
 
+![](out/salida-02-positron-caei.jpg)
+
+![](salida-02-positron-guakia.jpg)
+![](out/salida-02-positron-indrhi.jpg)
+![](out/salida-02-positron-intec.jpg)
+![](out/salida-02-positron-isa.jpg)
+
+![](out/salida-02-positron-onamet.jpg)
+
+![](out/salida-02-positron-reddom.jpg)
+
+![](out/salida-02-positron-hidrometricas.jpg)
+![](out/salida-02-positron-hidrometricas-indrhi.jpg)
+![](out/salida-02-positron-hidrometricas-sgn.jpg)
+
 Impresión de tabla resumen
 
 ``` r
