@@ -168,7 +168,7 @@ leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
 # Exportar
 ruta_gpkg_est_climaticas_onamet <- 'out/con_indicacion_estatus_onamet.gpkg'
 lista_con_periodo_2022_coord_todas_sf %>%
-  st_write(ruta_gpkg_est_climaticas_onamet, delete_dsn = T)
+  st_write(ruta_gpkg_est_climaticas_onamet, delete_dsn = T, quiet = T, verbose = F)
 ruta_csv_est_climaticas_onamet <- 'out/con_indicacion_estatus_onamet.csv'
 lista_con_periodo_2022_coord_todas %>%
   select(ID = id, Nombre = nombre_onamet, Estado = estado, Longitud = lon, Latitud = lat) %>%
@@ -279,7 +279,7 @@ leaflet(indrhi_hidrometricas_final_sf) %>%
 # Exportar
 ruta_gpkg_est_hidrometricas_indrhi <- 'out/con_indicacion_estatus_hidrometricas_indrhi.gpkg'
 indrhi_hidrometricas_final_sf %>%
-  st_write(ruta_gpkg_est_hidrometricas_indrhi, delete_dsn = TRUE)
+  st_write(ruta_gpkg_est_hidrometricas_indrhi, delete_dsn = TRUE, quiet = T, verbose = F)
 ruta_csv_est_hidrometricas_indrhi <- 'out/con_indicacion_estatus_hidrometricas_indrhi.csv'
 indrhi_hidrometricas_final %>%
   select(ID = `Código`, Nombre = `Nombre de la estación`, Estado,
@@ -347,7 +347,7 @@ sapply(
 
 3. No todas las estaciones disponían de coordenadas en el archivo histórico. Lógicamente, las estaciones sin coordenadas, las excluimos del mapa.
 
-```{r ejemplosrepetidas, echo=F, fig.cap='Ejemplos de estaciones repetidas en archivo histórico INDRHI', fig.width=15.7, dpi=62}
+```{r ejemplosrepetidas, echo=F, fig.cap='Ejemplos de estaciones repetidas en archivo histórico INDRHI'}
 knitr::include_graphics(rep("img/ejemplo_repetidas.jpg"))
 ```
 
@@ -417,7 +417,7 @@ leaflet(indrhi_climaticas_depurado_ll_sf) %>%
 # Exportar
 ruta_gpkg_est_climaticas_indrhi <- 'out/con_indicacion_estatus_climaticas_indrhi.gpkg'
 indrhi_climaticas_depurado_ll_sf %>%
-  st_write(ruta_gpkg_est_climaticas_indrhi, delete_dsn = T)
+  st_write(ruta_gpkg_est_climaticas_indrhi, delete_dsn = T, quiet = T, verbose = F)
 ruta_csv_est_climaticas_indrhi <- 'out/con_indicacion_estatus_climaticas_indrhi.csv'
 indrhi_climaticas_depurado_ll %>%
   select(Nombre = ESTACION, Estado,
@@ -432,14 +432,15 @@ indrhi_climaticas_depurado_ll %>%
 Sin cambios respecto de la primera evaluación realizada en noviembre de 2022 (ver cuaderno [consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
 
 ```{r}
-guakia_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+guakia_sf <- invisible(st_read('out/consolidado_estaciones_sf.gpkg', optional = T, quiet = T)) %>% 
   st_set_geometry('geom') %>% 
   filter(grepl('guakia', fuente, ignore.case = T)) %>% 
   select(Nombre = idOK) %>%
   mutate(Estado = 'activa o bueno', entidad = 'Guakía Ambiente',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-guakia_sf %>% st_write('out/con_indicacion_estatus_guakia_climaticas.gpkg', delete_dsn = T)
+guakia_sf %>% st_write('out/con_indicacion_estatus_guakia_climaticas.gpkg',
+                       delete_dsn = T, quiet = T, verbose = F)
 ```
 
 ### REDDOM
@@ -447,14 +448,15 @@ guakia_sf %>% st_write('out/con_indicacion_estatus_guakia_climaticas.gpkg', dele
 Sin cambios respecto de la primera evaluación realizada en noviembre de 2022 (ver cuaderno [consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
 
 ```{r}
-reddom_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+reddom_sf <- invisible(st_read('out/consolidado_estaciones_sf.gpkg', optional = T, quiet = T)) %>% 
   st_set_geometry('geom') %>% 
   filter(grepl('reddom', fuente, ignore.case = T)) %>% 
   select(Nombre = idOK) %>%
   mutate(Estado = 'activa o bueno', entidad = 'Fundación REDDOM',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-reddom_sf %>% st_write('out/con_indicacion_estatus_reddom_climaticas.gpkg', delete_dsn = T)
+reddom_sf %>% st_write('out/con_indicacion_estatus_reddom_climaticas.gpkg',
+                       delete_dsn = T, quiet = T, verbose = F)
 ```
 
 ### INTEC
@@ -462,14 +464,15 @@ reddom_sf %>% st_write('out/con_indicacion_estatus_reddom_climaticas.gpkg', dele
 Sin cambios respecto de la primera evaluación realizada en noviembre de 2022 (ver cuaderno [consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
 
 ```{r}
-intec_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+intec_sf <- invisible(st_read('out/consolidado_estaciones_sf.gpkg', optional = T, quiet = T)) %>% 
   st_set_geometry('geom') %>% 
   filter(grepl('intec', fuente, ignore.case = T)) %>% 
   select(Nombre = idOK) %>%
   mutate(Estado = 'activa o bueno', entidad = 'INTEC',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-intec_sf %>% st_write('out/con_indicacion_estatus_intec_climaticas.gpkg', delete_dsn = T)
+intec_sf %>% st_write('out/con_indicacion_estatus_intec_climaticas.gpkg',
+                      delete_dsn = T, quiet = T, verbose = F)
 ```
 
 ### PUCMM
@@ -483,7 +486,8 @@ pucmm_sf <- st_as_sf(pucmm_df, coords = c("lon","lat"), crs = 4326) %>%
   mutate(Nombre = 'Campus PUCCM', Estado = 'activa o bueno', entidad = 'INTEC',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-pucmm_sf %>% st_write('out/con_indicacion_estatus_pucmm_climaticas.gpkg', delete_dsn = T)
+pucmm_sf %>% st_write('out/con_indicacion_estatus_pucmm_climaticas.gpkg',
+                      delete_dsn = T, quiet = T, verbose = F)
 ```
 
 ### CAEI
@@ -491,7 +495,7 @@ pucmm_sf %>% st_write('out/con_indicacion_estatus_pucmm_climaticas.gpkg', delete
 Obtuvimos coordenadas de una estación meteoclimática durante reunión virtual en diciembre de 2022 y, posteriormente, coordenadas de una red de pluviómetros por correo electrónico.
 
 ```{r}
-caei_pluv_sf <- st_read('fuentes/caei/PluviometrosCAEI/PluviometrosCAEI.gpkg') %>%
+caei_pluv_sf <- invisible(st_read('fuentes/caei/PluviometrosCAEI/PluviometrosCAEI.gpkg', optional = T, quiet = T)) %>%
   st_geometry() %>% st_geometry() %>% st_as_sf() %>% st_set_geometry('geom') %>% 
   mutate(tipo = 'pluviométrica') %>% st_zm()
 caei_clim_df <- data.frame(lon = -(69+31/60+29.59/3600), lat = 18+35/60+37.83/3600)
@@ -501,7 +505,8 @@ caei_clim_sf <- st_as_sf(caei_clim_df, coords = c("lon","lat"), crs = 4326) %>%
 caei_sf <-  bind_rows(caei_pluv_sf, caei_clim_sf) %>% 
   mutate(Estado = 'activa o bueno', entidad = 'CAEI', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-caei_sf %>% st_write('out/con_indicacion_estatus_caei_climaticas_pluviometricas.gpkg', delete_dsn = T)
+caei_sf %>% st_write('out/con_indicacion_estatus_caei_climaticas_pluviometricas.gpkg',
+                     delete_dsn = T, quiet = T, verbose = F)
 ```
 
 ### Universidad ISA
@@ -513,7 +518,8 @@ isa_sf <- st_as_sf(isa_df, coords = c("lon","lat"), crs = 4326) %>%
   mutate(Nombre = 'Estación Japonesa', Estado = 'activa o bueno', entidad = 'Universidad ISA',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-isa_sf %>% st_write('out/con_indicacion_estatus_isa_climaticas.gpkg', delete_dsn = T)
+isa_sf %>% st_write('out/con_indicacion_estatus_isa_climaticas.gpkg',
+                    delete_dsn = T, quiet = T, verbose = F)
 ```
 
 ### Servicio Geológico Nacional (SGN)
@@ -526,7 +532,8 @@ sgn_sf <- st_as_sf(sgn_df, coords = c("x","y"), crs = 32619) %>%
          Estado = 'activa o bueno', entidad = 'SGN',
          tipo = 'hidrométrica', propiedad = 'pública',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-sgn_sf %>% st_write('out/con_indicacion_estatus_sgn_hidrometricas.gpkg', delete_dsn = T)
+sgn_sf %>% st_write('out/con_indicacion_estatus_sgn_hidrometricas.gpkg',
+                    delete_dsn = T, quiet = T, verbose = F)
 ```
 
 ### EGEHAINA
@@ -539,7 +546,7 @@ Aunque se recibió documentación de las estaciones, no se recibieron coordenada
 
 ## Consolidado
 
-```{r}
+```{r, fig.width=15.7, fig.height=10.5, dpi=62}
 indrhi_p_consolidado_sf <- bind_rows(
   indrhi_climaticas_depurado_ll_sf %>%
     st_set_geometry('geom') %>% 
@@ -569,19 +576,20 @@ consolidado_sf <- bind_rows(
   indrhi_p_consolidado_sf, onamet_p_consolidado_sf) %>% 
   mutate(Estado = factor(Estado, levels = c('activa o bueno','regular', 'inactiva o no reportada')))
 consolidado_sf %>%
-  st_write('out/con_indicacion_estatus_consolidado.gpkg', delete_dsn = T)
+  st_write('out/con_indicacion_estatus_consolidado.gpkg',
+           delete_dsn = T, quiet = T, verbose = F)
 consolidado_sf %>% st_drop_geometry %>% write_csv('out/con_indicacion_estatus_consolidado.csv')
 ```
 
 Mapa de estaciones climáticas según estado
 
-```{r}
+```{r, fig.width=15.7, fig.height=10.5, dpi=62}
 fpal_estado <- colorFactor(
   palette = c("#E41A1C", "#FFFF33","#4DAF4A"),
   domain = unique(consolidado_sf$Estado), reverse = T)
 leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
   addCircleMarkers(
-    radius = 5, group = ~ entidad,
+    radius = 5, group = ~ Estado,
     popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
     color = ~ fpal_estado(Estado),
     stroke = F, fillOpacity = 1
@@ -602,10 +610,10 @@ leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
 
 Mapa de estaciones hidrométricas según estado
 
-```{r}
+```{r, fig.width=15.7, fig.height=10.5, dpi=62}
 leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
   addCircleMarkers(
-    radius = 5, group = ~ entidad,
+    radius = 5, group = ~ Estado,
     popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
     color = ~ fpal_estado(Estado),
     stroke = F, fillOpacity = 1
@@ -626,13 +634,13 @@ leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
 
 Mapa de estaciones climáticas según propiedad
 
-```{r}
+```{r, fig.width=15.7, fig.height=10.5, dpi=62}
 fpal_propiedad <- colorFactor(
   palette = c("#f1a340", "#998ec3"),
   domain = unique(consolidado_sf$propiedad))
 leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
   addCircleMarkers(
-    radius = 5, group = ~ entidad,
+    radius = 5, group = ~ propiedad,
     popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
     color = ~ fpal_propiedad(propiedad),
     stroke = F, fillOpacity = 1
@@ -653,10 +661,10 @@ leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
 
 Mapa de estaciones hidrométricas según propiedad (Yaque vendría aquí)
 
-```{r}
+```{r, fig.width=15.7, fig.height=10.5, dpi=62}
 leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
   addCircleMarkers(
-    radius = 5, group = ~ entidad,
+    radius = 5, group = ~ propiedad,
     popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
     color = ~ fpal_propiedad(propiedad),
     stroke = F, fillOpacity = 1
@@ -677,7 +685,7 @@ leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
 
 Mapa de estaciones climáticas según entidad
 
-```{r}
+```{r, fig.width=15.7, fig.height=10.5, dpi=62}
 fpal_entidad <- colorFactor(
   palette = RColorBrewer::brewer.pal(length(unique(consolidado_sf$entidad)), 'Set1'),
   domain = unique(consolidado_sf$entidad))
@@ -704,7 +712,7 @@ leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
 
 Mapa de estaciones hidrométricas según entidad
 
-```{r}
+```{r, fig.width=15.7, fig.height=10.5, dpi=62}
 leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
   addCircleMarkers(
     radius = 5, group = ~ entidad,
@@ -726,9 +734,9 @@ leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
   addFullscreenControl()
 ```
 
-Mapas de estaciones climáticas según entidad
+Mapas individuales de estaciones climáticas por entidades según estado
 
-```{r}
+```{r, fig.width=7, dpi=200}
 ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
 ez_ver <- 'd7f79365168e688f0d78f521e53fbf2da19244ef/'
 pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
@@ -748,9 +756,9 @@ map(unique(consolidado_sf %>% filter(tipo == 'meteoclimática') %>% pull(entidad
     })
 ```
 
-Mapa de pluviométricas según entidad
+Mapa individuales de estaciones pluviométricas por entidades según estado
 
-```{r}
+```{r, fig.width=7, dpi=200}
 map(unique(consolidado_sf %>% filter(tipo == 'pluviométrica') %>% pull(entidad)),
     function(x) {
       consolidado_sf %>% filter(entidad == x & tipo == 'pluviométrica') %>% 
@@ -766,9 +774,9 @@ map(unique(consolidado_sf %>% filter(tipo == 'pluviométrica') %>% pull(entidad)
 ```
 
 
-Mapas de estaciones hidrométricas según entidad
+Mapas individuales de estaciones hidrométricas por entidades según estado
 
-```{r}
+```{r, fig.width=7, dpi=200}
 map(unique(consolidado_sf %>% filter(tipo == 'hidrométrica') %>% pull(entidad)),
     function(x) {
       consolidado_sf %>% filter(entidad == x & tipo == 'hidrométrica') %>% 

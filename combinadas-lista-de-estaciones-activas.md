@@ -4794,15 +4794,7 @@ leaflet(lista_con_periodo_2022_coord_todas_sf) %>%
 # Exportar
 ruta_gpkg_est_climaticas_onamet <- 'out/con_indicacion_estatus_onamet.gpkg'
 lista_con_periodo_2022_coord_todas_sf %>%
-  st_write(ruta_gpkg_est_climaticas_onamet, delete_dsn = T)
-```
-
-    ## Deleting source `out/con_indicacion_estatus_onamet.gpkg' using driver `GPKG'
-    ## Writing layer `con_indicacion_estatus_onamet' to data source 
-    ##   `out/con_indicacion_estatus_onamet.gpkg' using driver `GPKG'
-    ## Writing 87 features with 18 fields and geometry type Point.
-
-``` r
+  st_write(ruta_gpkg_est_climaticas_onamet, delete_dsn = T, quiet = T, verbose = F)
 ruta_csv_est_climaticas_onamet <- 'out/con_indicacion_estatus_onamet.csv'
 lista_con_periodo_2022_coord_todas %>%
   select(ID = id, Nombre = nombre_onamet, Estado = estado, Longitud = lon, Latitud = lat) %>%
@@ -12204,15 +12196,7 @@ leaflet(indrhi_hidrometricas_final_sf) %>%
 # Exportar
 ruta_gpkg_est_hidrometricas_indrhi <- 'out/con_indicacion_estatus_hidrometricas_indrhi.gpkg'
 indrhi_hidrometricas_final_sf %>%
-  st_write(ruta_gpkg_est_hidrometricas_indrhi, delete_dsn = TRUE)
-```
-
-    ## Deleting source `out/con_indicacion_estatus_hidrometricas_indrhi.gpkg' using driver `GPKG'
-    ## Writing layer `con_indicacion_estatus_hidrometricas_indrhi' to data source 
-    ##   `out/con_indicacion_estatus_hidrometricas_indrhi.gpkg' using driver `GPKG'
-    ## Writing 166 features with 11 fields and geometry type Point.
-
-``` r
+  st_write(ruta_gpkg_est_hidrometricas_indrhi, delete_dsn = TRUE, quiet = T, verbose = F)
 ruta_csv_est_hidrometricas_indrhi <- 'out/con_indicacion_estatus_hidrometricas_indrhi.csv'
 indrhi_hidrometricas_final %>%
   select(ID = `Código`, Nombre = `Nombre de la estación`, Estado,
@@ -14775,15 +14759,7 @@ leaflet(indrhi_climaticas_depurado_ll_sf) %>%
 # Exportar
 ruta_gpkg_est_climaticas_indrhi <- 'out/con_indicacion_estatus_climaticas_indrhi.gpkg'
 indrhi_climaticas_depurado_ll_sf %>%
-  st_write(ruta_gpkg_est_climaticas_indrhi, delete_dsn = T)
-```
-
-    ## Deleting source `out/con_indicacion_estatus_climaticas_indrhi.gpkg' using driver `GPKG'
-    ## Writing layer `con_indicacion_estatus_climaticas_indrhi' to data source 
-    ##   `out/con_indicacion_estatus_climaticas_indrhi.gpkg' using driver `GPKG'
-    ## Writing 54 features with 13 fields and geometry type Point.
-
-``` r
+  st_write(ruta_gpkg_est_climaticas_indrhi, delete_dsn = T, quiet = T, verbose = F)
 ruta_csv_est_climaticas_indrhi <- 'out/con_indicacion_estatus_climaticas_indrhi.csv'
 indrhi_climaticas_depurado_ll %>%
   select(Nombre = ESTACION, Estado,
@@ -14804,32 +14780,16 @@ Sin cambios respecto de la primera evaluación realizada en noviembre de
 [consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
 
 ``` r
-guakia_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+guakia_sf <- invisible(st_read('out/consolidado_estaciones_sf.gpkg', optional = T, quiet = T)) %>% 
   st_set_geometry('geom') %>% 
   filter(grepl('guakia', fuente, ignore.case = T)) %>% 
   select(Nombre = idOK) %>%
   mutate(Estado = 'activa o bueno', entidad = 'Guakía Ambiente',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+guakia_sf %>% st_write('out/con_indicacion_estatus_guakia_climaticas.gpkg',
+                       delete_dsn = T, quiet = T, verbose = F)
 ```
-
-    ## Reading layer `consolidado_estaciones_sf' from data source 
-    ##   `/home/jose/Documentos/git/datos-meteoclimaticos-escenarios-cc/out/consolidado_estaciones_sf.gpkg' 
-    ##   using driver `GPKG'
-    ## Simple feature collection with 237 features and 2 fields
-    ## Geometry type: POINT
-    ## Dimension:     XY
-    ## Bounding box:  xmin: -71.67778 ymin: 18.025 xmax: -68.79723 ymax: 19.86363
-    ## Geodetic CRS:  WGS 84
-
-``` r
-guakia_sf %>% st_write('out/con_indicacion_estatus_guakia_climaticas.gpkg', delete_dsn = T)
-```
-
-    ## Deleting source `out/con_indicacion_estatus_guakia_climaticas.gpkg' using driver `GPKG'
-    ## Writing layer `con_indicacion_estatus_guakia_climaticas' to data source 
-    ##   `out/con_indicacion_estatus_guakia_climaticas.gpkg' using driver `GPKG'
-    ## Writing 1 features with 7 fields and geometry type Point.
 
 ### REDDOM
 
@@ -14838,32 +14798,16 @@ Sin cambios respecto de la primera evaluación realizada en noviembre de
 [consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
 
 ``` r
-reddom_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+reddom_sf <- invisible(st_read('out/consolidado_estaciones_sf.gpkg', optional = T, quiet = T)) %>% 
   st_set_geometry('geom') %>% 
   filter(grepl('reddom', fuente, ignore.case = T)) %>% 
   select(Nombre = idOK) %>%
   mutate(Estado = 'activa o bueno', entidad = 'Fundación REDDOM',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+reddom_sf %>% st_write('out/con_indicacion_estatus_reddom_climaticas.gpkg',
+                       delete_dsn = T, quiet = T, verbose = F)
 ```
-
-    ## Reading layer `consolidado_estaciones_sf' from data source 
-    ##   `/home/jose/Documentos/git/datos-meteoclimaticos-escenarios-cc/out/consolidado_estaciones_sf.gpkg' 
-    ##   using driver `GPKG'
-    ## Simple feature collection with 237 features and 2 fields
-    ## Geometry type: POINT
-    ## Dimension:     XY
-    ## Bounding box:  xmin: -71.67778 ymin: 18.025 xmax: -68.79723 ymax: 19.86363
-    ## Geodetic CRS:  WGS 84
-
-``` r
-reddom_sf %>% st_write('out/con_indicacion_estatus_reddom_climaticas.gpkg', delete_dsn = T)
-```
-
-    ## Deleting source `out/con_indicacion_estatus_reddom_climaticas.gpkg' using driver `GPKG'
-    ## Writing layer `con_indicacion_estatus_reddom_climaticas' to data source 
-    ##   `out/con_indicacion_estatus_reddom_climaticas.gpkg' using driver `GPKG'
-    ## Writing 32 features with 7 fields and geometry type Point.
 
 ### INTEC
 
@@ -14872,32 +14816,16 @@ Sin cambios respecto de la primera evaluación realizada en noviembre de
 [consolidacion-lista-estaciones.md](consolidacion-lista-estaciones.md).
 
 ``` r
-intec_sf <- st_read('out/consolidado_estaciones_sf.gpkg') %>% 
+intec_sf <- invisible(st_read('out/consolidado_estaciones_sf.gpkg', optional = T, quiet = T)) %>% 
   st_set_geometry('geom') %>% 
   filter(grepl('intec', fuente, ignore.case = T)) %>% 
   select(Nombre = idOK) %>%
   mutate(Estado = 'activa o bueno', entidad = 'INTEC',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
+intec_sf %>% st_write('out/con_indicacion_estatus_intec_climaticas.gpkg',
+                      delete_dsn = T, quiet = T, verbose = F)
 ```
-
-    ## Reading layer `consolidado_estaciones_sf' from data source 
-    ##   `/home/jose/Documentos/git/datos-meteoclimaticos-escenarios-cc/out/consolidado_estaciones_sf.gpkg' 
-    ##   using driver `GPKG'
-    ## Simple feature collection with 237 features and 2 fields
-    ## Geometry type: POINT
-    ## Dimension:     XY
-    ## Bounding box:  xmin: -71.67778 ymin: 18.025 xmax: -68.79723 ymax: 19.86363
-    ## Geodetic CRS:  WGS 84
-
-``` r
-intec_sf %>% st_write('out/con_indicacion_estatus_intec_climaticas.gpkg', delete_dsn = T)
-```
-
-    ## Deleting source `out/con_indicacion_estatus_intec_climaticas.gpkg' using driver `GPKG'
-    ## Writing layer `con_indicacion_estatus_intec_climaticas' to data source 
-    ##   `out/con_indicacion_estatus_intec_climaticas.gpkg' using driver `GPKG'
-    ## Writing 5 features with 7 fields and geometry type Point.
 
 ### PUCMM
 
@@ -14911,13 +14839,9 @@ pucmm_sf <- st_as_sf(pucmm_df, coords = c("lon","lat"), crs = 4326) %>%
   mutate(Nombre = 'Campus PUCCM', Estado = 'activa o bueno', entidad = 'INTEC',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-pucmm_sf %>% st_write('out/con_indicacion_estatus_pucmm_climaticas.gpkg', delete_dsn = T)
+pucmm_sf %>% st_write('out/con_indicacion_estatus_pucmm_climaticas.gpkg',
+                      delete_dsn = T, quiet = T, verbose = F)
 ```
-
-    ## Deleting source `out/con_indicacion_estatus_pucmm_climaticas.gpkg' using driver `GPKG'
-    ## Writing layer `con_indicacion_estatus_pucmm_climaticas' to data source 
-    ##   `out/con_indicacion_estatus_pucmm_climaticas.gpkg' using driver `GPKG'
-    ## Writing 1 features with 7 fields and geometry type Point.
 
 ### CAEI
 
@@ -14926,22 +14850,9 @@ virtual en diciembre de 2022 y, posteriormente, coordenadas de una red
 de pluviómetros por correo electrónico.
 
 ``` r
-caei_pluv_sf <- st_read('fuentes/caei/PluviometrosCAEI/PluviometrosCAEI.gpkg') %>%
+caei_pluv_sf <- invisible(st_read('fuentes/caei/PluviometrosCAEI/PluviometrosCAEI.gpkg', optional = T, quiet = T)) %>%
   st_geometry() %>% st_geometry() %>% st_as_sf() %>% st_set_geometry('geom') %>% 
   mutate(tipo = 'pluviométrica') %>% st_zm()
-```
-
-    ## Reading layer `PluviometrosCAEI' from data source 
-    ##   `/home/jose/Documentos/git/datos-meteoclimaticos-escenarios-cc/fuentes/caei/PluviometrosCAEI/PluviometrosCAEI.gpkg' 
-    ##   using driver `GPKG'
-    ## Simple feature collection with 95 features and 11 fields
-    ## Geometry type: POINT
-    ## Dimension:     XYZ
-    ## Bounding box:  xmin: -70.24698 ymin: 18.24269 xmax: -69.1708 ymax: 18.74102
-    ## z_range:       zmin: 0 zmax: 0
-    ## Geodetic CRS:  WGS 84
-
-``` r
 caei_clim_df <- data.frame(lon = -(69+31/60+29.59/3600), lat = 18+35/60+37.83/3600)
 caei_clim_sf <- st_as_sf(caei_clim_df, coords = c("lon","lat"), crs = 4326) %>%
   st_geometry() %>% st_as_sf() %>% st_set_geometry('geom') %>% 
@@ -14949,13 +14860,9 @@ caei_clim_sf <- st_as_sf(caei_clim_df, coords = c("lon","lat"), crs = 4326) %>%
 caei_sf <-  bind_rows(caei_pluv_sf, caei_clim_sf) %>% 
   mutate(Estado = 'activa o bueno', entidad = 'CAEI', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-caei_sf %>% st_write('out/con_indicacion_estatus_caei_climaticas_pluviometricas.gpkg', delete_dsn = T)
+caei_sf %>% st_write('out/con_indicacion_estatus_caei_climaticas_pluviometricas.gpkg',
+                     delete_dsn = T, quiet = T, verbose = F)
 ```
-
-    ## Deleting source `out/con_indicacion_estatus_caei_climaticas_pluviometricas.gpkg' using driver `GPKG'
-    ## Writing layer `con_indicacion_estatus_caei_climaticas_pluviometricas' to data source 
-    ##   `out/con_indicacion_estatus_caei_climaticas_pluviometricas.gpkg' using driver `GPKG'
-    ## Writing 96 features with 6 fields and geometry type Point.
 
 ### Universidad ISA
 
@@ -14966,13 +14873,9 @@ isa_sf <- st_as_sf(isa_df, coords = c("lon","lat"), crs = 4326) %>%
   mutate(Nombre = 'Estación Japonesa', Estado = 'activa o bueno', entidad = 'Universidad ISA',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-isa_sf %>% st_write('out/con_indicacion_estatus_isa_climaticas.gpkg', delete_dsn = T)
+isa_sf %>% st_write('out/con_indicacion_estatus_isa_climaticas.gpkg',
+                    delete_dsn = T, quiet = T, verbose = F)
 ```
-
-    ## Deleting source `out/con_indicacion_estatus_isa_climaticas.gpkg' using driver `GPKG'
-    ## Writing layer `con_indicacion_estatus_isa_climaticas' to data source 
-    ##   `out/con_indicacion_estatus_isa_climaticas.gpkg' using driver `GPKG'
-    ## Writing 1 features with 7 fields and geometry type Point.
 
 ### Servicio Geológico Nacional (SGN)
 
@@ -14984,13 +14887,9 @@ sgn_sf <- st_as_sf(sgn_df, coords = c("x","y"), crs = 32619) %>%
          Estado = 'activa o bueno', entidad = 'SGN',
          tipo = 'hidrométrica', propiedad = 'pública',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
-sgn_sf %>% st_write('out/con_indicacion_estatus_sgn_hidrometricas.gpkg', delete_dsn = T)
+sgn_sf %>% st_write('out/con_indicacion_estatus_sgn_hidrometricas.gpkg',
+                    delete_dsn = T, quiet = T, verbose = F)
 ```
-
-    ## Deleting source `out/con_indicacion_estatus_sgn_hidrometricas.gpkg' using driver `GPKG'
-    ## Writing layer `con_indicacion_estatus_sgn_hidrometricas' to data source 
-    ##   `out/con_indicacion_estatus_sgn_hidrometricas.gpkg' using driver `GPKG'
-    ## Writing 2 features with 7 fields and geometry type Point.
 
 ### EGEHAINA
 
@@ -15034,15 +14933,8 @@ consolidado_sf <- bind_rows(
   indrhi_p_consolidado_sf, onamet_p_consolidado_sf) %>% 
   mutate(Estado = factor(Estado, levels = c('activa o bueno','regular', 'inactiva o no reportada')))
 consolidado_sf %>%
-  st_write('out/con_indicacion_estatus_consolidado.gpkg', delete_dsn = T)
-```
-
-    ## Deleting source `out/con_indicacion_estatus_consolidado.gpkg' using driver `GPKG'
-    ## Writing layer `con_indicacion_estatus_consolidado' to data source 
-    ##   `out/con_indicacion_estatus_consolidado.gpkg' using driver `GPKG'
-    ## Writing 445 features with 7 fields and geometry type Point.
-
-``` r
+  st_write('out/con_indicacion_estatus_consolidado.gpkg',
+           delete_dsn = T, quiet = T, verbose = F)
 consolidado_sf %>% st_drop_geometry %>% write_csv('out/con_indicacion_estatus_consolidado.csv')
 ```
 
@@ -15054,7 +14946,7 @@ fpal_estado <- colorFactor(
   domain = unique(consolidado_sf$Estado), reverse = T)
 leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
   addCircleMarkers(
-    radius = 5, group = ~ entidad,
+    radius = 5, group = ~ Estado,
     popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
     color = ~ fpal_estado(Estado),
     stroke = F, fillOpacity = 1
@@ -15080,7 +14972,7 @@ Mapa de estaciones hidrométricas según estado
 ``` r
 leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
   addCircleMarkers(
-    radius = 5, group = ~ entidad,
+    radius = 5, group = ~ Estado,
     popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
     color = ~ fpal_estado(Estado),
     stroke = F, fillOpacity = 1
@@ -15109,7 +15001,7 @@ fpal_propiedad <- colorFactor(
   domain = unique(consolidado_sf$propiedad))
 leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
   addCircleMarkers(
-    radius = 5, group = ~ entidad,
+    radius = 5, group = ~ propiedad,
     popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
     color = ~ fpal_propiedad(propiedad),
     stroke = F, fillOpacity = 1
@@ -15135,7 +15027,7 @@ Mapa de estaciones hidrométricas según propiedad (Yaque vendría aquí)
 ``` r
 leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
   addCircleMarkers(
-    radius = 5, group = ~ entidad,
+    radius = 5, group = ~ propiedad,
     popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
     color = ~ fpal_propiedad(propiedad),
     stroke = F, fillOpacity = 1
@@ -15211,7 +15103,7 @@ leaflet(consolidado_sf %>% filter(tipo == 'hidrométrica')) %>%
 
 ![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
 
-Mapas de estaciones climáticas según entidad
+Mapas individuales de estaciones climáticas por entidades según estado
 
 ``` r
 ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
@@ -15267,7 +15159,8 @@ map(unique(consolidado_sf %>% filter(tipo == 'meteoclimática') %>% pull(entidad
 
 ![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-29-7.png)<!-- -->
 
-Mapa de pluviométricas según entidad
+Mapa individuales de estaciones pluviométricas por entidades según
+estado
 
 ``` r
 map(unique(consolidado_sf %>% filter(tipo == 'pluviométrica') %>% pull(entidad)),
@@ -15288,7 +15181,8 @@ map(unique(consolidado_sf %>% filter(tipo == 'pluviométrica') %>% pull(entidad)
 
 ![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
 
-Mapas de estaciones hidrométricas según entidad
+Mapas individuales de estaciones hidrométricas por entidades según
+estado
 
 ``` r
 map(unique(consolidado_sf %>% filter(tipo == 'hidrométrica') %>% pull(entidad)),
