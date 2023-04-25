@@ -481,10 +481,11 @@ intec_sf %>% st_write('out/con_indicacion_estatus_intec_climaticas.gpkg',
 Obtuvimos coordenadas por medio de correo electrónico, fechado 19 de diciembre de 2022.
 
 ```{r}
-pucmm_df <- data.frame(lon = -70.682416, lat = 19.4409224)
+pucmm_df <- data.frame(lon = c(-70.682416, -69.929943), lat = c(19.4409224, 18.463916))
 pucmm_sf <- st_as_sf(pucmm_df, coords = c("lon","lat"), crs = 4326) %>% 
   st_set_geometry('geom') %>% 
-  mutate(Nombre = 'Campus PUCCM', Estado = 'activa o bueno', entidad = 'INTEC',
+  mutate(Nombre = c('Campus PUCCM Santiago', 'Campus PUCMM Santo Domingo'),
+         Estado = 'activa o bueno', entidad = 'PUCMM',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
 pucmm_sf %>% st_write('out/con_indicacion_estatus_pucmm_climaticas.gpkg',
@@ -794,12 +795,13 @@ map(unique(consolidado_sf %>% filter(tipo == 'hidrométrica') %>% pull(entidad))
 
 ![](out/salida-02-positron-caei.jpg)
 
-![](salida-02-positron-guakia.jpg)
+![](out/salida-02-positron-guakia.jpg)
 ![](out/salida-02-positron-indrhi.jpg)
 ![](out/salida-02-positron-intec.jpg)
 ![](out/salida-02-positron-isa.jpg)
 
 ![](out/salida-02-positron-onamet.jpg)
+![](out/salida-02-positron-pucmm.jpg)
 
 ![](out/salida-02-positron-reddom.jpg)
 
