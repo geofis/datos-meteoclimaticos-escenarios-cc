@@ -40,6 +40,7 @@ library(parzer)
 library(tidyverse)
 library(kableExtra)
 library(fuzzyjoin)
+library(janitor)
 source('R/funciones.R')
 leaflet_map_view <- . %>% setView(lat = 18.7, lng = -70.3, zoom = 8)
 ```
@@ -790,6 +791,20 @@ map(unique(consolidado_sf %>% filter(tipo == 'hidrométrica') %>% pull(entidad))
        theme(legend.title = element_blank()) 
     })
 
+```
+
+Impresión de tabla resumen
+
+```{r}
+consolidado_sf %>% st_drop_geometry %>%
+  select(entidad, tipo, Estado) %>% 
+  group_by_all() %>% 
+  count() %>% 
+  pivot_wider(names_from = tipo, values_from = n, values_fill = 0) %>% 
+  adorn_totals(c('row', 'col')) %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
 ```
 
 Impresión de tabla exhaustiva

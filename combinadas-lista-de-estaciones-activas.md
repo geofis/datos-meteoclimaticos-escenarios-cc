@@ -18,6 +18,7 @@ library(parzer)
 library(tidyverse)
 library(kableExtra)
 library(fuzzyjoin)
+library(janitor)
 source('R/funciones.R')
 leaflet_map_view <- . %>% setView(lat = 18.7, lng = -70.3, zoom = 8)
 ```
@@ -15207,6 +15208,287 @@ map(unique(consolidado_sf %>% filter(tipo == 'hidrométrica') %>% pull(entidad))
     ## [[2]]
 
 ![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-31-2.png)<!-- -->
+
+Impresión de tabla resumen
+
+``` r
+consolidado_sf %>% st_drop_geometry %>%
+  select(entidad, tipo, Estado) %>% 
+  group_by_all() %>% 
+  count() %>% 
+  pivot_wider(names_from = tipo, values_from = n, values_fill = 0) %>% 
+  adorn_totals(c('row', 'col')) %>% 
+  kable(booktabs=T) %>%
+  kable_styling(latex_options = c("HOLD_position", "scale_down")) %>%
+  gsub(' NA ', '', .)
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+entidad
+</th>
+<th style="text-align:left;">
+Estado
+</th>
+<th style="text-align:right;">
+meteoclimática
+</th>
+<th style="text-align:right;">
+pluviométrica
+</th>
+<th style="text-align:right;">
+hidrométrica
+</th>
+<th style="text-align:right;">
+Total
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+CAEI
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+95
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+96
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Fundación REDDOM
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:right;">
+32
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+32
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Guakía Ambiente
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+26
+</td>
+<td style="text-align:right;">
+42
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+regular
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:right;">
+32
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+INDRHI
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+118
+</td>
+<td style="text-align:right;">
+146
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+INTEC
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:right;">
+36
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+36
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ONAMET
+</td>
+<td style="text-align:left;">
+inactiva o no reportada
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+51
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SGN
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Universidad ISA
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Total
+</td>
+<td style="text-align:left;">
+
+- </td>
+  <td style="text-align:right;">
+  182
+  </td>
+  <td style="text-align:right;">
+  95
+  </td>
+  <td style="text-align:right;">
+  168
+  </td>
+  <td style="text-align:right;">
+  445
+  </td>
+  </tr>
+  </tbody>
+  </table>
 
 Impresión de tabla exhaustiva
 

@@ -6,4 +6,4 @@ Entradas disponibles:
 
 - [Consolidación inicial de listas de estaciones](consolidacion-lista-estaciones.md)
 - [Listas de estaciones según entidad y estado](combinadas-lista-de-estaciones-activas.md)
-- [Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas en República Dominicana, usando AHP y análisis de autocorrelación espacial](seleccion-sitios-red-de-estaciones.md)
+- [Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas en República Dominicana usando decisión multicriterio y análisis de vecindad](seleccion-sitios-red-de-estaciones.md)

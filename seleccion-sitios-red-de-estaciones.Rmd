@@ -1,5 +1,5 @@
 ---
-title: "Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas en República Dominicana usando decisión multicriterio"
+title: "Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas en República Dominicana usando decisión multicriterio y análisis de vecindad"
 author: "José Martínez<br>Michela Izzo"
 output:
   # bookdown::github_document2:
