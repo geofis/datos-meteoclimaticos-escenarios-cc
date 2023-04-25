@@ -793,6 +793,9 @@ map(unique(consolidado_sf %>% filter(tipo == 'hidrométrica') %>% pull(entidad))
 
 ```
 
+![](out/salida-02-positron.jpg)
+
+
 ![](out/salida-02-positron-caei.jpg)
 
 ![](out/salida-02-positron-guakia.jpg)

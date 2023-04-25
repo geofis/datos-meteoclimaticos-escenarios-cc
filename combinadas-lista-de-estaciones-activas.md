@@ -14834,10 +14834,11 @@ Obtuvimos coordenadas por medio de correo electrónico, fechado 19 de
 diciembre de 2022.
 
 ``` r
-pucmm_df <- data.frame(lon = -70.682416, lat = 19.4409224)
+pucmm_df <- data.frame(lon = c(-70.682416, -69.929943), lat = c(19.4409224, 18.463916))
 pucmm_sf <- st_as_sf(pucmm_df, coords = c("lon","lat"), crs = 4326) %>% 
   st_set_geometry('geom') %>% 
-  mutate(Nombre = 'Campus PUCCM', Estado = 'activa o bueno', entidad = 'INTEC',
+  mutate(Nombre = c('Campus PUCCM Santiago', 'Campus PUCMM Santo Domingo'),
+         Estado = 'activa o bueno', entidad = 'PUCMM',
          tipo = 'meteoclimática', propiedad = 'privada',
          Longtiud = st_coordinates(geom)[,1], Latitud = st_coordinates(geom)[,2])
 pucmm_sf %>% st_write('out/con_indicacion_estatus_pucmm_climaticas.gpkg',
@@ -15160,6 +15161,11 @@ map(unique(consolidado_sf %>% filter(tipo == 'meteoclimática') %>% pull(entidad
 
 ![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-29-7.png)<!-- -->
 
+    ## 
+    ## [[8]]
+
+![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-29-8.png)<!-- -->
+
 Mapa individuales de estaciones pluviométricas por entidades según
 estado
 
@@ -15209,14 +15215,17 @@ map(unique(consolidado_sf %>% filter(tipo == 'hidrométrica') %>% pull(entidad))
 
 ![](combinadas-lista-de-estaciones-activas_files/figure-gfm/unnamed-chunk-31-2.png)<!-- -->
 
+![](out/salida-02-positron.jpg)
+
 ![](out/salida-02-positron-caei.jpg)
 
-![](salida-02-positron-guakia.jpg)
+![](out/salida-02-positron-guakia.jpg)
 ![](out/salida-02-positron-indrhi.jpg)
 ![](out/salida-02-positron-intec.jpg)
 ![](out/salida-02-positron-isa.jpg)
 
 ![](out/salida-02-positron-onamet.jpg)
+![](out/salida-02-positron-pucmm.jpg)
 
 ![](out/salida-02-positron-reddom.jpg)
 
@@ -15390,7 +15399,7 @@ INTEC
 activa o bueno
 </td>
 <td style="text-align:right;">
-6
+5
 </td>
 <td style="text-align:right;">
 0
@@ -15399,7 +15408,7 @@ activa o bueno
 0
 </td>
 <td style="text-align:right;">
-6
+5
 </td>
 </tr>
 <tr>
@@ -15440,6 +15449,26 @@ inactiva o no reportada
 </td>
 <td style="text-align:right;">
 51
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PUCMM
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
 </td>
 </tr>
 <tr>
@@ -15490,7 +15519,7 @@ Total
 
 - </td>
   <td style="text-align:right;">
-  182
+  183
   </td>
   <td style="text-align:right;">
   95
@@ -15499,7 +15528,7 @@ Total
   168
   </td>
   <td style="text-align:right;">
-  445
+  446
   </td>
   </tr>
   </tbody>
@@ -23590,29 +23619,6 @@ privada
 </tr>
 <tr>
 <td style="text-align:left;">
-Campus PUCCM
-</td>
-<td style="text-align:left;">
-activa o bueno
-</td>
-<td style="text-align:left;">
-INTEC
-</td>
-<td style="text-align:left;">
-meteoclimática
-</td>
-<td style="text-align:left;">
-privada
-</td>
-<td style="text-align:right;">
--70.68242
-</td>
-<td style="text-align:right;">
-19.44092
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 ARPT. ARROYO BARRIL
 </td>
 <td style="text-align:left;">
@@ -25610,6 +25616,52 @@ pública
 </td>
 <td style="text-align:right;">
 18.77271
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Campus PUCCM Santiago
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+PUCMM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-70.68242
+</td>
+<td style="text-align:right;">
+19.44092
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Campus PUCMM Santo Domingo
+</td>
+<td style="text-align:left;">
+activa o bueno
+</td>
+<td style="text-align:left;">
+PUCMM
+</td>
+<td style="text-align:left;">
+meteoclimática
+</td>
+<td style="text-align:left;">
+privada
+</td>
+<td style="text-align:right;">
+-69.92994
+</td>
+<td style="text-align:right;">
+18.46392
 </td>
 </tr>
 <tr>
