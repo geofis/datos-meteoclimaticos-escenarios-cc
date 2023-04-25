@@ -1,4 +1,4 @@
-Estaciones combinadas y activas
+Listas de estaciones según entidad y estado
 ================
 José Martínez<br>Michela Izzo
 

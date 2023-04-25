@@ -4,6 +4,6 @@ El proyecto "Generación y gestión de datos hidrometeorológicos y escenarios d
 
 Entradas disponibles:
 
-- [Consolidación de listas de estaciones](consolidacion-lista-estaciones.md)
-- [Listas de estaciones según estado](combinadas-lista-de-estaciones-activas.md)
+- [Consolidación inicial de listas de estaciones](consolidacion-lista-estaciones.md)
+- [Listas de estaciones según entidad y estado](combinadas-lista-de-estaciones-activas.md)
 - [Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas en República Dominicana, usando AHP y análisis de autocorrelación espacial](seleccion-sitios-red-de-estaciones.md)

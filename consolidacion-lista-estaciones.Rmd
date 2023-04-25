@@ -1,5 +1,5 @@
 ---
-title: "Consolidación de listas de estaciones"
+title: "Consolidación inicial de listas de estaciones"
 author: "José Ramón Martínez Batlle"
 output:
   # pdf_document:

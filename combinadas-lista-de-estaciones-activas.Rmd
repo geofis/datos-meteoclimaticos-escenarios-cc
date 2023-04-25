@@ -1,5 +1,5 @@
 ---
-title: "Estaciones combinadas y activas"
+title: "Listas de estaciones según entidad y estado"
 author: "José Martínez<br>Michela Izzo"
 output:
   # bookdown::github_document2:
