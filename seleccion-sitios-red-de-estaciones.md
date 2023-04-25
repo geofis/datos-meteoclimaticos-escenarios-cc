@@ -9399,13 +9399,9 @@ Unir los vectoriales de cada criterio y representar mapa.
 all_criteria <- map(objetos[2:length(objetos)], ~ get(.x)[['vectorial']] %>% st_drop_geometry) %>% 
   prepend(list(get(objetos[1])[['vectorial']])) %>% 
   reduce(left_join, by = "hex_id")
-all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg', delete_dsn = T)
+all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg',
+                          delete_dsn = T, quiet = T, verbose = F)
 ```
-
-    ## Deleting source `out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg' using driver `GPKG'
-    ## Writing layer `intervalos_etiquetas_puntuaciones_AHP_criterios_separados' to data source 
-    ##   `out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg' using driver `GPKG'
-    ## Writing 13152 features with 25 fields and geometry type Unknown (any).
 
 Mapas puntuaciones reclasificadas de cada criterio.
 
@@ -9477,13 +9473,9 @@ all_criteria_scores <- all_criteria %>%
   relocate(c(`Puntuación agregada escalada`, `Categoría agregada`), .after = `Puntuación agregada`)
 if(interactive()) summary(all_criteria_scores$`Puntuación agregada`)
 if(interactive()) table(all_criteria_scores$`Categoría agregada`)
-all_criteria_scores %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg', delete_dsn = T)
+all_criteria_scores %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg',
+                                 delete_dsn = T, quiet = T, verbose = F)
 ```
-
-    ## Deleting source `out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg' using driver `GPKG'
-    ## Writing layer `intervalos_etiquetas_puntuaciones_AHP_criterios_agregados' to data source 
-    ##   `out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg' using driver `GPKG'
-    ## Writing 13152 features with 28 fields and geometry type Unknown (any).
 
 Generamos una tabla de áreas proporcionales según categorías agregadas.
 
@@ -9606,15 +9598,8 @@ all_criteria_scores_excluded <- all_criteria_scores %>%
                                                max(`Puntuación agregada escalada`, na.rm = T)),
                                     labels = rev(names(paleta)),
                                     include.lowest = T))
-all_criteria_scores_excluded %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados_excluded.gpkg', delete_dsn = T)
-```
-
-    ## Deleting source `out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados_excluded.gpkg' using driver `GPKG'
-    ## Writing layer `intervalos_etiquetas_puntuaciones_AHP_criterios_agregados_excluded' to data source 
-    ##   `out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados_excluded.gpkg' using driver `GPKG'
-    ## Writing 13152 features with 28 fields and geometry type Unknown (any).
-
-``` r
+all_criteria_scores_excluded %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados_excluded.gpkg',
+                                          delete_dsn = T, quiet = T, verbose = F)
 hexagonos_imputados <- sum(!(all_criteria_scores %>% pull(`Categoría agregada`) ==
                                all_criteria_scores_excluded %>% pull(`Categoría agregada`)))
 ```
@@ -9832,22 +9817,10 @@ map(names(escenarios_ai_mi),
       sin_especiales <- iconv(names(escenarios_ai_mi[x]),
                               from = 'utf-8', to = 'ASCII//TRANSLIT')
       nombre_archivo <- tolower(paste0(gsub(' |: ', '_', sin_especiales), '.gpkg'))
-      escenarios_ai_mi[[x]] %>% st_write(paste0('out/', nombre_archivo), delete_dsn = T)
+      escenarios_ai_mi[[x]] %>% st_write(paste0('out/', nombre_archivo),
+                                         delete_dsn = T, quiet = T, verbose = F)
     })
 ```
-
-    ## Deleting source `out/escenario_100_km2_por_estacion.gpkg' using driver `GPKG'
-    ## Writing layer `escenario_100_km2_por_estacion' to data source 
-    ##   `out/escenario_100_km2_por_estacion.gpkg' using driver `GPKG'
-    ## Writing 237 features with 0 fields and geometry type Point.
-    ## Deleting source `out/escenario_150_km2_por_estacion.gpkg' using driver `GPKG'
-    ## Writing layer `escenario_150_km2_por_estacion' to data source 
-    ##   `out/escenario_150_km2_por_estacion.gpkg' using driver `GPKG'
-    ## Writing 158 features with 0 fields and geometry type Point.
-    ## Deleting source `out/escenario_250_km2_por_estacion.gpkg' using driver `GPKG'
-    ## Writing layer `escenario_250_km2_por_estacion' to data source 
-    ##   `out/escenario_250_km2_por_estacion.gpkg' using driver `GPKG'
-    ## Writing 95 features with 0 fields and geometry type Point.
 
     ## [[1]]
     ## Simple feature collection with 237 features and 0 fields
@@ -10083,15 +10056,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
-```
-
-    ## Deleting source `out/escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
-    ## Writing layer `escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas' to data source 
-    ##   `out/escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
-    ## Writing 170 features with 29 fields and geometry type Point.
-
-``` r
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
@@ -10168,15 +10135,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
-```
-
-    ## Deleting source `out/escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
-    ## Writing layer `escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares' to data source 
-    ##   `out/escenario_100_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
-    ## Writing 168 features with 29 fields and geometry type Point.
-
-``` r
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
@@ -10250,15 +10211,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
-```
-
-    ## Deleting source `out/escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
-    ## Writing layer `escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas' to data source 
-    ##   `out/escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
-    ## Writing 89 features with 29 fields and geometry type Point.
-
-``` r
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
@@ -10335,15 +10290,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
-```
-
-    ## Deleting source `out/escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
-    ## Writing layer `escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares' to data source 
-    ##   `out/escenario_150_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
-    ## Writing 86 features with 29 fields and geometry type Point.
-
-``` r
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
@@ -10417,15 +10366,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
-```
-
-    ## Deleting source `out/escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
-    ## Writing layer `escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas' to data source 
-    ##   `out/escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg' using driver `GPKG'
-    ## Writing 39 features with 29 fields and geometry type Point.
-
-``` r
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
@@ -10502,15 +10445,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
-```
-
-    ## Deleting source `out/escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
-    ## Writing layer `escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares' to data source 
-    ##   `out/escenario_250_km2_por_estacion_exclusion_redundancia_activas_buenas_regulares.gpkg' using driver `GPKG'
-    ## Writing 38 features with 29 fields and geometry type Point.
-
-``` r
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%

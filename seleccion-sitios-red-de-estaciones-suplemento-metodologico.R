@@ -477,7 +477,8 @@ areas_proporcionales_kable
 all_criteria <- map(objetos[2:length(objetos)], ~ get(.x)[['vectorial']] %>% st_drop_geometry) %>% 
   prepend(list(get(objetos[1])[['vectorial']])) %>% 
   reduce(left_join, by = "hex_id")
-all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg', delete_dsn = T)
+all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_separados.gpkg',
+                          delete_dsn = T, quiet = T, verbose = F)
 
 
 ## ---- fig.width=8, fig.height=12----------------------------------------------
@@ -539,7 +540,8 @@ all_criteria_scores <- all_criteria %>%
   relocate(c(`Puntuación agregada escalada`, `Categoría agregada`), .after = `Puntuación agregada`)
 if(interactive()) summary(all_criteria_scores$`Puntuación agregada`)
 if(interactive()) table(all_criteria_scores$`Categoría agregada`)
-all_criteria_scores %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg', delete_dsn = T)
+all_criteria_scores %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados.gpkg',
+                                 delete_dsn = T, quiet = T, verbose = F)
 
 
 ## -----------------------------------------------------------------------------
@@ -596,7 +598,8 @@ all_criteria_scores_excluded <- all_criteria_scores %>%
                                                max(`Puntuación agregada escalada`, na.rm = T)),
                                     labels = rev(names(paleta)),
                                     include.lowest = T))
-all_criteria_scores_excluded %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados_excluded.gpkg', delete_dsn = T)
+all_criteria_scores_excluded %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_agregados_excluded.gpkg',
+                                          delete_dsn = T, quiet = T, verbose = F)
 hexagonos_imputados <- sum(!(all_criteria_scores %>% pull(`Categoría agregada`) ==
                                all_criteria_scores_excluded %>% pull(`Categoría agregada`)))
 
@@ -682,7 +685,8 @@ map(names(escenarios_ai_mi),
       sin_especiales <- iconv(names(escenarios_ai_mi[x]),
                               from = 'utf-8', to = 'ASCII//TRANSLIT')
       nombre_archivo <- tolower(paste0(gsub(' |: ', '_', sin_especiales), '.gpkg'))
-      escenarios_ai_mi[[x]] %>% st_write(paste0('out/', nombre_archivo), delete_dsn = T)
+      escenarios_ai_mi[[x]] %>% st_write(paste0('out/', nombre_archivo),
+                                         delete_dsn = T, quiet = T, verbose = F)
     })
 
 
@@ -746,7 +750,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
@@ -806,7 +812,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
@@ -863,7 +871,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
@@ -923,7 +933,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
@@ -980,7 +992,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
@@ -1040,7 +1054,9 @@ esc <- escenarios_ai_mi[[indice]] %>%
   filter(dist_onamet_indrhi > resumen_calculos_escenarios[[indice]]$`Distancia esperada entre vecinos`*1000) %>%
   st_join(all_criteria_scores_excluded, left = T)
 esc %>%
-  st_write(paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'), delete_dsn = T)
+  st_write(
+    paste0('out/escenario_', escenario, '_km2_por_estacion_exclusion_redundancia_', redundancia, '.gpkg'),
+    delete_dsn = T, quiet = T, verbose = F)
 obj <- paste0('esc_', escenario, '_', redundancia, '_mapa')
 assign(obj,
        bind_rows(esc %>% st_geometry %>% st_as_sf() %>%
