@@ -1,5 +1,6 @@
 Selección de sitios para el establecimiento de una red de estaciones
-meteoclimáticas en República Dominicana usando decisión multicriterio
+meteoclimáticas en República Dominicana usando decisión multicriterio y
+análisis de vecindad
 ================
 José Martínez<br>Michela Izzo
 
@@ -818,6 +819,18 @@ Total
 </tbody>
 </table>
 
+Consideremos igualmente la participación de las estaciones de la red
+privada en el mapa de sitios propuestos. Notamos que algunos de los
+sitios propuestos ya están debidamente representados por estaciones de
+dicha red, por lo que nos encontramos ante una oportunidad de hacer
+sinergias para mejorar la calidad y representatividad del dato.
+
+``` r
+esc_100_activas_buenas_privadas_mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-1.jpeg" width="100%" />
+
 En el segundo subescenario, en el cual consideramos la existencia de las
 estaciones de estado regular del INDRHI, se recomienda instalar 168.
 
@@ -825,7 +838,7 @@ estaciones de estado regular del INDRHI, se recomienda instalar 168.
 esc_100_activas_buenas_regulares_mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-3-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-4-1.jpeg" width="100%" />
 
 ``` r
 esc_100_activas_buenas_regulares_df_resumen %>% 
@@ -904,6 +917,14 @@ bajo costo, algunas de las cuales ya son accesibles desde República
 Dominicana. Estas tienen la ventaja añadida de que pueden combinarse con
 proyectos educativos en centros escolares.
 
+Añadimos al mapa de este subescenario la red de estaciones privadas.
+
+``` r
+esc_100_activas_buenas_regulares_privadas_mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-5-1.jpeg" width="100%" />
+
 A continuación mostramos los subescenarios correspondientes a la
 densidad 150 km<sup>2</sup> por estación. Al igual que en el caso
 anterior, evitaremos redundancia utilizando las redes existentes con y
@@ -916,7 +937,7 @@ Si sólo consideramos las estaciones en estado activas (ONAMET) y bueno
 esc_150_activas_buenas_mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-4-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-6-1.jpeg" width="100%" />
 
 ``` r
 esc_150_activas_buenas_df_resumen %>% 
@@ -981,6 +1002,14 @@ Total
 </tbody>
 </table>
 
+Añadimos al mapa de este subescenario la red de estaciones privadas.
+
+``` r
+esc_150_activas_buenas_privadas_mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-7-1.jpeg" width="100%" />
+
 Si consideramos las estaciones regulares de INDRHI, entonces sería
 necesario adquirir e instalar 86 estaciones.
 
@@ -988,7 +1017,7 @@ necesario adquirir e instalar 86 estaciones.
 esc_150_activas_buenas_regulares_mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-5-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-8-1.jpeg" width="100%" />
 
 ``` r
 esc_150_activas_buenas_regulares_df_resumen %>% 
@@ -1053,6 +1082,14 @@ Total
 </tbody>
 </table>
 
+Añadimos al mapa de este subescenario la red de estaciones privadas.
+
+``` r
+esc_150_activas_buenas_regulares_privadas_mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-9-1.jpeg" width="100%" />
+
 Finalmente, resumimos a continuación los subescenarios donde cada
 estación cubre 250 km<sup>2</sup>. Si consideramos la existencia de las
 estaciones activas y buenas de INDHRI, recomendamos instalar 39
@@ -1062,7 +1099,7 @@ estaciones.
 esc_250_activas_buenas_mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-6-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-10-1.jpeg" width="100%" />
 
 ``` r
 esc_250_activas_buenas_df_resumen %>% 
@@ -1127,6 +1164,14 @@ Total
 </tbody>
 </table>
 
+Añadimos al mapa de este subescenario la red de estaciones privadas.
+
+``` r
+esc_250_activas_buenas_privadas_mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-11-1.jpeg" width="100%" />
+
 Si consideramos las estaciones regulares de INDRHI, entonces sería
 necesario adquirir e instalar 38 estaciones.
 
@@ -1134,7 +1179,7 @@ necesario adquirir e instalar 38 estaciones.
 esc_250_activas_buenas_regulares_mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-7-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-12-1.jpeg" width="100%" />
 
 ``` r
 esc_250_activas_buenas_regulares_df_resumen %>% 
@@ -1198,6 +1243,14 @@ Total
 </tr>
 </tbody>
 </table>
+
+Añadimos al mapa de este subescenario la red de estaciones privadas.
+
+``` r
+esc_250_activas_buenas_regulares_privadas_mapa
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-13-1.jpeg" width="100%" />
 
 ## Discusión
 
@@ -9386,7 +9439,7 @@ if(interactive()) dev.new()
 all_criteria_mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-9-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-10-11-1.jpeg" width="100%" />
 
 Calculamos las puntuaciones agregadas multiplicando las puntuaciones
 parciales de cada criterio por sus correspondientes pesos de
@@ -9527,7 +9580,7 @@ all_criteria_scores_mapa <- all_criteria_scores %>%
 all_criteria_scores_mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-12-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-15-1.jpeg" width="100%" />
 
 ## Exclusión por factores limitantes
 
@@ -9590,7 +9643,7 @@ all_criteria_scores_excluded_mapa <- all_criteria_scores_excluded %>%
 all_criteria_scores_excluded_mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-14-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-17-1.jpeg" width="100%" />
 
 Y mostramos la distribución porcentual por categrías agregadas luego de
 la exclusión por factores limitantes.
@@ -9760,17 +9813,17 @@ escenarios_ai_mi_mapas
 
     ## [[1]]
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-17-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-20-1.jpeg" width="100%" />
 
     ## 
     ## [[2]]
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-17-2.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-20-2.jpeg" width="100%" />
 
     ## 
     ## [[3]]
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-17-3.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-20-3.jpeg" width="100%" />
 
 ``` r
 # Exportar
@@ -10006,6 +10059,17 @@ de corte entre estaciones es de 11 km. Por lo tanto, eliminaremos las
 estaciones propuestas por nosotros que queden dentro de ese rango
 respecto de estaciones de ONAMET y/o INDRHI existentes.
 
+Usamo igualmente las estaciones de la red privada, pero sólo para fines
+de representación. Nuestro objetivo, al mostrar la red privada sobre los
+escenarios de densidad, es visibilizar las oportunidad de colaboración y
+la posible sinergia que contribuirían en definitiva a la mejora de la
+calidad del dato.
+
+``` r
+consolidado_sf <- invisible(st_read('out/con_indicacion_estatus_consolidado.gpkg', quiet = T))
+meteo_priv <- consolidado_sf %>% filter(propiedad == 'privada' & tipo == 'meteoclimática')
+```
+
 ### Escenario 100 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
 
 - Mapa
@@ -10051,7 +10115,28 @@ assign(obj,
 get(obj) #Mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-23-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-27-1.jpeg" width="100%" />
+
+``` r
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-27-2.jpeg" width="100%" />
 
 - Tabla-resumen conteniendo los valores
 
@@ -10112,7 +10197,28 @@ assign(obj,
 get(obj) #Mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-25-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-29-1.jpeg" width="100%" />
+
+``` r
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-29-2.jpeg" width="100%" />
 
 - Tabla-resumen conteniendo los valores
 
@@ -10176,7 +10282,28 @@ assign(obj,
 get(obj) #Mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-27-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-31-1.jpeg" width="100%" />
+
+``` r
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-31-2.jpeg" width="100%" />
 
 - Tabla-resumen conteniendo los valores
 
@@ -10237,7 +10364,28 @@ assign(obj,
 get(obj) #Mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-29-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-33-1.jpeg" width="100%" />
+
+``` r
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-33-2.jpeg" width="100%" />
 
 - Tabla-resumen conteniendo los valores
 
@@ -10301,7 +10449,28 @@ assign(obj,
 get(obj) #Mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-31-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-35-1.jpeg" width="100%" />
+
+``` r
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-35-2.jpeg" width="100%" />
 
 - Tabla-resumen conteniendo los valores
 
@@ -10362,7 +10531,28 @@ assign(obj,
 get(obj) #Mapa
 ```
 
-<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-33-1.jpeg" width="100%" />
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-37-1.jpeg" width="100%" />
+
+``` r
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
+```
+
+<img src="seleccion-sitios-red-de-estaciones_files/figure-gfm/unnamed-chunk-37-2.jpeg" width="100%" />
 
 - Tabla-resumen conteniendo los valores
 

@@ -152,6 +152,12 @@ esc_100_activas_buenas_df_resumen %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
+Consideremos igualmente la participación de las estaciones de la red privada en el mapa de sitios propuestos. Notamos que algunos de los sitios propuestos ya están debidamente representados por estaciones de dicha red, por lo que nos encontramos ante una oportunidad de hacer sinergias para mejorar la calidad y representatividad del dato.
+
+```{r}
+esc_100_activas_buenas_privadas_mapa
+```
+
 En el segundo subescenario, en el cual consideramos la existencia de las estaciones de estado regular del INDRHI, se recomienda instalar `r last(esc_100_activas_buenas_regulares_df_resumen$n)`.
 
 ```{r}
@@ -163,6 +169,12 @@ esc_100_activas_buenas_regulares_df_resumen %>%
 ```
 
 Se recomienda notar que la tabla resumen diferencia los sitios idóneos y los altamente idóneos. Esto permite a las entidades responsables, decidir un esquema de intervención según presupuesto disponible, prioridades y esquema de gobernanza. Así, las entidades dispondrán de la información de inversión sugerida para cada tipo de área. En particular, proponemos desplegar estaciones de altas prestaciones en primera instancia, y especialmente en lugares altamente idóneos; una vez establecidas éstas, colocar las restantes estaciones (e.g. de prestaciones normales) en sitios de categoría idónea. En este sentido, también proponemos que las entidades consideren adquirir opciones de bajo costo, algunas de las cuales ya son accesibles desde República Dominicana. Estas tienen la ventaja añadida de que pueden combinarse con proyectos educativos en centros escolares.
+
+Añadimos al mapa de este subescenario la red de estaciones privadas.
+
+```{r}
+esc_100_activas_buenas_regulares_privadas_mapa
+```
 
 A continuación mostramos los subescenarios correspondientes a la densidad 150 km<sup>2</sup> por estación. Al igual que en el caso anterior, evitaremos redundancia utilizando las redes existentes con y sin las estaciones de estado regular de INDRHI.
 
@@ -176,6 +188,12 @@ esc_150_activas_buenas_df_resumen %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
+Añadimos al mapa de este subescenario la red de estaciones privadas.
+
+```{r}
+esc_150_activas_buenas_privadas_mapa
+```
+
 Si consideramos las estaciones regulares de INDRHI, entonces sería necesario adquirir e instalar `r last(esc_150_activas_buenas_regulares_df_resumen$n)` estaciones.
 
 ```{r}
@@ -184,6 +202,12 @@ esc_150_activas_buenas_regulares_df_resumen %>%
   kable(format = 'html', escape = F, booktabs = T, digits = 2,
         caption = 'Inversión sugerida para el escenario de densidad 150 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET, y buenas y regulares de INDRHI') %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+Añadimos al mapa de este subescenario la red de estaciones privadas.
+
+```{r}
+esc_150_activas_buenas_regulares_privadas_mapa
 ```
 
 Finalmente, resumimos a continuación los subescenarios donde cada estación cubre 250 km<sup>2</sup>. Si consideramos la existencia de las estaciones activas y buenas de INDHRI, recomendamos instalar `r last(esc_250_activas_buenas_df_resumen$n)` estaciones.
@@ -196,6 +220,12 @@ esc_250_activas_buenas_df_resumen %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
 
+Añadimos al mapa de este subescenario la red de estaciones privadas.
+
+```{r}
+esc_250_activas_buenas_privadas_mapa
+```
+
 Si consideramos las estaciones regulares de INDRHI, entonces sería necesario adquirir e instalar `r last(esc_250_activas_buenas_regulares_df_resumen$n)` estaciones.
 
 ```{r}
@@ -205,6 +235,13 @@ esc_250_activas_buenas_regulares_df_resumen %>%
         caption = 'Inversión sugerida para el escenario de densidad 250 kilómetros cuadrados por estación, evitando redundancia respecto de estaciones activas de ONAMET, y buenas y regulares de INDRHI') %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 ```
+
+Añadimos al mapa de este subescenario la red de estaciones privadas.
+
+```{r}
+esc_250_activas_buenas_regulares_privadas_mapa
+```
+
 
 ## Discusión
 

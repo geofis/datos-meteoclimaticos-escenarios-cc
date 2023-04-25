@@ -733,6 +733,11 @@ actbuereg_d %>% writeRaster('out/onamet_indrhi_actbuereg_dist_500x500_distancia.
 
 
 ## -----------------------------------------------------------------------------
+consolidado_sf <- invisible(st_read('out/con_indicacion_estatus_consolidado.gpkg', quiet = T))
+meteo_priv <- consolidado_sf %>% filter(propiedad == 'privada' & tipo == 'meteoclimática')
+
+
+## -----------------------------------------------------------------------------
 indice <- 1; escenario <- '100'
 redundancia <- 'activas_buenas'; estaciones <- actbue; distancia <- actbue_d
 esc_d <- raster::extract(distancia, escenarios_ai_mi[[indice]])
@@ -763,6 +768,23 @@ assign(obj,
          ggspatial::annotation_scale(style = 'ticks') +
          theme(legend.title = element_blank())) 
 get(obj) #Mapa
+
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
 
 
 ## -----------------------------------------------------------------------------
@@ -803,6 +825,23 @@ assign(obj,
          ggspatial::annotation_scale(style = 'ticks') +
          theme(legend.title = element_blank())) 
 get(obj) #Mapa
+
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
 
 
 ## -----------------------------------------------------------------------------
@@ -847,6 +886,23 @@ assign(obj,
          theme(legend.title = element_blank())) 
 get(obj) #Mapa
 
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
+
 
 ## -----------------------------------------------------------------------------
 obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
@@ -886,6 +942,23 @@ assign(obj,
          ggspatial::annotation_scale(style = 'ticks') +
          theme(legend.title = element_blank())) 
 get(obj) #Mapa
+
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
 
 
 ## -----------------------------------------------------------------------------
@@ -930,6 +1003,23 @@ assign(obj,
          theme(legend.title = element_blank())) 
 get(obj) #Mapa
 
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
+
 
 ## -----------------------------------------------------------------------------
 obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
@@ -969,6 +1059,23 @@ assign(obj,
          ggspatial::annotation_scale(style = 'ticks') +
          theme(legend.title = element_blank())) 
 get(obj) #Mapa
+
+# Preparando mapa con privadas
+obj_p <- paste0('esc_', escenario, '_', redundancia, '_privadas_mapa')
+assign(
+  obj_p,
+  get(obj) +
+    geom_sf(
+      data = meteo_priv %>% mutate(id='estaciones privadas'),
+      aes(fill = id, shape = id), alpha = 0.8, stroke = 0) + 
+    scale_fill_manual(values = c('grey70', 'red', 'black')) + 
+    scale_shape_manual(values = c(25, 21, 21)) +
+    labs(title = paste0(trimws(names(escenarios)[indice]),'\n',
+                        'Eliminación de redundancia respecto de estaciones ',
+                        gsub('_', '+', redundancia), '\n',
+                        'Incluye estaciones privadas'))
+  )
+get(obj_p) #Mapa con privadas
 
 
 ## -----------------------------------------------------------------------------
