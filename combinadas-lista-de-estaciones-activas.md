@@ -14893,15 +14893,25 @@ sgn_sf %>% st_write('out/con_indicacion_estatus_sgn_hidrometricas.gpkg',
                     delete_dsn = T, quiet = T, verbose = F)
 ```
 
-### EGEHAINA
+### Entidades no representadas
 
-Aunque se recibió documentación de las estaciones, no se recibieron
-coordenadas.
+De las instituciones listadas abajo, aunque recibimos documentación
+sobre estaciones (históricas y/o actuales), o sostuvimos reuniones de
+intercambio de información, no recibimos coordenadas.
 
-### JAD
+- EGEHAINA
 
-Aunque se recibió documentación de las estaciones, no se recibieron
-coordenadas.
+- Instituto Dominicano de Investigaciones Agropecuarias y Forestales
+  (IDIAF)
+
+- Instituto Dominicano del Café (INDOCAFE)
+
+- JAD
+
+Las razones ofrecidas por las entidades para no compartir coordenadas de
+estaciones fueron diversas, desde cuestiones relacionadas con
+confidencialidad, hasta pérdida de archivo digital o dificultad para
+localizarlo.
 
 ## Consolidado
 
