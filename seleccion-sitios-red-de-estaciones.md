@@ -127,50 +127,53 @@ personas con experiencia en el área de conocimiento donde se enmarque el
 problema en cuestión.
 
 En este estudio, aplicamos AHP para seleccionar sitios idóneos donde
-instalar estaciones meteoclimáticas en República Dominicana,
-garantizando la eficiencia de la red, maximizando recursos y evitando
-redundancia información. Para ello, nos apoyamos tanto en fuentes de
-información geoespacial sistemáticamente producidas, como en consultas a
-personas con experiencia en temas climáticos y meteorológicos.
+instalar estaciones meteoclimáticas en República Dominicana, siguiendo
+una escala de prioridad y garantizando la eficiencia de la red,
+maximizando recursos y evitando redundancia información. Para ello, nos
+apoyamos tanto en fuentes de información geoespacial sistemáticamente
+producidas, como en consultas a personas con experiencia en temas
+climáticos y meteorológicos.
 
 ## Materiales y método
 
 Aplicamos una secuencia de tres técnicas interdependientes para formular
 distintas alternativas de redes de observación meteoclimática,
-centrándonos en la selección multicriterio de sitios idóneos. En primer
-lugar, aplicamos un **proceso analítico jerárquico (AHP)** para
-seleccionar la mejor opción entre diferentes alternativas, utilizando
-criterios de selección ponderados por personas consultadas con
-conocimiento del problema (Thomas L. Saaty 2013). Los criterios
-seleccionados fueron *distancia a accesos, estacionalidad térmica,
-estacionalidad pluviométrica, heterogeneidad de hábitat, distancia a
-cuerpos de agua, pendiente, horas de insolación, elevación*. Elegimos
-estos ocho criterios por considerarlos relevantes según nuestro propio
-conocimiento de la problemática, así como apoyándonos en estudios
-previos y recomendaciones de la Organización Meteorológica Mundial
-(Rojas Briceño et al. 2021; World Meteorological Organization (WMO) and
-The International Association of Hydrological Sciences 1976).
+centrándonos en la selección multicriterio de sitios que consideramos
+prioritarios para acoger estaciones meteoclimáticas. En primer lugar,
+aplicamos un **proceso analítico jerárquico (AHP)** para seleccionar la
+mejor opción entre diferentes alternativas, utilizando criterios de
+selección ponderados por personas consultadas con conocimiento del
+problema (Thomas L. Saaty 2013). Los criterios seleccionados fueron
+*distancia a accesos, estacionalidad térmica, estacionalidad
+pluviométrica, heterogeneidad de hábitat, distancia a cuerpos de agua,
+pendiente, horas de insolación, elevación*. Elegimos estos ocho
+criterios por considerarlos relevantes según nuestro propio conocimiento
+de la problemática, así como apoyándonos en estudios previos y
+recomendaciones de la Organización Meteorológica Mundial (Rojas Briceño
+et al. 2021; World Meteorological Organization (WMO) and The
+International Association of Hydrological Sciences 1976).
 
-Las consultas fueron solicitadas de forma explícita, quienes
-respondieron a las preguntas mediante formularios electrónicos. Tras las
-consultas, organizamos y recodificamos las respuestas obtenidas y,
-posteriormente, evaluamos su consistencia. Posteriormente, seleccionamos
-las respuestas consistentes para establecer la ponderación de criterios.
-Finalmente, aplicamos la ponderación obtenida a las fuentes de
-información geográfica disponibles, que en nuestro caso fueron ca.
-[13,000 hexágonos conteniendo la correspondiente información
+Las consultas fueron solicitadas de forma explícita a personas expertas,
+quienes respondieron a las preguntas mediante formularios electrónicos.
+Tras las consultas, organizamos y recodificamos las respuestas obtenidas
+y, posteriormente, evaluamos su consistencia. Posteriormente,
+seleccionamos las respuestas consistentes para establecer la ponderación
+de criterios. Finalmente, aplicamos la ponderación obtenida a las
+fuentes de información geográfica disponibles, que en nuestro caso
+fueron ca. [13,000 hexágonos conteniendo la correspondiente información
 multicriterio, y repartidos sobre el territorio
 dominicano](https://geofis.github.io/zonal-statistics/README.html)
 (Martínez-Batlle 2022). De esta ponderación, asignamos una categoría
-agregada a cada hexágono que podía ser una de las siguientes cuatro:
-marginalmente idóneo, moderadamente idóneo, idóneo y altamente idóneo.
+agregada de prioridad a cada hexágono que podía ser una de las
+siguientes cuatro: marginalmente prioritario, moderadamente prioritario,
+prioritario e imprescindible.
 
 Tanto el diseño de los formularios, como el procesamiento de respuestas
 y la ponderación de criterios, los realizamos empleando lenguajes de
 programación. Para diseñar los formularios, empleamos paquetes y
 funciones de Python, mientras que para los análisis nos auxiliamos del
 paquete `ahpsurvey` y otros del entorno de programación estadística R,
-diseñado para tales fines (Cho 2019; R Core Team 2021; Wickham et al.
+diseñados para tales fines (Cho 2019; R Core Team 2021; Wickham et al.
 2019). Describimos el procedimiento detalladamente en la sección
 [Información suplementaria](#infosupl).
 
@@ -178,22 +181,22 @@ Posteriormente, usamos los resultados obtenidos del AHP como entrada de
 un procesamiento posterior, en el que realizamos una simple **exclusión
 por factores limitantes**. Específicamente, eliminamos los hexágonos
 que, por su localización respecto de accesos y cuerpos de agua,
-constituían áreas no idóneas para el establecimiento de EMC.
+constituían áreas no prioritarias para el establecimiento de EMC.
 
 Finalmente, al resultado del procedimiento anterior, le aplicamos un
 **análisis de vecindad entre estaciones (existentes y propuestas)**, con
 el objetivo de garantizar homogeneidad espacial y evitar redundancia.
-Primero lanzamos nubes puntos sobre distintas categorías de idoneidad
-(e.g. “altamente idóneo”) usando funciones programadas en R, con lo cual
-garantizamos el cumplimiento de criterios de densidad de estaciones
-sugeridos por la Organización Meteorológica Mundial (World
+Primero lanzamos nubes puntos sobre distintas categorías de prioridad
+(e.g. prioritario e imprescindible), usando funciones programadas en R,
+con lo cual garantizamos el cumplimiento de criterios de densidad de
+estaciones sugeridos por la Organización Meteorológica Mundial (World
 Meteorological Organization (WMO) and The International Association of
 Hydrological Sciences 1976; World Meteorological Organization (WMO)
 2020). Finalmente, usando superficies continuas de distancia
 (e.g. rásters), eliminamos estaciones propuestas que estuviesen muy
-próximas a estaciones ya establecidas, evitando así proponer nuevas
-localidades que, de no eliminarse, aportarían redundancia a la red. Los
-detalles metodológicos pueden consultarse en la sección [Información
+próximas a estaciones ya establecidas, evitando así recomendar nuevas
+localidades que, de no eliminarse, redundarían con las ya existentes.
+Los detalles metodológicos pueden consultarse en la sección [Información
 suplementaria](#infosupl)).
 
 ## Resultados
@@ -325,19 +328,19 @@ pendiente
 </table>
 
 Las puntuaciones reclasificadas de cada criterio mostraron una amplia
-variabilidad de la superficie ocupada por cada categoría (ver tabla
-<a href="#tab:areasproporcionales">2</a>). De los criterios ponderados
-con un alto peso dentro de la valoración AHP, las estacionalidades
-pluviométrica y térmica presentaron proporciones relativamente
-equilibradas del territorio según las cuatro clases de idoneidad. Por
-otra parte, el criterio horas de insolación, mostró una importante
-acumulación de áreas idóneas (incluye “idóneas” propiamente y “altamente
-idóneas”) para el establecimiento de estaciones. Igualmente, el criterio
-elevación resultó predominantemente idóneo y altamente idóneo. Esto se
-debió a que los sistemas montañosos dominicanos presentan las menores
-densidades de estaciones meteoclimáticas, por lo que se prefirió
-impulsar la idoneidad de la topografía elevada para el establecimiento
-de EMC.
+variabilidad de la superficie ocupada por cada categoría de prioridad
+(ver tabla <a href="#tab:areasproporcionales">2</a>). De los criterios
+ponderados con un alto peso dentro de la valoración AHP, las
+estacionalidades pluviométrica y térmica presentaron proporciones
+relativamente equilibradas del territorio según las cuatro clases de
+prioridad. Por otra parte, el criterio horas de insolación, mostró una
+importante acumulación de áreas prioritarias (incluye prioritario
+propiamente y imprescindible) para el establecimiento de estaciones.
+Igualmente, según el criterio elevación, muchos hexágonos recibieron la
+categorización de prioritario y imprescindible. Esto se debió a que los
+sistemas montañosos dominicanos presentan las menores densidades de
+estaciones meteoclimáticas, por lo que se prefirió priorizar la
+topografía elevada para el establecimiento de EMC.
 
 ``` r
 areas_proporcionales %>%
@@ -357,16 +360,16 @@ sitios de estaciones meteoclimáticas
 criterio
 </th>
 <th style="text-align:right;">
-altamente idóneo
+imprescindible
 </th>
 <th style="text-align:right;">
-idóneo
+prioritario
 </th>
 <th style="text-align:right;">
-moderadamente idóneo
+moderadamente prioritario
 </th>
 <th style="text-align:right;">
-marginalmente idóneo
+marginalmente prioritario
 </th>
 <th style="text-align:right;">
 Total
@@ -542,11 +545,12 @@ concentrado (ver figura
 <a href="#fig:mapacriteriospuntuaciones"><strong>??</strong></a>). Todos
 los criterios presentaron autocorrelación espacial positiva, lo que
 significa que los hexágonos se aglomeran en cúmulos de valores grandes
-(“grumos” de hexágonos idóneos, formando *hotspots*) y/o pequeños
-(cúmulos de hexágonos marginalmente idóneos, formando *coldspots*).
-Destaca, aunque era esperable, la particular la distribución espacial de
-la distancia a cuerpos de agua, con un patrón muy homogéneo y monótono
-de hexágonos de alta idoneidad.
+(“grumos” de hexágonos de tipo “imprescindible”, formando *hotspots*)
+y/o pequeños (cúmulos de hexágonos de tipo marginalmente prioritario,
+formando *coldspots*). Destaca, aunque era esperable, la particular la
+distribución espacial de la distancia a cuerpos de agua, con un patrón
+muy homogéneo y monótono de hexágonos dentro de la categoría
+imprescindible.
 
 ``` r
 all_criteria_mapa
@@ -556,10 +560,10 @@ all_criteria_mapa
 
 Tras sumar los criterios ponderados, obtuvimos la distribución de las
 categorías agregadas. En cuanto a superficie representada, predominaron
-los intermedios, “moderadamente idóneo” e “idóneo” con un 70% de toda la
-superficie estudiada, mientras que las categorías extremas
-“marginalmente idóneo” y “altamente idóneo” se repartieron el restante
-30% (ver tabla <a href="#tab:areasproporcionalesall">3</a>).
+las categorías intermedias, pues moderadamente prioritario y prioritario
+acumularon un 70% de toda la superficie estudiada, mientras que las
+categorías marginalmente prioritario y imprescindible se repartieron el
+restante 30% (ver tabla <a href="#tab:areasproporcionalesall">3</a>).
 
 ``` r
 areas_proporcionales_all_criteria %>% 
@@ -586,7 +590,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 13.79
@@ -594,7 +598,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 30.81
@@ -602,7 +606,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 39.62
@@ -610,7 +614,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 15.77
@@ -624,13 +628,14 @@ el territorio dominicano (ver figura
 <a href="#fig:mapacriteriospuntuacionesall"><strong>??</strong></a>). En
 particular, la representación espacial sugiere que el método AHP
 priorizó aquellas áreas que, por sus atributos, nos interesaba impulsar
-en primera instancia. Las áreas con gran estacionalidad, especialmente
-las montañas y el borde oriental del país, que al mismo tiempo mostraron
-buen rendimiento en cuanto a horas de insolación, resultaron ser las más
-idóneas para el establecimiento de nuevas EMC. Por otra parte, los
-sectores situados a menor elevación, que al mismo tiempo contaban con
-pocas horas de insolación, fuertes pendientes y bajas estacionalidades
-térmica y pluviométrica, fueron clasificados como marginalmente idóneos.
+en primera instancia. Los hexágonos con gran estacionalidad,
+especialmente los situados en montañas y en el borde oriental del país,
+y que al mismo tiempo mostraron buen rendimiento en cuanto a horas de
+insolación, recibieron las categorías de prioritario e imprescindible.
+Por otra parte, los sectores situados a menor elevación, que al mismo
+tiempo contaban con pocas horas de insolación, fuertes pendientes y
+bajas estacionalidades térmica y pluviométrica, recibieron la categoría
+de marginalmente prioritario.
 
 ``` r
 all_criteria_scores_mapa
@@ -640,12 +645,12 @@ all_criteria_scores_mapa
 
 ### Exclusión por factores limitantes
 
-Un total de 1508 hexágonos fueron imputados como marginalmente idóneos
-por su proximidad a cuerpos de agua, o por encontrarse dentro de áreas
-pobladas o muy distantes en términos de accesibilidad. La mayoría se
-localizó en los lagos y lagunas interiores y costeras, en áreas próximas
-a la costa, en ríos anchos y embalses, y en áreas montañosas
-inaccesibles. El mapa de la figura
+Un total de 1508 hexágonos fueron imputados con la categoría
+marginalmente prioritario, debido a su proximidad a cuerpos de agua, o
+por encontrarse dentro de áreas pobladas o muy distantes en términos de
+accesibilidad. La mayoría se localizó en lagos y lagunas interiores y
+costeras, en áreas próximas a la costa, en ríos anchos y embalses, y en
+áreas montañosas inaccesibles. El mapa de la figura
 <a href="#fig:mapacriteriospuntuacionesallexcluded"><strong>??</strong></a>
 muestra la nueva distribución de las categorías agregadas (compárese con
 el mapa de la figura
@@ -685,7 +690,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 24.08
@@ -693,7 +698,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 26.95
@@ -701,7 +706,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 34.39
@@ -709,7 +714,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 14.59
@@ -727,7 +732,7 @@ lineamientos sugeridos por la OMM (World Meteorological Organization
 (WMO) and The International Association of Hydrological Sciences 1976;
 World Meteorological Organization (WMO) 2020). En los tres casos
 utilizamos, como área a cubrir, la compuesta por los hexágonos que
-cumplieran con los criterios de “altamente idóneo” o “idóneo”.
+cumplieran con los criterios de imprescindible o prioritario.
 
 A partir de los escenarios generados por la función de selección de
 sitios en vecindad, obtuvimos escenarios ideales sin considerar las
@@ -736,13 +741,16 @@ sugeridos de nuestra propuesta inicial que ya se encontraran
 representados por estaciones de la red existente de INDRHI y/o ONAMET.
 Consideramos dos redes existentes distintas: 1) Red compuesta por las
 estaciones **activas de ONAMET** y las catalogadas como de **“buenas”
-del INDRHI** (red de estaciones “activas+buenas”); 2) Red **similar a la
-anterior**, pero incluyendo además las estaciones de **estado “Regular”
-del INDRHI**, las cuales sólo requieren de una mínima inversión para
-ponerlas en operación nuevamente (red de estaciones
-“activas+buenas+regulares”). Por lo tanto, para cada uno de los tres
-escenarios de densidad, se eliminó redundancia respecto de dos redes
-existentes, lo cual produjo, a su vez, 6 escenarios posibles.
+del INDRHI**, que también denotamos como “red de estaciones
+activas+buenas” (Instituto Nacional de Recursos Hidráulicos (INDRHI)
+2019); 2) Red **similar a la anterior**, pero incluyendo además las
+estaciones de **estado “Regular” del INDRHI**, las cuales sólo
+requerían, en 2019, de una mínima inversión para ponerlas en operación
+nuevamente, que también denotamos como “red de estaciones
+activas+buenas+regulares” (Instituto Nacional de Recursos Hidráulicos
+(INDRHI) 2019). Por lo tanto, para cada uno de los tres escenarios de
+densidad, se eliminó redundancia respecto de dos redes existentes, lo
+cual produjo, en definitiva, 6 escenarios posibles.
 
 En el primer escenario, cada estación cubre 100 km<sup>2</sup>. Al
 eliminar redundancia respecto de la red existente, obtuvimos dos
@@ -785,7 +793,7 @@ Monto (US\$)
 <tbody>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 127
@@ -796,7 +804,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 43
@@ -869,7 +877,7 @@ Monto (US\$)
 <tbody>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 125
@@ -880,7 +888,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 43
@@ -903,19 +911,20 @@ Total
 </tbody>
 </table>
 
-Se recomienda notar que la tabla resumen diferencia los sitios idóneos y
-los altamente idóneos. Esto permite a las entidades responsables,
-decidir un esquema de intervención según presupuesto disponible,
-prioridades y esquema de gobernanza. Así, las entidades dispondrán de la
-información de inversión sugerida para cada tipo de área. En particular,
-proponemos desplegar estaciones de altas prestaciones en primera
-instancia, y especialmente en lugares altamente idóneos; una vez
-establecidas éstas, colocar las restantes estaciones (e.g. de
-prestaciones normales) en sitios de categoría idónea. En este sentido,
-también proponemos que las entidades consideren adquirir opciones de
-bajo costo, algunas de las cuales ya son accesibles desde República
-Dominicana. Estas tienen la ventaja añadida de que pueden combinarse con
-proyectos educativos en centros escolares.
+Destacamos que la tabla resumen diferencia los sitios categorizados como
+prioritario e imprescindible. Esto permite, a las entidades
+responsables, decidir un esquema de intervención según presupuesto
+disponible, prioridades y esquema de gobernanza. Así, las entidades
+dispondrán de la información de inversión sugerida para cada tipo de
+área. En particular, proponemos desplegar estaciones de altas
+prestaciones en primera instancia, y especialmente en sitios bajo la
+categoría de imprescindible; una vez establecidas éstas, colocar las
+restantes estaciones (e.g. de prestaciones normales) en sitios bajo la
+categoría de prioritario. En este sentido, también proponemos que las
+entidades consideren adquirir opciones de bajo costo, algunas de las
+cuales ya son accesibles desde República Dominicana. Estas tienen la
+ventaja añadida de que pueden combinarse con proyectos educativos en
+centros escolares.
 
 Añadimos al mapa de este subescenario la red de estaciones privadas.
 
@@ -968,7 +977,7 @@ Monto (US\$)
 <tbody>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 66
@@ -979,7 +988,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 23
@@ -1048,7 +1057,7 @@ Monto (US\$)
 <tbody>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 63
@@ -1059,7 +1068,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 23
@@ -1130,7 +1139,7 @@ Monto (US\$)
 <tbody>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 30
@@ -1141,7 +1150,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 9
@@ -1210,7 +1219,7 @@ Monto (US\$)
 <tbody>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 29
@@ -1221,7 +1230,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 9
@@ -7645,19 +7654,20 @@ pendiente
 ## Reclasificación de fuentes cartográficas: valores originales, intervalos, representación de la reclasificación
 
 Utilizamos múltiples fuentes cartográficas como variables de territorio
-para modelizar la idoneidad de sitios candidatos para la instalación de
-estaciones meteoclimáticas. Las fuentes disponibles eran capas ráster
-servidas bajo distintas resoluciones y sistemas de referencia, por lo
-que fue necesario aplicar algoritmos de estadística zonal (reducción) y
-consolidar resultados en una geometría vectorial común. Para ello,
-redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3
-(*hex bins*) (Martínez-Batlle 2022). Probamos distintas resoluciones de
-dicho índice, y tras algunas pruebas, elegimos la resolución “7”. Con
-esta resolución, cubrimos el territorio dominicano (más un área de
-influencia) con aproximadamente 13,000 hexágonos de ca. 4 km<sup>2</sup>
-cada uno. Dentro de cada hexágono, por medio de estadística zonal,
-obtuvimos la media de cada variable, la cual utilizamos como estadístico
-de referencia en la reclasificación descrita a continuación.
+para modelizar el grado de priorización de sitios candidatos para la
+instalación de estaciones meteoclimáticas. Las fuentes disponibles eran
+capas ráster servidas bajo distintas resoluciones y sistemas de
+referencia, por lo que fue necesario aplicar algoritmos de estadística
+zonal (reducción) y consolidar resultados en una geometría vectorial
+común. Para ello, redujimos todas las fuentes ráster al índice
+geoespacial de hexágonos H3 (*hex bins*) (Martínez-Batlle 2022).
+Probamos distintas resoluciones de dicho índice, y tras algunas pruebas,
+elegimos la resolución “7”. Con esta resolución, cubrimos el territorio
+dominicano (más un área de influencia) con aproximadamente 13,000
+hexágonos de ca. 4 km<sup>2</sup> cada uno. Dentro de cada hexágono, por
+medio de estadística zonal, obtuvimos la media de cada variable, la cual
+utilizamos como estadístico de referencia en la reclasificación descrita
+a continuación.
 
 Reclasificamos los valores promedio de las ocho variables seleccionadas,
 aplicando criterios definidos por el equipo de investigación para cada
@@ -7666,13 +7676,13 @@ bibliográficas especializadas en redes de monitoreo meteoclimático, y
 adaptando las escalas a la realidad insular (Food and Agriculture
 Organization of the United Nations (FAO) 1976; Rojas Briceño et al.
 2021). A cada criterio, y para cada hexágono, asignamos un entero en una
-escala ordinal del 1 al 4 (de “marginalmente idóneo” a “altamente
-idóneo”). Para facilitar esta tarea, y garantizar reproducibilidad y
-consistencia, creamos funciones que realizaron la reclasificación de
-forma semitautomática. Representamos a continuación, para cada criterio,
-los valores originales mediante gráfico de violín, mostramos los
-intervalos usados en la reclasificación, y la representamos
-cartográficamente.
+escala ordinal del 1 al 4 (de marginalmente prioritario a
+imprescindible). Para facilitar esta tarea, y garantizar
+reproducibilidad y consistencia, creamos funciones que realizaron la
+reclasificación de forma semitautomática. Representamos a continuación,
+para cada criterio, los valores originales mediante gráfico de violín,
+mostramos los intervalos usados en la reclasificación, y la
+representamos cartográficamente.
 
 ``` r
 source('R/funciones.R')
@@ -7770,7 +7780,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 5.84
@@ -7778,7 +7788,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 11.54
@@ -7786,7 +7796,7 @@ altamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 33.77
@@ -7794,7 +7804,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 48.85
@@ -7830,7 +7840,7 @@ distancia a accesos puntuación
 \[12.8,50\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 1
@@ -7841,7 +7851,7 @@ marginalmente idóneo
 (50,200\]
 </td>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 4
@@ -7852,7 +7862,7 @@ altamente idóneo
 (200,500\]
 </td>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 3
@@ -7863,7 +7873,7 @@ idóneo
 (500,5e+03\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 2
@@ -7874,7 +7884,7 @@ moderadamente idóneo
 (5e+03,3.28e+04\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 1
@@ -7945,7 +7955,7 @@ estacionalidad térmica puntuación
 \[0.573,1.1\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 1
@@ -7956,7 +7966,7 @@ marginalmente idóneo
 (1.1,1.3\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 2
@@ -7967,7 +7977,7 @@ moderadamente idóneo
 (1.3,1.5\]
 </td>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 3
@@ -7978,7 +7988,7 @@ idóneo
 (1.5,1.87\]
 </td>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 4
@@ -8008,7 +8018,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 11.33
@@ -8016,7 +8026,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 38.39
@@ -8024,7 +8034,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 28.11
@@ -8032,7 +8042,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 22.17
@@ -8103,7 +8113,7 @@ estacionalidad pluviométrica puntuación
 \[19.5,30\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 1
@@ -8114,7 +8124,7 @@ marginalmente idóneo
 (30,40\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 2
@@ -8125,7 +8135,7 @@ moderadamente idóneo
 (40,50\]
 </td>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 3
@@ -8136,7 +8146,7 @@ idóneo
 (50,89.6\]
 </td>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 4
@@ -8166,7 +8176,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 21.47
@@ -8174,7 +8184,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 21.67
@@ -8182,7 +8192,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 22.95
@@ -8190,7 +8200,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 33.90
@@ -8261,7 +8271,7 @@ heterogeneidad de hábitat puntuación
 \[0,300\]
 </td>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 4
@@ -8272,7 +8282,7 @@ altamente idóneo
 (300,450\]
 </td>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 3
@@ -8283,7 +8293,7 @@ idóneo
 (450,600\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 2
@@ -8294,7 +8304,7 @@ moderadamente idóneo
 (600,3.56e+03\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 1
@@ -8324,7 +8334,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 19.88
@@ -8332,7 +8342,7 @@ altamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 43.74
@@ -8340,7 +8350,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 20.16
@@ -8348,7 +8358,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 16.22
@@ -8419,7 +8429,7 @@ distancia a cuerpos de agua puntuación
 \[0,1e+03\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 1
@@ -8430,7 +8440,7 @@ marginalmente idóneo
 (1e+03,2e+03\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 2
@@ -8441,7 +8451,7 @@ moderadamente idóneo
 (2e+03,3e+03\]
 </td>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 3
@@ -8452,7 +8462,7 @@ idóneo
 (3e+03,2.64e+04\]
 </td>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 4
@@ -8482,7 +8492,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 8.20
@@ -8490,7 +8500,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 8.72
@@ -8498,7 +8508,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 8.04
@@ -8506,7 +8516,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 75.04
@@ -8577,7 +8587,7 @@ pendiente puntuación
 \[0,3\]
 </td>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 4
@@ -8588,7 +8598,7 @@ altamente idóneo
 (3,9\]
 </td>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 3
@@ -8599,7 +8609,7 @@ idóneo
 (9,15\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 2
@@ -8610,7 +8620,7 @@ moderadamente idóneo
 (15,32.7\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 1
@@ -8640,7 +8650,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 39.60
@@ -8648,7 +8658,7 @@ altamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 28.86
@@ -8656,7 +8666,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 16.92
@@ -8664,7 +8674,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 14.63
@@ -8735,7 +8745,7 @@ horas de insolación puntuación
 \[3.18e+03,3.9e+03\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 1
@@ -8746,7 +8756,7 @@ marginalmente idóneo
 (3.9e+03,4.1e+03\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 2
@@ -8757,7 +8767,7 @@ moderadamente idóneo
 (4.1e+03,4.3e+03\]
 </td>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 3
@@ -8768,7 +8778,7 @@ idóneo
 (4.3e+03,4.48e+03\]
 </td>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 4
@@ -8798,7 +8808,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 10.68
@@ -8806,7 +8816,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 16.03
@@ -8814,7 +8824,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 25.06
@@ -8822,7 +8832,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 48.23
@@ -8893,7 +8903,7 @@ elevación puntuación
 (200,400\]
 </td>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 2
@@ -8904,7 +8914,7 @@ moderadamente idóneo
 (400,800\]
 </td>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 3
@@ -8915,7 +8925,7 @@ idóneo
 (800,2.79e+03\]
 </td>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 4
@@ -8926,7 +8936,7 @@ altamente idóneo
 \[-42,200\]
 </td>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 1
@@ -8956,7 +8966,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 50.39
@@ -8964,7 +8974,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 16.53
@@ -8972,7 +8982,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 16.03
@@ -8980,7 +8990,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 17.05
@@ -9007,7 +9017,7 @@ puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiqueta
   group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
   summarise(value = paste(value, collapse = ' y ')) %>% 
   pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
-  select(criterio, `altamente idóneo`, `idóneo`, `moderadamente idóneo`, `marginalmente idóneo`)
+  select(criterio, rev(fuente))
 ) %>% bind_rows()
 readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
 puntuaciones_umbrales_kable <- puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
@@ -9027,16 +9037,16 @@ estaciones meteoclimáticas
 criterio
 </th>
 <th style="text-align:left;">
-altamente idóneo
+imprescindible
 </th>
 <th style="text-align:left;">
-idóneo
+prioritario
 </th>
 <th style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </th>
 <th style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </th>
 </tr>
 </thead>
@@ -9190,7 +9200,7 @@ areas_proporcionales <- map(objetos, function(x) get(x)[['area_proporcional']] %
   pivot_longer(cols = -matches('proporción'), names_to = 'criterio') %>%
   mutate(criterio = gsub(' etiquetas', '', criterio)) %>% 
   pivot_wider(names_from = value, values_from = proporción)) %>% bind_rows() %>% 
-  select(criterio, `altamente idóneo`, `idóneo`, `moderadamente idóneo`, `marginalmente idóneo`) %>% 
+  select(criterio, rev(fuente)) %>% 
   adorn_totals('col') 
 readODS::write_ods(x = areas_proporcionales,
                    path = 'fuentes/umbrales-criterios-ahp/areas_proporcionales.ods')
@@ -9211,16 +9221,16 @@ sitios de estaciones meteoclimáticas
 criterio
 </th>
 <th style="text-align:right;">
-altamente idóneo
+imprescindible
 </th>
 <th style="text-align:right;">
-idóneo
+prioritario
 </th>
 <th style="text-align:right;">
-moderadamente idóneo
+moderadamente prioritario
 </th>
 <th style="text-align:right;">
-marginalmente idóneo
+marginalmente prioritario
 </th>
 <th style="text-align:right;">
 Total
@@ -9403,11 +9413,11 @@ all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_s
                           delete_dsn = T, quiet = T, verbose = F)
 ```
 
-Mapas puntuaciones reclasificadas de cada criterio.
+Mapas de puntuaciones reclasificadas para cada criterio.
 
 ``` r
-paleta <- c("altamente idóneo" = "#018571", "idóneo" = "#80cdc1",
-               "moderadamente idóneo" = "#dfd2b3", "marginalmente idóneo" = "#a6611a")
+paleta <- c("#018571", "#80cdc1", "#dfd2b3", "#a6611a")
+names(paleta) <- rev(fuente)
 all_criteria_mapa <- all_criteria %>%
   select(all_of(contains('etiquetas'))) %>% 
   rename_with(~ stringr::str_replace(.x, 
@@ -9441,8 +9451,8 @@ Calculamos las puntuaciones agregadas multiplicando las puntuaciones
 parciales de cada criterio por sus correspondientes pesos de
 preferencias agregadas, con lo cual generamos las puntuaciones
 agregadas. Estas puntuaciones las reclasificamos en las cuatro
-categorías habituales (marginalmente idóneo…altamente idóneo) siguiendo
-un criterio de número de desviaciones estándar.
+categorías habituales (marginalmente prioritario…imprescindible)
+siguiendo el criterio de cantidad de desviaciones estándar.
 
 ``` r
 nombres_ahp_obj_sf <- data.frame(
@@ -9514,7 +9524,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 13.79
@@ -9522,7 +9532,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 30.81
@@ -9530,7 +9540,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 39.62
@@ -9538,7 +9548,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 15.77
@@ -9578,19 +9588,19 @@ all_criteria_scores_mapa
 
 Imputamos valores mínimos en las columnas `Puntuación agregada` y
 `Puntuación agregada escalada` a los hexágonos categorizados como
-“marginalmente idóneos” en el criterio de distancia a accesos o en el
+marginalmente prioritario en el criterio de distancia a accesos o en el
 criterio de distancia a cuerpos de agua. Posteriormente, recalculamos la
 columna `Categorías agregadas` para que los hexágonos a los que se les
-imputaron valores, se reclasifiquen como “marginalmente idóneos”.
+imputaron valores, se reclasifiquen como marginalmente prioritario.
 
 ``` r
 all_criteria_scores_excluded <- all_criteria_scores %>% 
   mutate(
     `Puntuación agregada` = ifelse(
-      `distancia a accesos etiquetas` == 'marginalmente idóneo' | `distancia a cuerpos de agua etiquetas` == 'marginalmente idóneo',
+      `distancia a accesos etiquetas` == fuente[1] | `distancia a cuerpos de agua etiquetas` == fuente[1],
       min(`Puntuación agregada`, na.rm = T), `Puntuación agregada`),
     `Puntuación agregada escalada` = ifelse(
-      `distancia a accesos etiquetas` == 'marginalmente idóneo' | `distancia a cuerpos de agua etiquetas` == 'marginalmente idóneo',
+      `distancia a accesos etiquetas` == fuente[1] | `distancia a cuerpos de agua etiquetas` == fuente[1],
       min(`Puntuación agregada escalada`, na.rm = T), `Puntuación agregada escalada`),
     `Categoría agregada` = cut(`Puntuación agregada escalada`,
                                     breaks = c(min(`Puntuación agregada escalada`, na.rm = T),
@@ -9670,7 +9680,7 @@ proporción
 <tbody>
 <tr>
 <td style="text-align:left;">
-marginalmente idóneo
+marginalmente prioritario
 </td>
 <td style="text-align:right;">
 24.08
@@ -9678,7 +9688,7 @@ marginalmente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-moderadamente idóneo
+moderadamente prioritario
 </td>
 <td style="text-align:right;">
 26.95
@@ -9686,7 +9696,7 @@ moderadamente idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-idóneo
+prioritario
 </td>
 <td style="text-align:right;">
 34.39
@@ -9694,7 +9704,7 @@ idóneo
 </tr>
 <tr>
 <td style="text-align:left;">
-altamente idóneo
+imprescindible
 </td>
 <td style="text-align:right;">
 14.59
@@ -9746,9 +9756,10 @@ respectivamente.
 
 ``` r
 # Categorías agregadas
-categorias_elegidas <- c('altamente idóneo', 'idóneo')
-names(categorias_elegidas) <- rep('categorías de idoneidad', length(categorias_elegidas))
+categorias_elegidas <- c(fuente[length(fuente)-1], fuente[length(fuente)])
+names(categorias_elegidas) <- rep('categorías de prioridad', length(categorias_elegidas))
 # Criterio de separación (en este caso, kilómetros cuadrados por estación) 
+# !!!!!!!!!!!!!!!!!!!!!!REFACTOR!!!!!!!!!!!!!!!!!!!!!! CAMBIAR km2 por km cuadrados y crear funcion nombre archivo
 names(escenarios) <- paste('Escenario:', escenarios, 'km2 por estación')
 # Primero realizamos los cálculos
 resumen_calculos_escenarios <- map(escenarios, 
@@ -9962,9 +9973,10 @@ estadisticos_distancias_orden_1(indrhi_para_vecindad_b)
     ##      se
     ## X1 2.69
 
-Igualmente, si comparamos con la misma red, pero incluyendo también las
+Igualmente, siguiendo con la red del INDRHI, incluyendo en este caso las
 estaciones en estado “Regular”, notaremos que igualmente las distancias
-de separación entre estaciones siguen siendo grandes.
+de separación entre estaciones siguen siendo muy por encima del mínimo
+recomendado por la OMM.
 
 ``` r
 indrhi_para_vecindad_br <- st_read('out/con_indicacion_estatus_climaticas_indrhi.gpkg') %>% 
@@ -10028,15 +10040,15 @@ actbuereg_d %>% writeRaster('out/onamet_indrhi_actbuereg_dist_500x500_distancia.
 ```
 
 En el caso del escenario “100 km<sup>2</sup> por estación”, la distancia
-de corte entre estaciones es de 11 km. Por lo tanto, eliminaremos las
-estaciones propuestas por nosotros que queden dentro de ese rango
+de corte entre estaciones es de 11 km. Por lo tanto, eliminamos las
+estaciones propuestas por nosotros que caían dentro de ese rango
 respecto de estaciones de ONAMET y/o INDRHI existentes.
 
-Usamo igualmente las estaciones de la red privada, pero sólo para fines
-de representación. Nuestro objetivo, al mostrar la red privada sobre los
-escenarios de densidad, es visibilizar las oportunidad de colaboración y
-la posible sinergia que contribuirían en definitiva a la mejora de la
-calidad del dato.
+En nuestros análisis, usamos igualmente las estaciones de la red
+privada, pero sólo para fines de representación. Nuestro objetivo al
+mostrar la red privada sobre los distintos escenarios de densidad, es
+visibilizar la oportunidad de colaboración y posible sinergia para
+contribuir a la mejora de la calidad del dato.
 
 ``` r
 consolidado_sf <- invisible(st_read('out/con_indicacion_estatus_consolidado.gpkg', quiet = T))
@@ -10112,14 +10124,14 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
 
     ##  Categoría agregada   n Monto (US$)
-    ##              idóneo 127      889000
-    ##    altamente idóneo  43     1505000
+    ##         prioritario 127      889000
+    ##      imprescindible  43     1505000
     ##               Total 170     2394000
 
 ### Escenario 100 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
@@ -10188,14 +10200,14 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
 
     ##  Categoría agregada   n Monto (US$)
-    ##              idóneo 125      875000
-    ##    altamente idóneo  43     1505000
+    ##         prioritario 125      875000
+    ##      imprescindible  43     1505000
     ##               Total 168     2380000
 
 ### Escenario 150 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
@@ -10267,14 +10279,14 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
 
     ##  Categoría agregada  n Monto (US$)
-    ##              idóneo 66      462000
-    ##    altamente idóneo 23      805000
+    ##         prioritario 66      462000
+    ##      imprescindible 23      805000
     ##               Total 89     1267000
 
 ### Escenario 150 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
@@ -10343,14 +10355,14 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
 
     ##  Categoría agregada  n Monto (US$)
-    ##              idóneo 63      441000
-    ##    altamente idóneo 23      805000
+    ##         prioritario 63      441000
+    ##      imprescindible 23      805000
     ##               Total 86     1246000
 
 ### Escenario 250 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas
@@ -10422,14 +10434,14 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
 
     ##  Categoría agregada  n Monto (US$)
-    ##              idóneo 30      210000
-    ##    altamente idóneo  9      315000
+    ##         prioritario 30      210000
+    ##      imprescindible  9      315000
     ##               Total 39      525000
 
 ### Escenario 250 km<sup>2</sup> por estación, eliminando propuestas de sitios redundantes respecto de ONAMET activas + INDRHI buenas y regulares
@@ -10498,14 +10510,14 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
 
     ##  Categoría agregada  n Monto (US$)
-    ##              idóneo 29      203000
-    ##    altamente idóneo  9      315000
+    ##         prioritario 29      203000
+    ##      imprescindible  9      315000
     ##               Total 38      518000
 
 ## Referencias
@@ -10596,6 +10608,15 @@ Bulletin 32*. Food and Agriculture Organization of the United Nations
 Frei, Thomas. 2003. “Designing Meteorological Networks for Switzerland
 According to User Requirements.” *Meteorological Applications* 10 (4):
 313–17.
+
+</div>
+
+<div id="ref-indrhi2019inventario" class="csl-entry">
+
+Instituto Nacional de Recursos Hidráulicos (INDRHI). 2019. “<span
+class="nocase">Inventario de Estaciones Hidrometeorológicas. Informe
+Final</span>.” Santo Domingo: Instituto Nacional de Recursos
+Hidráulicos.
 
 </div>
 

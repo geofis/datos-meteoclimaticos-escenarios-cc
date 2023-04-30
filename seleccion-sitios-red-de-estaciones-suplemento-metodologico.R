@@ -449,7 +449,7 @@ puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiqueta
   group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
   summarise(value = paste(value, collapse = ' y ')) %>% 
   pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
-  select(criterio, `altamente idóneo`, `idóneo`, `moderadamente idóneo`, `marginalmente idóneo`)
+  select(criterio, rev(fuente))
 ) %>% bind_rows()
 readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
 puntuaciones_umbrales_kable <- puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
@@ -463,7 +463,7 @@ areas_proporcionales <- map(objetos, function(x) get(x)[['area_proporcional']] %
   pivot_longer(cols = -matches('proporción'), names_to = 'criterio') %>%
   mutate(criterio = gsub(' etiquetas', '', criterio)) %>% 
   pivot_wider(names_from = value, values_from = proporción)) %>% bind_rows() %>% 
-  select(criterio, `altamente idóneo`, `idóneo`, `moderadamente idóneo`, `marginalmente idóneo`) %>% 
+  select(criterio, rev(fuente)) %>% 
   adorn_totals('col') 
 readODS::write_ods(x = areas_proporcionales,
                    path = 'fuentes/umbrales-criterios-ahp/areas_proporcionales.ods')
@@ -482,8 +482,8 @@ all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_s
 
 
 ## ---- fig.width=8, fig.height=12----------------------------------------------
-paleta <- c("altamente idóneo" = "#018571", "idóneo" = "#80cdc1",
-               "moderadamente idóneo" = "#dfd2b3", "marginalmente idóneo" = "#a6611a")
+paleta <- c("#018571", "#80cdc1", "#dfd2b3", "#a6611a")
+names(paleta) <- rev(fuente)
 all_criteria_mapa <- all_criteria %>%
   select(all_of(contains('etiquetas'))) %>% 
   rename_with(~ stringr::str_replace(.x, 
@@ -587,10 +587,10 @@ all_criteria_scores_mapa
 all_criteria_scores_excluded <- all_criteria_scores %>% 
   mutate(
     `Puntuación agregada` = ifelse(
-      `distancia a accesos etiquetas` == 'marginalmente idóneo' | `distancia a cuerpos de agua etiquetas` == 'marginalmente idóneo',
+      `distancia a accesos etiquetas` == fuente[1] | `distancia a cuerpos de agua etiquetas` == fuente[1],
       min(`Puntuación agregada`, na.rm = T), `Puntuación agregada`),
     `Puntuación agregada escalada` = ifelse(
-      `distancia a accesos etiquetas` == 'marginalmente idóneo' | `distancia a cuerpos de agua etiquetas` == 'marginalmente idóneo',
+      `distancia a accesos etiquetas` == fuente[1] | `distancia a cuerpos de agua etiquetas` == fuente[1],
       min(`Puntuación agregada escalada`, na.rm = T), `Puntuación agregada escalada`),
     `Categoría agregada` = cut(`Puntuación agregada escalada`,
                                     breaks = c(min(`Puntuación agregada escalada`, na.rm = T),
@@ -651,9 +651,10 @@ n_esc <- length(escenarios)
 
 ## -----------------------------------------------------------------------------
 # Categorías agregadas
-categorias_elegidas <- c('altamente idóneo', 'idóneo')
-names(categorias_elegidas) <- rep('categorías de idoneidad', length(categorias_elegidas))
+categorias_elegidas <- c(fuente[length(fuente)-1], fuente[length(fuente)])
+names(categorias_elegidas) <- rep('categorías de prioridad', length(categorias_elegidas))
 # Criterio de separación (en este caso, kilómetros cuadrados por estación) 
+# !!!!!!!!!!!!!!!!!!!!!!REFACTOR!!!!!!!!!!!!!!!!!!!!!! CAMBIAR km2 por km cuadrados y crear funcion nombre archivo
 names(escenarios) <- paste('Escenario:', escenarios, 'km2 por estación')
 # Primero realizamos los cálculos
 resumen_calculos_escenarios <- map(escenarios, 
@@ -798,7 +799,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 
@@ -857,7 +858,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 
@@ -919,7 +920,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 
@@ -978,7 +979,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 
@@ -1040,7 +1041,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 
@@ -1099,7 +1100,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 

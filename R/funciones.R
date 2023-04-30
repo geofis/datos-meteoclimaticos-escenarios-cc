@@ -43,6 +43,10 @@ limpiar_coord <- function(mi_vector = NULL, sufijo = NULL) {
   return(salida)
 }
 
+# Objeto "fuente", para categorías
+# fuente <- c('marginalmente idóneo', 'moderadamente idóneo', 'idóneo', 'altamente idóneo')
+fuente <- c('marginalmente prioritario', 'moderadamente prioritario', 'prioritario', 'imprescindible')
+
 # Función de reclasificación
 reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
                          ord_cat = 'in', nombre = NULL){
@@ -106,7 +110,6 @@ reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
   if(is.null(nombre)) nombre <- campo
   
   # Función para construir categorías
-  fuente <- c('marginalmente idóneo', 'moderadamente idóneo', 'idóneo', 'altamente idóneo')
   construir_categorias <- function(ordenacion = ord_cat){
     categorias <- switch(ordenacion,
            'mim' = c(#Antiguo 'nin'
@@ -146,8 +149,8 @@ reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
   vectorial <- vectorial[c(campo_indice, campo_salida_interv, campo_salida_etiq, paste(campo, 'puntuación'))]
   
   # Crear mapa
-  val_col <- c("altamente idóneo" = "#018571", "idóneo" = "#80cdc1",
-               "moderadamente idóneo" = "#dfd2b3", "marginalmente idóneo" = "#a6611a")
+  val_col <- c("imprescindible" = "#018571", "prioritario" = "#80cdc1",
+               "moderadamente prioritario" = "#dfd2b3", "marginalmente prioritario" = "#a6611a")
   val_col_cat <- val_col[match(categorias, names(val_col))]
   mapa <- vectorial %>% ggplot +
     aes(fill = .data[[campo_salida_etiq]]) +

@@ -383,9 +383,9 @@ kable_prefagg
 
 ## Reclasificación de fuentes cartográficas: valores originales, intervalos, representación de la reclasificación
 
-Utilizamos múltiples fuentes cartográficas como variables de territorio para modelizar la idoneidad de sitios candidatos para la instalación de estaciones meteoclimáticas. Las fuentes disponibles eran capas ráster servidas bajo distintas resoluciones y sistemas de referencia, por lo que fue necesario aplicar algoritmos de estadística zonal (reducción) y consolidar resultados en una geometría vectorial común. Para ello, redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3 (*hex bins*) [@jose_ramon_martinez_batlle_2022_7367180]. Probamos distintas resoluciones de dicho índice, y tras algunas pruebas, elegimos la resolución "7". Con esta resolución, cubrimos el territorio dominicano (más un área de influencia) con aproximadamente 13,000 hexágonos de ca. 4 km<sup>2</sup> cada uno. Dentro de cada hexágono, por medio de estadística zonal, obtuvimos la media de cada variable, la cual utilizamos como estadístico de referencia en la reclasificación descrita a continuación.
+Utilizamos múltiples fuentes cartográficas como variables de territorio para modelizar el grado de priorización de sitios candidatos para la instalación de estaciones meteoclimáticas. Las fuentes disponibles eran capas ráster servidas bajo distintas resoluciones y sistemas de referencia, por lo que fue necesario aplicar algoritmos de estadística zonal (reducción) y consolidar resultados en una geometría vectorial común. Para ello, redujimos todas las fuentes ráster al índice geoespacial de hexágonos H3 (*hex bins*) [@jose_ramon_martinez_batlle_2022_7367180]. Probamos distintas resoluciones de dicho índice, y tras algunas pruebas, elegimos la resolución "7". Con esta resolución, cubrimos el territorio dominicano (más un área de influencia) con aproximadamente 13,000 hexágonos de ca. 4 km<sup>2</sup> cada uno. Dentro de cada hexágono, por medio de estadística zonal, obtuvimos la media de cada variable, la cual utilizamos como estadístico de referencia en la reclasificación descrita a continuación.
 
-Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios definidos por el equipo de investigación para cada criterio, para lo cual utilizamos conocimiento experto y referencias bibliográficas especializadas en redes de monitoreo meteoclimático, y adaptando las escalas a la realidad insular [@fao1976framework; @rojasbriceno2021]. A cada criterio, y para cada hexágono, asignamos un entero en una escala ordinal del 1 al 4 (de "marginalmente idóneo" a "altamente idóneo"). Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática. Representamos a continuación, para cada criterio, los valores originales mediante gráfico de violín, mostramos los intervalos usados en la reclasificación, y la representamos cartográficamente.
+Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios definidos por el equipo de investigación para cada criterio, para lo cual utilizamos conocimiento experto y referencias bibliográficas especializadas en redes de monitoreo meteoclimático, y adaptando las escalas a la realidad insular [@fao1976framework; @rojasbriceno2021]. A cada criterio, y para cada hexágono, asignamos un entero en una escala ordinal del 1 al 4 (de `r first(fuente)` a `r last(fuente)`). Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática. Representamos a continuación, para cada criterio, los valores originales mediante gráfico de violín, mostramos los intervalos usados en la reclasificación, y la representamos cartográficamente.
 
 
 ```{r funcionesfuentescartograficas}
@@ -591,7 +591,7 @@ puntuaciones_umbrales <- map(objetos, function(x) get(x)[['intervalos_y_etiqueta
   group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
   summarise(value = paste(value, collapse = ' y ')) %>% 
   pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
-  select(criterio, `altamente idóneo`, `idóneo`, `moderadamente idóneo`, `marginalmente idóneo`)
+  select(criterio, rev(fuente))
 ) %>% bind_rows()
 readODS::write_ods(puntuaciones_umbrales, 'fuentes/umbrales-criterios-ahp/puntuaciones.ods')
 puntuaciones_umbrales_kable <- puntuaciones_umbrales %>% kable(format = 'html', escape = F, booktabs = T, digits = 2,
@@ -609,7 +609,7 @@ areas_proporcionales <- map(objetos, function(x) get(x)[['area_proporcional']] %
   pivot_longer(cols = -matches('proporción'), names_to = 'criterio') %>%
   mutate(criterio = gsub(' etiquetas', '', criterio)) %>% 
   pivot_wider(names_from = value, values_from = proporción)) %>% bind_rows() %>% 
-  select(criterio, `altamente idóneo`, `idóneo`, `moderadamente idóneo`, `marginalmente idóneo`) %>% 
+  select(criterio, rev(fuente)) %>% 
   adorn_totals('col') 
 readODS::write_ods(x = areas_proporcionales,
                    path = 'fuentes/umbrales-criterios-ahp/areas_proporcionales.ods')
@@ -631,11 +631,11 @@ all_criteria %>% st_write('out/intervalos_etiquetas_puntuaciones_AHP_criterios_s
                           delete_dsn = T, quiet = T, verbose = F)
 ```
 
-Mapas puntuaciones reclasificadas de cada criterio.
+Mapas de puntuaciones reclasificadas para cada criterio.
 
 ```{r, fig.width=8, fig.height=12}
-paleta <- c("altamente idóneo" = "#018571", "idóneo" = "#80cdc1",
-               "moderadamente idóneo" = "#dfd2b3", "marginalmente idóneo" = "#a6611a")
+paleta <- c("#018571", "#80cdc1", "#dfd2b3", "#a6611a")
+names(paleta) <- rev(fuente)
 all_criteria_mapa <- all_criteria %>%
   select(all_of(contains('etiquetas'))) %>% 
   rename_with(~ stringr::str_replace(.x, 
@@ -663,7 +663,7 @@ if(interactive()) dev.new()
 all_criteria_mapa
 ```
 
-Calculamos las puntuaciones agregadas  multiplicando las puntuaciones parciales de cada criterio por sus correspondientes pesos de preferencias agregadas, con lo cual generamos las puntuaciones agregadas. Estas puntuaciones las reclasificamos en las cuatro categorías habituales (marginalmente idóneo...altamente idóneo) siguiendo un criterio de número de desviaciones estándar.
+Calculamos las puntuaciones agregadas  multiplicando las puntuaciones parciales de cada criterio por sus correspondientes pesos de preferencias agregadas, con lo cual generamos las puntuaciones agregadas. Estas puntuaciones las reclasificamos en las cuatro categorías habituales (`r first(fuente)`...`r last(fuente)`) siguiendo el criterio de cantidad de desviaciones estándar.
 
 ```{r}
 nombres_ahp_obj_sf <- data.frame(
@@ -743,16 +743,16 @@ all_criteria_scores_mapa
 
 ## Exclusión por factores limitantes
 
-Imputamos valores mínimos en las columnas `Puntuación agregada` y `Puntuación agregada escalada` a los hexágonos categorizados como "marginalmente idóneos" en el criterio de distancia a accesos o en el criterio de distancia a cuerpos de agua. Posteriormente, recalculamos la columna `Categorías agregadas` para que los hexágonos a los que se les imputaron valores, se reclasifiquen como "marginalmente idóneos".
+Imputamos valores mínimos en las columnas `Puntuación agregada` y `Puntuación agregada escalada` a los hexágonos categorizados como `r fuente[1]` en el criterio de distancia a accesos o en el criterio de distancia a cuerpos de agua. Posteriormente, recalculamos la columna `Categorías agregadas` para que los hexágonos a los que se les imputaron valores, se reclasifiquen como `r fuente[1]`.
 
 ```{r}
 all_criteria_scores_excluded <- all_criteria_scores %>% 
   mutate(
     `Puntuación agregada` = ifelse(
-      `distancia a accesos etiquetas` == 'marginalmente idóneo' | `distancia a cuerpos de agua etiquetas` == 'marginalmente idóneo',
+      `distancia a accesos etiquetas` == fuente[1] | `distancia a cuerpos de agua etiquetas` == fuente[1],
       min(`Puntuación agregada`, na.rm = T), `Puntuación agregada`),
     `Puntuación agregada escalada` = ifelse(
-      `distancia a accesos etiquetas` == 'marginalmente idóneo' | `distancia a cuerpos de agua etiquetas` == 'marginalmente idóneo',
+      `distancia a accesos etiquetas` == fuente[1] | `distancia a cuerpos de agua etiquetas` == fuente[1],
       min(`Puntuación agregada escalada`, na.rm = T), `Puntuación agregada escalada`),
     `Categoría agregada` = cut(`Puntuación agregada escalada`,
                                     breaks = c(min(`Puntuación agregada escalada`, na.rm = T),
@@ -827,9 +827,10 @@ Aplicamos la función definiendo `r n_esc`dos escenarios posibles, en los que ca
 
 ```{r}
 # Categorías agregadas
-categorias_elegidas <- c('altamente idóneo', 'idóneo')
-names(categorias_elegidas) <- rep('categorías de idoneidad', length(categorias_elegidas))
+categorias_elegidas <- c(fuente[length(fuente)-1], fuente[length(fuente)])
+names(categorias_elegidas) <- rep('categorías de prioridad', length(categorias_elegidas))
 # Criterio de separación (en este caso, kilómetros cuadrados por estación) 
+# !!!!!!!!!!!!!!!!!!!!!!REFACTOR!!!!!!!!!!!!!!!!!!!!!! CAMBIAR km2 por km cuadrados y crear funcion nombre archivo
 names(escenarios) <- paste('Escenario:', escenarios, 'km2 por estación')
 # Primero realizamos los cálculos
 resumen_calculos_escenarios <- map(escenarios, 
@@ -889,7 +890,7 @@ indrhi_para_vecindad_b <- st_read('out/con_indicacion_estatus_climaticas_indrhi.
 estadisticos_distancias_orden_1(indrhi_para_vecindad_b)
 ```
 
-Igualmente, si comparamos con la misma red, pero incluyendo también las estaciones en estado "Regular", notaremos que igualmente las distancias de separación entre estaciones siguen siendo grandes.
+Igualmente, siguiendo con la red del INDRHI, incluyendo en este caso las estaciones en estado "Regular", notaremos que igualmente las distancias de separación entre estaciones siguen siendo muy por encima del mínimo recomendado por la OMM.
 
 ```{r}
 indrhi_para_vecindad_br <- st_read('out/con_indicacion_estatus_climaticas_indrhi.gpkg') %>% 
@@ -922,9 +923,9 @@ actbuereg_d %>% writeRaster('out/onamet_indrhi_actbuereg_dist_500x500_distancia.
                             overwrite = T, setStatistics = F)
 ```
 
-En el caso del escenario "100 km<sup>2</sup> por estación", la distancia de corte entre estaciones es de 11 km. Por lo tanto, eliminaremos las estaciones propuestas por nosotros que queden dentro de ese rango respecto de estaciones de ONAMET y/o INDRHI existentes.
+En el caso del escenario "100 km<sup>2</sup> por estación", la distancia de corte entre estaciones es de 11 km. Por lo tanto, eliminamos las estaciones propuestas por nosotros que caían dentro de ese rango respecto de estaciones de ONAMET y/o INDRHI existentes.
 
-Usamo igualmente las estaciones de la red privada, pero sólo para fines de representación. Nuestro objetivo, al mostrar la red privada sobre los escenarios de densidad, es visibilizar las oportunidad de colaboración y la posible sinergia que contribuirían en definitiva a la mejora de la calidad del dato.
+En nuestros análisis, usamos igualmente las estaciones de la red privada, pero sólo para fines de representación. Nuestro objetivo al mostrar la red privada sobre los distintos escenarios de densidad, es visibilizar la oportunidad de colaboración y posible sinergia para contribuir a la mejora de la calidad del dato.
 
 ```{r}
 consolidado_sf <- invisible(st_read('out/con_indicacion_estatus_consolidado.gpkg', quiet = T))
@@ -994,7 +995,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
@@ -1059,7 +1060,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
@@ -1127,7 +1128,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
@@ -1192,7 +1193,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
@@ -1260,7 +1261,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
@@ -1325,7 +1326,7 @@ obj <- paste0('esc_', escenario, '_', redundancia, '_df_resumen')
 assign(obj,
        esc %>% st_drop_geometry %>%
          dplyr::select(`Categoría agregada`) %>% count(`Categoría agregada`) %>% 
-         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == 'idóneo', n*7000, n*35000)) %>% 
+         mutate(`Monto (US$)` = ifelse(`Categoría agregada` == fuente[3], n*7000, n*35000)) %>% 
          adorn_totals())
 get(obj) #Tabla
 ```
