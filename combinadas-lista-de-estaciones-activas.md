@@ -23578,7 +23578,7 @@ privada
 -69.55257
 </td>
 <td style="text-align:right;">
-19.03248
+19.32638
 </td>
 </tr>
 <tr>

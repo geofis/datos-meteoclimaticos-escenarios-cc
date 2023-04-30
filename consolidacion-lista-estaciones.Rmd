@@ -79,6 +79,10 @@ set.seed(99); reddom[sample(seq_len(nrow(reddom)), 10), ] %>%
 intec <- read_excel(path = 'fuentes/intec/Lista estaciones meteorológicas OCCR.xlsx',
                     skip = 7, col_names = T)
 colnames(intec) <- c(colnames(intec)[c(1, 2)], c('longitud', 'latitud'), colnames(intec)[c(5, 6)])
+#Edición manual de coordenada de Las Terrenas. ¡El dato facilitado cae en Los Haitises!
+intec <- intec %>% mutate(latitud = case_when(
+      `Ubicación` == 'Las Terrenas' ~  'N19 19.583',
+      TRUE ~ latitud))
 (intec$longitudOK <- parse_lon(intec$longitud))
 (intec$latitudOK <- parse_lat(gsub('\\. ', '\\.', intec$latitud)))
 intec$Marca <- intec$Marca[1]

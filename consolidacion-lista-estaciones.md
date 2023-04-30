@@ -1,4 +1,4 @@
-Consolidación de listas de estaciones
+Consolidación inicial de listas de estaciones
 ================
 José Ramón Martínez Batlle
 
@@ -1732,6 +1732,10 @@ Novillero_Clay_REDDOM
 intec <- read_excel(path = 'fuentes/intec/Lista estaciones meteorológicas OCCR.xlsx',
                     skip = 7, col_names = T)
 colnames(intec) <- c(colnames(intec)[c(1, 2)], c('longitud', 'latitud'), colnames(intec)[c(5, 6)])
+#Edición manual de coordenada de Las Terrenas. ¡El dato facilitado cae en Los Haitises!
+intec <- intec %>% mutate(latitud = case_when(
+      `Ubicación` == 'Las Terrenas' ~  'N19 19.583',
+      TRUE ~ latitud))
 (intec$longitudOK <- parse_lon(intec$longitud))
 ```
 
@@ -1741,7 +1745,7 @@ colnames(intec) <- c(colnames(intec)[c(1, 2)], c('longitud', 'latitud'), colname
 (intec$latitudOK <- parse_lat(gsub('\\. ', '\\.', intec$latitud)))
 ```
 
-    ## [1] 18.49500 18.47433 19.03248 19.49751 18.45637
+    ## [1] 18.49500 18.47433 19.32638 19.49751 18.45637
 
 ``` r
 intec$Marca <- intec$Marca[1]
@@ -1856,7 +1860,7 @@ Las Terrenas
 W-69 33.153852
 </td>
 <td style="text-align:left;">
-N19 1. 948976
+N19 19.583
 </td>
 <td style="text-align:left;">
 Davis Vantage Pro2
@@ -1869,7 +1873,7 @@ radiación solar, humedad y temperatura del ambiente. 
 -69.55257
 </td>
 <td style="text-align:right;">
-19.03248
+19.32638
 </td>
 <td style="text-align:left;">
 Las Terrenas
@@ -2655,6 +2659,11 @@ reddom
 </tr>
 </tbody>
 </table>
+
+``` r
+st_crs(consolidado_estaciones_sf) <- 4326
+# st_write(consolidado_estaciones_sf, 'out/consolidado_estaciones_sf.gpkg', delete_dsn = T)
+```
 
 ## Mapa datos 2022
 
