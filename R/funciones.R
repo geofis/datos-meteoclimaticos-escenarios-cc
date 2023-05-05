@@ -488,3 +488,38 @@ estadisticos_distancias_orden_1 <- function(geom){
   estadisticos_distancias <- describe(distancias_1) #Estadísticos de distancias
   return(estadisticos_distancias)
 }
+
+source_rmd_chunks <- function(file, chunk_labels, skip_plots = TRUE, output_temp = FALSE){
+  #From: https://gist.github.com/brshallo/e963b9dca5e4e1ab12ec6348b135362e
+  library(magrittr)
+  library(stringr)
+  library(readr)
+  library(purrr)
+  library(glue)
+  library(knitr)
+  
+  temp <- tempfile(fileext=".R")
+  knitr::purl(file, output = temp)
+  
+  text <- readr::read_file(temp)
+  
+  text <- purrr::map(chunk_labels, ~stringr::str_extract(text, glue::glue("(## ----{var})(.|[:space:])*?(?=(## ----)|$)", var = .x))) %>% 
+    stringr::str_c(collapse = "\n")
+  
+  readr::write_file(text, temp)
+  
+  if(skip_plots) {
+    old_dev = getOption('device')
+    options(device = function(...) {
+      .Call("R_GD_nullDevice", PACKAGE = "grDevices")
+    })
+  }
+  
+  source(temp)
+  
+  if(skip_plots) {
+    options(device = old_dev)
+  }
+  
+  if(output_temp) temp
+}

@@ -388,27 +388,29 @@ Utilizamos múltiples fuentes cartográficas como variables de territorio para m
 Reclasificamos los valores promedio de las ocho variables seleccionadas, aplicando criterios definidos por el equipo de investigación para cada criterio, para lo cual utilizamos conocimiento experto y referencias bibliográficas especializadas en redes de monitoreo meteoclimático, y adaptando las escalas a la realidad insular [@fao1976framework; @rojasbriceno2021]. A cada criterio, y para cada hexágono, asignamos un entero en una escala ordinal del 1 al 4 (de `r first(fuente)` a `r last(fuente)`). Para facilitar esta tarea, y garantizar reproducibilidad y consistencia, creamos funciones que realizaron la reclasificación de forma semitautomática. Representamos a continuación, para cada criterio, los valores originales mediante gráfico de violín, mostramos los intervalos usados en la reclasificación, y la representamos cartográficamente.
 
 
-```{r funcionesfuentescartograficas}
+```{r funciones}
 source('R/funciones.R')
 library(sf)
 library(spdep)
 library(kableExtra)
+```
+
+
+```{r githubvars}
 res_h3 <- 7 #Escribir un valor entre 4 y 7, ambos extremos inclusive
 ruta_ez_gh <- 'https://raw.githubusercontent.com/geofis/zonal-statistics/'
 # ez_ver <- 'da5b4ed7c6b126fce15f8980b7a0b389937f7f35/'
 ez_ver <- 'd7f79365168e688f0d78f521e53fbf2da19244ef/'
+```
+
+
+```{r fuentescartograficasindice}
 ind_esp_url <- paste0(ruta_ez_gh, ez_ver, 'out/all_sources_all_variables_res_', res_h3, '.gpkg')
 ind_esp_url
 if(!any(grepl('^ind_esp$', ls()))){
   ind_esp <- st_read(ind_esp_url, optional = T, quiet = T)
   st_geometry(ind_esp) <- "geometry"
   ind_esp <- st_transform(ind_esp, 32619)
-}
-if(!any(grepl('^pais_url$', ls()))){
-  pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
-  pais <- invisible(st_read(pais_url, optional = T, layer = 'pais', quiet = T))
-  st_geometry(pais) <- "geometry"
-  pais <- st_transform(pais, 32619)
 }
 if(!any(grepl('^ind_esp_inters$', ls()))){
   ind_esp_inters <- st_intersection(pais, ind_esp)
@@ -420,6 +422,16 @@ if(!any(grepl('^ind_esp_inters$', ls())) && interactive()){
   print(ind_esp_inters)
 }
 ```
+
+```{r fuentescartograficaspais}
+if(!any(grepl('^pais_url$', ls()))){
+  pais_url <- paste0(ruta_ez_gh, ez_ver, 'inst/extdata/dr.gpkg')
+  pais <- invisible(st_read(pais_url, optional = T, layer = 'pais', quiet = T))
+  st_geometry(pais) <- "geometry"
+  pais <- st_transform(pais, 32619)
+}
+```
+
 
 Creación de objeto contenedor para la reclasificación de criterios.
 
