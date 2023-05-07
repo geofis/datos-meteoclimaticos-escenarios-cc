@@ -7,7 +7,7 @@ José Martínez<br>Michela Izzo
 Versión HTML (más legible e interactiva),
 [aquí](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/seleccion-sitios-red-de-estaciones-hidrometricas-suplemento-metodologico.html)
 
-## Procedimiento
+# Introducción
 
 A pesar de la importancia de los datos hidrométricos para diseñar e
 implementar políticas efectivas de gestión de recursos hídricos,
@@ -110,12 +110,13 @@ Existen al menos dos fuentes de información geográfica sobre la red
 hidrográfica dominicana. La primera es la red digitalizada a partir del
 mapa topográfico nacional escala 1:50,000 (“MTN-50k”) (Instituto
 Cartográfico Militar (ICM) 1989). La red del MTN-50K, aunque es bastante
-exhaustiva, es realmente una red parcial, y no aporta características
-morfométricas de las corrientes fluviales (e.g. jerarquía), además de
-que no es lo suficientemente precisa como para utilizarla, por sí sola,
-en análisis morfométricos. No obstante, dicha red puede servir de insumo
-para algoritmos semiautomáticos de extracción de drenajes (e.g. tallado
-de red).
+exhaustiva, es realmente una red parcial e inconsistente (e.g. uso de
+criterios subjetivos para definir cursos fluviales), y no aporta
+características morfométricas de las corrientes (e.g. jerarquía), además
+de que no es lo suficientemente precisa como para utilizarla, por sí
+sola, en análisis hidrológicos. No obstante, dicha red puede servir de
+insumo para crear el DEM con fines hidrológicos, como por ejemplo, la
+aplicación o tallado de la red.
 
 La segunda fuente sobre la hidrografía dominicana es un conjunto de
 documentos técnicos y multitemáticos, tanto de ámbito nacional (INDRHI
@@ -123,40 +124,37 @@ documentos técnicos y multitemáticos, tanto de ámbito nacional (INDRHI
 1994; Secretaría de Estado de Medio Ambiente y Recursos Naturales 2004;
 Rodríguez y Febrillet 2006), como de cuencas seleccionadas (CIDIAT y
 INDRHI 1992; Halcrow-COR Ing. S.A. 2002; SERCITEC y INDRHI 2002),
-realizados por personal del Instituto Nacional de Recursos Hidráulicos
-(INDRHI). Sin embargo, cada uno fue generado por métodos distintos y no
-permiten la consolidación de una hidrografía consistente de ámbito
-nacional. Cabe destacar que se están dando pasos en esa dirección
-actualmente, tras el inicio de los trabajos de actualización del Plan
-Hidrológico Nacional, pero se trata de una iniciativa en curso al
-momento de realizarse esta investigación.
+realizados mayormente por personal del Instituto Nacional de Recursos
+Hidráulicos (INDRHI). Sin embargo, cada estudio fue elaborado con
+métodos distintos, por lo que no es viable la consolidación de una
+hidrografía consistente de ámbito nacional a partir de estos. Cabe
+destacar que se están dando pasos en esa dirección actualmente, tras
+haberse iniciado la actualización del Plan Hidrológico Nacional.
 
-El presente estudio tiene, como primer objetivo generar una red de ríos,
-arroyos y cañadas (en la terminología geomorfológica, *talweg*, o línea
-que une puntos de elevaciones mínimas en vaguadas) densa que combine las
-fuentes abiertas más precisas disponibles a la fecha, con miras a
-seleccionar sitios idóneos para la instalación de estaciones
-hidrométricas. En concreto, y para este cometido, optamos por generar la
-red a partir del modelo digital de elevaciones de mayor resolución
-espacial disponible al público en la actualidad, usando métodos
-semiautomáticos implementados en software de código abierto, y
+El presente estudio tiene, como primer objetivo generar una red densa de
+ríos, arroyos y cañadas (en la terminología geomorfológica, *talweg*, o
+línea que une puntos de elevaciones mínimas en vaguadas), elaborada a
+partir de las fuentes geoespaciales abiertas más precisas de las que se
+tenga conocimiento, con miras a seleccionar sitios idóneos para la
+instalación de estaciones hidrométricas. Para este cometido, optamos por
+generar la red a partir del modelo digital de elevaciones de mayor
+resolución espacial disponible al público en la actualidad, usando
+métodos semiautomáticos implementados en software de código abierto, y
 apoyándonos en fuentes pre-existentes, como el mapa topográfico nacional
 y el mapa geológico, entre otros.
 
 Como segundo objetivo nos planteamos seleccionar sitios idóneos para la
-instalación de estaciones hidrométricas, exclusivamente para corrientes
-fluviales, excluyendo mediciones de pozos, lagos, canales de riego,
-embalses y otros cuerpos de agua distintos a ríos, arroyos y cañadas.
-Para esta labor, y como parte del diseño de la investigación,
-aprovechamos las unidades hexagonales ya elegidas previamente en el
-estudio complementario a este, donde se propuso aumentar la densidad de
-la red estaciones meteoclimáticas (ver informe titulado “[Selección de
-sitios para el establecimiento de una red de estaciones meteoclimáticas
-en República Dominicana usando decisión multicriterio y análisis de
+instalación de estaciones hidrométricas, considerando únicamente la
+escorrentía superficial en *talwegs*, excluyendo mediciones de pozos,
+lagos, canales de riego, embalses y otros cuerpos de agua distintos a
+ríos, arroyos y cañadas. Para esta labor, y como parte del diseño de la
+investigación, aprovechamos las unidades hexagonales ya elegidas
+previamente en el estudio complementario a este, donde se propuso
+aumentar la densidad de la red estaciones meteoclimáticas (ver informe
+titulado “[Selección de sitios para el establecimiento de una red de
+estaciones meteoclimáticas en República Dominicana usando decisión
+multicriterio y análisis de
 vecindad](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/seleccion-sitios-red-de-estaciones.html)”).
-Adicionalmente, uno de nuestros objetivos específicos es crear, por
-medios semiautomáticos, una red hidrográfica densa y robusta a partir de
-fuentes abiertas y precisas.
 
 > Notas sobre la unidad elemental *talweg* y la precisión de la red. Un
 > *talweg* es una línea imaginaria sobre el terreno que une los puntos
@@ -186,12 +184,24 @@ fuentes abiertas y precisas.
 > de nuestro estudio, ya que nuestros objetivos se centran en otras
 > áreas.
 
+> Notas sobre cuencas transfronterizas. Las cuencas transfronterizas
+> fueron caracterizadas sólo con la información de la porción de
+> territorio dominicano, por lo cual el orden de red obtenido para las
+> redes correspondientes, no necesariamente refleja el orden de real.
+> Estas cuencas incluyen las de los ríos Artibonito, Pedernales y
+> Masacre, así como varias cuencas pequeñas distribuidas a ambos lados
+> de la línea fronteriza. Sin embargo, una rápida inspección visual
+> sugiere que la referida omisión, no afecta el objetivo de nuestro
+> estudio.
+
 Los resultados de este estudio ofrecen la oportunidad de mejorar la red
 de estaciones hidrométricas, y tienen el potencial de informar medidas
 de conservación, planificación y gestión de recursos hídricos a nivel
 nacional, en un momento en el que la humanidad y, en particular, la
 sociedad dominicana, se preparan para afrontar los efectos del cambio
 climático y la consecuente escasez de agua pronosticada.
+
+# Materiales y métodos
 
 ## Datos, paquetes y funciones
 
@@ -211,7 +221,7 @@ estilo_kable <- function(df, titulo = '', cubre_anchura = T) {
 }
 ```
 
-## Datos de elevación
+## Selección de los datos de elevación
 
 Elegimos el Modelo Digital de Elevación del Satélite de Observación
 Avanzada de la Tierra (ALOS-DEM, por sus siglas en inglés), pues es
@@ -524,22 +534,9 @@ Representamos el índice de escena con `ggplot2`, superponiendo las
 huellas (polígono de área con datos) sobre el límite costero e
 internacional de República Dominicana.
 
-``` r
-ind_orig_sel_m <- ind_orig_sel %>%
-  ggplot +
-  geom_sf(alpha = 0.6, fill = 'grey90', color = 'grey20', size = 0.5) +
-  geom_sf(data = pais, fill = 'transparent', color = 'black') +
-  geom_sf_label(aes(label = sceneName), color = 'red', size = 1.5, label.padding = unit(0.1, "lines"), alpha = 0.9) +
-  labs(title = 'Mapa índice de escenas usadas en la formación del DEM 12.5 ALOS-PALSAR de RD') +
-  theme_bw() + 
-  theme(plot.title = element_text(size = 11)) +
-  ggspatial::annotation_scale(style = 'ticks', )
-ind_orig_sel_m
-```
+<img src="seleccion-sitios-red-de-estaciones-hidrometricas-suplemento-metodologico_files/figure-gfm/mapaindice-1.png" alt="Mapa índice de escenas usadas en la formación del DEM 12.5 ALOS-PALSAR de RD" width="80%" style="display: block; margin: auto;" />
 
-<img src="seleccion-sitios-red-de-estaciones-hidrometricas-suplemento-metodologico_files/figure-gfm/mapaindice-1.png" width="100%" />
-
-## Extracción DEM seleccionados desde comprimidos
+## Extracción de las escenas seleccionadas
 
 Usando el índice de las escenas seleccionadas, extrajimos los
 correspondientes DEM en formato GTiff desde los archivos comprimidos
@@ -644,6 +641,7 @@ CPU en áreas que ajenas al proyecto.
 v.import input=mascara-1km.gpkg output=mascara_1km
 
 # Fijar máscara
+r.mask -r
 r.mask vector=mascara_1km
 
 # Ver ambiente
@@ -671,6 +669,8 @@ time r.import --overwrite input=dem_seamless.vrt output=dem
 g.list type=raster
 ```
 
+<img src="out/dem-sin-procesar.jpg" alt="DEM ALOS PALSAR sin procesar, representado como relieve sombreado. Nótesense los píxeles sin datos, destacados en color rojo (Los Patos-Ojeda-Paraíso, provincia Barahona, sudoeste de República Dominicana)" width="80%" style="display: block; margin: auto;" />
+
 ## Rellenado de píxeles nulos (sin datos)
 
 Para esta tarea, utilizamos el eficiente complemento de GRASS
@@ -690,11 +690,16 @@ echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
 ## real 10m11.925s
 ```
 
-## Exportado de GeoTIFF
+<img src="out/dem-relleno.jpg" alt="DEM ALOS PALSAR sin procesar, representado como relieve sombreado. Los píxeles sin datos fueron eliminados (Los Patos-Ojeda-Paraíso, provincia Barahona, sudoeste de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
-Exportamos el DEM rellenado desde GRASS GIS a un GeoTIFF, en disco y
-fuera de la base de datos de GRASS, para aplicarle un algoritmo de
-suavizado.
+## Suavizado preservando morfologías
+
+Para el suavizado, usamos la herramienta *FeaturePreservingSmoothing* de
+WhiteboxTools, la cual reduce reducir la rugosidad generada por ruido en
+el modelo digital de elevaciones (John B. Lindsay, Francioni, y Cockburn
+2019; John B. Lindsay 2018). Para aplicar esta herramienta, primero
+exportamos el DEM desde la base de datos de GRASS GIS a archivo GeoTIFF,
+y posteriormente aplicamos el suavizado.
 
 ``` bash
 # Exportar a GTiff con compresión LZW
@@ -704,16 +709,7 @@ time r.out.gdal --overwrite --verbose createopt="COMPRESS=LZW,BIGTIFF=YES" \
 # Enviar mensaje al finalizar (ejecutar conjuntamente con anterior)
 echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
 ## real 0m58.924s
-```
 
-## Suavizado preservando morfologías
-
-Usamos la herramienta *FeaturePreservingSmoothing* de WhiteboxTools para
-reducir la rugosidad generada por ruido en el modelo digital de
-elevaciones (John B. Lindsay, Francioni, y Cockburn 2019; John B.
-Lindsay 2018).
-
-``` bash
 # Comenzó a 23.20 de 22 de abril
 time ~/WhiteboxTools_linux_amd64/WBT/whitebox_tools \
   --wd='/media/jose/datos/alos-palsar-dem-rd/dem/' \
@@ -725,9 +721,12 @@ echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
 ## real 9min46.103s
 ```
 
+<img src="out/dem-suavizado.jpg" alt="DEM ALOS PALSAR suavizado, representado como relieve sombreado. Nótese la conservación de las morfologías principales y la eliminación del ruido sobre éstas (Los Patos-Ojeda-Paraíso, provincia Barahona, sudoeste de República Dominicana)" width="80%" style="display: block; margin: auto;" />
+
 ## Importar DEM suavizado a la base de datos de GRASS GIS
 
-Importamos el DEM suavizado para aplicarle nuevos procesamientos.
+Importamos el DEM suavizado para aplicarle nuevos procesamientos
+hidrológicos.
 
 ``` bash
 time r.import input=dem_relleno_suavizado.tif output=dem_suavizado
@@ -782,69 +781,62 @@ g.region raster=dem_suavizado -ap
 r.mapcalc --overwrite "dem_pseudo_ortometrico = dem_suavizado - egm2008_hires"
 ```
 
-## Tallar la red sobre el DEM
+<img src="out/perfiles-dem/los-patos.png" alt="Alturas respecto de geoide EGM08 (~ortométrica) y sobre elipsoide WGS84, de un transecto descendente desde Bahoruco Oriental al Mar Caribe (Los Patos-Ojeda-Paraíso, provincia Barahona, sudoeste de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
-El tallado o grabado de red (*stream burning*) consiste en reforzar,
-sobre el DEM, la red hidrográfica conocida, con el objetivo de inducir
-el flujo a través de lechos reales por parte de algoritmos automáticos
-de acumulación de flujo y extracción de redes. Este procedimiento es
-particularmente útil (e imprescindible) en áreas llanas, pues produce
-redes hidrográficas más reales y, en suma, mejora la topología de la
-red. Para esta tarea, probamos dos herramientas de tallado de DEM, y
-tallamos, con cada uno de ellos, dos redes distintas, por lo que
-generamos cuatro DEM tallados.
+## Tallar (aplicar) la red sobre el DEM
 
-Los herramientas que probamos fueron FillBurn de WhiteboxTools (John B.
-Lindsay 2018) y r.carve de GRASS GIS (GRASS Development Team 2022).
-FillBurns de WBT, basado en (Saunders 2000; John B. Lindsay 2016)
-realiza dos modificaciones a la vez sobre el DEM; por una parte, graba
-la red, usando una profundidad por defecto y, por otro, rellena
-depresiones. Por su parte, r.carve de GRASS GIS talla la red usando
-valores de profundidad y anchura de lechos por defecto definidos por el
-usuario. Por defecto, la anchura de lecho es equivalente a la resolución
-del DEM. La profundidad puede definirse por el usuario, y es establecida
-en unidades relativas dentro del contexto de cada celda a grabar como
-lecho. Esta herramienta no altera ni elimina las depresiones, por lo que
-conserva las propiedades topográficas originales.
+El tallado, grabado o aplicación de red (*stream burning*) consiste en
+reforzar, sobre el DEM, la red hidrográfica conocida para garantizar que
+los algoritmos automáticos de análisis hidrológico conduzcan el flujo a
+través de lechos existentes. Este procedimiento es particularmente útil
+(e imprescindible) en áreas llanas, pues produce redes hidrográficas más
+reales y, en suma, mejora la topología de la red. No obstante, el
+procesamiento modifica sensiblemente el DEM, especialmente en los
+lugares donde ocurre el grabado.
 
-Cada uno de estos algoritmos los aplicamos tallando el DEM con dos redes
-de drenaje distintas, una densa y otra sólo de cursos largos. Para
-generar la red densa, nos apoyamos en el mapa topográfico nacional a
-escala 1:50,000 (MTN50K) (Instituto Cartográfico Militar (ICM) 1989). En
-particular, la red densa consistió en una recopilación exhaustiva de los
-*talweg* dibujados en el mapa topográfico (lechos en valles drenados,
-líneas de mínima elevación, “vaguadas”), excluyendo canales de riego y
-otras obras de ingeniería de reconducción de flujo. Para garantizar la
-continuidad de la red, recuperamos el trazado de la red previo al
-llenado de embalses, usando mapas topográficos de la época pre-embalse.
+Probamos dos alternativas de tallado de DEM usando las herramientas
+`FillBurn` de WhiteboxTools (John B. Lindsay 2018) y `r.carve` de GRASS
+GIS (GRASS Development Team 2022). Asimismo, con cada algoritmo probamos
+intentando grabar en el DEM dos redes de drenaje distintas, una densa y
+otra compuesta sólo los cursos largos.
 
-Para generar la red de cursos largos, utilizamos tanto el MTN50K
-(Instituto Cartográfico Militar (ICM) 1989), así como imágenes
-satelitales de distintos proveedores (Google; Airbus, CNES; Airbus,
-Landsat; Copernicus; Maxar Technologies; U.S. Geological Survey 2023).
-Esta red consistió en una selección de los ríos más largos y embalsados
-de República Dominicana. Para generarla, extrajimos de cada uno su
-trazado en los tramos más bajos y de menor pendiente, para así ayudar a
-encauzar el flujo en estas áreas y mejorar las propiedades topológicas
-de la red. Al igual que en la red densa, ignoramos la presencia de los
-embalses para garantizar la continuidad topológica de la red.
+Para generar la red densa, nos apoyamos en el mapa topográfico nacional
+a escala 1:50,000 (MTN50K) (Instituto Cartográfico Militar (ICM) 1989).
+En particular, la red densa consistió en una recopilación exhaustiva de
+los *talweg* dibujados en el mapa topográfico (lechos en valles
+drenados, líneas de mínima elevación, “vaguadas”), excluyendo canales de
+riego y otras obras de ingeniería de reconducción de flujo. Para
+garantizar la continuidad de la red, recuperamos el trazado de la red
+previo al llenado de embalses, usando mapas topográficos de la época
+pre-embalse. Por otra parte, tal como indicamos arriba, alternativamente
+probamos con una red de cursos largos, la cual generamos a partir del
+MTN-50K (Instituto Cartográfico Militar (ICM) 1989), imágenes
+satelitales, y mapas de distintos proveedores (Google; Airbus, CNES;
+Airbus, Landsat; Copernicus; Maxar Technologies; U.S. Geological Survey
+2023; OpenStreetMap contributors 2017). Esta red consistió en una
+selección de los ríos más largos y represados de República Dominicana, e
+incluyó tramos de ríos que atraviesan áreas problemáticas, como grandes
+llanuras o relieves kársticos. Al igual que en la red densa, para
+garantizar la continuidad topológica de la red, ignoramos la presencia
+de los embalses y grabamos trazados históricos sobre el DEM. El
+siguiente paso fue probar las dos herramientas disponibles, `r.carve` de
+GRASS GIS y `FillBurn` de WBT, con cada una de las redes.
 
-La herramienta FillBurn de WhiteboxTools mostró mejor rendimiento en
-cuanto a tiempo de cómputo, tanto con la red densa como con la de lechos
-largos. No obstante, **el DEM resultante fue muy diferente al original,
-especialmente en las áreas con depresiones**. Lo consideramos útil para
-extraer la red de drenaje y su jerarquía, pero no para obtener
-estadísticos de cuencas y redes de drenaje, en cuyo caso utilizamos el
-DEM pseudo-ortométrico.
+### Alternativa 1. Tallado con GRASS GIS (elegida)
 
-La herramienta r.carve, fue menos eficiente que FillBurn de WBT. En el
-caso de la red densa, al intentar tallarla sobre el DEM, dedicamos un
-tiempo de cómputo de más de siete horas, pero nos vimos obligados a
-interrumpirlo sin concluir. Al tallar la red de lechos largo, obtuvimos
-un buen resultado, con un DEM más preciso y aprovechable en términos de
-topografía original.
-
-### Alternativa 1. Tallado con GRASS GIS
+La herramienta r.carve de GRASS GIS fue diseñada para grabar el DEM sin
+modificarlo sensiblemente, permitiendo configurar la profundidad y la
+anchura del grabado. Por defecto, la anchura de lecho es equivalente a
+la resolución del DEM. La profundidad puede definirse por el usuario,
+para lo cual nosotros establecimos 100 metros. Aunque la herramienta
+conserva las propiedades topográficas en el DEM, su rendimiento en
+nuestras pruebas fue muy bajo. Por ejemplo, en el caso de la red densa,
+al intentar tallarla sobre el DEM, dedicamos un tiempo de cómputo de más
+de siete horas (sin paralelización), por lo que nos vimos obligados a
+interrumpirlo sin concluir. No obstante, **la red de cursos largos sí
+pudimos tallarla sobre el DEM con esta herramienta, generando un
+resultado óptimo**, aunque el proceso ocupó más de 1 hora de tiempo de
+cómputo.
 
 ``` bash
 # Limpiar red manualmente en QGIS
@@ -855,56 +847,86 @@ topografía original.
 # Importar red a GRASS
 v.import --overwrite input=red_mtn50k_cleaned_largos.gpkg output=red_mtn50k_cleaned_largos
 time r.carve --overwrite --verbose raster=dem_pseudo_ortometrico \
-  vector=red_mtn50k_cleaned_largos output=dem_tallado depth=0.5
-echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
+  vector=red_mtn50k_cleaned_largos output=dem_tallado depth=100
+echo "r.carve finalizado" | mail -s "r.carve finalizado" zoneminderjr@gmail.com
 ## real 320m40.373s # NO ALCANZÓ A TERMINAR USANDO RED DOMINICANA DEL MTN50K DENSA (red_mtn50k_cleaned)
-## real 72m42.253s # COMPLETADO: USANDO RED DE CURSOS LARGOS SOLAMENTE (red_mtn50k_cleaned_largos)
+## real 97m3.970s # COMPLETADO: USANDO RED DE CURSOS LARGOS SOLAMENTE (red_mtn50k_cleaned_largos)
 ```
 
-### Alternativa 2. Tallado con WhiteboxTools
+<img src="out/dem-sin-tallar-tallado.png" alt="DEM ALOS PALSAR sin aplicación de hidrografía (A), y con aplicación de hidrografía seleccionada (B). El DEM se representa como relieve sombreado y la aplicación se denota como un grabado oscurecido (cañón del río Payabo, Los Haitises, y río Yuna (proximidades de Arenoso, nordeste de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
-``` bash
-# Alternativa 2: rápida, pero produce un tallado muy profundo y rellena depresiones
-# Exportar dem_pseudo_ortometrico a GTiff con compresión LZW
-# time r.out.gdal --overwrite --verbose createopt="COMPRESS=LZW,BIGTIFF=YES" \
-#   input=dem_pseudo_ortometrico \
-#   format=GTiff type=Float64 output=dem_pseudo_ortometrico.tif
-# echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
-## real 1m0.248s
-```
+Probando alternativas más eficientes con álgebra de mapas.
 
-Convertir red a shapefile para usar en tallado con FillBurn de
-WhiteboxTools
+\`\`\`{bash. eval=F} \# Basado en:
 
-``` r
-# Exportar red_mtn50k_cleaned.gpkg a shapefile
-ogr2ogr(src_datasource_name = '/media/jose/datos/alos-palsar-dem-rd/dem/red_mtn50k_cleaned.gpkg',
-        dst_datasource_name = '/media/jose/datos/alos-palsar-dem-rd/dem/red_mtn50k_cleaned.shp',
-        verbose=TRUE)
-```
 
-``` bash
-# Tallar con WBT
-# time ~/WhiteboxTools_linux_amd64/WBT/whitebox_tools \
-#   --wd='/media/jose/datos/alos-palsar-dem-rd/dem/' \
-#   --run=FillBurn --dem='dem_pseudo_ortometrico.tif' \
-#   --streams=red_mtn50k_cleaned.shp --output='dem_tallado.tif' -v
-# echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
-## real 9m21.980s
-# Importar a GRASS GIS
-# time r.import --overwrite input=dem_tallado.tif output=dem_tallado
-# echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
-## real 0m38.519s
-```
 
-## Crear depresiones para quemarlas sobre el DEM tallado
 
-Usamos la capa de calizas con depresiones de República Dominicana
-(limestones_with_depressions.gpkg), para intersectarla con una capa de
-depresiones generada a partir de geomórfonos, la cual a su vez fue
-generada a partir del DEM pseudo-ortomético. Usamos este DEM, porque
-produce una relación más exhaustiva de depresiones. Con este paso
-generamos una capa de depresiones con sentido.
+    ### Alternativa 2. Tallado con WhiteboxTools (descartada)
+
+    Como alternativa de procesamiento 2 usamos la herramienta `FillBurn`, basada en @saunders2000 e implementada por @lindsay2016 en de WBT. Esta realiza dos modificaciones a la vez sobre el DEM; por una parte, graba la red, usando una profundidad por defecto y, por otro, rellena las depresiones. La herramienta mostró mejor rendimiento que la de GRASS GIS en cuanto a tiempo de cómputo, tanto con la red densa, que sí pudo grabarla sobre el DEM, como con la de cursos largos.
+
+    En particular, sobre el grabado de la red densa, notamos que los trazados no se alineaban bien con el DEM por problemas de alineación y ajuste de datums entre el mapa topográfico nacional y el DEM (NAD27 y WGS84). Como consecuencia, la red se grababa en topografías claramente muy accidentadas o a contrapendiente, generando así una red con duplicados y falsos positivos. No obstante, intentamos generar una red con dicho DEM, pero el resultado no fue satisfactorio en términos hidrológicos, por lo que optamos por probar con la red de cursos largos para generar el DEM tallado. En este caso, **el DEM resultante fue muy diferente al original, especialmente en las áreas con depresiones**. Por esta razón, decidimos usar el DEM tallado con la red de cursos largos generado por GRASS GIS.
+
+
+    ```bash
+    # Alternativa 2: rápida, pero produce un tallado muy profundo y rellena depresiones
+    # Exportar dem_pseudo_ortometrico a GTiff con compresión LZW
+    # time r.out.gdal --overwrite --verbose createopt="COMPRESS=LZW,BIGTIFF=YES" \
+    #   input=dem_pseudo_ortometrico \
+    #   format=GTiff type=Float64 output=dem_pseudo_ortometrico.tif
+    # echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
+    ## real 1m0.248s
+
+    # Exportar red_mtn50k_cleaned.gpkg a shapefile
+    # ogr2ogr(src_datasource_name = '/media/jose/datos/alos-palsar-dem-rd/dem/red_mtn50k_cleaned.gpkg',
+    #         dst_datasource_name = '/media/jose/datos/alos-palsar-dem-rd/dem/red_mtn50k_cleaned.shp',
+    #         verbose=TRUE)
+
+    # Tallar con WBT
+    # time ~/WhiteboxTools_linux_amd64/WBT/whitebox_tools \
+    #   --wd='/media/jose/datos/alos-palsar-dem-rd/dem/' \
+    #   --run=FillBurn --dem='dem_pseudo_ortometrico.tif' \
+    #   --streams=red_mtn50k_cleaned.shp --output='dem_tallado.tif' -v
+    # echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
+    ## real 9m21.980s
+    # Importar a GRASS GIS
+    # time r.import --overwrite input=dem_tallado.tif output=dem_tallado
+    # echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
+    ## real 0m38.519s
+
+## Depresiones
+
+Para producir límites de cuencas y redes de drenaje con sentido, los
+algoritmos de análisis hidrológico requieren que se identifiquen las
+depresiones capaces de capturar la escorrentía superficial (e.g. ponor,
+pérdidas). Usando la capa de litologías de República Dominicana (Mollat
+et al. 2004), identificamos y separamos las calizas que presentaban
+suficiente grado de karstificación, de acuerdo con nuestra experiencia
+de campo. Posteriormente, generamos una capa de depresiones con el
+complemento `r.geomorphon` a partir del DEM (Jarosław Jasiewicz y
+Stepinski 2013). Adicionalmente, digitalizamos algunas depresiones cuya
+localización conocíamos por experiencia de terreno. Finalmente,
+intersectamos las tres fuentes para producir una capa comprensiva de las
+depresiones que capturan el flujo superficial.
+
+No obstante, nuestro resultado debe tomarse con cautela en el relieve
+kárstico. Como bien es sabido, no todas las calizas representadas en la
+geología dominicana están lo suficientemente karstificadas como para
+desarrollar depresiones. Por esta razón, usamos la capa de calizas a
+discreción, y sólo conservamos aquellos afloramientos de calizas donde
+no se evidenciaba escorrentía superficial, y donde encontramos evidencia
+de depresiones en la topografía detallada y en imágenes satelitales. No
+obstante, gran parte de este trabajo se realizó manualmente, por lo que
+la exhaustividad no está del todo garantizada. Además, es virtualmente
+imposible identificar todas las depresiones que funcionan como pérdidas
+en imágenes satelitales o en mapas topográficos. Finalmente, un elemento
+adicional complica aún más las cosas en los relieves kársticos: muchas
+pérdidas no ocurren a través de una depresión topográficamente visible,
+pues gran parte de la infiltración se produce a través de fracturas en
+la roca, pasando al endokarst y a la zona vadosa de manera “silenciosa”,
+sin que veamos desde el aire la típica morfología deprimida
+(e.g. dolina).
 
 ``` bash
 # Crear geomórfonos
@@ -914,18 +936,18 @@ generamos una capa de depresiones con sentido.
 #   --dem=dem_tallado.tif -o=geomorfonos.tif --search=25 \
 #   --threshold=0 --tdist=0.0 --forms
 # echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
-## real 6m52.298s
+## real 6m52.298s #MUY EFICIENTE
 # GRASS GIS
 # time r.geomorphon --overwrite --verbose elevation=dem_tallado forms=geomorfonos search=25
 time r.geomorphon --overwrite --verbose elevation=dem_pseudo_ortometrico forms=geomorfonos search=25
 echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
-## real 33m16.508s!!!!!!!!!!!!!!!!!
+## real 33m16.508s #MUY LENTO
 
 # Extraer depresiones desde geomorfonos
 r.mapcalc --overwrite expression="'depresiones_geomorfonos' = if(geomorfonos == 10, 1, null())"
 
 # Importar depresiones manualmente digitalizadas a base de datos de GRASS GIS
-v.import input=depresiones_digitalizadas.gpkg output=depresiones_digitalizadas
+v.import --overwrite input=depresiones_digitalizadas.gpkg output=depresiones_digitalizadas
 
 # Convertir depresiones digitalizadas manualmente a ráster
 v.to.rast --overwrite input=depresiones_digitalizadas type=area use=val output=depresiones_digitalizadas
@@ -946,81 +968,204 @@ r.patch --overwrite input=depresiones_geomorfonos_calizas,depresiones_digitaliza
   output=depresiones_todas
 ```
 
-## Análisis morfométrico, jerarquía de red. El dilema: r.watershed o r.stream.extract
+<img src="out/depresiones.png" alt="DEM ALOS PALSAR representado como mapa hipsómétrico (rojo y marrón representan terreno elevado, verde y azul claro terreno bajo) sobre relieve sombreado, mostrando el área de Guaraguao, Los Haitises, al sur del río Yuna (nordeste de República Dominicana). (A) sin mostrar depresiones, (B) mostrando depresiones en tonalidad azul oscuro" width="80%" style="display: block; margin: auto;" />
 
-El complemento r.watershed es uno de los más completos de GRASS GIS. Con
-este complemento se pueden obtener las capas de acumulación de flujo,
-talwegs, redes de drenaje y cuencas, entre otras. Estos productos son
-usados tanto en el análisis de cuenca, como en el análisis de red de
-drenaje (e.g. análisis hortoniano). No obstante, otro complemento de
-GRASS GIS también extrae red de drenaje. La elección de uno u otro
-dependerá de nuestro objetivo. Si nos interesa analizar cuencas
-hidrográficas, entonces, el complemento a usar será r.watershed. Si nos
-interesa analizar redes de drenaje y jerarquía hidrográfica, entonces
-tenemos dos opciones: r.watershed o r.stream\*.
+## Análisis hidrológicos, morfométricos y jerarquía de red. El dilema: `r.watershed` o `r.stream*`
 
-La familia r.stream\* incluye un generador de red (r.stream.extract) y
-un calculador de jerarquía de red (r.stream.order). El complemento
-r.stream.order es bastante potente, porque nos ayuda a caracterizar la
-red hidrográfica de manera muy completa. Para correr r.stream.order,
-necesitamos el mapa de la red propiamente (“stream_rast”), y el de
-dirección de drenaje (direction).
+El complemento `r.watershed` es uno de los más completos de GRASS GIS
+para realizar análisis hidrológico a nivel de cuenca e incluso para
+redes. Con este complemento se pueden obtener los mapas de acumulación
+de flujo, talwegs, redes de drenaje y cuencas, entre otros. Estos
+productos son usados tanto en el análisis de cuenca, como en el análisis
+de red de drenaje (e.g. análisis hortoniano). Sin embargo, otro
+complemento de GRASS GIS se especializa en la extracción y
+caracterización de redes de drenaje. La elección de uno u otro dependerá
+de nuestro objetivo. Si nos interesa analizar cuencas hidrográficas,
+entonces, el complemento a usar será r.watershed. Si nos interesa
+analizar redes de drenaje y jerarquía hidrográfica, entonces tenemos dos
+opciones: `r.watershed` y `r.stream*`, ya sea combinados o de forma
+excluyente.
 
-Tanto r.stream.extract como r.waterhsed son capaces de generar estos
-productos, pero con ligeras diferencias. **La clave consiste en no
-combinar un producto de r.watershed con uno de r.stream.extract**. Por
-ejemplo, para calcular órdenes de red con r.stream.order, no se
-recomienda combinar el mapa de la red producido por r.watershed con el
-de dirección de drenaje de r.stream.extract. Ambos deben ser producidos
-por un mismo algoritmo.
+La familia `r.stream*` incluye un generador de red (`r.stream.extract`),
+un calculador de jerarquía de red (`r.stream.order`) y un generador de
+cuencas hidrográficas consecuente con la red de drenaje
+(`r.stream.basins`) (JarosŁaw Jasiewicz y Metz 2011). El complemento
+`r.stream.order` es bastante potente, porque nos permite caracterizar la
+red hidrográfica de manera muy completa usando la topología para
+determinar la jerarquía ordenada. Para correr `r.stream.order`,
+necesitamos el mapa de la red propiamente (`stream_rast`), y el de
+dirección de drenaje (`direction`). Por otra parte, `r.stream.basins`
+utliza como entrada los mapas producidos por `r.stream.order` para
+delimitar cuencas de acuerdo con la ordenación jerárquica elegida.
 
-Por lo tanto, en este punto tenemos dos opciones: - Opción 1: generar
-tanto stream_rast y direction con r.watershed, - Opción 2: generar tanto
-stream_rast y direction con r.stream.extract.
+Tanto `r.stream.extract` como `r.waterhsed` son capaces de generar
+productos que sirven de insumo a otros complementos, pero con ligeras
+diferencias. En un uso combinado de estos complementos, para garantizar
+la consistencia del resultado, **la clave está en no combinar un
+producto de r.watershed con uno de `r.stream.extract`**. Por ejemplo,
+para calcular órdenes de red con `r.stream.order`, no se recomienda
+combinar el mapa de la red producido por `r.watershed` con el de
+dirección de drenaje de `r.stream.extract`. Ambas entradas deben ser
+producidas por un mismo algoritmo.
 
-Dado que nuestro interés principal es la jerarquía de red, saltaremos
-directamente a ejecutar el complemento r.stream.extract, para generar
-productos que usaremos posteriormente en r.stream.order. Esto nos
-ahorrará el paso de ejecutar r.watershed. Sólo para fines de
-demostrativos, conservaremos el código necesario para ejecutar
-r.watershed.
+Por lo tanto, en este punto tenemos dos opciones:
+
+- Opción 1: generar tanto `stream_rast` y `direction` con `r.watershed`.
+
+- Opción 2: generar tanto `stream_rast` y `direction` con
+  `r.stream.extract`.
+
+Dado que nuestro interés principal es la jerarquía de red, pues la
+utilizamos como criterio de selección de sitios idóneos para estaciones
+hidrométricas, podríamos saltar directamente a ejecutar el complemento
+`r.stream.extract`, y generar productos que usaremos posteriormente en
+`r.stream.order`. Esto nos ahorraría el paso de ejecutar `r.watershed`.
+Ahora bien, dado que nos interesa que `r.stream.order` calcule la
+jerarquía por el método Horton, entonces necesitaremos el mapa de
+acumulación, el cual sólo puede producirlo `r.watershed`. Comencemos
+precisamente con ello, generando el mapa de acumulación.
+
+Dado que a partir de este bloque de código, inician los análisis
+hidrológicos, antes de ejecutar `r.watershed`, aplicamos una máscara
+ajustada a la línea de costa y los límites fronterizos del país. Esta
+máscara más ajustada asegura que las redes extraídas no se extiendan
+hacia en el mar. Por otra parte, para evitar interrupciones abruptas y
+no realistas del flujo, creamos una zona de influencia en el límite
+fronterizo para permitir la salida y entrada de flujo a través de éste.
 
 ``` bash
-# time r.watershed --overwrite --verbose \
-#   elevation=dem_tallado depression=depresiones_todas accumulation=rwshed_acum \
-#   stream=rwshed_talwegs drainage=rwshed_dir_drenaje basin=rwshed_cuencas \
-#   half_basin=rwshed_hemicuencas threshold=160 memory=32000
-# echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
-## real 10m56.662s
+# Importar máscara
+v.import --overwrite input=mascara.gpkg output=mascara
+# Fijar máscara (EJECUTAR SÓLO SI ES ESTRICTAMENTE NECESARIO, PUES TARDA MUCHO)
+r.mask -r
+r.mask vector=mascara
 ```
 
-Ahora bien, si nos interesa que r.stream.order calcule la jerarquía por
-el método Horton, entonces necesitaremos el mapa de acumulación, el cual
-sólo puedo producirlo r.watershed.
+Iniciamos los análisis hidrológicos con la nueva máscara.
 
-``` bash
+``` r
 time r.watershed --overwrite --verbose elevation=dem_tallado \
  depression=depresiones_todas accumulation=rwshed_acum \
- threshold=160 memory=32000
-echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
-## real
+ threshold=180 stream=rwshed_talwegs \
+ # drainage=rwshed_direccion_drenaje basin=rwshed_cuencas half_basin=rwshed_hemicuenca \
+ # tci=rwshed_tci spi=rwshed_spi \
+ # length_slope=rwshed_longitud_vertiente slope_steepness=rwshed_empinamiento \
+ # retention=rwshed_retencion_flujo max_slope_length=rwshed_max_longitud_vertiente \
+ memory=32000
+echo "r.watershed finalizado" | mail -s "r.watershed finalizado" zoneminderjr@gmail.com
+## real 9m47.041s
 ```
 
-## Extraer red de drenaje
+### Extraer red de drenaje
+
+Con el DEM y la capa de acumulación generada por `r.watershed`,
+extrajimos la red hidrográfica, para lo cual, previamente elegimos, por
+medio de inspección visual, un umbral óptimo de acumulación. La elección
+del umbral óptimo puede variar en función de las características
+específicas de cada cuenca, como la pendiente y tamaño de la misma, la
+litología, el clima, entre otros atributos. En consecuencia, la práctica
+habitual recomienda realizar varias corridas de análisis con diferentes
+valores umbral para obtener la mejor configuración de la red
+hidrográfica para el área de interés. Los criterios que fijamos para
+elegir un umbral óptimo de acumulación fueron los siguientes:
+
+1.  Umbrales consistentes con estudios similares.
+
+2.  Densidad de red suficiente como para producir una red
+    representativa.
+
+3.  Evitar la generalización de la red al punto que invisibilice lugares
+    idóneos.
+
+4.  Evitar una red extremadamente densa con lugares que no reúnen las
+    mínimas características hidrológicas (e.g. cursos con caudal
+    permamennte o semipermanente).
+
+Dado que nuestro DEM cuenta con una resolución espacial de 12.5 m,
+exploramos diferentes umbrales para determinar la extensión de las
+cuencas hidrográficas y la densidad de la red hidrográfica que nos
+resultara idónea. Seleccionamos los valores 180, 540 y 900 celdas como
+umbrales de acumulación en el complemento `r.stream.extract`, los cuales
+equivalen, respectivamente, a 3, 8 y 14 hectáreas en términos de
+superficie, respectivamente. Estos umbrales se inscriben en el rango de
+valores usados en estudios consultados (Marchesini et al. 2021), donde
+evalúan por métodos de “áreas susceptibles a inundación” (Freedman y
+Diaconis 1981), el rango de umbrales a elegir en nuestro estudio.
 
 ``` bash
-time r.stream.extract --overwrite elevation=dem_tallado accumulation=rwshed_acum \
-  depression=depresiones_todas threshold=160 \
-  stream_vector=rstream_talwegs stream_raster=rstream_talwegs \
-    direction=rstream_direccion memory=32000
-echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
+# Extraer redes de drenaje para tres umbrales de acumulación distintos
+# En bucle
+for i in `echo {180..900..360}`; \
+  do echo -e "\nTRABAJANDO EL UMBRAL DE ACUMULACIÓN $i ...\n"; \
+  time r.stream.extract --overwrite elevation=dem_tallado accumulation=rwshed_acum \
+    depression=depresiones_todas threshold=$i \
+    stream_vector=rstream_talwegs_umbral_$i stream_raster=rstream_talwegs_umbral_$i \
+    direction=rstream_direccion_umbral_$i memory=32000; \
+  echo -e "r.stream.extract umbral $i finalizado" | mail -s "r.stream.extract finalizado" zoneminderjr@gmail.com; \
+done
+## real 11m28.455s
+## real 11m26.908s
+## real 11m30.074s
+# Único
+# time r.stream.extract --overwrite elevation=dem_tallado accumulation=rwshed_acum \
+#   depression=depresiones_todas threshold=64 \
+#   stream_vector=rstream_talwegs_umbral_64 stream_raster=rstream_talwegs_umbral_64 \
+#     direction=rstream_direccion_umbral_64 memory=32000
+# echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
 ## real 11m46.930s
+```
 
+<img src="out/red-indiferenciada.png" alt="Red de drenaje extraída para tres umbrales de acumulación: (A) 180 celdas, equivalente a ~3 ha; (B) 540 celdas, equivalente a ~8 ha; (C) 900 celdas, equivalente a ~14 ha. La imagen de fondo es un relieve sombreado a partir de DEM ALOS PALSAR, mostrando el área de El Arroyazo en la reserva científica Ébano Verde (provincia La Vega, cordillera Central de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
-r.stream.order --overwrite stream_rast=rstream_talwegs direction=rstream_direccion \
-    elevation=dem_tallado accumulation=rwshed_acum stream_vect=order_todos \
-    topo=topologia_orden memory=32000
-echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
+### Generar órdenes de red
+
+``` bash
+# Extraer orden de red
+# En bucle
+for i in `echo {180..900..360}`; \
+  do echo -e "\nTRABAJANDO EL UMBRAL DE ACUMULACIÓN $i ...\n"; \
+  time r.stream.order --overwrite stream_rast=rstream_talwegs_umbral_$i \
+    direction=rstream_direccion_umbral_$i \
+    elevation=dem_tallado accumulation=rwshed_acum \
+    stream_vect=rstream_orden_de_red_umbral_$i \
+    strahler=rstream_orden_strahler_de_red_umbral_$i \
+    horton=rstream_orden_horton_de_red_umbral_$i \
+    topo=topologia_orden_umbral_$i memory=32000; \
+  echo -e "r.stream.order umbral de acumulación $i finalizado" | mail -s "r.stream.order finalizado" zoneminderjr@gmail.com; \
+done
+## real 1m34.983s
+## real 1m18.662s
+## real 1m14.986s
+# Único
+# time r.stream.order --overwrite stream_rast=rstream_talwegs direction=rstream_direccion \
+#     elevation=dem_tallado accumulation=rwshed_acum stream_vect=order_todos \
+#     topo=topologia_orden memory=32000
+# echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
+## real 
+```
+
+<img src="out/red-orden-nacional.jpg" alt="Representación del orden de red de Strahler por medio de grosor de línea, para todo el territorio dominicano. Esta red fue generada usando un umbral de acumulación de 900 celdas, equivalente a ~14 ha" width="80%" style="display: block; margin: auto;" />
+
+<img src="out/red-orden.png" alt="Orden de red de Strahler para redes de drenaje generadas a partir de tres umbrales de acumulación: (A) 180 celdas, equivalente a ~3 ha; (B) 540 celdas, equivalente a ~8 ha; (C) 900 celdas, equivalente a ~14 ha. El área mostrada corresponde al río San Juan, afluente del río Yaque del Sur (vertiente sur de la cordillera Central de República Dominicana)" width="80%" style="display: block; margin: auto;" />
+
+<img src="out/red-orden-detalle-mtn.jpg" alt="Orden de red de Strahler en el área del pico de la Viuda y Sabana Vieja, provincia San Juan (vertiente sur de la cordillera Central de República Dominicana). Esta red fue generada usando un umbral de acumulación de 180 celdas, equivalente a ~3 ha. De fondo, mapa topográfico nacional escala 1:50,000 y relieve sombreado" width="80%" style="display: block; margin: auto;" />
+
+### Delimitar cuencas según la jerarquía de red
+
+``` bash
+# Delimitar cuencas según jerarquía
+# En bucle
+for i in `echo {180..900..360}`; \
+  do for j in `echo {1..9..1}`; \
+    do echo -e "\nTRABAJANDO EL UMBRAL DE ACUMULACIÓN $i, orden $j...\n"; \
+    time r.stream.basins -c --overwrite direction=rstream_direccion_umbral_$i \
+      stream_rast=rstream_orden_strahler_de_red_umbral_$i cats=$j \
+      basins=rstream_cuencas_strahler_umbral_${i}_orden_$j memory=32000; \
+  done; \
+  echo -e "r.stream.order umbral de acumulación $i finalizado" | mail -s "r.stream.order finalizado" zoneminderjr@gmail.com; \
+done
+## real 
+## real 
 ## real 
 ```
 
@@ -1089,6 +1234,14 @@ Yaque del Sur*. Instituto Nacional de Recursos Hidráulicos (INDRHI).
 
 Foucault, A., y J. F. Raoult. 1985. *Diccionario de Geología*. MASSON.
 <https://books.google.com.do/books?id=x5FDPQAACAAJ>.
+
+</div>
+
+<div id="ref-freedman1981" class="csl-entry">
+
+Freedman, David, y Persi Diaconis. 1981. «On the Histogram as a Density
+Estimator:L 2 Theory». *Zeitschrift Für Wahrscheinlichkeitstheorie Und
+Verwandte Gebiete* 57 (4): 453-76. <https://doi.org/10.1007/BF01025868>.
 
 </div>
 
@@ -1175,6 +1328,23 @@ Militar.
 
 </div>
 
+<div id="ref-jasiewicz2011a" class="csl-entry">
+
+Jasiewicz, JarosŁaw, y Markus Metz. 2011. «A New GRASS GIS Toolkit for
+Hortonian Analysis of Drainage Networks». *Computers & Geosciences* 37
+(8): 1162-73. <https://doi.org/10.1016/j.cageo.2011.03.003>.
+
+</div>
+
+<div id="ref-jasiewicz2013" class="csl-entry">
+
+Jasiewicz, Jarosław, y Tomasz F. Stepinski. 2013. «Geomorphons a Pattern
+Recognition Approach to Classification and Mapping of Landforms».
+*Geomorphology* 182 (enero): 147-56.
+<https://doi.org/10.1016/j.geomorph.2012.11.005>.
+
+</div>
+
 <div id="ref-lindsay2018whiteboxtools" class="csl-entry">
 
 Lindsay, John B. 2018. «WhiteboxTools user manual». Available online:
@@ -1183,19 +1353,20 @@ abril, 2023).
 
 </div>
 
-<div id="ref-lindsay2016" class="csl-entry">
-
-Lindsay, John B. 2016. «The Practice of DEM Stream Burning Revisited:
-The Practice of DEM Stream Burning Revisited». *Earth Surface Processes
-and Landforms* 41 (5): 658-68. <https://doi.org/10.1002/esp.3888>.
-
-</div>
-
 <div id="ref-lindsay2019" class="csl-entry">
 
 Lindsay, John B., Anthony Francioni, y Jaclyn M. H. Cockburn. 2019.
 «LiDAR DEM Smoothing and the Preservation of Drainage Features». *Remote
 Sensing* 11 (16): 1926. <https://doi.org/10.3390/rs11161926>.
+
+</div>
+
+<div id="ref-marchesini2021" class="csl-entry">
+
+Marchesini, Ivan, Paola Salvati, Mauro Rossi, Marco Donnini, Simone
+Sterlacchini, y Fausto Guzzetti. 2021. «Data-Driven Flood Hazard
+Zonation of Italy». *Journal of Environmental Management* 294
+(septiembre): 112986. <https://doi.org/10.1016/j.jenvman.2021.112986>.
 
 </div>
 
@@ -1212,6 +1383,14 @@ Canadian Watersheds». *Journal of Hydrology* 380 (3-4): 420-37.
 Mishra, Ashok K., y Paulin Coulibaly. 2009. «Developments in Hydrometric
 Network Design: A Review». *Reviews of Geophysics* 47 (2): RG2001.
 <https://doi.org/10.1029/2007RG000243>.
+
+</div>
+
+<div id="ref-mollat2004mapa" class="csl-entry">
+
+Mollat, Hartmut, Bernhard M Wagner, Pavel Cepek, y Wolfgang Weiss. 2004.
+*Mapa Geológico de la República Dominicana 1 : 250.000. Texto
+Explicativo*. Stuttgart: E. Schweizerbart’sche Verlagsbuchhandiung.
 
 </div>
 
@@ -1284,14 +1463,6 @@ Daniel Iliquín Trigoso, Miguel Barrena Gurbillón, y Elgar Barboza. 2021.
 «Site Selection for a Network of Weather Stations Using AHP and Near
 Analysis in a GIS Environment in Amazonas, NW Peru». *Climate* 9 (12):
 169. <https://doi.org/10.3390/cli9120169>.
-
-</div>
-
-<div id="ref-saunders2000" class="csl-entry">
-
-Saunders, William. 2000. «Preparation of DEMs for use in environmental
-modeling analysis». *Hydrologic and Hydraulic Modeling Support.
-Redlands, CA: ESRI*, 2951.
 
 </div>
 
