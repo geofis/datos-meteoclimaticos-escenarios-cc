@@ -794,11 +794,12 @@ reales y, en suma, mejora la topología de la red. No obstante, el
 procesamiento modifica sensiblemente el DEM, especialmente en los
 lugares donde ocurre el grabado.
 
-Probamos dos alternativas de tallado de DEM usando las herramientas
-`FillBurn` de WhiteboxTools (John B. Lindsay 2018) y `r.carve` de GRASS
-GIS (GRASS Development Team 2022). Asimismo, con cada algoritmo probamos
-intentando grabar en el DEM dos redes de drenaje distintas, una densa y
-otra compuesta sólo los cursos largos.
+Probamos tres alternativas de tallado de DEM usando las herramientas
+`FillBurn` de WhiteboxTools (John B. Lindsay 2018), `r.carve` de GRASS
+GIS y álgebra de mapas, también de GRASS GIS (GRASS Development Team
+2022). Asimismo, con cada algoritmo probamos intentando grabar en el DEM
+dos redes de drenaje distintas, una densa y otra compuesta sólo los
+cursos largos.
 
 Para generar la red densa, nos apoyamos en el mapa topográfico nacional
 a escala 1:50,000 (MTN50K) (Instituto Cartográfico Militar (ICM) 1989).
@@ -822,21 +823,24 @@ de los embalses y grabamos trazados históricos sobre el DEM. El
 siguiente paso fue probar las dos herramientas disponibles, `r.carve` de
 GRASS GIS y `FillBurn` de WBT, con cada una de las redes.
 
-### Alternativa 1. Tallado con GRASS GIS (elegida)
+### Alternativa 1. Tallado con GRASS GIS, complemento `r.carve` (descartada)
 
 La herramienta r.carve de GRASS GIS fue diseñada para grabar el DEM sin
 modificarlo sensiblemente, permitiendo configurar la profundidad y la
 anchura del grabado. Por defecto, la anchura de lecho es equivalente a
 la resolución del DEM. La profundidad puede definirse por el usuario,
-para lo cual nosotros establecimos 100 metros. Aunque la herramienta
-conserva las propiedades topográficas en el DEM, su rendimiento en
-nuestras pruebas fue muy bajo. Por ejemplo, en el caso de la red densa,
-al intentar tallarla sobre el DEM, dedicamos un tiempo de cómputo de más
-de siete horas (sin paralelización), por lo que nos vimos obligados a
-interrumpirlo sin concluir. No obstante, **la red de cursos largos sí
+para lo cual nosotros establecimos 100 metros. Al intentar tallar la red
+densa sobre el DEM con este método, dedicamos un tiempo de cómputo de
+más de siete horas (sin paralelización), por lo que nos vimos obligados
+a interrumpirlo sin concluir. No obstante, **la red de cursos largos sí
 pudimos tallarla sobre el DEM con esta herramienta, generando un
 resultado óptimo**, aunque el proceso ocupó más de 1 hora de tiempo de
-cómputo.
+cómputo. Esta alternativa es recomendada en si resultase imprescindible
+conservar las propiedades topográficas en el DEM, pero debe tenerse en
+cuenta que su rendimiento es muy bajo. En los casos donde se use un DEM
+pequeño, se recomienda usar esta alternativa. Sin embargo, en esta
+investigación, con un DEM de más 300 millones de celdas, preferimos
+evaluar otras alternativas.
 
 ``` bash
 # Limpiar red manualmente en QGIS
@@ -845,55 +849,105 @@ cómputo.
 # Tallar
 # Alternativa 1: tardó mucho tiempo y ni tan siquiera terminó
 # Importar red a GRASS
-v.import --overwrite input=red_mtn50k_cleaned_largos.gpkg output=red_mtn50k_cleaned_largos
-time r.carve --overwrite --verbose raster=dem_pseudo_ortometrico \
+# v.import --overwrite input=red_mtn50k_cleaned_largos.gpkg output=red_mtn50k_cleaned_largos
+# time r.carve --overwrite --verbose raster=dem_pseudo_ortometrico \
   vector=red_mtn50k_cleaned_largos output=dem_tallado depth=100
-echo "r.carve finalizado" | mail -s "r.carve finalizado" zoneminderjr@gmail.com
+# echo "r.carve finalizado" | mail -s "r.carve finalizado" zoneminderjr@gmail.com
 ## real 320m40.373s # NO ALCANZÓ A TERMINAR USANDO RED DOMINICANA DEL MTN50K DENSA (red_mtn50k_cleaned)
 ## real 97m3.970s # COMPLETADO: USANDO RED DE CURSOS LARGOS SOLAMENTE (red_mtn50k_cleaned_largos)
 ```
 
+### Alternativa 2. Tallado con GRASS GIS, usando álgebra de mapas `r.mapcalc` (elegida)
+
+Tallado eficiente usando álgebra de mapas. Normalizamos el DEM,
+generamos una capa booleana ráster con la red de cursos largos, la
+restamos al DEM normalizado y luego multiplicamos el ráster resultante
+de la resta nuevamente por el rango del DEM (máximo - mínimo) para
+restablecer los valores originales fuera de las áreas talladas. El
+resultado es un DEM tallado, en el que los píxeles tallados (por donde
+circula la red) tenían una profundidad (valor negativo) equivalente al
+rango.
+
+``` bash
+# Implementar esta alternativa con mapcalc de GRASS GIS y evaluar rendimiento
+# https://www.youtube.com/watch?v=jHT_StPb_oM
+
+# Limpiar red manualmente en QGIS
+# Aplicar v.clean, en QGIS
+
+# Tallar
+# Alternativa 2: probando álgebra de mapas
+# Importar red a GRASS
+v.import --overwrite input=red_mtn50k_cleaned_largos.gpkg output=red_mtn50k_cleaned_largos
+# Rasterizar red (los píxeles de la red valdrán 1, el resto, nulo)
+v.to.rast --overwrite input=red_mtn50k_cleaned_largos type=line use=val output=red_mtn50k_cleaned_largos
+# Convertir nulos a cero
+r.null map=red_mtn50k_cleaned_largos null=0
+# Determinar estadísticas univariantes del DEM
+r.univar map=dem_pseudo_ortometrico
+# minimum: -51.4456
+# maximum: 3102.34
+
+# Aplicar normalización y resta
+r.mapcalc --overwrite << EOF
+eval(stddem = (dem_pseudo_ortometrico - -51.4456) / (3102.34 - -51.4456), \
+     stddemburn = stddem - red_mtn50k_cleaned_largos)
+dem_tallado = (stddemburn * (3102.34 - -51.4456)) - 51.4456
+EOF
+echo "Tallado finalizado" | mail -s "Mensaje sobre tallado" zoneminderjr@gmail.com
+```
+
 <img src="out/dem-sin-tallar-tallado.png" alt="DEM ALOS PALSAR sin aplicación de hidrografía (A), y con aplicación de hidrografía seleccionada (B). El DEM se representa como relieve sombreado y la aplicación se denota como un grabado oscurecido (cañón del río Payabo, Los Haitises, y río Yuna (proximidades de Arenoso, nordeste de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
-Probando alternativas más eficientes con álgebra de mapas.
+### Alternativa 3. Tallado con WhiteboxTools (descartada)
 
-\`\`\`{bash. eval=F} \# Basado en:
+Como alternativa de procesamiento 3 usamos la herramienta `FillBurn`,
+basada en Saunders (2000) e implementada por John B. Lindsay (2016) en
+de WBT. Esta realiza dos modificaciones a la vez sobre el DEM; por una
+parte, graba la red, usando una profundidad por defecto y, por otro,
+rellena las depresiones. La herramienta mostró mejor rendimiento que la
+de GRASS GIS en cuanto a tiempo de cómputo, tanto con la red densa, que
+sí pudo grabarla sobre el DEM, como con la de cursos largos.
 
+En particular, sobre el grabado de la red densa, notamos que los
+trazados no se alineaban bien con el DEM por problemas de alineación y
+ajuste de datums entre el mapa topográfico nacional y el DEM (NAD27 y
+WGS84). Como consecuencia, la red se grababa en topografías claramente
+muy accidentadas o a contrapendiente, generando así una red con
+duplicados y falsos positivos. No obstante, intentamos generar una red
+con dicho DEM, pero el resultado no fue satisfactorio en términos
+hidrológicos, por lo que optamos por probar con la red de cursos largos
+para generar el DEM tallado. En este caso, **el DEM resultante fue muy
+diferente al original, especialmente en las áreas con depresiones**. Por
+esta razón, decidimos usar el DEM tallado con la red de cursos largos
+generado por GRASS GIS.
 
+``` bash
+# Alternativa 2: rápida, pero produce un tallado muy profundo y rellena depresiones
+# Exportar dem_pseudo_ortometrico a GTiff con compresión LZW
+# time r.out.gdal --overwrite --verbose createopt="COMPRESS=LZW,BIGTIFF=YES" \
+#   input=dem_pseudo_ortometrico \
+#   format=GTiff type=Float64 output=dem_pseudo_ortometrico.tif
+# echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
+## real 1m0.248s
 
+# Exportar red_mtn50k_cleaned.gpkg a shapefile
+# ogr2ogr(src_datasource_name = '/media/jose/datos/alos-palsar-dem-rd/dem/red_mtn50k_cleaned.gpkg',
+#         dst_datasource_name = '/media/jose/datos/alos-palsar-dem-rd/dem/red_mtn50k_cleaned.shp',
+#         verbose=TRUE)
 
-    ### Alternativa 2. Tallado con WhiteboxTools (descartada)
-
-    Como alternativa de procesamiento 2 usamos la herramienta `FillBurn`, basada en @saunders2000 e implementada por @lindsay2016 en de WBT. Esta realiza dos modificaciones a la vez sobre el DEM; por una parte, graba la red, usando una profundidad por defecto y, por otro, rellena las depresiones. La herramienta mostró mejor rendimiento que la de GRASS GIS en cuanto a tiempo de cómputo, tanto con la red densa, que sí pudo grabarla sobre el DEM, como con la de cursos largos.
-
-    En particular, sobre el grabado de la red densa, notamos que los trazados no se alineaban bien con el DEM por problemas de alineación y ajuste de datums entre el mapa topográfico nacional y el DEM (NAD27 y WGS84). Como consecuencia, la red se grababa en topografías claramente muy accidentadas o a contrapendiente, generando así una red con duplicados y falsos positivos. No obstante, intentamos generar una red con dicho DEM, pero el resultado no fue satisfactorio en términos hidrológicos, por lo que optamos por probar con la red de cursos largos para generar el DEM tallado. En este caso, **el DEM resultante fue muy diferente al original, especialmente en las áreas con depresiones**. Por esta razón, decidimos usar el DEM tallado con la red de cursos largos generado por GRASS GIS.
-
-
-    ```bash
-    # Alternativa 2: rápida, pero produce un tallado muy profundo y rellena depresiones
-    # Exportar dem_pseudo_ortometrico a GTiff con compresión LZW
-    # time r.out.gdal --overwrite --verbose createopt="COMPRESS=LZW,BIGTIFF=YES" \
-    #   input=dem_pseudo_ortometrico \
-    #   format=GTiff type=Float64 output=dem_pseudo_ortometrico.tif
-    # echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
-    ## real 1m0.248s
-
-    # Exportar red_mtn50k_cleaned.gpkg a shapefile
-    # ogr2ogr(src_datasource_name = '/media/jose/datos/alos-palsar-dem-rd/dem/red_mtn50k_cleaned.gpkg',
-    #         dst_datasource_name = '/media/jose/datos/alos-palsar-dem-rd/dem/red_mtn50k_cleaned.shp',
-    #         verbose=TRUE)
-
-    # Tallar con WBT
-    # time ~/WhiteboxTools_linux_amd64/WBT/whitebox_tools \
-    #   --wd='/media/jose/datos/alos-palsar-dem-rd/dem/' \
-    #   --run=FillBurn --dem='dem_pseudo_ortometrico.tif' \
-    #   --streams=red_mtn50k_cleaned.shp --output='dem_tallado.tif' -v
-    # echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
-    ## real 9m21.980s
-    # Importar a GRASS GIS
-    # time r.import --overwrite input=dem_tallado.tif output=dem_tallado
-    # echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
-    ## real 0m38.519s
+# Tallar con WBT
+# time ~/WhiteboxTools_linux_amd64/WBT/whitebox_tools \
+#   --wd='/media/jose/datos/alos-palsar-dem-rd/dem/' \
+#   --run=FillBurn --dem='dem_pseudo_ortometrico.tif' \
+#   --streams=red_mtn50k_cleaned.shp --output='dem_tallado.tif' -v
+# echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
+## real 9m21.980s
+# Importar a GRASS GIS
+# time r.import --overwrite input=dem_tallado.tif output=dem_tallado
+# echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
+## real 0m38.519s
+```
 
 ## Depresiones
 
@@ -940,7 +994,7 @@ sin que veamos desde el aire la típica morfología deprimida
 # GRASS GIS
 # time r.geomorphon --overwrite --verbose elevation=dem_tallado forms=geomorfonos search=25
 time r.geomorphon --overwrite --verbose elevation=dem_pseudo_ortometrico forms=geomorfonos search=25
-echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
+echo "r.geomorphon finalizado" | mail -s "Mensaje sobre r.geomorphon" zoneminderjr@gmail.com
 ## real 33m16.508s #MUY LENTO
 
 # Extraer depresiones desde geomorfonos
@@ -1035,10 +1089,10 @@ fronterizo para permitir la salida y entrada de flujo a través de éste.
 
 ``` bash
 # Importar máscara
-v.import --overwrite input=mascara.gpkg output=mascara
+v.import --overwrite input=mascara-1km-solo-en-frontera.gpkg output=mascara_1km_solo_en_frontera
 # Fijar máscara (EJECUTAR SÓLO SI ES ESTRICTAMENTE NECESARIO, PUES TARDA MUCHO)
 r.mask -r
-r.mask vector=mascara
+r.mask vector=mascara_1km_solo_en_frontera
 ```
 
 Iniciamos los análisis hidrológicos con la nueva máscara.
@@ -1052,7 +1106,7 @@ time r.watershed --overwrite --verbose elevation=dem_tallado \
  # length_slope=rwshed_longitud_vertiente slope_steepness=rwshed_empinamiento \
  # retention=rwshed_retencion_flujo max_slope_length=rwshed_max_longitud_vertiente \
  memory=32000
-echo "r.watershed finalizado" | mail -s "r.watershed finalizado" zoneminderjr@gmail.com
+echo "r.watershed finalizado" | mail -s "Mensaje sobre r.watershed" zoneminderjr@gmail.com
 ## real 9m47.041s
 ```
 
@@ -1090,7 +1144,18 @@ equivalen, respectivamente, a 3, 8 y 14 hectáreas en términos de
 superficie, respectivamente. Estos umbrales se inscriben en el rango de
 valores usados en estudios consultados (Marchesini et al. 2021), donde
 evalúan por métodos de “áreas susceptibles a inundación” (Freedman y
-Diaconis 1981), el rango de umbrales a elegir en nuestro estudio.
+Diaconis 1981), el rango de umbrales a elegir.
+
+Luego de evaluar los resultados producidos por cada uno, elegimos el
+valor 900 celdas (14 ha), por adaptarse mejor a los fines de nuestro
+estudio. Las redes producidas con este umbral resultaron ser bastante
+limpias y diversas en el territorio dominicano, por lo que no se
+ocultaron patrones de variabilidad necesarios en la toma de decisiones
+sobre selección de sitios para instalar estaciones hidrométricas.
+Igualmente, la red generada con este umbral, alcanzó un valor máximo de
+8 según los métodos de Strahler y Horton, lo cual nos permitió
+establecer rangos de idoneidad según orden de red (e.g. 5 y 6) para la
+selección de sitios candidatos.
 
 ``` bash
 # Extraer redes de drenaje para tres umbrales de acumulación distintos
@@ -1101,7 +1166,7 @@ for i in `echo {180..900..360}`; \
     depression=depresiones_todas threshold=$i \
     stream_vector=rstream_talwegs_umbral_$i stream_raster=rstream_talwegs_umbral_$i \
     direction=rstream_direccion_umbral_$i memory=32000; \
-  echo -e "r.stream.extract umbral $i finalizado" | mail -s "r.stream.extract finalizado" zoneminderjr@gmail.com; \
+  echo -e "r.stream.extract umbral $i finalizado" | mail -s "Mensaje sobre r.stream.extract" zoneminderjr@gmail.com; \
 done
 ## real 11m28.455s
 ## real 11m26.908s
@@ -1131,7 +1196,7 @@ for i in `echo {180..900..360}`; \
     strahler=rstream_orden_strahler_de_red_umbral_$i \
     horton=rstream_orden_horton_de_red_umbral_$i \
     topo=topologia_orden_umbral_$i memory=32000; \
-  echo -e "r.stream.order umbral de acumulación $i finalizado" | mail -s "r.stream.order finalizado" zoneminderjr@gmail.com; \
+  echo -e "r.stream.order umbral de acumulación $i finalizado" | mail -s "Mensaje sobre r.stream.order" zoneminderjr@gmail.com; \
 done
 ## real 1m34.983s
 ## real 1m18.662s
@@ -1156,17 +1221,33 @@ done
 # Delimitar cuencas según jerarquía
 # En bucle
 for i in `echo {180..900..360}`; \
-  do for j in `echo {1..9..1}`; \
+  do for j in `echo {1..8..1}`; \
     do echo -e "\nTRABAJANDO EL UMBRAL DE ACUMULACIÓN $i, orden $j...\n"; \
     time r.stream.basins -c --overwrite direction=rstream_direccion_umbral_$i \
       stream_rast=rstream_orden_strahler_de_red_umbral_$i cats=$j \
       basins=rstream_cuencas_strahler_umbral_${i}_orden_$j memory=32000; \
   done; \
-  echo -e "r.stream.order umbral de acumulación $i finalizado" | mail -s "r.stream.order finalizado" zoneminderjr@gmail.com; \
+  echo -e "r.stream.basins umbral de acumulación $i finalizado" | mail -s "Mensaje sobre r.stream.basins" zoneminderjr@gmail.com; \
 done
 ## real 
 ## real 
 ## real 
+```
+
+## Fondo de valle
+
+Obtuvimos la imagen de fondo de valle, con la cual estimamos la
+superficie ocupada por este. Este criterio nos sirvió para discriminar
+entre cuencas con fondos de valle anchos, no idóneas, y cuencas con
+fondos de valle estrechos, idóneas.
+
+``` bash
+# Intentado para todo el país, pero descartado. El único intento que completó el procesamiento,
+# tardó unas 4 horas, y no produjo resultado aprovechable (ráster de nan).
+# Se aplica mejor por sectores.
+time r.valley.bottom --verbose --overwrite elevation=dem_pseudo_ortometrico \
+  mrvbf=rvb_fondo_de_valle mrrtf=rvb_crestas t_slope=25 min_cells=25
+echo -e "Fondo de valle finalizado" | mail -s "Mensaje sobre r.valley.bottom"
 ```
 
 ## Frecuencia de inundado
@@ -1180,20 +1261,27 @@ GitHub:
 ## Criterios finales elegidos
 
 - Frecuencia de inundado
-- Orden de red
-- Superficie drenada
-- Litología
-- Tiempo de concentración (alejamiento medio)
-- Coeficiente de torrencialidad
-- Razón de elongación / compacidad / circularidad
-- Concavidad transversal
-- TPI, TRI, TWI
-- Pendiente media
-- Índice de concavidad
-- $V_f$: relación de anchura de fondo de valle respecto de altura de
-  valle
-- Integral hipsométrica
-- SPI, ¿balance hídrico?.
+- Orden de red: 5 o 6, o $\geq$ 4
+- Litología, por orden de preferencia: magmáticas nada o poco alteradas,
+  metamórficas (no mármoles), sedimentarias (no calizas).
+- Criterios de Rantz seleccionados:
+  - Orillas altas, valle estrecho (#4). Deseable, $V_f$: relación de
+    anchura de fondo de valle respecto de altura de valle, pero no tan
+    fácil de obtener.
+  - Tramo recto (#1 de lista de Rantz)
+  - Valle con afloramientos de sustrato rocoso, rocas consistentes (#5)
+  - Lejanía a confluencias y efectos mareales (#7)
+  - Accesible (#9)
+- Pool de criterios no elegidos:
+  - Tiempo de concentración (alejamiento medio)
+  - Coeficiente de torrencialidad
+  - Razón de elongación / compacidad / circularidad
+  - Concavidad transversal
+  - TPI, TRI, TWI
+  - Pendiente media
+  - Índice de concavidad
+  - Integral hipsométrica
+  - SPI, ¿balance hídrico?.
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
@@ -1353,6 +1441,14 @@ abril, 2023).
 
 </div>
 
+<div id="ref-lindsay2016" class="csl-entry">
+
+Lindsay, John B. 2016. «The Practice of DEM Stream Burning Revisited:
+The Practice of DEM Stream Burning Revisited». *Earth Surface Processes
+and Landforms* 41 (5): 658-68. <https://doi.org/10.1002/esp.3888>.
+
+</div>
+
 <div id="ref-lindsay2019" class="csl-entry">
 
 Lindsay, John B., Anthony Francioni, y Jaclyn M. H. Cockburn. 2019.
@@ -1463,6 +1559,14 @@ Daniel Iliquín Trigoso, Miguel Barrena Gurbillón, y Elgar Barboza. 2021.
 «Site Selection for a Network of Weather Stations Using AHP and Near
 Analysis in a GIS Environment in Amazonas, NW Peru». *Climate* 9 (12):
 169. <https://doi.org/10.3390/cli9120169>.
+
+</div>
+
+<div id="ref-saunders2000" class="csl-entry">
+
+Saunders, William. 2000. «Preparation of DEMs for use in environmental
+modeling analysis». *Hydrologic and Hydraulic Modeling Support.
+Redlands, CA: ESRI*, 2951.
 
 </div>
 
