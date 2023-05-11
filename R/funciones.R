@@ -539,3 +539,19 @@ vector_a_lista <- function(vec) {
     return(paste(rest, last))
   }
 }
+
+extraer_dato <- function(
+    ruta = NULL, patron = 'total',
+    sustituir = '^.*\\|', convertir_num = T) {
+  fuente <- readLines(ruta)
+  fila_interes <- grep(patron, fuente, value = T)
+  dato_interes <- gsub(sustituir, '', fila_interes)
+  if(convertir_num) dato_interes <- as.numeric(dato_interes)
+  return(dato_interes)
+}
+
+conteo_lineas <- function(ruta, saltar = 1, convertir_num = T){
+  dato_interes <- system(paste0('tail -n +', 1+saltar, ' ', ruta, ' | wc -l'), intern=T)
+  if(convertir_num) dato_interes <- as.numeric(dato_interes)
+  return(dato_interes)
+}

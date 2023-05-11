@@ -201,12 +201,16 @@ nacional, en un momento en el que la humanidad y, en particular, la
 sociedad dominicana, se preparan para afrontar los efectos del cambio
 climático y la consecuente escasez de agua pronosticada.
 
-# Materiales y métodos
+# Materiales, métodos y resultados
 
-## Datos, paquetes y funciones
+## Paquetes y funciones
 
-Los siguientes bloques de código cargan los paquetes, funciones y datos
-necesarios para preparar el índice de escenas y representarlos en mapa.
+Los siguientes bloques de código cargan los paquetes de uso común a lo
+largo de este cuaderno, así como funciones creadas por nosotros para
+eficientizar las tareas de limpieza y representación de datos y mapas
+(e.g. huellas de las escenas del DEM ALOS PALSAR). Igualmente,
+aprovechamos esta sección para declarar la ruta del directorio de
+trabajo, la cual reaprovechamos en distintas partes del código.
 
 ``` r
 source('R/funciones.R')
@@ -219,31 +223,50 @@ estilo_kable <- function(df, titulo = '', cubre_anchura = T) {
   df %>% kable(format = 'html', escape = F, booktabs = T, digits = 2, caption = titulo) %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = cubre_anchura)
 }
+dem_proc_dir <- 'alos-palsar-dem-rd/dem/'
 ```
 
-## Selección de los datos de elevación
+## DEM: obtención y preparación, procesamiento
+
+### Selección de los datos de elevación
 
 Elegimos el Modelo Digital de Elevación del Satélite de Observación
 Avanzada de la Tierra (ALOS-DEM, por sus siglas en inglés), pues es
-actualmente la fuente abierta de mayor resolución espacial (12.5 m)
-actualmente disponible al público (ASF DAAC 2015). A pesar de su alta
-resolución espacial, investigadores encontraron que no necesariamente es
-el de mayor precisión en cuanto a los estadísticos básicos de elevación
-(e.g. RMSE comparado con estaciones GNSS) (Aziz y Rashwan 2022). No
-obstante, la evaluación realizada por este equipo de investigadores no
-realizó preprocesamiento de los datos descargado. Sin embargo, para la
-extracción de redes de drenaje, a mejor resolución, mejores resultados
-en cuanto a densidad de la red y caracterización morfométrica.
-Realizamos la descarga desde el Centro de Archivo Activo Distribuido
-(DAAC) del [Alaska Satellite Facility (ASF)](https://asf.alaska.edu/).
-Usando este modelo de elevaciones como fuente, extrajimos de manera
-automática las redes hidrográficas de todo el país.
+actualmente la fuente de mayor resolución espacial (12.5 m) y disponible
+al público (ASF DAAC 2015). A pesar de su alta resolución espacial,
+investigadores encontraron que no necesariamente es el DEM de mayor
+precisión en cuanto a los estadísticos básicos de elevación (e.g. RMSE
+comparado con estaciones GNSS) (Aziz y Rashwan 2022). No obstante, la
+evaluación realizada por el referido equipo de investigadores, no
+realizó preprocesamiento ni limpieza de los datos descargados. De todas
+formas, aunque es probable que existan errores en el DEM, para fines de
+extracción de redes de drenaje es la mejor opción disponible, pues a
+mejor resolución, mejores resultados en cuanto a densidad de la red y
+caracterización morfométrica.
 
-## Descarga de escenas
+Para procesarlo, debimos descargar más de 28 escenas desde el Centro de
+Archivo Activo Distribuido (DAAC) del [Alaska Satellite Facility
+(ASF)](https://asf.alaska.edu/) y unirla en un mosaico creado como
+ráster virtual. Señalamos que, al momento de realizarse esta
+investigación, la tendencia global en el análisis de datos geoespaciales
+apunta a prácticas centrada en la nube (e.g. Google Earth Engine,
+Microsoft Planetary Computer) Aunque hemos realizado investigaciones
+usando dichas plataformas, muchos de los algoritmos necesarios para
+realizar análisis hidrológico, no están aún disponibles en los referidos
+servicios. Por esta razón, nos vimos en la necesidad de usar nuestros
+propios computadores. En concreto, usamos una PC equipada con procesador
+Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz, 64 GB de memoria RAM y unidad
+de estado sólido. Aunque logramos paralelizar algunos procesos, la
+mayoría de los algoritmos no aprovechan al máximo los múltiples núcleos
+de los procesadores y, consecuentemente, la capacidad de memoria también
+se subutiliza.
 
-Identificamos las escenas necesarias para cubrir el país usando una
-búsqueda geográfica mediante polígono delimitador. Dado que la misión
-del ALOS-DEM ofrece escenas de distinta fecha para una misma área,
+### Descarga de escenas
+
+Identificamos las escenas necesarias para cubrir íntegramente la
+República Dominicana, usando una búsqueda geográfica mediante polígono
+delimitador en Alaska Satellite Facility. Dado que la misión del
+ALOS-DEM ofrece escenas de distinta fecha para una misma área,
 descargamos escenas redundantes que posteriormente excluimos del
 análisis. La descarga la realizamos por lotes, usando un *script* de
 Python provisto por el propio ASF.
@@ -252,12 +275,13 @@ Python provisto por el propio ASF.
 python download-all-2023-04-20_00-30-00.py
 ```
 
-## Creación de índice de DEM
+### Creación de índice de DEM
 
 Utilizando el índice de huellas de escenas, escribimos un pequeño
-programa para seleccionar la escena más reciente en las áreas donde
-contábamos con escenas redundantes. Con esto construimos un índice de
-DEM seleccionados.
+programa para seleccionar las más reciente en las áreas donde había
+redundancia. Con esto construimos un índice de DEM para fines de
+representación, y para guiarnos durante la construcción del ráster
+virtual.
 
 ``` r
 ind_orig <- invisible(
@@ -276,9 +300,6 @@ seleccionados <- duplicados %>%
 ind_orig_sel <- ind_orig %>% filter(!fila %in% duplicados$fila | fila %in% seleccionados) %>% 
   filter(centerLon < -72.1821)
 ```
-
-En total, para cubrir el territorio de República Dominicano, necesitamos
-28 de escenas únicas ALOS-PALSAR.
 
 ``` r
 ind_orig_sel %>% select(sceneName, startTime) %>% st_drop_geometry() %>%
@@ -530,17 +551,26 @@ ALPSRP242300350
 </tbody>
 </table>
 
-Representamos el índice de escena con `ggplot2`, superponiendo las
-huellas (polígono de área con datos) sobre el límite costero e
-internacional de República Dominicana.
+En total, para cubrir el territorio de República Dominicana, necesitamos
+28 de escenas únicas ALOS-PALSAR. Representamos el índice de escena con
+`ggplot2`, superponiendo las huellas (polígono de área con datos) sobre
+el límite costero e internacional de República Dominicana. Señalamos en
+este punto un detalle relevante para el análisis hidrológico. Las
+escenas correspondientes a la porción haitiana del río Artibonito, no
+las procesamos en este estudio, a efectos de agilizar la producción de
+resultados. No obstante, dicha tarea queda pendiente para futuras
+investigaciones.
 
 <img src="seleccion-sitios-red-de-estaciones-hidrometricas-suplemento-metodologico_files/figure-gfm/mapaindice-1.png" alt="Mapa índice de escenas usadas en la formación del DEM 12.5 ALOS-PALSAR de RD" width="80%" style="display: block; margin: auto;" />
 
-## Extracción de las escenas seleccionadas
+### Extracción de las escenas seleccionadas
 
 Usando el índice de las escenas seleccionadas, extrajimos los
 correspondientes DEM en formato GTiff desde los archivos comprimidos
-(`.zip`).
+(`.zip`). Alaska Satellite Facility los sirve como comprimidos para
+reducir el ancho de banda en la descarga. Esta medida es muy conveniente
+para mantener el rendimiento en sus servidores, además de que la
+descomprensión de estos archivos no toma realmente mucho tiempo.
 
 ``` r
 zip_path <- 'alos-palsar-dem-rd/'
@@ -553,11 +583,12 @@ sapply(ind_orig_sel$fileName,
        )
 ```
 
-## Verificación de CRS, transformar a zona 19N
+### Verificación de CRS, transformar a zona 19N
 
 Todos los DEM fueron servidos bajo el sistema de coordenadas universal
-transversal de Mercator (UTM), pero algunos fueron fijados en el huso
-18N, por lo que los transformamos al huso 19N para generar un producto
+transversal de Mercator (UTM), pero algunos fueron se encontraban
+fijados en el huso 18N, por lo que primero los identificamos y,
+posteriormente, los transformamos al huso 19N para generar un producto
 continuo usando la herramienta `gdalwarp` de la biblioteca GDAL
 (GDAL/OGR contributors 2022).
 
@@ -576,11 +607,16 @@ sapply(crs_18n_ren, function(x){
   t_srs = 'EPSG:32619', overwrite = T)})
 ```
 
-## Construcción de ráster virtual
+### Construcción de ráster virtual
 
 A efectos de eficientizar la manipulación del DEM, creamos un ráster
 virtual (VRT) usando la herramienta `gdalbuildvrt` de la biblioteca
-GDAL.
+GDAL. Este formato es conveniente, pues se trata de un XML que combina
+todas las fuentes sobre la marcha (*on the fly*) para fines de
+visualización. También es posible, luego de generar el ráster virtual,
+crear una imagen real en los formatos tradicionales. De hecho, la
+importación a GRASS GIS crea un ráster real para importarlo a su base de
+datos.
 
 ``` r
 gdalbuildvrt(gdalfile = dems_orig_path,
@@ -588,17 +624,19 @@ gdalbuildvrt(gdalfile = dems_orig_path,
              resolution = 'highest', r = 'average')
 ```
 
-## Creación de base de datos de GRASS GIS
+### Creación de base de datos de GRASS GIS
 
 Creamos una base de datos y localización de GRASS GIS usando como fuente
-de extensión y resolución el ráster virtual creado en el paso anterior
-(GRASS Development Team 2022). Decidimos usar GRASS GIS a partir de este
-punto para algunas tareas en las que este paquete es bastante eficiente
-(e.g. rellenado de nulos). Sin embargo, en pasos posteriores, alternamos
-el flujo de procesamiento con otras herramientas, como WhiteboxTools
-(John B. Lindsay 2018). En todo caso, nuestro criterio fue siempre
-aprovechar al máximo los recursos de hardware y software disponibles
-para obtener los productos requeridos en el menor tiempo posible.
+de extensión y resolución el ráster virtual (GRASS Development Team
+2022). Decidimos usar GRASS GIS a partir de este punto para
+prácticamente todas las tareas de análisis geoespacial e hidrológico,
+pues se trata de un software bastante eficiente en muchos de sus
+complementos y algoritmos de serie (e.g. rellenado de nulos). Sin
+embargo, en pasos posteriores, alternamos el flujo de procesamiento con
+otras herramientas, como WhiteboxTools (John B. Lindsay 2018). En todo
+caso, nuestro criterio fue siempre aprovechar al máximo los recursos de
+hardware y software disponibles para obtener los productos requeridos en
+el menor tiempo posible.
 
 ``` bash
 # Usando Bash, desde la ruta ./alos-palsar-dem-rd/dem
@@ -606,7 +644,7 @@ grass --text -c dem_seamless.vrt ./grassdata
 # Para abrir luego de cerrada: grass grassdata/PERMANENT/
 ```
 
-## Máscara: crear, importar, aplicar
+### Máscara: crear, importar, aplicar
 
 Creamos una máscara de país en QGIS (QGIS Development Team 2021),
 superponiendo el límite oficial obtenido desde la página de la [Oficina
@@ -619,8 +657,8 @@ Estadística (ONE) 2018; GADM 2022; OCHA 2022; OpenStreetMap contributors
 2017). De la máscara, eliminamos las superficies de máximas de lagos y
 lagunas no artificiales, pues nos interesa procesar las cuencas
 endorreicas que drenan hacia ellos. No obstante, los embalses no los
-incluimos ne dicha superficie, dado que necesitamos construir la
-jerarquía de red ignorando su presencia, por lo tanto, asumiendo como
+incluimos en dicha superficie, dado que necesitamos construir la
+jerarquía de red ignorando su presencia, es decir, asumiendo como
 continuos todos los cursos fluviales. Sobre esta máscara, creamos un
 área de influencia, para recortar el DEM con un cierto “acolchado” que
 nos permitiera análizar sin dificultades las áreas costeras y de
@@ -653,7 +691,7 @@ g.gisenv
 ## PID=1632142
 ```
 
-## Creación de mapa ráster a partir de VRT
+### Creación de mapa ráster a partir de VRT
 
 Importamos el ráster virtual a la base de datos de GRASS GIS. Con este
 paso generamos un mapa ráster dentro de la base de datos GRASS GIS, el
@@ -671,7 +709,7 @@ g.list type=raster
 
 <img src="out/dem-sin-procesar.jpg" alt="DEM ALOS PALSAR sin procesar, representado como relieve sombreado. Nótesense los píxeles sin datos, destacados en color rojo (Los Patos-Ojeda-Paraíso, provincia Barahona, sudoeste de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
-## Rellenado de píxeles nulos (sin datos)
+### Rellenado de píxeles nulos (sin datos)
 
 Para esta tarea, utilizamos el eficiente complemento de GRASS
 `r.fill.nulls`. Lo configuramos para rellenar píxeles nulos usando
@@ -692,7 +730,7 @@ echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
 
 <img src="out/dem-relleno.jpg" alt="DEM ALOS PALSAR sin procesar, representado como relieve sombreado. Los píxeles sin datos fueron eliminados (Los Patos-Ojeda-Paraíso, provincia Barahona, sudoeste de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
-## Suavizado preservando morfologías
+### Suavizado preservando morfologías
 
 Para el suavizado, usamos la herramienta *FeaturePreservingSmoothing* de
 WhiteboxTools, la cual reduce reducir la rugosidad generada por ruido en
@@ -723,7 +761,7 @@ echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
 
 <img src="out/dem-suavizado.jpg" alt="DEM ALOS PALSAR suavizado, representado como relieve sombreado. Nótese la conservación de las morfologías principales y la eliminación del ruido sobre éstas (Los Patos-Ojeda-Paraíso, provincia Barahona, sudoeste de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
-## Importar DEM suavizado a la base de datos de GRASS GIS
+### Importar DEM suavizado a la base de datos de GRASS GIS
 
 Importamos el DEM suavizado para aplicarle nuevos procesamientos
 hidrológicos.
@@ -734,15 +772,16 @@ echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
 ## real 0m21.593s
 ```
 
-## Obtener alturas pseudo-ortométricas
+### Obtención de alturas pseudo-ortométricas
 
 Usamos el ráster de altura de geoide de La Española a 1 minuto de
 resolución (EGM2008) para obtener alturas pseudo-ortométricas, por medio
 de una suma algebraica simple. Sin embargo, previamente fue necesario
-aumentar la resolución del ráster de altural del geoide antes de
-realizar la suma. Para esto, usamos `r.resamp.rst` (evaluamos una
-alternativa 2 con el addon `r.resamp.interp`, pero resultó ):
-<https://grass.osgeo.org/grass82/manuals/r.resamp.interp.html>
+aumentar la resolución del ráster de altura del geoide antes de realizar
+la suma. Para esto, usamos `r.resamp.rst` (evaluamos una alternativa 2
+con el completo `r.resamp.interp` y, aunque realizó el trabajo
+eficientemente, eliminó muchas áreas limítrofes, por lo que preferimos
+no utilizarlo).
 
 ``` bash
 # Importar DEM a región de GRASS
@@ -779,11 +818,34 @@ g.region raster=dem_suavizado -ap
 
 # Aplicar álgebra de mapas
 r.mapcalc --overwrite "dem_pseudo_ortometrico = dem_suavizado - egm2008_hires"
+
+#Estadísticos univariados
+r.univar dem_pseudo_ortometrico
+# n: 306462417
+# minimum: -51.4456
+# maximum: 3102.34
+# range: 3153.79
+# mean: 403.703
+# mean of absolute values: 403.858
+# standard deviation: 487.27
+# variance: 237432
+# variation coefficient: 120.7 %
+# sum: 123719658638.311
 ```
+
+El resumen estadístico proporcionado por GRASS GIS, usando una máscara
+ajustada a los límites costeros e internacional del país, informa que la
+elevación mínima es -51.5 m, mientras que la máxima es 3102.34 m, para
+un rango de casi 3154 m. El valor mínimo probablemente no está bien
+recogido, debido a que la máscara empleada podría estar eliminando
+elevaciones muy bajas en el área de la Hoya de Enriquillo. La elevación
+media, tanto considerando los negativos como los positivos, es de
+aproximadamente 404 m, con desviación estándar de 487 m y coeficiente de
+variación de 121%.
 
 <img src="out/perfiles-dem/los-patos.png" alt="Alturas respecto de geoide EGM08 (~ortométrica) y sobre elipsoide WGS84, de un transecto descendente desde Bahoruco Oriental al Mar Caribe (Los Patos-Ojeda-Paraíso, provincia Barahona, sudoeste de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
-## Tallar (aplicar) la red sobre el DEM
+### Tallar (aplicar) la red sobre el DEM
 
 El tallado, grabado o aplicación de red (*stream burning*) consiste en
 reforzar, sobre el DEM, la red hidrográfica conocida para garantizar que
@@ -802,28 +864,102 @@ dos redes de drenaje distintas, una densa y otra compuesta sólo los
 cursos largos.
 
 Para generar la red densa, nos apoyamos en el mapa topográfico nacional
-a escala 1:50,000 (MTN50K) (Instituto Cartográfico Militar (ICM) 1989).
-En particular, la red densa consistió en una recopilación exhaustiva de
-los *talweg* dibujados en el mapa topográfico (lechos en valles
-drenados, líneas de mínima elevación, “vaguadas”), excluyendo canales de
-riego y otras obras de ingeniería de reconducción de flujo. Para
-garantizar la continuidad de la red, recuperamos el trazado de la red
-previo al llenado de embalses, usando mapas topográficos de la época
-pre-embalse. Por otra parte, tal como indicamos arriba, alternativamente
-probamos con una red de cursos largos, la cual generamos a partir del
-MTN-50K (Instituto Cartográfico Militar (ICM) 1989), imágenes
-satelitales, y mapas de distintos proveedores (Google; Airbus, CNES;
-Airbus, Landsat; Copernicus; Maxar Technologies; U.S. Geological Survey
-2023; OpenStreetMap contributors 2017). Esta red consistió en una
-selección de los ríos más largos y represados de República Dominicana, e
-incluyó tramos de ríos que atraviesan áreas problemáticas, como grandes
-llanuras o relieves kársticos. Al igual que en la red densa, para
-garantizar la continuidad topológica de la red, ignoramos la presencia
-de los embalses y grabamos trazados históricos sobre el DEM. El
-siguiente paso fue probar las dos herramientas disponibles, `r.carve` de
-GRASS GIS y `FillBurn` de WBT, con cada una de las redes.
+a escala 1:50,000 (MTN-50K) (Instituto Cartográfico Militar (ICM) 1989),
+el cual se encuentra digitalizado, pero procede de una fuente anónima
+(esperamos que este estudio nos ayude a establecer la autoría para
+incluirla oportunamente, aunque en los análisis hidrológicos no pudimos
+sacarle ningún provecho). En particular, la red densa es una
+recopilación exhaustiva de los *talweg* dibujados en el mapa topográfico
+(lechos en valles drenados, líneas de mínima elevación, “vaguadas”),
+excluyendo canales de riego y otras obras de ingeniería de reconducción
+de flujo. Para garantizar la continuidad del flujo, modificamos esta red
+recuperando el trazado original de varios ríos embalsados, usando mapas
+topográficos de la época pre-embalse. Importamos la red densa a la base
+de datos de GRASS GIS. Le aplicamos el complemento `v.clean` de GRASS
+GIS para generar una versión topológicamente aceptable, aunque muchos
+errores no pudieron corregirse. Finalmente, obtuvimos estadísticos
+básicos de conteo de segmentos y longitud para fines de comparación con
+la red generada por nosotros.
 
-### Alternativa 1. Tallado con GRASS GIS, complemento `r.carve` (descartada)
+``` bash
+# Importar red hidrográfica digitalizada desde el MTN-50K
+v.import --overwrite input=red_mtn50k_cleaned.gpkg output=red_mtn50k_cleaned
+# Ver mapa importado en lista (q para salir)
+g.list type=vector
+# Calcular y pasar a archivo, la longitud de cursos y número de segmentos (ejecutar en casos de actualización)
+v.to.db -p option=length map=red_mtn50k_cleaned > stats_length_red_mtn50k_cleaned.txt
+```
+
+``` r
+stats_red_mtn50k <- read_delim(paste0(dem_proc_dir, 'stats_length_red_mtn50k_cleaned.txt'),
+                               progress = F, show_col_types = F)
+n_seg_red_mtn50k <- stats_red_mtn50k %>% filter(!cat==-1) %>% nrow
+length_mtn50k <- stats_red_mtn50k %>% filter(!cat==-1) %>% pull(length) %>% sum/1000
+```
+
+A partir del archivo de texto generado GRASS GIS, obtuvimos los
+estadísticos básicos: se trata de una red compuesta por **29750
+segmentos** que suman un total de **45698.8 kilómetros** de longitud. Es
+importante señalar que la segmentación de las polilíneas no
+necesariamente guarda relación con la hidrografía, y probablemente
+responda a errores de digitalización. Verificamos muchos casos en los
+que un tramo continuo, verificado en el mapa fuente, figuraba segmentado
+en pequeños trozos en el vectorial, incluso encontramos lugares donde la
+continuidad se interrumpía. Otros problemas topológicos encontrados
+fueron los siguientes: confluencias que no siempre se resolvían con
+nodos de intersección, líneas duplicadas, cursos fluviales aparecían
+enredados, entre otros.
+
+<img src="out/red-densa.jpg" alt="Mapa de la red densa de ríos, arroyos, cañadas y canales de riego, alegadamente extraída desde el MTN-50K. Lo que sabemos que es fue digitalizada a partir del MTN-50K. Sin embargo, aunque está bastante bien alineada en buena parte del país, en algunos puntos del país (e.g. costa norte, sierra de Bahoruco), la red se desplaza ligeramente. La utilizamos para tallar el DEM, pero los análisis hidrológicos produjeron talwegs duplicados y, en los ríos con meandros divagantes, el resultado no se adaptaba bien al DEM (la fecha del DEM es 2010, mientras que la red es del siglo pasado). Autoría desconocida (esperamos que nos la indiquen próximamente)" width="80%" style="display: block; margin: auto;" />
+
+Por otra parte, tal como indicamos arriba, alternativamente probamos con
+una red de cursos largos para tallar al DEM, la cual generamos
+digitalizando sobre imágenes satelitales (Google; Airbus, CNES; Airbus,
+Landsat; Copernicus; Maxar Technologies; U.S. Geological Survey 2023) y,
+ocasionalmente, sobre el MTN-50K (Instituto Cartográfico Militar (ICM)
+1989). Asimismo, nos auxiliamos en gran medida de OpenStreetMap
+contributors (2017), como fuente disponible directamente en formato
+vectorial. Esta red consistió en una selección de los ríos más largos y
+represados de República Dominicana, e incluyó tramos de ríos que
+atraviesan áreas problemáticas para la conducción del flujo, como
+grandes llanuras y karst. Al igual que con la red densa, para garantizar
+la continuidad topológica, ignoramos los embalses y grabamos trazados
+históricos sobre el DEM. Importamos esta red a la base de datos de GRASS
+GIS y obtuvimos estadísticos básicos.
+
+``` bash
+# Importar red a GRASS
+v.import --overwrite input=red_mtn50k_cleaned_largos.gpkg output=red_mtn50k_cleaned_largos
+# Ver mapa importado en lista (q para salir)
+g.list type=vector
+# Calcular y pasar a archivo, la longitud de cursos y número de segmentos (ejecutar en casos de actualización)
+v.to.db -p option=length map=red_mtn50k_cleaned_largos > stats_length_red_mtn50k_cleaned_largos.txt
+```
+
+``` r
+stats_red_mtn50k_largos <- read_delim(paste0(dem_proc_dir, 'stats_length_red_mtn50k_cleaned_largos.txt'),
+                               progress = F, show_col_types = F)
+n_seg_red_mtn50k_largos <- stats_red_mtn50k_largos %>% filter(!cat==-1) %>% nrow
+length_mtn50k_largos <- stats_red_mtn50k_largos %>% filter(!cat==-1) %>% pull(length) %>% sum/1000
+```
+
+A partir del archivo de texto generado, obtuvimos los estadísticos
+básicos: se trata de una red compuesta por **29750 segmentos** que suman
+un total de **45698.8 kilómetros** de longitud. Cabe señalar que esta
+red no tiene valor hidrográfico, pues la creamos únicamente para forzar
+el flujo a seguir el trazado real, especialmente en zonas llanas.
+Desaconsejamos su uso para otros fines que no sean los de complementar
+un análisis hidrológico completo.
+
+<img src="out/red-cursos-largos.jpg" alt="Mapa de la red de cursos largos creada para el estudio a partir de varias fuentes (más detalles, en el texto)." width="80%" style="display: block; margin: auto;" />
+
+Con ambas redes ya generadas, el siguiente consistió en probar las
+herramientas disponibles, `r.carve` de GRASS GIS, álgebra de mapas
+(``` r.mapcalc``de GRASS GIS) y ```FillBurn\` de WBT. Los resultados
+obtenidos en cada caso los describimos detalladamente en las secciones a
+continuación.
+
+#### Alternativa 1. Tallado con GRASS GIS, complemento `r.carve` (descartada)
 
 La herramienta r.carve de GRASS GIS fue diseñada para grabar el DEM sin
 modificarlo sensiblemente, permitiendo configurar la profundidad y la
@@ -846,18 +982,19 @@ evaluar otras alternativas.
 # Limpiar red manualmente en QGIS
 # Aplicar v.clean, en QGIS
 
-# Tallar
-# Alternativa 1: tardó mucho tiempo y ni tan siquiera terminó
-# Importar red a GRASS
-# v.import --overwrite input=red_mtn50k_cleaned_largos.gpkg output=red_mtn50k_cleaned_largos
+# Tallar la red densa
 # time r.carve --overwrite --verbose raster=dem_pseudo_ortometrico \
-  vector=red_mtn50k_cleaned_largos output=dem_tallado depth=100
+#  vector=red_mtn50k_cleaned output=dem_tallado depth=100
 # echo "r.carve finalizado" | mail -s "r.carve finalizado" zoneminderjr@gmail.com
 ## real 320m40.373s # NO ALCANZÓ A TERMINAR USANDO RED DOMINICANA DEL MTN50K DENSA (red_mtn50k_cleaned)
+# Tallar red de cursos largos
+# time r.carve --overwrite --verbose raster=dem_pseudo_ortometrico \
+#  vector=red_mtn50k_cleaned_largos output=dem_tallado depth=100
+# echo "r.carve finalizado" | mail -s "r.carve finalizado" zoneminderjr@gmail.com
 ## real 97m3.970s # COMPLETADO: USANDO RED DE CURSOS LARGOS SOLAMENTE (red_mtn50k_cleaned_largos)
 ```
 
-### Alternativa 2. Tallado con GRASS GIS, usando álgebra de mapas `r.mapcalc` (elegida)
+#### Alternativa 2. Tallado con GRASS GIS, usando álgebra de mapas `r.mapcalc` (elegida)
 
 Tallado eficiente usando álgebra de mapas. Normalizamos el DEM,
 generamos una capa booleana ráster con la red de cursos largos, la
@@ -868,7 +1005,7 @@ resultado es un DEM tallado, en el que los píxeles tallados (por donde
 circula la red) tenían una profundidad (valor negativo) equivalente al
 rango.
 
-``` bash
+``` r
 # Implementar esta alternativa con mapcalc de GRASS GIS y evaluar rendimiento
 # https://www.youtube.com/watch?v=jHT_StPb_oM
 
@@ -876,9 +1013,6 @@ rango.
 # Aplicar v.clean, en QGIS
 
 # Tallar
-# Alternativa 2: probando álgebra de mapas
-# Importar red a GRASS
-v.import --overwrite input=red_mtn50k_cleaned_largos.gpkg output=red_mtn50k_cleaned_largos
 # Rasterizar red (los píxeles de la red valdrán 1, el resto, nulo)
 v.to.rast --overwrite input=red_mtn50k_cleaned_largos type=line use=val output=red_mtn50k_cleaned_largos
 # Convertir nulos a cero
@@ -893,13 +1027,14 @@ r.mapcalc --overwrite << EOF
 eval(stddem = (dem_pseudo_ortometrico - -51.4456) / (3102.34 - -51.4456), \
      stddemburn = stddem - red_mtn50k_cleaned_largos)
 dem_tallado = (stddemburn * (3102.34 - -51.4456)) - 51.4456
+# dem_tallado = stddemburn * dem_pseudo_ortometrico # Alternativa
 EOF
 echo "Tallado finalizado" | mail -s "Mensaje sobre tallado" zoneminderjr@gmail.com
 ```
 
 <img src="out/dem-sin-tallar-tallado.png" alt="DEM ALOS PALSAR sin aplicación de hidrografía (A), y con aplicación de hidrografía seleccionada (B). El DEM se representa como relieve sombreado y la aplicación se denota como un grabado oscurecido (cañón del río Payabo, Los Haitises, y río Yuna (proximidades de Arenoso, nordeste de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
-### Alternativa 3. Tallado con WhiteboxTools (descartada)
+#### Alternativa 3. Tallado con WhiteboxTools (descartada)
 
 Como alternativa de procesamiento 3 usamos la herramienta `FillBurn`,
 basada en Saunders (2000) e implementada por John B. Lindsay (2016) en
@@ -949,7 +1084,7 @@ generado por GRASS GIS.
 ## real 0m38.519s
 ```
 
-## Depresiones
+### Depresiones
 
 Para producir límites de cuencas y redes de drenaje con sentido, los
 algoritmos de análisis hidrológico requieren que se identifiquen las
@@ -958,11 +1093,13 @@ pérdidas). Usando la capa de litologías de República Dominicana (Mollat
 et al. 2004), identificamos y separamos las calizas que presentaban
 suficiente grado de karstificación, de acuerdo con nuestra experiencia
 de campo. Posteriormente, generamos una capa de depresiones con el
-complemento `r.geomorphon` a partir del DEM (Jarosław Jasiewicz y
-Stepinski 2013). Adicionalmente, digitalizamos algunas depresiones cuya
-localización conocíamos por experiencia de terreno. Finalmente,
+complemento `r.geomorphon` usando el DEM como insumo (Jarosław Jasiewicz
+y Stepinski 2013). Adicionalmente, digitalizamos algunas depresiones
+cuya localización conocíamos por experiencia de terreno. Finalmente,
 intersectamos las tres fuentes para producir una capa comprensiva de las
 depresiones que capturan el flujo superficial.
+
+<img src="out/geomorfonos-de-rd.jpg" alt="&quot;Geomórfonos&quot; de República Dominicana generados a partir de DEM ALOS PALSAR. En cartela, detalle del cañón del río Payabo" width="80%" style="display: block; margin: auto;" />
 
 No obstante, nuestro resultado debe tomarse con cautela en el relieve
 kárstico. Como bien es sabido, no todas las calizas representadas en la
@@ -1024,7 +1161,9 @@ r.patch --overwrite input=depresiones_geomorfonos_calizas,depresiones_digitaliza
 
 <img src="out/depresiones.png" alt="DEM ALOS PALSAR representado como mapa hipsómétrico (rojo y marrón representan terreno elevado, verde y azul claro terreno bajo) sobre relieve sombreado, mostrando el área de Guaraguao, Los Haitises, al sur del río Yuna (nordeste de República Dominicana). (A) sin mostrar depresiones, (B) mostrando depresiones en tonalidad azul oscuro" width="80%" style="display: block; margin: auto;" />
 
-## Análisis hidrológicos, morfométricos y jerarquía de red. El dilema: `r.watershed` o `r.stream*`
+## Extracción de red de drenaje y cuencas hidrográficas: análisis hidrológicos y morfométricos, jerarquía de red
+
+### El dilema: `r.watershed` o `r.stream*`
 
 El complemento `r.watershed` es uno de los más completos de GRASS GIS
 para realizar análisis hidrológico a nivel de cuenca e incluso para
@@ -1097,7 +1236,7 @@ r.mask vector=mascara_1km_solo_en_frontera
 
 Iniciamos los análisis hidrológicos con la nueva máscara.
 
-``` r
+``` bash
 time r.watershed --overwrite --verbose elevation=dem_tallado \
  depression=depresiones_todas accumulation=rwshed_acum \
  threshold=180 stream=rwshed_talwegs \
@@ -1110,7 +1249,9 @@ echo "r.watershed finalizado" | mail -s "Mensaje sobre r.watershed" zoneminderjr
 ## real 9m47.041s
 ```
 
-### Extraer red de drenaje
+<img src="out/acumulacion-flujo-y-red-rwshed.png" alt="Mapas de acumulación de flujo y red extraída con `r.watershed`" width="80%" style="display: block; margin: auto;" />
+
+### Extracción de red de drenaje y cuencas hidrográficas según orden jerárquico
 
 Con el DEM y la capa de acumulación generada por `r.watershed`,
 extrajimos la red hidrográfica, para lo cual, previamente elegimos, por
@@ -1146,17 +1287,6 @@ valores usados en estudios consultados (Marchesini et al. 2021), donde
 evalúan por métodos de “áreas susceptibles a inundación” (Freedman y
 Diaconis 1981), el rango de umbrales a elegir.
 
-Luego de evaluar los resultados producidos por cada uno, elegimos el
-valor 900 celdas (14 ha), por adaptarse mejor a los fines de nuestro
-estudio. Las redes producidas con este umbral resultaron ser bastante
-limpias y diversas en el territorio dominicano, por lo que no se
-ocultaron patrones de variabilidad necesarios en la toma de decisiones
-sobre selección de sitios para instalar estaciones hidrométricas.
-Igualmente, la red generada con este umbral, alcanzó un valor máximo de
-8 según los métodos de Strahler y Horton, lo cual nos permitió
-establecer rangos de idoneidad según orden de red (e.g. 5 y 6) para la
-selección de sitios candidatos.
-
 ``` bash
 # Extraer redes de drenaje para tres umbrales de acumulación distintos
 # En bucle
@@ -1171,18 +1301,54 @@ done
 ## real 11m28.455s
 ## real 11m26.908s
 ## real 11m30.074s
-# Único
+# Único umbral, para testing
 # time r.stream.extract --overwrite elevation=dem_tallado accumulation=rwshed_acum \
 #   depression=depresiones_todas threshold=64 \
 #   stream_vector=rstream_talwegs_umbral_64 stream_raster=rstream_talwegs_umbral_64 \
 #     direction=rstream_direccion_umbral_64 memory=32000
 # echo "Job finished" | mail -s "Job finished" zoneminderjr@gmail.com
 ## real 11m46.930s
+
+# Calcular estadisticos, y pasar a archivo
+for i in `echo {180..900..360}`; \
+  do v.to.db -p option=length map=rstream_talwegs_umbral_$i > stats_length_rstream_talwegs_umbral_$i.txt;
+done
 ```
+
+``` r
+stats_rstream_talwegs <- sapply(as.character(c(180, 540, 900)), function(x) 
+  read_delim(paste0(dem_proc_dir, 'stats_length_rstream_talwegs_umbral_', x, '.txt'),
+             progress = F, show_col_types = F), simplify = F)
+n_rstream_talwegs <- stats_rstream_talwegs %>% 
+  map(~ .x %>% filter(!cat==-1) %>% nrow) %>% unlist
+length_rstream_talwegs <- stats_rstream_talwegs %>%
+  map(~ .x %>% filter(!cat==-1) %>% pull(length) %>% sum/1000) %>% unlist
+```
+
+A partir del archivo de texto generado, obtuvimos los estadísticos
+básicos: se trata de una red compuesta por **419646, 192453 y 130244
+segmentos**, respectivamente para cada umbral de 180, 540 y 900 celdas,
+los cuales suman totales de **138444, 98213 y 82081 kilómetros** de
+longitud, respectivamente.
+
+Tras realizar una inspección visual de los resultados producidos por el
+complemento `r.stream.extract`, elegimos los resultados correspondientes
+al umbral de 540 celdas (8 ha), por adaptarse mejor a los fines de
+nuestro estudio. Las redes producidas con este umbral resultaron ser
+bastante limpias y diversas en el territorio dominicano, mostrando una
+hidrografía representativa sin ocultar patrones de variabilidad,
+necesarios en la toma de decisiones sobre selección de sitios para
+instalar estaciones hidrométricas. Además, como se muestra a
+continuación, la red generada con este umbral, alcanzó un orden máximo 8
+según los métodos de Strahler y Horton, lo cual nos permitió usar, de
+manera preferente,pero no exclusiva, los órdenes de red 5 y 6 como
+candidatos idóneos para el establecimeinto de estaciones hidrométricas,
+por su mayor probabilidad de ser ríos permanentes o semipermanentes, sin
+llegar a tener valles de fondo muy ancho.
 
 <img src="out/red-indiferenciada.png" alt="Red de drenaje extraída para tres umbrales de acumulación: (A) 180 celdas, equivalente a ~3 ha; (B) 540 celdas, equivalente a ~8 ha; (C) 900 celdas, equivalente a ~14 ha. La imagen de fondo es un relieve sombreado a partir de DEM ALOS PALSAR, mostrando el área de El Arroyazo en la reserva científica Ébano Verde (provincia La Vega, cordillera Central de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
-### Generar órdenes de red
+#### Generar órdenes de red
 
 ``` bash
 # Extraer orden de red
@@ -1209,13 +1375,20 @@ done
 ## real 
 ```
 
-<img src="out/red-orden-nacional.jpg" alt="Representación del orden de red de Strahler por medio de grosor de línea, para todo el territorio dominicano. Esta red fue generada usando un umbral de acumulación de 900 celdas, equivalente a ~14 ha" width="80%" style="display: block; margin: auto;" />
+<img src="out/red-orden-nacional.jpg" alt="Representación de la red hidrográfica dominicana usando simbolizando el grosor de los segmentos en función de su orden de red (método de Strahler). El orden máximo alcanzado fue de 8. Esta red fue generada usando un umbral de acumulación de 540 celdas (~8 ha)" width="80%" style="display: block; margin: auto;" />
 
 <img src="out/red-orden.png" alt="Orden de red de Strahler para redes de drenaje generadas a partir de tres umbrales de acumulación: (A) 180 celdas, equivalente a ~3 ha; (B) 540 celdas, equivalente a ~8 ha; (C) 900 celdas, equivalente a ~14 ha. El área mostrada corresponde al río San Juan, afluente del río Yaque del Sur (vertiente sur de la cordillera Central de República Dominicana)" width="80%" style="display: block; margin: auto;" />
 
 <img src="out/red-orden-detalle-mtn.jpg" alt="Orden de red de Strahler en el área del pico de la Viuda y Sabana Vieja, provincia San Juan (vertiente sur de la cordillera Central de República Dominicana). Esta red fue generada usando un umbral de acumulación de 180 celdas, equivalente a ~3 ha. De fondo, mapa topográfico nacional escala 1:50,000 y relieve sombreado" width="80%" style="display: block; margin: auto;" />
 
-### Delimitar cuencas según la jerarquía de red
+#### Delimitar cuencas y subcuencas según la jerarquía de red
+
+Usamos el complemento `r.stream.basins` dentro de un bucle `for` para
+delimitar las cuencas y subcuencas según su orden de red máximo. Al
+utilizar el criterio orden de red, las unidades delimitadas por este
+procedimiento incluyen tanto cuencas y subcuencas, por lo que, la
+mayoría contiene redes de drenaje tributarias de otro río (ríos que
+desembocan en otros ríos).
 
 ``` bash
 # Delimitar cuencas según jerarquía
@@ -1229,59 +1402,544 @@ for i in `echo {180..900..360}`; \
   done; \
   echo -e "r.stream.basins umbral de acumulación $i finalizado" | mail -s "Mensaje sobre r.stream.basins" zoneminderjr@gmail.com; \
 done
-## real 
-## real 
-## real 
+## real ~ 0m40s repetido tantas veces como órdenes para cada umbral de acumulación
 ```
 
-## Fondo de valle
+#### Delimitar cuencas con drenaje final
 
-Obtuvimos la imagen de fondo de valle, con la cual estimamos la
-superficie ocupada por este. Este criterio nos sirvió para discriminar
-entre cuencas con fondos de valle anchos, no idóneas, y cuencas con
-fondos de valle estrechos, idóneas.
+En esta sección aplicamos el mismo complemento, pero esta vez para
+delimitar las cuencas con drenaje final. Es decir, delimitamos las
+cuencas completas, cuya red desemboca en el mar (exorreicas), o en
+lagos, lagunas y pérdidas del karst (endorreicas), y excluimos las
+subcuencas (red que desemboca en otro río) . Es decir, se trata de
+cuencas propiamente en la acepción más formal del término, que significa
+que no existe (ni se conoce) prolongación del drenaje superficial fuera
+de ellas.
 
 ``` bash
-# Intentado para todo el país, pero descartado. El único intento que completó el procesamiento,
-# tardó unas 4 horas, y no produjo resultado aprovechable (ráster de nan).
-# Se aplica mejor por sectores.
-time r.valley.bottom --verbose --overwrite elevation=dem_pseudo_ortometrico \
-  mrvbf=rvb_fondo_de_valle mrrtf=rvb_crestas t_slope=25 min_cells=25
-echo -e "Fondo de valle finalizado" | mail -s "Mensaje sobre r.valley.bottom"
+# Delimitar cuencas terminales
+# En bucle
+for i in `echo {180..900..360}`; \
+  do for j in `echo {1..8..1}`; \
+    do echo -e "\nTRABAJANDO EL UMBRAL DE ACUMULACIÓN $i, orden $j...\n"; \
+    time r.stream.basins -lc --overwrite direction=rstream_direccion_umbral_$i \
+      stream_rast=rstream_orden_strahler_de_red_umbral_$i cats=$j \
+      basins=rstream_cuencas_strahler_terminal_umbral_${i}_orden_$j memory=32000; \
+  done; \
+  echo -e "r.stream.basins umbral de acumulación $i finalizado" | mail -s "Mensaje sobre r.stream.basins" zoneminderjr@gmail.com; \
+done
+## real ~ 0m40s repetido tantas veces como órdenes para cada umbral de acumulación
 ```
 
-## Frecuencia de inundado
+#### Convertir cuencas a vectorial. Sólo las de umbral 540
 
-Usar como referencia:
-<https://www.sciencedirect.com/science/article/pii/S1569843222001984>
+En esta sección, convertimos las cuencas creadas en el paso anterior, a
+archivos vectoriales para su mejor manejo y representación. Asimismo,
+representamos el mapa de las estaciones hidrométricas existentes sobre
+las cuencas categorizadas en función del orden de red máximo encontrado
+en ellas.
 
-GitHub:
-<https://github.com/ChenZhiheng-NJU/SurfaceWaterMonitoringProject>
+A primera vista, notamos que la cobertura de la red de estaciones es
+relativamente baja y que, a priori, existe un déficit importante de
+estaciones hidrométricas en la mayoría de las cuencas de orden 5 y
+superiores, con una marcada concentración en cuencas con presas.
+Reconocemos que el establecimiento de estaciones hidrométricas asociadas
+a las presas es una labor de rutina y necesaria, pero el desbalance
+entre cuencas instrumentadas y no instrumentadas es significativo, lo
+cual, en última instancia, contribuye al sesgo en el dato hidrométrico.
+El mapa muestra las estaciones según estado “Bueno” y “Regular”, de
+acuerdo con lo reportado en el informe del INDRHI de 2019 (INDRHI 2019),
+así como las dos estaciones manejadas por el Servicio Geológico Nacional
+(SGN)
 
-## Criterios finales elegidos
+``` bash
+for i in `echo {1..8..1}`; \
+  do r.to.vect --overwrite input=rstream_cuencas_strahler_terminal_umbral_540_orden_$i \
+  output=rstream_cuencas_strahler_terminal_umbral_540_orden_$i type=area; \
+  v.db.addcolumn rstream_cuencas_strahler_terminal_umbral_540_orden_$i columns="strahler int"; \
+  v.db.update rstream_cuencas_strahler_terminal_umbral_540_orden_$i \
+  col=strahler value=$i where="strahler IS NULL"; \
+done
+v.patch -e --overwrite \
+  input=`g.list type=v pattern='rstream_cuencas_strahler_terminal_umbral_540_orden_*' separator=comma` \
+  output=rstream_cuencas_strahler_terminal_umbral_540_todos
 
-- Frecuencia de inundado
-- Orden de red: 5 o 6, o $\geq$ 4
-- Litología, por orden de preferencia: magmáticas nada o poco alteradas,
-  metamórficas (no mármoles), sedimentarias (no calizas).
+# Calcular estadisticos, y pasar a archivo
+## Preparación de fuentes (corrección de topología > actualización de área > eliminar registros)
+v.clean --overwrite layer=1 input=rstream_cuencas_strahler_terminal_umbral_540_todos \
+  output=rstream_cuencas_strahler_terminal_umbral_540_todos_cleaned tool=rmarea threshold=200
+v.to.db --overwrite option=area type=centroid columns=area \
+  map=rstream_cuencas_strahler_terminal_umbral_540_todos_cleaned
+v.db.droprow rstream_cuencas_strahler_terminal_umbral_540_todos_cleaned output=rstream_cuencas_strahler_terminal_umbral_540_todos_cleaned_2 where="area IS NULL"
+g.rename --overwrite \
+  vector=rstream_cuencas_strahler_terminal_umbral_540_todos_cleaned_2,\
+  rstream_cuencas_strahler_terminal_umbral_540_todos_cleaned
+
+## Ahora sí, la tabla
+v.db.select --overwrite rstream_cuencas_strahler_terminal_umbral_540_todos_cleaned where='cat!=-1' > \
+  stats_area_rstream_cuencas_strahler_terminal_umbral_540_todos.txt
+```
+
+``` r
+stats_rstream_cuencas_540 <- read_delim(
+  paste0(dem_proc_dir, 'stats_area_rstream_cuencas_strahler_terminal_umbral_540_todos.txt'),
+  progress = F, show_col_types = F)
+rstream_cuencas_540_por_orden <- stats_rstream_cuencas_540 %>% 
+  rename(`Orden de red (Strahler)` = strahler) %>% 
+  group_by(`Orden de red (Strahler)`)  %>%
+  summarise(`Número de cuencas` = n(),
+            `Área promedio` = mean(area),
+            `Área total` = sum(area)) 
+rstream_cuencas_540_por_orden %>%
+  ggplot + aes(x = `Orden de red (Strahler)`, y = `Número de cuencas`) + geom_line() +
+  scale_y_continuous(trans='log2') + theme_bw()
+```
+
+<img src="seleccion-sitios-red-de-estaciones-hidrometricas-suplemento-metodologico_files/figure-gfm/unnamed-chunk-28-1.png" width="80%" style="display: block; margin: auto;" />
+
+``` r
+rstream_cuencas_540_por_orden %>%
+  kable(format = 'html', escape = F, booktabs = T,
+        caption = 'Relación entre orden de red de Strahler y número de cuencas de República Dominicana') %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+<table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+TABLA 2: Relación entre orden de red de Strahler y número de cuencas de
+República Dominicana
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+Orden de red (Strahler)
+</th>
+<th style="text-align:right;">
+Número de cuencas
+</th>
+<th style="text-align:right;">
+Área promedio
+</th>
+<th style="text-align:right;">
+Área total
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4070
+</td>
+<td style="text-align:right;">
+263837.3
+</td>
+<td style="text-align:right;">
+1073817672
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2029
+</td>
+<td style="text-align:right;">
+956249.8
+</td>
+<td style="text-align:right;">
+1940230776
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+606
+</td>
+<td style="text-align:right;">
+3911578.6
+</td>
+<td style="text-align:right;">
+2370416619
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+165
+</td>
+<td style="text-align:right;">
+21414857.6
+</td>
+<td style="text-align:right;">
+3533451511
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+46
+</td>
+<td style="text-align:right;">
+111125189\.5
+</td>
+<td style="text-align:right;">
+5111758717
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+517463997\.1
+</td>
+<td style="text-align:right;">
+9831815945
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3979801647.7
+</td>
+<td style="text-align:right;">
+7959603295
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3708474023.0
+</td>
+<td style="text-align:right;">
+14833896092
+</td>
+</tr>
+</tbody>
+</table>
+
+Los estadísticos básicos de cuenca sugieren, en primer lugar, que la
+familia de complementos `r.stream*` está produciendo resultados
+consistentes, pues se observa claramente el típico decrecimiento
+exponencial del número de cuencas en relación con el orden de red. En
+segundo lugar, destaca un hecho particular que hemos observado en otra
+cuencas del país: el número de cuencas de orden 7 es menor número de
+cuencas muy reducido (incluyendo la cuenca del Yaque del Norte) con
+relación al posterior.
+
+<img src="out/cuencas-ordenes-4-y-superiores-estaciones-indrhi-sgn.jpg" alt="Cuencas de orden 4 o superior de República Dominicana, extraídas a partir de una red de drenaje creada usando 540 celdas (aprox. 8 ha) como umbral de acumulación del DEM ALOS PALSAR. Nótese el marcado déficit de estaciones en gran parte del territorio" width="80%" style="display: block; margin: auto;" />
+
+## Propuesta de sitios idóneos para estaciones hidrométricas
+
+Las redes de drenaje y las cuencas hidrográficas generadas en los pasos
+anteriores, fueron la base de información primordial y objetivo
+principal de esta investigación. A partir de la red generada, definimos
+el área de interés u objetivo, que son los cauces. El segundo objetivo
+de nuestra investigación fue seleccionar sitios prioritarios para
+establecer estaciones hidrométricas. Explicamos en esta sección cómo
+desarrollamos ese segundo objetivo.
+
+### El codiseño: sinergia con la propuesta de red de estaciones meteoclimáticas
+
+Con la red disponible, y generando algunas variables adicionales, nos
+encontrábamos en capacidad de aplicar algoritmos de reclasificación de
+variables y álgebra de mapas para producir una lista de sitios que
+cumplierann con criterios preestablecidos. Sin embargo, esta
+aproximación podría considerarse un tanto ingenua y hasta ineficiente,
+pues ignoraría los resultados que obtuvimos en el estudio complementario
+a éste titulado “[Selección de sitios para el establecimiento de una red
+de estaciones meteoclimáticas en República Dominicana usando decisión
+multicriterio y análisis de
+vecindad](https://geofis.github.io/datos-meteoclimaticos-escenarios-cc/seleccion-sitios-red-de-estaciones.html)”.
+Por esta razón, optamos por un esquema de codiseño flexible, de tal
+suerte que la propuesta de estaciones hidrométricas aprovechase la red
+de estaciones meteoclimáticas. Resumimos a continuación las múltiples
+ventajas de esta decisión.
+
+En primer lugar, la estrategia de codiseño redujo significativamente el
+tiempo de cómputo de variables territoriales. En segundo lugar, al
+proponer la colocación de ambos tipos de estaciones a un mismo contexto,
+estamos impulsando la co-observación del dato climático e hidrométrico.
+En tercer lugar, las áreas priorizadas, cumplen con una serie de
+criterios que son comunes a la selección de sitios idóneos para
+estaciones hidrométricas, como son la estacionalidad pluviomética y la
+distancia a accesos. En cuarto lugar, al reaprovechar la localización de
+estaciones meteoclimáticas, sacamos partido a los escenarios de densidad
+de estaciones (e.g. una estación para X km<sup>2</sup>) y nos apegamos a
+los estándares propuestos por la OMM. Los escenarios de densidad son una
+oportuna herramienta de planificación, pues bien usados, evitan la
+redundancia en la red, ofrecen varias alternativas de presupuesto de
+inversión, y facilitan el despliegue de medios de forma escalonada.
+
+A pesar de las múltiples ventajas señaladas, existen algunas desventajas
+que consideramos oportuno mencionar. En primer lugar, una corriente
+fluvial no necesariamente tiene su mejor lugar de medición en torno a un
+sitio preestablecido. Por esta razón, consideramos que, en la fase de
+implementación, la sensatez y la flexibilidad deben primar. No olvidemos
+que las bases de datos geoespaciales y los algoritmos sólo nos dan una
+idea preliminar; para tomar la decisión final se necesitará, sobre todo,
+de conocimiento de terreno y un sólido compromiso presupuestario. Otra
+desventaja del codiseño es el riesgo de subestimar los costos de
+operación y mantenimiento de las estaciones hidrométricas, pues estas
+son más complejas y sufren más incidencias que las meteoclimáticas.
+
+### Áreas de prospección: definición, materialización
+
+Para materializar el codiseño de las redes, nos apoyamos en lo que
+denominamos como **áreas de prospección para el establecimiento de
+estaciones hidrométricas** o AP. Definimos el AP como un polígono
+imaginario que rodea a una estación meteoclimática existente o
+propuesta—sin exceder su área de representación—, creado con el objetivo
+de evaluar, de manera flexible, la idoneidad de instalar una estación
+hidrométrica. La identificación del sitio idóneo se realiza aplicando
+criterios de idoneidad, los cuales a su vez se obtienen reclasificando
+información territorial y aplicando álgebra de mapas.
+
+Para materializar las AP sólo necesitamos la red de estaciones
+meteoclimáticas existentes y propuestas, y definir un área de influencia
+(e.g. *buffer*) en torno a ella. En el estudio complementario ya
+referido, propusimos tres escenarios de densidades distintos: un
+escenario donde cada estación tenía un área de representación de 100
+km<sup>2</sup> (219 estaciones, entre existentes y propuestas), otro de
+150 km<sup>2</sup> (138 estaciones) y otro de 250 km<sup>2</sup> (85
+estaciones).
+
+En el referido estudio, las áreas de representación de las estaciones
+meteoclimáticas las materializamos por medio de los criterios de
+densidad. Por ejemplo, en el escenario de densidad “100 km<sup>2</sup>
+por estación”, el área de representación de una estación era
+precisamente dicho valor, 100 km<sup>2</sup>. Pero en el estudio que nos
+ocupa, lo que necesitamos son áreas de prospección para situar
+estaciones hidrométricas, con la condición de que queden inscritas
+íntegamente dentro de las áreas de representación de la red
+meteoclimática.
+
+Resolvemos esta condición de manera más eficiente si generalizamos el
+problema. Una estación meteoclimática $M_i$ cubre un área de
+representación $b_i$, con radio $p_i=\sqrt{b_i/\pi}$. Queremos localizar
+un sitio idóneo para establecer, en su entorno, una estación
+hidrométrica, $H_i$, explorando el AP, la cual denotamos como $c_i$ con
+radio $rh_i$. Para garantizar que $c_i$ quede inscrita dentro de $b_i$,
+siendo a su vez lo más grande posible, tenemos que observar dos
+restricciones: 1) Localización: los centroides de los polígonos de ambas
+áreas, coinciden; 2) Tamaño: $c_i$ debe ser menor que $b_i$, es decir
+$c_i<b_i$.
+
+Una solución programática para es problema consiste en crear $c_i$
+usando *buffer* circulares en torno a $M_i$, donde los radios guardan
+una desigualdad tal que $q_i<p_i$, para lo cual haremos que $p_i$ se
+multiplique por una fracción propia y obtener así el valor de $q_i$.
+Luego de evaluar las opciones $q_i=p_i/2$ y $q_i=2p_i/3$, preferimos
+esta última para generar $c_i$, porque nos ofreció una zona de búsqueda
+mayor, sin que la circunferencia resultante se acercara a la del área de
+representación de $M_i$. Por lo tanto, la distancia que necesitamos para
+generar las áreas buffer es
+$q_i=\frac{2}{3}p_i=\frac{2}{3}\sqrt{b_i/\pi}$, que para los casos
+específicos de las densidades 100, 150 y 250, equivalen a 3.76, 4.61 y
+5.95 kilómetros, respectivamente.
+
+Para generarlas, importamos a la base de datos de GRASS GIS la capa de
+puntos que contiene la propuesta de sitios de estaciones meteoclimáticas
+para cada escenario de densidad (100, 150 y 250 km<sup>2</sup>),
+considerando sólo la red donde se eliminó redundancia por proximidad con
+estaciones meteoclimáticas de INDRHI y ONAMET existentes que se
+encontraban en estado “bueno”. Posteriormente, importamos la red de
+estaciones meteoclimáticas de INDRHI y ONAMET existentes, conservando
+sólo aquellas en estado bueno. Finalmente, combinamos, en un único
+vectorial, las estaciones y los sitios propuestos. Usando el mapa
+combinado y las distancias ya calculadas, generamos las áreas *buffer*
+que representan las AP (ver figura siguiente).
+
+``` bash
+# Propuestas de estaciones
+vareaskm2=(100 150 250)
+for areakm2 in "${vareaskm2[@]}"; do v.import --overwrite \
+  input=escenario_${areakm2}_km2_por_estacion_exclusion_redundancia_activas_buenas.gpkg \
+  output=escenario_${areakm2}_km2;
+done
+# Estaciones climáticas del INDRHI
+v.import --overwrite input=con_indicacion_estatus_climaticas_indrhi.gpkg \
+  output=tmp; \
+  v.extract --overwrite input=tmp where='Estado=="Bueno"' output=estaciones_indrhi
+  g.remove -f type=vector name=tmp
+# Estaciones climáticas de ONAMET
+v.import --overwrite input=con_indicacion_estatus_onamet.gpkg \
+  output=tmp; \
+  v.extract --overwrite input=tmp where='estado=="activa"' output=estaciones_onamet
+  g.remove -f type=vector name=tmp
+#Combinar estaciones y sitios propuestos en un único vectorial
+for areakm2 in "${vareaskm2[@]}"; do v.patch --overwrite \
+  input=escenario_${areakm2}_km2,estaciones_indrhi,estaciones_onamet \
+  output=puntos_para_areas_prospeccion_${areakm2}_km2;
+done
+# Crear buffer de tamaño variable, con categorías únicas ("cat" secuencial)
+for areakm2 in "${vareaskm2[@]}"; do v.buffer --overwrite \
+  input=puntos_para_areas_prospeccion_${areakm2}_km2 distance=`echo "scale=2;(2*sqrt($areakm2/3.14159))*1000/3" | bc` \
+  output=areas_prospeccion_${areakm2}_km2;
+  v.category --overwrite input=areas_prospeccion_${areakm2}_km2 output=tmp option=del cat=-1;
+  v.category --overwrite input=tmp  output=areas_prospeccion_${areakm2}_km2 option=add step=1;
+  v.db.addtable areas_prospeccion_${areakm2}_km2 columns="cat int";
+done
+```
+
+Los pasos siguientes consistieron en generar, dentro de las AP, los
+diferentes criterios que aplicamos a la selección de sitios para el
+establecimiento de estaciones hidrométricas. Para ello, ejecutamos
+varios complementos de GRASS GIS fijando como máscara las AP. Este paso
+fue crucial, pues conseguimos mejorar el tiempo de cómputo en la
+generación de las variables de entrada para seleccionar sitios
+prioritarios.
+
+## Generación de criterios
+
+Elegimos los siguientes criterios de priorización de sitios para el
+establecimiento de estaciones hidrométricas, los cuales calculamos
+exclusivamente dentro de las áreas prospección:
+
+- Orden de red: 4 para órdenes 4, 5, 6; 1 para órdenes ≤ 3 o ≥ 7.
 - Criterios de Rantz seleccionados:
-  - Orillas altas, valle estrecho (#4). Deseable, $V_f$: relación de
-    anchura de fondo de valle respecto de altura de valle, pero no tan
-    fácil de obtener.
-  - Tramo recto (#1 de lista de Rantz)
-  - Valle con afloramientos de sustrato rocoso, rocas consistentes (#5)
-  - Lejanía a confluencias y efectos mareales (#7)
-  - Accesible (#9)
-- Pool de criterios no elegidos:
-  - Tiempo de concentración (alejamiento medio)
-  - Coeficiente de torrencialidad
-  - Razón de elongación / compacidad / circularidad
-  - Concavidad transversal
-  - TPI, TRI, TWI
-  - Pendiente media
-  - Índice de concavidad
-  - Integral hipsométrica
-  - SPI, ¿balance hídrico?.
+  - Fondo de valle: 4 para fondos de valle pequeños; 1 para fondos de
+    valle grandes.
+  - Sinuosidad del tramo (#1 de lista de Rantz): 4 para rectilíneo
+    (sinuosidad baja); 1 para curvo (sinuosidad alta)
+  - Tipo de sustrato rocoso, rocas consistentes (#5): 4 para magmáticas
+    nada o poco alteradas; 3 para metamórficas (no mármoles); 2 para
+    sedimentarias (no calizas); 1 para calizas.
+  - Confluencias y efectos mareales (#7): 4 para distante; 1 para
+    próximo
+  - Accesible (#9): 4 para próximo; 1 para distante. Ya valorado para
+    las estaciones meteoclimáticas.
+- Instrumentación en la subcuenca específica: se aplica al finalizar,
+  realizando un análisis de vecindad por subcuenca, para determinar si
+  el sitio propuesto se encuentra próximo a otro existente.
+
+### Fondos de valle
+
+Usando el complemento `r.valley.bottom` (Gallant y Dowling 2003),
+obtuvimos el “índice múltiresolución de planitud de fondos de valle”
+(MrVBF), con el cual estimamos la superficie ocupada por este importante
+elemento morfológico del sistema fluvial. Este criterio nos sirvió para
+discriminar entre talwegs con fondo de valle anchos, (menos
+prioritarios, por su mayor inversión requerida), y talwegs con fondos de
+valle estrechos (prioritarios).
+
+> Nota sobre la eficiencia del complemento `r.valley.bottom`. En un
+> primer intento, ejecutamos el siguiente bloque de código para obtener
+> el MrVBF de todo el país. Entendíamos posible lograrlo y, una vez
+> obtenido, recortarlo en las áreas de prospección, un procedimiento que
+> hemos realizado con muchos otros algoritmos, pero al parecer, el
+> complemento `r.valley.bottom` no está preparado para demandas tan
+> exigentes. Nos vimos en la necesidad de buscar formas distintas de
+> cómputo, porque la ejecución del algoritmo para todo el país tardó más
+> de 4 horas, y el ráster resultante sólo contenía valores sin datos, lo
+> cual atribuimos a la necesaria definición de parámetros específicos
+> para un territorio topográficamente muy diverso. Esto nos obligó a
+> calcular un ráster de MrVBF para sectores más pequeños, en concreto,
+> sólo para nuestras áreas de prospección.
+
+``` bash
+# Tarda un tiempo considerable
+# Al elegir min_cells=10000, el número de pasos es ocho, que es mucho menor
+# que los 12 o 16 que ejecutaría con valores por omisión de min_cells (que es 2).
+# Además, se probaron varios valores min_cells, como 1000, 10000 y 100000, y el
+# resultado siempre fue el mismo: una imagen con valores nulo.
+# Sin embargo, la única prueba exitosa se consiguió al utilizar, como valor
+# del parámetro min_cells, el número de celdas de la región, en este caso 911808546
+# Esto redujo el número de pasos a 3, y el resultado fue satisfactorio.
+# Todo el país, una sola imagen. Tiempo de cómputo: ~1 hora.
+r.mask -r
+mascara_1km_solo_en_frontera
+time r.valley.bottom --verbose --overwrite elevation=dem_pseudo_ortometrico \
+  mrvbf=rvb_fondo_de_valle_pais \
+  min_cells=911808546
+# real 61m18.997s
+
+# Una alternativa también probada fue generar MrVBF sólo dentro 
+# de las AP, aplicando una máscara con bucle for. El tiempo de 
+# cómputo no se redujo, al contrario, aumentó a más de 3 horas.
+vareaskm2=(100 150 250)
+for areakm2 in "${vareaskm2[@]}"; do \
+  r.mask -r; \
+  r.mask vector=areas_prospeccion_${areakm2}_km2; \
+  time r.valley.bottom --verbose --overwrite elevation=dem_pseudo_ortometrico \
+  mrvbf=rvb_fondo_de_valle_${areakm2}_km2 \
+  min_cells=911808546; \
+  echo -e "Fondo de valle finalizado" | mail -s "Mensaje sobre r.valley.bottom"; \
+  echo -e "Fondo de valle para $i km2 finalizado" | mail -s "Mensaje sobre r.valley.bottom" zoneminderjr@gmail.com; \
+done
+# real 66m33.824s
+# real 66m25.192s
+# real 66m37.745s
+```
+
+### Nota sobre criterios no usados en esta primera evaluación, reservados para futuros intentos
+
+Transcribimos en esta sección una lista de criterios inicialmente
+considerados, pero que finalmente decidimos no incluir en esta primera
+evaluación, a efectos de mantener el procedimiento lo más simple
+posible, y debido a que el tiempo de cómputo que requerían excedía el
+inicialmente previsto.
+
+- Frecuencia de inundado. Se puede estimar por teledetección óptica y
+  radar, pero consideramos que no aportaría nuevos elementos más de allá
+  de la propia inspección visual que realizamos en imágenes de alta
+  resolución. Para más detalles, consultar el trabajo de Chen y Zhao
+  (2022), y ver [repositorio
+  asociado](https://github.com/ChenZhiheng-NJU/SurfaceWaterMonitoringProject).
+- SPI, ¿balance hídrico? Esta variable se podría generar para el país,
+  pero es probable que no aporte muchos más elementos para elegir sitios
+  prioritarios. De todas formas, se podría evaluar su cómputo.
+- Variables que pueden generarse con el complemento `r.basin` y otros de
+  GRASS GIS y [software que hemos
+  desarrollados](https://github.com/geofis/rgrass) en otras
+  investigaciones (Martinez Batlle 2019; Martínez-Batlle 2019). Esta
+  variables son relativamente fáciles de generar, pero abultarían mucho
+  la selección de criterios. No obstante, para las cuencas drenadas por
+  las estaciones hidrométricas actuales y propuestas, podría ser de gran
+  interés como forma de caracterizar el territorio instrumentado y
+  potencialmente a instrumentar:
+  - Tiempo de concentración (alejamiento medio).
+  - Coeficiente de torrencialidad.
+  - Razón de elongación / compacidad / circularidad.
+  - Concavidad transversal.
+  - TPI, TRI, TWI.
+  - Pendiente media.
+  - Índice de concavidad.
+  - Integral hipsométrica.
+
+# TODO
+
+- Ejecutar `r.basin`
+- Topología de red
+- Variación espacial de las variables morfométricas: $R_b$, densidad de
+  drenaje
+- Incluir las cuencas internacionales de forma íntegra, especialmente,
+  el Artibonito.
+
+# Referencias
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
@@ -1311,6 +1969,16 @@ Development». *Hydrological Sciences Journal* 42 (4): 481-92.
 
 </div>
 
+<div id="ref-chen2022" class="csl-entry">
+
+Chen, Zhiheng, y Shuhe Zhao. 2022. «Automatic Monitoring of Surface
+Water Dynamics Using Sentinel-1 and Sentinel-2 Data with Google Earth
+Engine». *International Journal of Applied Earth Observation and
+Geoinformation* 113 (septiembre): 103010.
+<https://doi.org/10.1016/j.jag.2022.103010>.
+
+</div>
+
 <div id="ref-cidiatindrhi1992control" class="csl-entry">
 
 CIDIAT, y INDRHI. 1992. *Control de Inundaciones en la cuenca del Río
@@ -1337,6 +2005,15 @@ Verwandte Gebiete* 57 (4): 453-76. <https://doi.org/10.1007/BF01025868>.
 
 GADM. 2022. «GADM». Available online: <https://gadm.org/index.html>
 (accessed on abril, 2023).
+
+</div>
+
+<div id="ref-gallant2003" class="csl-entry">
+
+Gallant, John C., y Trevor I. Dowling. 2003. «A Multiresolution Index of
+Valley Bottom Flatness for Mapping Depositional Areas: MULTIRESOLUTION
+VALLEY BOTTOM FLATNESS». *Water Resources Research* 39 (12).
+<https://doi.org/10.1029/2002WR001426>.
 
 </div>
 
@@ -1463,6 +2140,23 @@ Marchesini, Ivan, Paola Salvati, Mauro Rossi, Marco Donnini, Simone
 Sterlacchini, y Fausto Guzzetti. 2021. «Data-Driven Flood Hazard
 Zonation of Italy». *Journal of Environmental Management* 294
 (septiembre): 112986. <https://doi.org/10.1016/j.jenvman.2021.112986>.
+
+</div>
+
+<div id="ref-martinezbatlle2019" class="csl-entry">
+
+Martinez Batlle, Jose. 2019. «Drainage rearrangement as a driver of
+geomorphological evolution during the Upper Pleistocene in a small
+tropical basin». <https://doi.org/10.31223/OSF.IO/PFZVQ>.
+
+</div>
+
+<div id="ref-batlle2019" class="csl-entry">
+
+Martínez-Batlle, José-Ramón. 2019. «Drainage Rearrangement as a Driver
+of Geomorphological Evolution During the Upper Pleistocene in a Small
+Tropical Basin». *Journal of Geography and Geology* 11 (2): 1.
+<https://doi.org/10.5539/jgg.v11n2p1>.
 
 </div>
 
