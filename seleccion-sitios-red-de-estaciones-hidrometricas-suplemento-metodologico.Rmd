@@ -1096,7 +1096,7 @@ r.to.vect --overwrite input=prioridad_reescalada \
   output=prioridad_reescalada type=line
 ```
 
-```{r prioridadesc250km2, echo=F, fig.cap='Prioridad de instalación de estaciones hidrométricas, escenario de densidad, 250 km cuadrados'}
+```{r prioridadesc250km2, echo=F, fig.cap='Prioridad de instalación de estaciones hidrométricas, escenario de densidad, 250 km cuadrados. Los autores del trabajo somos conscientes de que hay que eliminar determinados tramos, en concreto, en áreas de karst. Pudimos haberlo hecho manualmente, pero no es una opción metodológicamente correcta, ni reproducible, así que lo mejoraremos en breve y esta nota desaparecerá.'}
 knitr::include_graphics("out/tramos-prioritarios-densidad-250.jpg")
 ```
 
@@ -1134,9 +1134,9 @@ v.out.ogr input=prioridad_reescalada output=prioridad_reescalada.gpkg
 ```{r}
 escenario <- as.character(c(100,150,250))
 ap <- sapply(escenario, function(x)
-  obj_sf <- st_read(paste0(dem_proc_dir, 'areas_prospeccion_', x, '_km2.gpkg')),
+  obj_sf <- st_read(paste0(dem_proc_dir, 'areas_prospeccion_', x, '_km2.gpkg'), quiet=T),
   simplify = F)
-prioridad <- st_read(paste0(dem_proc_dir, 'prioridad_reescalada.gpkg'))
+prioridad <- st_read(paste0(dem_proc_dir, 'prioridad_reescalada.gpkg'), quiet=T)
 ```
 
 Exploramos cuántos sitios por tipo de prioridad fueron encontrados para cada escenario de densidad.
@@ -1170,7 +1170,7 @@ map(escenario, function(x) resultados_por_area[[x]] %>%
       st_drop_geometry() %>% 
       kable(format = 'html', escape = F, booktabs = T,
       caption = paste0('Número de tramos identificados por cada área de prospección ',
-                       'según nivel de prioridad y densidad. Escenario de densidad: ', x, ' kilómetros cuadrados')) %>%
+                       'según nivel de prioridad. Escenario de densidad: ', x, ' kilómetros cuadrados')) %>%
       kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T))
 # mapas <- sapply(
 #   seq_along(centroides), function(x){
@@ -1181,9 +1181,19 @@ map(escenario, function(x) resultados_por_area[[x]] %>%
 # sapply(mapas, print)
 ```
 
-Resúmenes
+Resúmenes. Número de áreas de prospección en las que se propone instrumentar.
 
-```{r}
+```{r, results='asis'}
+map(escenario, function(x) resultados_por_area[[x]] %>%
+      st_drop_geometry() %>% 
+      select(matches('imprescindible|Total')) %>% 
+      mutate_all( ~ ifelse(.>0, 1, 0)) %>%
+      mutate_all( ~sum(., na.rm = T)) %>% 
+      distinct %>% 
+      kable(format = 'html', escape = F, booktabs = T,
+      caption = paste0('Número de áreas de prospección en las que se propone instrumentar.',
+                       'Escenario de densidad: ', x, ' kilómetros cuadrados')) %>%
+      kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T))
 
 ```
 
