@@ -944,8 +944,8 @@ length_mtn50k_largos <- stats_red_mtn50k_largos %>% filter(!cat==-1) %>% pull(le
 ```
 
 A partir del archivo de texto generado, obtuvimos los estadísticos
-básicos: se trata de una red compuesta por **29750 segmentos** que suman
-un total de **45698.8 kilómetros** de longitud. Cabe señalar que esta
+básicos: se trata de una red compuesta por **1047 segmentos** que suman
+un total de **4895.88 kilómetros** de longitud. Cabe señalar que esta
 red no tiene valor hidrográfico, pues la creamos únicamente para forzar
 el flujo a seguir el trazado real, especialmente en zonas llanas.
 Desaconsejamos su uso para otros fines que no sean los de complementar
