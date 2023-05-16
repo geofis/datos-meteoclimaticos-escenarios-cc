@@ -1895,6 +1895,8 @@ done
 # real 66m37.745s
 ```
 
+<img src="out/fondos-de-valle.jpg" alt="Índice múltiresolución de planitud de fondos de valle (MrVBF)" width="80%" style="display: block; margin: auto;" />
+
 Con la imagen de fondos de valle, obtuvimos una imagen de anchura de
 cauce. El procedimiento abreviado consistió en determinar, localmente
 para cada tramo de corriente, el valor del índice MrVBF, convertirlo a
@@ -2082,7 +2084,31 @@ r.to.vect --overwrite input=prioridad_reescalada \
   output=prioridad_reescalada type=line
 ```
 
-<img src="out/tramos-prioritarios-densidad-250.jpg" alt="Prioridad de instalación de estaciones hidrométricas, escenario de densidad, 250 km cuadrados. Los autores del trabajo somos conscientes de que hay que eliminar determinados tramos, en concreto, en áreas de karst. Pudimos haberlo hecho manualmente, pero no es una opción metodológicamente correcta, ni reproducible, así que lo mejoraremos en breve y esta nota desaparecerá." width="80%" style="display: block; margin: auto;" />
+Genemos las prioridades reescaladas por cada escenario de densidad,
+usando la función `v.overlay`.
+
+``` bash
+vareaskm2=(100 150 250)
+for areakm2 in "${vareaskm2[@]}"; do v.overlay \
+  ainput=prioridad_reescalada binput=areas_prospeccion_${areakm2}_km2 operator=and \
+  output=prioridad_reescalada_en_areas_prospeccion_${areakm2}_km2;
+done
+```
+
+Mostramos las prioridades reescaladas para cada escenario de densidad,
+en los mapas a continuación. Los autores de esta investigación somos
+conscientes de que hay que eliminar determinados tramos, en concreto, en
+áreas de karst y/o de riego. Pudimos haberlo hecho manualmente, pero no
+es una opción metodológicamente correcta, ni reproducible, así que lo
+mejoraremos en breve y esta nota desaparecerá. No obstante, la
+aproximación automática ofrece una priorización bastante ajustada a la
+realidad territorial dominicana.
+
+<img src="out/tramos-prioritarios-densidad-100.jpg" alt="Prioridad de instalación de estaciones hidrométricas, escenario de densidad, 100 km cuadrados." width="80%" style="display: block; margin: auto;" />
+
+<img src="out/tramos-prioritarios-densidad-150.jpg" alt="Prioridad de instalación de estaciones hidrométricas, escenario de densidad, 150 km cuadrados." width="80%" style="display: block; margin: auto;" />
+
+<img src="out/tramos-prioritarios-densidad-250.jpg" alt="Prioridad de instalación de estaciones hidrométricas, escenario de densidad, 250 km cuadrados." width="80%" style="display: block; margin: auto;" />
 
 ### Sobre la categorización en escalas de prioridad aplicadas a las estaciones hidrométricas
 
@@ -11612,18 +11638,28 @@ Total moderadamente prioritario + prioritario + imprescindible
 # sapply(mapas, print)
 ```
 
-Resúmenes. Número de áreas de prospección en las que se propone
-instrumentar.
+**Resúmenes**
+
+Número de áreas de prospección en las que se propone instrumentar. Cabe
+señalar que, **en varias unidades de prospección, existen múltiples
+tramos posibles donde resulta viable instalar estaciones
+hidrométricas**. En tales casos, recomendamos evaluar la mejor opción,
+para lo cual el criterio técnico y el conocimiento de terreno serían
+bastante oportunos.
 
 ``` r
 map(escenario, function(x) resultados_por_area[[x]] %>%
       st_drop_geometry() %>% 
-      select(matches('imprescindible|Total')) %>% 
+      select(matches('^imprescindible$|^prioritario$|^moderadamente prioritario$')) %>% 
       mutate_all( ~ ifelse(.>0, 1, 0)) %>%
       mutate_all( ~sum(., na.rm = T)) %>% 
       distinct %>% 
+      relocate(prioritario, .after = imprescindible) %>% 
+      mutate(`Total prioritario + imprescindible` = prioritario + imprescindible,
+             `Total moderadamente prioritario + prioritario + imprescindible` = `moderadamente prioritario` + prioritario + imprescindible) %>% 
+      relocate(`moderadamente prioritario`, .after = `Total prioritario + imprescindible`) %>% 
       kable(format = 'html', escape = F, booktabs = T,
-      caption = paste0('Número de áreas de prospección en las que se propone instrumentar.',
+      caption = paste0('Número de áreas de prospección en las que se propone instrumentar. ',
                        'Escenario de densidad: ', x, ' kilómetros cuadrados')) %>%
       kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T))
 ```
@@ -11632,7 +11668,7 @@ map(escenario, function(x) resultados_por_area[[x]] %>%
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
 TABLA 4: Número de áreas de prospección en las que se propone
-instrumentar.Escenario de densidad: 100 kilómetros cuadrados
+instrumentar. Escenario de densidad: 100 kilómetros cuadrados
 </caption>
 <thead>
 <tr>
@@ -11640,7 +11676,13 @@ instrumentar.Escenario de densidad: 100 kilómetros cuadrados
 imprescindible
 </th>
 <th style="text-align:right;">
+prioritario
+</th>
+<th style="text-align:right;">
 Total prioritario + imprescindible
+</th>
+<th style="text-align:right;">
+moderadamente prioritario
 </th>
 <th style="text-align:right;">
 Total moderadamente prioritario + prioritario + imprescindible
@@ -11653,10 +11695,16 @@ Total moderadamente prioritario + prioritario + imprescindible
 28
 </td>
 <td style="text-align:right;">
-102
+99
 </td>
 <td style="text-align:right;">
-190
+127
+</td>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+279
 </td>
 </tr>
 </tbody>
@@ -11665,7 +11713,7 @@ Total moderadamente prioritario + prioritario + imprescindible
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
 TABLA 4: Número de áreas de prospección en las que se propone
-instrumentar.Escenario de densidad: 150 kilómetros cuadrados
+instrumentar. Escenario de densidad: 150 kilómetros cuadrados
 </caption>
 <thead>
 <tr>
@@ -11673,7 +11721,13 @@ instrumentar.Escenario de densidad: 150 kilómetros cuadrados
 imprescindible
 </th>
 <th style="text-align:right;">
+prioritario
+</th>
+<th style="text-align:right;">
 Total prioritario + imprescindible
+</th>
+<th style="text-align:right;">
+moderadamente prioritario
 </th>
 <th style="text-align:right;">
 Total moderadamente prioritario + prioritario + imprescindible
@@ -11686,10 +11740,16 @@ Total moderadamente prioritario + prioritario + imprescindible
 21
 </td>
 <td style="text-align:right;">
-78
+74
 </td>
 <td style="text-align:right;">
-129
+95
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+205
 </td>
 </tr>
 </tbody>
@@ -11698,7 +11758,7 @@ Total moderadamente prioritario + prioritario + imprescindible
 <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
 TABLA 4: Número de áreas de prospección en las que se propone
-instrumentar.Escenario de densidad: 250 kilómetros cuadrados
+instrumentar. Escenario de densidad: 250 kilómetros cuadrados
 </caption>
 <thead>
 <tr>
@@ -11706,7 +11766,13 @@ instrumentar.Escenario de densidad: 250 kilómetros cuadrados
 imprescindible
 </th>
 <th style="text-align:right;">
+prioritario
+</th>
+<th style="text-align:right;">
 Total prioritario + imprescindible
+</th>
+<th style="text-align:right;">
+moderadamente prioritario
 </th>
 <th style="text-align:right;">
 Total moderadamente prioritario + prioritario + imprescindible
@@ -11719,10 +11785,16 @@ Total moderadamente prioritario + prioritario + imprescindible
 17
 </td>
 <td style="text-align:right;">
-55
+51
 </td>
 <td style="text-align:right;">
-81
+68
+</td>
+<td style="text-align:right;">
+71
+</td>
+<td style="text-align:right;">
+139
 </td>
 </tr>
 </tbody>

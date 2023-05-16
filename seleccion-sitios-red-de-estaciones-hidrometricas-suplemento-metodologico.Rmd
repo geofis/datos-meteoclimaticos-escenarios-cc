@@ -946,6 +946,10 @@ done
 # real 66m37.745s
 ```
 
+```{r fondosdevalle, echo=F, fig.cap='Índice múltiresolución de planitud de fondos de valle (MrVBF)'}
+knitr::include_graphics("out/fondos-de-valle.jpg")
+```
+
 Con la imagen de fondos de valle, obtuvimos una imagen de anchura de cauce. El procedimiento abreviado consistió en determinar, localmente para cada tramo de corriente, el valor del índice MrVBF, convertirlo a puntuacionez z, obtener el área de fondo de valle y dividirla por la longitud del tramo.
 
 Primero, extrajimos los cursos de orden 4 o superior:
@@ -1096,7 +1100,27 @@ r.to.vect --overwrite input=prioridad_reescalada \
   output=prioridad_reescalada type=line
 ```
 
-```{r prioridadesc250km2, echo=F, fig.cap='Prioridad de instalación de estaciones hidrométricas, escenario de densidad, 250 km cuadrados. Los autores del trabajo somos conscientes de que hay que eliminar determinados tramos, en concreto, en áreas de karst. Pudimos haberlo hecho manualmente, pero no es una opción metodológicamente correcta, ni reproducible, así que lo mejoraremos en breve y esta nota desaparecerá.'}
+Genemos las prioridades reescaladas por cada escenario de densidad, usando la función `v.overlay`.
+
+```{bash, eval=F}
+vareaskm2=(100 150 250)
+for areakm2 in "${vareaskm2[@]}"; do v.overlay \
+  ainput=prioridad_reescalada binput=areas_prospeccion_${areakm2}_km2 operator=and \
+  output=prioridad_reescalada_en_areas_prospeccion_${areakm2}_km2;
+done
+```
+
+Mostramos las prioridades reescaladas para cada escenario de densidad, en los mapas a continuación. Los autores de esta investigación somos conscientes de que hay que eliminar determinados tramos, en concreto, en áreas de karst y/o de riego. Pudimos haberlo hecho manualmente, pero no es una opción metodológicamente correcta, ni reproducible, así que lo mejoraremos en breve y esta nota desaparecerá. No obstante, la aproximación automática ofrece una priorización bastante ajustada a la realidad territorial dominicana.
+
+```{r prioridadesc100km2, echo=F, fig.cap='Prioridad de instalación de estaciones hidrométricas, escenario de densidad, 100 km cuadrados.'}
+knitr::include_graphics("out/tramos-prioritarios-densidad-100.jpg")
+```
+
+```{r prioridadesc150km2, echo=F, fig.cap='Prioridad de instalación de estaciones hidrométricas, escenario de densidad, 150 km cuadrados.'}
+knitr::include_graphics("out/tramos-prioritarios-densidad-150.jpg")
+```
+
+```{r prioridadesc250km2, echo=F, fig.cap='Prioridad de instalación de estaciones hidrométricas, escenario de densidad, 250 km cuadrados.'}
 knitr::include_graphics("out/tramos-prioritarios-densidad-250.jpg")
 ```
 
@@ -1116,7 +1140,6 @@ Nuestra misión es proponer sitios a escala nacional. Para ello, usamos la fuent
 Por otra parte, en los lugares que fueron catalogados con la etiqueta "prioritario", y quizá en algún caso los catalogados como "moderadamente prioritarios", proponemos una intervención gradual y a largo plazo, dado que requieren mayor inversión. No obstante, los sitios catalogado como "moderadamente prioritarios" podrían er lugares poco convenientes, por lo que dicha categoría debe tomarse con cautela.
 
 Al margen de lo anterior, y tal como sugieren varias publicaciones sobre el diseño de redes de medición hidrométrica, lo deseable es definir objetivos concretos en cuanto al agua, y añadirlos como una capa de criterios más sobre los meramente físico. Continuemos con los análisis.
-
 
 
 ### Analicemos los resultados en R
@@ -1181,17 +1204,23 @@ map(escenario, function(x) resultados_por_area[[x]] %>%
 # sapply(mapas, print)
 ```
 
-Resúmenes. Número de áreas de prospección en las que se propone instrumentar.
+**Resúmenes**
+
+Número de áreas de prospección en las que se propone instrumentar. Cabe señalar que, **en varias unidades de prospección, existen múltiples tramos posibles donde resulta viable instalar estaciones hidrométricas**. En tales casos, recomendamos evaluar la mejor opción, para lo cual el criterio técnico y el conocimiento de terreno serían bastante oportunos.
 
 ```{r, results='asis'}
 map(escenario, function(x) resultados_por_area[[x]] %>%
       st_drop_geometry() %>% 
-      select(matches('imprescindible|Total')) %>% 
+      select(matches('^imprescindible$|^prioritario$|^moderadamente prioritario$')) %>% 
       mutate_all( ~ ifelse(.>0, 1, 0)) %>%
       mutate_all( ~sum(., na.rm = T)) %>% 
       distinct %>% 
+      relocate(prioritario, .after = imprescindible) %>% 
+      mutate(`Total prioritario + imprescindible` = prioritario + imprescindible,
+             `Total moderadamente prioritario + prioritario + imprescindible` = `moderadamente prioritario` + prioritario + imprescindible) %>% 
+      relocate(`moderadamente prioritario`, .after = `Total prioritario + imprescindible`) %>% 
       kable(format = 'html', escape = F, booktabs = T,
-      caption = paste0('Número de áreas de prospección en las que se propone instrumentar.',
+      caption = paste0('Número de áreas de prospección en las que se propone instrumentar. ',
                        'Escenario de densidad: ', x, ' kilómetros cuadrados')) %>%
       kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T))
 
