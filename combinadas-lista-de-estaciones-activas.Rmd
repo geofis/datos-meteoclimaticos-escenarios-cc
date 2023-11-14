@@ -616,6 +616,33 @@ leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática')) %>%
   addFullscreenControl()
 ```
 
+Mapa de estaciones climáticas de la red pública según estado
+
+```{r, fig.width=15.7, fig.height=10.5, dpi=62}
+fpal_estado <- colorFactor(
+  palette = c("#E41A1C", "#FFFF33","#4DAF4A"),
+  domain = unique(consolidado_sf$Estado), reverse = T)
+leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática', propiedad == 'pública')) %>%
+  addCircleMarkers(
+    radius = 5, group = ~ Estado,
+    popup = ~ paste0('Entidad: ', entidad, '<br>Nombre: ', Nombre, '<br>Estado: ', Estado),
+    color = ~ fpal_estado(Estado),
+    stroke = F, fillOpacity = 1
+  ) %>%
+  addLegend(pal = fpal_estado, values = ~ Estado, opacity = 1,
+            title = "Estaciones<br>Climáticas<br>Estado") %>% 
+  addTiles(group = 'OSM') %>%
+  addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
+  addLayersControl(
+    baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
+    overlayGroups = ~ Estado, position = 'bottomright',
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  leaflet_map_view %>% 
+  addFullscreenControl()
+```
+
 Mapa de estaciones hidrométricas según estado
 
 ```{r, fig.width=15.7, fig.height=10.5, dpi=62}
