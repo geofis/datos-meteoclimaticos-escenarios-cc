@@ -620,7 +620,7 @@ Mapa de estaciones climáticas de la red pública según estado
 
 ```{r, fig.width=15.7, fig.height=10.5, dpi=62}
 fpal_estado <- colorFactor(
-  palette = c("#E41A1C", "#FFFF33","#4DAF4A"),
+  palette = c("#E41A1C", "#FFFF33","#40ff40"),
   domain = unique(consolidado_sf$Estado), reverse = T)
 leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática', propiedad == 'pública')) %>%
   addCircleMarkers(
@@ -633,7 +633,8 @@ leaflet(consolidado_sf %>% filter(tipo == 'meteoclimática', propiedad == 'públ
             title = "Estaciones<br>Climáticas<br>Estado") %>% 
   addTiles(group = 'OSM') %>%
   addProviderTiles("Esri.NatGeoWorldMap", group="ESRI Mapa") %>%
-  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen") %>%
+  addProviderTiles("Esri.WorldImagery", group="ESRI Imagen",
+                   options = providerTileOptions(opacity = 0.4)) %>%
   addProviderTiles("CartoDB.Positron", group= "CartoDB") %>%
   addLayersControl(
     baseGroups = c("ESRI Imagen", "CartoDB", "OSM", "ESRI Mapa"),
