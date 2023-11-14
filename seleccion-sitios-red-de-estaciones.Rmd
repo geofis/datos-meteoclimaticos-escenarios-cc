@@ -1,6 +1,7 @@
 ---
 title: "Selección de sitios para el establecimiento de una red de estaciones meteoclimáticas en República Dominicana usando decisión multicriterio y análisis de vecindad"
 author: "José Martínez<br>Michela Izzo"
+abstract: Las estaciones meteorológicas y climáticas (EMC) desempeñan un papel esencial en la monitorización del clima y el tiempo atmosférico. Sin embargo, la ubicación estratégica de estas estaciones en áreas como la República Dominicana sigue siendo un desafío dada la diversidad topoclimática y la escasez de puntos de medición actualmente establecidos. En este estudio, abordamos la selección óptima de sitios para EMC utilizando decisión multicriterio y análisis de vecindad. Como principal hallazgo, identificamos ocho criterios esenciales y tres densidades teóricas óptimas de estaciones respaldadas por la Organización Meteorológica Mundial, que determinan la ubicación preferente de las EMC. Estos criterios revelan una aproximación integral y basada en evidencia idónea para el establecimeinto de nuevas estaciones. Dentro del ámbito de la meteorología y la climatología, este enfoque proporciona un marco más robusto para la planificación y establecimiento de redes de observación. En un contexto más amplio, este estudio subraya la importancia de la selección basada en datos para la infraestructura científica, garantizando una recopilación de datos más precisa y representativa en cualquier disciplina.
 output:
   # bookdown::github_document2:
   #   number_sections: false

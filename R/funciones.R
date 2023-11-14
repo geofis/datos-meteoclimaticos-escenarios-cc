@@ -555,3 +555,18 @@ conteo_lineas <- function(ruta, saltar = 1, convertir_num = T){
   if(convertir_num) dato_interes <- as.numeric(dato_interes)
   return(dato_interes)
 }
+
+estilo_kable <- function(df, titulo = '', cubre_anchura = T) {
+  df %>% kable(format = 'latex', escape = F, booktabs = T,
+               digits = 2, caption = titulo) %>%
+    kable_styling(bootstrap_options = c("hover", "condensed"),
+                  latex_options = "HOLD_position",
+                  full_width = cubre_anchura, position = "center")
+}
+
+estilo_kable_corto <- function(df, titulo = '', cubre_anchura = T) {
+  df %>%
+    kable(format = 'latex', escape = F, booktabs = T, digits = 2, caption = titulo) %>%
+    kable_styling(bootstrap_options = c("hover", "condensed"),
+                  full_width = cubre_anchura)
+}
