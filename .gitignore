@@ -38,6 +38,10 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
+## Custom ignores
+# All .RData files
+*.RData
+
 # fuentes/*
 fuentes/reddom/db-structure
 fuentes/umbrales-criterios-ahp/puntuacion.odt

@@ -46,6 +46,7 @@ limpiar_coord <- function(mi_vector = NULL, sufijo = NULL) {
 # Objeto "fuente", para categorías
 # fuente <- c('marginalmente idóneo', 'moderadamente idóneo', 'idóneo', 'altamente idóneo')
 fuente <- c('marginalmente prioritario', 'moderadamente prioritario', 'prioritario', 'imprescindible')
+fuente_eng <- c('marginally prioritized', 'moderately prioritized', 'prioritized', 'essential')
 
 # Función de reclasificación
 reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
@@ -383,7 +384,7 @@ generar_centroides_distantes <- function(
   bestpair <- rownames(which(as.matrix(hdist) == max(hdist), arr.ind = T))
   
   # El mejor par inicial en un data.frame
-  P <- rbind(hullpoints[bestpair[1],], hullpoints[bestpair[2],])
+  P <- rbind(hullpoints[as.numeric(bestpair[1]),], hullpoints[as.numeric(bestpair[2]),])
   
   # Buscar los subconjuntos óptimos
   if(!silencioso) cat("Buscando los subconjuntos óptimos...\n")
