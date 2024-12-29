@@ -69,7 +69,7 @@ variables <- c(
 )
 col_ord <- as.vector(sapply(as.data.frame(combn(names(variables), 2)), paste0, collapse = '_'))
 variables_eng <- c(
-    acce = "distance to access points",
+    acce = "distance to access routes",
     temp = "thermal seasonality",
     pluv = "rainfall seasonality",
     habi = "habitat heterogeneity",
@@ -383,6 +383,12 @@ prefagg <- flujo_completo_ahp$aggpref %>%
   rownames_to_column('Variable') %>% 
   mutate(Variable = factor(Variable, labels = variables[sort(names(variables))])) %>% 
   arrange(desc(`Preferencias agregadas`))
+prefagg_eng <- flujo_completo_ahp$aggpref %>%
+  as.data.frame() %>% 
+  rename(`Aggregated Preferences` = AggPref, `Standard Deviation` = SD.AggPref) %>% 
+  rownames_to_column('Variable') %>% 
+  mutate(Variable = factor(Variable, labels = variables_eng[sort(names(variables_eng))])) %>% 
+  arrange(desc(`Aggregated Preferences`))
 kable_prefagg <- prefagg %>% 
   estilo_kable(titulo = 'Preferencias agregadas',
                cubre_anchura = F) %>% 
@@ -623,6 +629,22 @@ puntuaciones_umbrales_kable <- puntuaciones_umbrales %>% kable(format = 'html', 
 puntuaciones_umbrales_kable
 ```
 
+```{r umbralesapuntuaciones_eng}
+puntuaciones_umbrales_eng <- map(objetos, function(x) get(x)[['intervalos_y_etiquetas']] %>% 
+  pivot_longer(cols = -matches('puntuación|etiquetas'), names_to = 'criterio') %>%
+  mutate(criterio = gsub(' intervalos', '', criterio)) %>% 
+  group_by(across(all_of(matches('etiquetas|criterio')))) %>% 
+  summarise(value = paste(value, collapse = ' y ')) %>% 
+  pivot_wider(names_from = contains('etiquetas'), values_from = value) %>% 
+  select(criterio, rev(fuente))) %>%
+  bind_rows() %>% 
+  mutate(criterio = factor(criterio, levels = variables, labels = variables_eng))
+colnames(puntuaciones_umbrales_eng)[1:5] <- c(
+  'variable',
+  fuente_eng[match(colnames(puntuaciones_umbrales_eng)[2:5], fuente)])
+```
+
+
 ### Áreas proporcionales consolidadas
 
 Las áreas proporcionales consolidadas quedan recogidas en la tabla (ver tabla \@ref(tab:areasproporcionales)).
@@ -640,7 +662,15 @@ areas_proporcionales_kable <- areas_proporcionales %>% kable(format = 'html', es
         caption = 'Áreas proporcionales por cada criterios para la selección de sitios de estaciones meteoclimáticas') %>%
   kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
 areas_proporcionales_kable
+
+# En inglés
+areas_proporcionales_eng <- areas_proporcionales
+areas_proporcionales_eng$criterio <- variables_eng[match(areas_proporcionales$criterio, variables)]
+colnames(areas_proporcionales_eng)[2:5] <- fuente_eng[match(colnames(areas_proporcionales)[2:5], fuente)]
+colnames(areas_proporcionales_eng)[1] <- 'Variable'
+colnames(areas_proporcionales_eng)[6] <- "Total"
 ```
+
 
 ### Representación consolidada de las reclasificaciones y puntuaciones agregadas
 
@@ -666,6 +696,8 @@ all_criteria_mapa <- all_criteria %>%
                                        replacement = ''), 
                 matches('etiquetas')) %>% 
   pivot_longer(cols = -geometry) %>% 
+  mutate(value = factor(value, levels = rev(fuente))) %>% 
+  na.omit() %>% 
   ggplot +
   aes(fill = value) +
   geom_sf(lwd=0) + 
@@ -684,6 +716,38 @@ all_criteria_mapa <- all_criteria %>%
     )
 if(interactive()) dev.new()
 all_criteria_mapa
+```
+
+
+```{r}
+paleta_eng <- c("#018571", "#80cdc1", "#dfd2b3", "#a6611a")
+names(paleta_eng) <- rev(fuente_eng)
+all_criteria_mapa_eng <- all_criteria %>%
+  select(all_of(contains('etiquetas'))) %>% 
+  rename_with(~ stringr::str_replace(.x, 
+                                       pattern = ' etiquetas', 
+                                       replacement = ''), 
+                matches('etiquetas')) %>% 
+  pivot_longer(cols = -geometry) %>% 
+  mutate(name = variables_eng[names(variables)[match(name, variables)]]) %>%
+  mutate(value = factor(fuente_eng[names(fuente_eng)[match(value, fuente)]], levels = rev(fuente_eng))) %>% 
+  na.omit() %>% 
+  ggplot +
+  aes(fill = value) +
+  geom_sf(lwd=0) + 
+  scale_fill_manual(values = paleta_eng) +
+  labs(title = paste('Reclassification of criteria values')) +
+  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
+  facet_wrap(~ name, ncol = 2) +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.key.size = unit(0.5, 'cm'), #change legend key size
+    legend.key.height = unit(0.5, 'cm'), #change legend key height
+    legend.key.width = unit(0.5, 'cm'), #change legend key width
+    legend.title = element_blank(), #change legend title font size
+    legend.text = element_text(size=5) #change legend text font size
+    )
 ```
 
 Calculamos las puntuaciones agregadas  multiplicando las puntuaciones parciales de cada criterio por sus correspondientes pesos de preferencias agregadas, con lo cual generamos las puntuaciones agregadas. Estas puntuaciones las reclasificamos en las cuatro categorías habituales (`r first(fuente)`...`r last(fuente)`) siguiendo el criterio de cantidad de desviaciones estándar.
@@ -831,6 +895,57 @@ areas_proporcionales_all_criteria_excluded %>%
     kable(format = 'html', escape = F, booktabs = T, digits = 2,
         caption = 'Áreas proporcionales de categorías agregadas para la selección de sitios de estaciones meteoclimáticas con exclusión por factores limitantes') %>%
       kable_styling(bootstrap_options = c("hover", "condensed"), full_width = T)
+```
+
+```{r}
+# Ambos mapas, sin y con exclusión por factores limitantes, en inglés
+all_criteria_scores_non_excluded_and_excluded_map_eng <- all_criteria_scores %>%
+  mutate(Type = 'Aggregated categories') %>% 
+  select(hex_id, Type, `Aggregated categories` = `Categoría agregada`) %>% 
+  bind_rows(
+    all_criteria_scores_excluded %>% 
+      mutate(Type = 'Aggregated categories, with exclusion') %>% 
+      select(hex_id, Type, `Aggregated categories` = `Categoría agregada`)
+  ) %>% 
+  mutate(
+    `Aggregated categories` = factor(
+      fuente_eng[names(fuente_eng)[match(`Aggregated categories`, fuente)]], levels = rev(fuente_eng))) %>% 
+  ggplot +
+  aes(fill = `Aggregated categories`) +
+  geom_sf(lwd=0) + 
+  scale_fill_manual(values = paleta_eng) +
+  # labs(title = paste('Aggregated criteria')) +
+  geom_sf(data = pais, fill = 'transparent', lwd = 0.5, color = 'grey50') +
+  facet_wrap(~ Type) +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.key.size = unit(0.5, 'cm'), #change legend key size
+    legend.key.height = unit(0.5, 'cm'), #change legend key height
+    legend.key.width = unit(0.5, 'cm'), #change legend key width
+    legend.title = element_blank(), #change legend title font size
+    legend.text = element_text(size=5) #change legend text font size
+    )
+```
+
+```{r}
+# Ambas tablas de áreas proporcionales según categorías, sin y con exclusión por factores limitantes, en español e inglés
+areas_prop_all_criteria_con_sin_excl_esp <- areas_proporcionales_all_criteria %>%
+  inner_join(
+    y = areas_proporcionales_all_criteria_excluded,
+    by = 'Categoría agregada', 
+    suffix = c(' (sin exlusion)', ' (con exclusión)'))
+areas_prop_all_criteria_con_sin_excl_eng <- areas_prop_all_criteria_con_sin_excl_esp %>%
+  rename(`Aggregated category` = `Categoría agregada`) %>%
+  rename_with(function(colname) {
+    colname %>%
+      gsub("proporción", "Proportion", .) %>%
+      gsub("sin exlusion", "without exclusion", .) %>%
+      gsub("con exclusión", "with exclusion", .)}) %>% 
+  mutate(
+    `Aggregated category` = factor(
+      fuente_eng[names(fuente_eng)[match(`Aggregated category`, fuente)]], levels = rev(fuente_eng))) %>% 
+  mutate(`Aggregated category` = gsub("^(.)", "\\U\\1", `Aggregated category`, perl = TRUE))
 ```
 
 ## Escenarios
@@ -1354,6 +1469,103 @@ assign(obj,
 get(obj) #Tabla
 ```
 
+```{r}
+# Mapas de todos los escenarios con las buenas, sin privadas, en inglés
+# Escenario 100 km2
+{esc_100_activas_buenas_mapa_eng <- esc_100_activas_buenas_mapa +
+  ggtitle(NULL)
+esc_100_activas_buenas_mapa_eng$layers <- esc_100_activas_buenas_mapa_eng$layers[-3]
+esc_100_activas_buenas_mapa_eng$data$id <- factor(
+  x = esc_100_activas_buenas_mapa_eng$data$id,
+  labels = c('Existing stations', 'Proposed sites'))
+esc_100_activas_buenas_mapa_eng$data <- esc_100_activas_buenas_mapa_eng$data %>%
+  st_join(
+    y = all_criteria_scores_excluded %>% select(Category = `Categoría agregada`),
+    join = st_nearest_feature) %>% 
+  mutate(Category = factor(
+    x = fuente_eng[names(fuente_eng)[match(Category, fuente)]],
+    levels = rev(fuente_eng)))
+esc_100_activas_buenas_mapa_eng <- ggplot() +
+  geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+  geom_sf(
+    data = esc_100_activas_buenas_mapa_eng$data %>% filter(id == 'Existing stations'),
+    alpha = 0.8, fill = 'grey', aes(shape = id), size = 2.5) +
+  geom_sf(
+    data = esc_100_activas_buenas_mapa_eng$data %>% filter(id == 'Proposed sites') %>% 
+      group_by(Category) %>% mutate(n = n(), Category = paste0(Category, ' (', n, ')')),
+    alpha = 0.8, aes(fill = Category), shape = 21, size = 2.5) +
+  scale_fill_manual(
+    values = c("#018571", "#80cdc1")) +
+  scale_shape_manual(
+    values = c(25, 21),
+    guide = guide_legend(title = NULL, order = 2, override.aes = list(fill = "grey"))) +
+  labs(fill = "Proposed sites") +
+  ggspatial::annotation_scale(style = 'ticks', height = unit(0.15, "cm"), location = 'br') +
+  theme_bw()
+# Escenario 150 km2
+esc_150_activas_buenas_mapa_eng <- esc_150_activas_buenas_mapa +
+  ggtitle(NULL)
+esc_150_activas_buenas_mapa_eng$layers <- esc_150_activas_buenas_mapa_eng$layers[-3]
+esc_150_activas_buenas_mapa_eng$data$id <- factor(
+  x = esc_150_activas_buenas_mapa_eng$data$id,
+  labels = c('Existing stations', 'Proposed sites'))
+esc_150_activas_buenas_mapa_eng$data <- esc_150_activas_buenas_mapa_eng$data %>%
+  st_join(
+    y = all_criteria_scores_excluded %>% select(Category = `Categoría agregada`),
+    join = st_nearest_feature) %>% 
+  mutate(Category = factor(
+    x = fuente_eng[names(fuente_eng)[match(Category, fuente)]],
+    levels = rev(fuente_eng)))
+esc_150_activas_buenas_mapa_eng <- ggplot() +
+  geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+  geom_sf(
+    data = esc_150_activas_buenas_mapa_eng$data %>% filter(id == 'Existing stations'),
+    alpha = 0.8, fill = 'grey', aes(shape = id), size = 2.5) +
+  geom_sf(
+    data = esc_150_activas_buenas_mapa_eng$data %>% filter(id == 'Proposed sites') %>% 
+      group_by(Category) %>% mutate(n = n(), Category = paste0(Category, ' (', n, ')')),
+    alpha = 0.8, aes(fill = Category), shape = 21, size = 2.5) +
+  scale_fill_manual(
+    values = c("#018571", "#80cdc1")) +
+  scale_shape_manual(
+    values = c(25, 21),
+    guide = guide_legend(title = NULL, order = 2, override.aes = list(fill = "grey"))) +
+  labs(fill = "Proposed sites") +
+  ggspatial::annotation_scale(style = 'ticks', height = unit(0.15, "cm"), location = 'br') +
+  theme_bw()
+# Escenario 250 km2
+esc_250_activas_buenas_mapa_eng <- esc_250_activas_buenas_mapa +
+  ggtitle(NULL)
+esc_250_activas_buenas_mapa_eng$layers <- esc_250_activas_buenas_mapa_eng$layers[-3]
+esc_250_activas_buenas_mapa_eng$data$id <- factor(
+  x = esc_250_activas_buenas_mapa_eng$data$id,
+  labels = c('Existing stations', 'Proposed sites'))
+esc_250_activas_buenas_mapa_eng$data <- esc_250_activas_buenas_mapa_eng$data %>%
+  st_join(
+    y = all_criteria_scores_excluded %>% select(Category = `Categoría agregada`),
+    join = st_nearest_feature) %>% 
+  mutate(Category = factor(
+    x = fuente_eng[names(fuente_eng)[match(Category, fuente)]],
+    levels = rev(fuente_eng)))
+esc_250_activas_buenas_mapa_eng <- ggplot() +
+  geom_sf(data = pais, fill = 'transparent', color = 'grey50') +
+  geom_sf(
+    data = esc_250_activas_buenas_mapa_eng$data %>% filter(id == 'Existing stations'),
+    alpha = 0.8, fill = 'grey', aes(shape = id), size = 2.5) +
+  geom_sf(
+    data = esc_250_activas_buenas_mapa_eng$data %>% filter(id == 'Proposed sites') %>% 
+      group_by(Category) %>% mutate(n = n(), Category = paste0(Category, ' (', n, ')')),
+    alpha = 0.8, aes(fill = Category), shape = 21, size = 2.5) +
+  scale_fill_manual(
+    values = c("#018571", "#80cdc1")) +
+  scale_shape_manual(
+    values = c(25, 21),
+    guide = guide_legend(title = NULL, order = 2, override.aes = list(fill = "grey"))) +
+  labs(fill = "Proposed sites") +
+  ggspatial::annotation_scale(style = 'ticks', height = unit(0.15, "cm"), location = 'br') +
+  theme_bw()}
+```
+
 
 ```{r}
 save.image('r-image-site-selection.RData')
@@ -1401,7 +1613,4 @@ sessionInfo()
 # [66] vroom_1.6.3        evaluate_0.21      lattice_0.20-45    rbibutils_2.2.13   snakecase_0.11.0  
 # [71] bslib_0.4.2        class_7.3-20       Rcpp_1.0.10        svglite_2.1.1      nlme_3.1-155      
 # [76] xfun_0.39          pkgconfig_2.0.3 
-
-
 ```
-

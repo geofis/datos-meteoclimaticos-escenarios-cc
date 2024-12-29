@@ -47,6 +47,7 @@ limpiar_coord <- function(mi_vector = NULL, sufijo = NULL) {
 # fuente <- c('marginalmente idóneo', 'moderadamente idóneo', 'idóneo', 'altamente idóneo')
 fuente <- c('marginalmente prioritario', 'moderadamente prioritario', 'prioritario', 'imprescindible')
 fuente_eng <- c('marginally prioritized', 'moderately prioritized', 'prioritized', 'essential')
+names(fuente_eng) <- fuente
 
 # Función de reclasificación
 reclasificar <- function(vectorial, campo, umbrales, campo_indice = 'hex_id',
@@ -526,7 +527,7 @@ source_rmd_chunks <- function(file, chunk_labels, skip_plots = TRUE, output_temp
 }
 
 
-vector_a_lista <- function(vec) {
+vector_a_lista <- function(vec, es = T) {
   n <- length(vec)
   if (n == 0) {
     return("")
@@ -535,7 +536,7 @@ vector_a_lista <- function(vec) {
   } else if (n == 2) {
     return(paste(vec, collapse = " y "))
   } else {
-    last <- paste("y", vec[n])
+    last <- paste(ifelse(es, "y", "and"), vec[n])
     rest <- paste(vec[1:(n-1)], collapse = ", ")
     return(paste(rest, last))
   }
