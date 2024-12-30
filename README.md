@@ -1,5 +1,7 @@
 # Proyecto "Generación y gestión de datos hidrometeorológicos y escenarios de cambio climático, República Dominicana"
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14571957.svg)](https://doi.org/10.5281/zenodo.14571957)
+
 El proyecto "Generación y gestión de datos hidrometeorológicos y escenarios de cambio climático, República Dominicana" es una asistencia técnica no reembolsable ejecutada por INDRHI, ONAMET, CNCCMDL, Presidencia de la República, MEPyD y Medio Ambiente, y financiada por el BID. En el marco del dicho proyecto, un equipo de la ONG Guakía Ambiente.
 
 Entradas disponibles:
